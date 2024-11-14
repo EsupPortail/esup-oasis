@@ -40,9 +40,22 @@ class ComposanteProvider extends AbstractEntityProvider
         $resource = new Composante();
         $resource->id = $entity->getId();
         $resource->libelle = $entity->getLibelle();
+
         $resource->referents = array_values(array_map(
                 fn($referent) => $this->transformerService->transform($referent, Utilisateur::class),
-                $entity->getReferents()->toArray()
+                //on crée une copie light de l'entité pour éviter des requêtes en cascade + boucles éventuelles
+                array_map(
+                    function (\App\Entity\Utilisateur $referent) {
+                        $ref = new \App\Entity\Utilisateur();
+                        $ref->setNom($referent->getNom())
+                            ->setPrenom($referent->getPrenom())
+                            ->setEmail($referent->getEmail())
+                            ->setUid($referent->getUid());
+
+                        return $ref;
+                    },
+                    $entity->getReferents()->toArray(),
+                )
             )
         );
         return $resource;

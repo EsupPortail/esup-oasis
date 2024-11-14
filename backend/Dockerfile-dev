@@ -12,10 +12,9 @@ RUN xcaddy build \
     --with github.com/dunglas/vulcain/caddy \
     --with github.com/dunglas/caddy-cbrotli \
     --with github.com/darkweak/souin/plugins/caddy \
-#    --with github.com/darkweak/storages/badger/caddy
     --with github.com/darkweak/storages/otter/caddy
 
-FROM dunglas/frankenphp:1.2.5-php8.3 AS frankenphp_upstream
+FROM dunglas/frankenphp:php8.3 AS frankenphp_upstream
 COPY --from=builder --link /usr/local/bin/frankenphp /usr/local/bin/frankenphp
 
 #force non-https

@@ -623,7 +623,7 @@ readonly class UtilisateurManager
         //On copie les données récupérables dans la demande
         $this->copierDonneesDemande($demande);
 
-        $this->utilisateurRepository->save($beneficiaire->getUtilisateur());
+        $this->utilisateurRepository->save($beneficiaire->getUtilisateur(), true);
 
         return $beneficiaire;
     }
