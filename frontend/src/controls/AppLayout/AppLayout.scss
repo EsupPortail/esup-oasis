@@ -33,6 +33,7 @@
   .user .ant-menu-title-content {
     padding: 0 !important;
   }
+
   .user .ant-menu-title-content, .recherche .ant-menu-title-content {
     background-color: $light-grey;
   }
@@ -84,6 +85,10 @@
   .item-accessibilite .ant-menu-submenu-title {
     display: flex;
     align-items: center;
+  }
+
+  .ant-menu .recherche {
+    line-height: 1;
   }
 
   .recherche.recherche-en-cours {
@@ -154,6 +159,8 @@
   color: #AAA !important;
   background: none;
 }
+
+
 
 .sider-trigger {
   background: transparent !important;
@@ -278,10 +285,15 @@
     vertical-align: middle !important;
   }
 
+  .ant-menu-submenu-title {
+    line-height: 52px;
+  }
+
   .user-space {
     font-size: 1rem;
     vertical-align: middle;
     font-weight: 400;
+    text-align: left;
 
     .ant-space-item {
       margin: 0;
