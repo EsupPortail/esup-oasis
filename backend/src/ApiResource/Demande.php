@@ -12,8 +12,8 @@
 
 namespace App\ApiResource;
 
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Doctrine\Orm\State\Options;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiProperty;
@@ -23,6 +23,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model\Operation;
+use App\Filter\CampagneNonArchiveeFilter;
 use App\Filter\DemandeDisciplineSportiveFilter;
 use App\Filter\DemandeFormatFilter;
 use App\Filter\DerniereInscriptionSearchFilter;
@@ -39,43 +40,43 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
-    operations            : [
+    operations: [
         new Get(
-            uriTemplate : self::ITEM_URI,
+            uriTemplate: self::ITEM_URI,
             uriVariables: ['id'],
-            security    : "is_granted('" . self::VOIR_DEMANDE . "', object)"
+            security: "is_granted('" . self::VOIR_DEMANDE . "', object)"
         ),
         new GetCollection(
             uriTemplate: self::COLLECTION_URI,
-            forceEager : false
+            forceEager: false
         ),
         new GetCollection(
-            uriTemplate : self::COLLECTION_UTILISATEUR_URI,
+            uriTemplate: self::COLLECTION_UTILISATEUR_URI,
             uriVariables: ['uid'],
-            security    : "is_granted('ROLE_GESTIONNAIRE') or request.get('uid') == user.getUid()",
-            forceEager  : false,
-            provider    : DemandesUtilisateurProvider::class,
+            security: "is_granted('ROLE_GESTIONNAIRE') or request.get('uid') == user.getUid()",
+            forceEager: false,
+            provider: DemandesUtilisateurProvider::class,
         ),
         new Post(
-            uriTemplate            : self::COLLECTION_URI,
-            denormalizationContext : ['groups' => [self::GROUP_IN]],
+            uriTemplate: self::COLLECTION_URI,
+            denormalizationContext: ['groups' => [self::GROUP_IN]],
             securityPostDenormalize: "is_granted('ROLE_GESTIONNAIRE') or object.demandeur.uid == user.getUid()",
-            read                   : false,
-            processor              : PostDemandeProcessor::class,
+            read: false,
+            processor: PostDemandeProcessor::class,
         ),
         new Patch(
-            uriTemplate            : self::ITEM_URI,
-            uriVariables           : ['id'],
-            denormalizationContext : ['groups' => [self::GROUP_CHANGEMENT_ETAT]],
+            uriTemplate: self::ITEM_URI,
+            uriVariables: ['id'],
+            denormalizationContext: ['groups' => [self::GROUP_CHANGEMENT_ETAT]],
             securityPostDenormalize: "is_granted('" . self::MAJ_DEMANDE . "', [previous_object, object])",
-            processor              : PatchDemandeProcessor::class
+            processor: PatchDemandeProcessor::class
         ),
     ],
-    normalizationContext  : ['groups' => [self::GROUP_OUT]],
+    normalizationContext: ['groups' => [self::GROUP_OUT]],
     denormalizationContext: ['groups' => [self::GROUP_IN]],
-    openapi               : new Operation(tags: ['Demandes']),
-    provider              : DemandeProvider::class,
-    stateOptions          : new Options(entityClass: \App\Entity\Demande::class),
+    openapi: new Operation(tags: ['Demandes']),
+    provider: DemandeProvider::class,
+    stateOptions: new Options(entityClass: \App\Entity\Demande::class),
 )]
 #[ApiFilter(SearchFilter::class, properties: [
     'demandeur.nom' => 'ipartial',
@@ -118,6 +119,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiFilter(DemandeDisciplineSportiveFilter::class)]
 #[ApiFilter(OrderFilter::class, properties: ['demandeur.nom', 'dateDepot'])]
 #[ApiFilter(DemandeFormatFilter::class)]
+#[ApiFilter(CampagneNonArchiveeFilter::class)]
 #[DemandeUniqueParCampagneConstraint]
 #[DemandeWorkflowConstraint]
 class Demande
