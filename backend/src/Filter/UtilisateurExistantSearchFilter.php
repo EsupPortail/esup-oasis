@@ -24,16 +24,18 @@ class UtilisateurExistantSearchFilter extends AbstractFilter
     protected const string PROPERTY = 'recherche';
 
     /**
-     * @param string                      $property
-     * @param string                      $value
-     * @param QueryBuilder                $queryBuilder
+     * @param string $property
+     * @param string $value
+     * @param QueryBuilder $queryBuilder
      * @param QueryNameGeneratorInterface $queryNameGenerator
-     * @param string                      $resourceClass
-     * @param Operation|null              $operation
-     * @param array                       $context
+     * @param string $resourceClass
+     * @param Operation|null $operation
+     * @param array $context
      * @return void
      */
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = []): void
+    protected function filterProperty(string                      $property, $value, QueryBuilder $queryBuilder,
+                                      QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass,
+                                      ?Operation                  $operation = null, array $context = []): void
     {
         if (static::PROPERTY !== $property) {
             return;

@@ -42,10 +42,48 @@ class NestedFieldSearchFilter extends AbstractFilter
         parent::__construct($managerRegistry, $logger, $properties, $nameConverter);
     }
 
+    public function getJoinAlias($path)
+    {
+        if (!array_key_exists($path, $this->joins)) {
+            throw new Exception('chemin de jointure ' . $path . ' non présent');
+        }
+        return $this->joins[$path];
+    }
+
+    #[Override] public function getDescription(string $resourceClass): array
+    {
+        $description = [];
+        foreach ($this->getProperties() as $property => $value) {
+            $description[$property] = [
+                'property' => $property,
+                'type' => Type::BUILTIN_TYPE_STRING,
+                'required' => false,
+                'is_collection' => false,
+                'openapi' => [
+                    'description' => $value['desc'],
+                    'name' => $property,
+                    'type' => 'string',
+                ],
+            ];
+            $description[$property . '[]'] = [
+                'property' => $property,
+                'type' => Type::BUILTIN_TYPE_STRING,
+                'required' => false,
+                'is_collection' => true,
+                'openapi' => [
+                    'description' => $value['desc'],
+                    'name' => $property,
+                    'type' => 'string',
+                ],
+            ];
+        }
+        return $description;
+    }
+
     #[Override]
     protected function filterProperty(string                      $property, $value, QueryBuilder $queryBuilder,
                                       QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass,
-                                      Operation                   $operation = null, array $context = []): void
+                                      ?Operation                  $operation = null, array $context = []): void
     {
         if (!in_array($property, array_keys($this->getProperties()))) {
             return;
@@ -92,25 +130,17 @@ class NestedFieldSearchFilter extends AbstractFilter
         $this->doFilter($alias, $currentResourceClass, $targetField, $value, $queryBuilder, $queryNameGenerator, $resourceClass, $operation, $context);
     }
 
-    public function getJoinAlias($path)
-    {
-        if (!array_key_exists($path, $this->joins)) {
-            throw new Exception('chemin de jointure ' . $path . ' non présent');
-        }
-        return $this->joins[$path];
-    }
-
     /**
      * Implémentation par défaut - on teste l'égalité
      *
-     * @param string                      $alias
-     * @param string                      $targetField
-     * @param array                       $value
-     * @param QueryBuilder                $queryBuilder
+     * @param string $alias
+     * @param string $targetField
+     * @param array $value
+     * @param QueryBuilder $queryBuilder
      * @param QueryNameGeneratorInterface $queryNameGenerator
-     * @param string                      $resourceClass
-     * @param Operation|null              $operation
-     * @param array                       $context
+     * @param string $resourceClass
+     * @param Operation|null $operation
+     * @param array $context
      * @return void
      */
     protected function doFilter(string $alias, string $currentResourceClass, string $targetField, array $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator,
@@ -138,36 +168,6 @@ class NestedFieldSearchFilter extends AbstractFilter
         $orX->addMultiple($exprs);
 
         $queryBuilder->andWhere($orX);
-    }
-
-    #[Override] public function getDescription(string $resourceClass): array
-    {
-        $description = [];
-        foreach ($this->getProperties() as $property => $value) {
-            $description[$property] = [
-                'property' => $property,
-                'type' => Type::BUILTIN_TYPE_STRING,
-                'required' => false,
-                'is_collection' => false,
-                'openapi' => [
-                    'description' => $value['desc'],
-                    'name' => $property,
-                    'type' => 'string',
-                ],
-            ];
-            $description[$property . '[]'] = [
-                'property' => $property,
-                'type' => Type::BUILTIN_TYPE_STRING,
-                'required' => false,
-                'is_collection' => true,
-                'openapi' => [
-                    'description' => $value['desc'],
-                    'name' => $property,
-                    'type' => 'string',
-                ],
-            ];
-        }
-        return $description;
     }
 
 

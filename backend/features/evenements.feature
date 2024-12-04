@@ -296,7 +296,7 @@ Feature: Evenements
     Given I send an authentication token for gestionnaire
     And there is an event on a locked period for user "gestionnaire"
     When I send a "DELETE" request to "/evenements/3"
-    Then the response status code should be 409
+    Then the response status code should be 422
 
   @modifyData
   Scenario: I can still add an event if the period locks today

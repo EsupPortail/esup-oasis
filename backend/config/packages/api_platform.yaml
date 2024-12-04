@@ -21,7 +21,11 @@ api_platform:
     jsonld: [ 'application/ld+json' ]
     html: [ 'text/html' ]
 
-  keep_legacy_inflector: true
+  #keep_legacy_inflector: true
+  use_symfony_listeners: true
+
+  serializer:
+    hydra_prefix: true
 
   http_cache:
     invalidation:

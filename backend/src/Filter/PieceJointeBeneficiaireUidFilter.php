@@ -25,9 +25,11 @@ class PieceJointeBeneficiaireUidFilter extends AbstractFilter
 
     public const string PROPERTY = 'uidBeneficiaire';
 
-    #[Override] protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
+    #[Override] protected function filterProperty(string                      $property, $value, QueryBuilder $queryBuilder,
+                                                  QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass,
+                                                  ?Operation                  $operation = null, array $context = []): void
     {
-        if (!$operation->getClass() === PieceJointeBeneficiaire::class || $property !== self::PROPERTY) {
+        if (!$operation->getClass() == PieceJointeBeneficiaire::class || $property !== self::PROPERTY) {
             return;
         }
 

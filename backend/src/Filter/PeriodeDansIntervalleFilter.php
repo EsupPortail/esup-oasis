@@ -35,7 +35,7 @@ class PeriodeDansIntervalleFilter extends AbstractFilter
     }
 
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator,
-                                      string $resourceClass, Operation $operation = null, array $context = []): void
+                                      string $resourceClass, ?Operation $operation = null, array $context = []): void
     {
         if (!in_array($property, array_keys($this->properties)) || !in_array($resourceClass, [Evenement::class, InterventionForfait::class])) {
             return;
@@ -60,9 +60,9 @@ class PeriodeDansIntervalleFilter extends AbstractFilter
         $queryBuilder->join(sprintf('%s.%s', $alias, $fieldname), $periodeAlias)
             ->andWhere(sprintf('%s.id in (:%s)', $periodeAlias, $periodeIdsParameter))
             ->setParameter(
-                key  : $periodeIdsParameter,
+                key: $periodeIdsParameter,
                 value: array_map(fn(PeriodeRH $periode) => $periode->getId(), $periodesConcernees),
-                type : ArrayParameterType::INTEGER
+                type: ArrayParameterType::INTEGER
             );
 
     }

@@ -19,7 +19,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 class BilanFinancierNormalizer implements NormalizerInterface
 {
 
-    public function normalize(mixed $object, string $format = null, array $context = []): array
+    public function normalize(mixed $object, ?string $format = null, array $context = []): array
     {
         if ($format === 'customcsv') {
             return $this->toArray($object);
@@ -27,7 +27,7 @@ class BilanFinancierNormalizer implements NormalizerInterface
         return [$object];
     }
 
-    public function supportsNormalization(mixed $data, string $format = null, $context = null): bool
+    public function supportsNormalization(mixed $data, ?string $format = null, ?array $context = null): bool
     {
         if (!$data instanceof BilanFinancier || !in_array($format, ['customcsv'])) {
             return false;

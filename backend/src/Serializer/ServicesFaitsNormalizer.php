@@ -25,7 +25,7 @@ class ServicesFaitsNormalizer implements NormalizerInterface
      * @param array         $context
      * @return array
      */
-    public function normalize(mixed $object, string $format = null, array $context = []): array
+    public function normalize(mixed $object, ?string $format = null, array $context = []): array
     {
         if ($format === 'customcsv') {
             return $this->toArray($object);
@@ -66,7 +66,7 @@ class ServicesFaitsNormalizer implements NormalizerInterface
      * @param array       $context
      * @return bool
      */
-    public function supportsNormalization(mixed $data, string $format = null, array $context = []): bool
+    public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
         if (!$data instanceof ServicesFaits || !in_array($format, ['customcsv', 'pdf'])) {
             return false;

@@ -13,7 +13,6 @@
 namespace App\State\Evenement;
 
 use ApiPlatform\Doctrine\Orm\State\CollectionProvider;
-use ApiPlatform\Doctrine\Orm\State\Options;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\ActiviteIntervenant;
@@ -38,8 +37,8 @@ readonly class ActiviteIntervenantProvider implements ProviderInterface
 
     /**
      * @param Operation $operation
-     * @param array     $uriVariables
-     * @param array     $context
+     * @param array $uriVariables
+     * @param array $context
      * @return object|array|object[]|null
      * @throws Exception
      */
@@ -49,8 +48,7 @@ readonly class ActiviteIntervenantProvider implements ProviderInterface
             ->withPaginationEnabled(false);
 
         $interventionsOperation = (clone $operation)->withClass(InterventionForfait::class)
-            ->withPaginationEnabled(false)
-            ->withStateOptions(new Options(entityClass: InterventionForfait::class));
+            ->withPaginationEnabled(false);
 
         $context['filters']['exists']['intervenant'] = true;
 
@@ -81,12 +79,12 @@ readonly class ActiviteIntervenantProvider implements ProviderInterface
             $key = $item->getIntervenant()->getId() . '#' . $campusId ?? 'undefined' . '#' . $item->getType()->getId() . '#' . ($taux->id ?? 'undefined');
             if (!array_key_exists($key, $results)) {
                 $results[$key] = new ActiviteIntervenant(
-                    id         : $key,
+                    id: $key,
                     utilisateur: $this->transformerService->transform(
                         entity: $item->getIntervenant()->getUtilisateur(),
-                        to    : Utilisateur::class),
-                    campus     : $item instanceof Evenement ? $this->transformerService->transform(entity: $item->getCampus(), to: Campus::class) : null,
-                    type       : $this->transformerService->transform(entity: $item->getType(), to: TypeEvenement::class),
+                        to: Utilisateur::class),
+                    campus: $item instanceof Evenement ? $this->transformerService->transform(entity: $item->getCampus(), to: Campus::class) : null,
+                    type: $this->transformerService->transform(entity: $item->getType(), to: TypeEvenement::class),
                     tauxHoraire: $taux ?? null
                 );
             }

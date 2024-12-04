@@ -24,10 +24,17 @@ use Symfony\Component\Clock\ClockAwareTrait;
 class AmenagementUtilisateurFilter extends AbstractFilter
 {
     use ClockAwareTrait;
-    
+
     public const string PROPERTY = 'uidUtilisateurBeneficiaire';
 
-    #[Override] protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
+    #[Override] public function getDescription(string $resourceClass): array
+    {
+        return [];
+    }
+
+    #[Override] protected function filterProperty(string                      $property, $value, QueryBuilder $queryBuilder,
+                                                  QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass,
+                                                  ?Operation                  $operation = null, array $context = []): void
     {
         if (!$operation->getClass() === Amenagement::class || $property !== self::PROPERTY) {
             return;
@@ -46,10 +53,5 @@ class AmenagementUtilisateurFilter extends AbstractFilter
             ->andWhere(sprintf('%s.uid = :%s', $utilisateurAlias, $uidParam))
             ->setParameter($uidParam, $value)
             ->setParameter($nowParam, $this->now());
-    }
-
-    #[Override] public function getDescription(string $resourceClass): array
-    {
-        return [];
     }
 }

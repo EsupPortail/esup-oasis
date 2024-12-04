@@ -21,7 +21,9 @@ use Symfony\Component\PropertyInfo\Type;
 class NomIntervenantFilter extends AbstractFilter
 {
 
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = []): void
+    protected function filterProperty(string                      $property, $value, QueryBuilder $queryBuilder,
+                                      QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass,
+                                      ?Operation                  $operation = null, array $context = []): void
     {
         if ($property !== 'nomIntervenant') {
             return;

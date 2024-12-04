@@ -12,14 +12,14 @@
 
 namespace App\Filter;
 
-use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use ApiPlatform\Metadata\IriConverterInterface;
 use ApiPlatform\Metadata\Operation;
 use App\ApiResource\Composante;
 use App\ApiResource\Formation;
-use App\Entity\Utilisateur;
 use App\Entity\Amenagement;
+use App\Entity\Utilisateur;
 use App\Repository\FormationRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;

@@ -12,7 +12,6 @@
 
 namespace App\State\PeriodeRH;
 
-use ApiPlatform\Doctrine\Orm\State\Options;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
@@ -48,9 +47,9 @@ readonly class IntervenantServicesFaitsProvider implements ProviderInterface
         }
 
         $periodes = $this->periodeProvider->provide(
-            operation   : $operation->withStateOptions(new Options(entityClass: PeriodeRH::class)),
+            operation: $operation->withClass(PeriodeRH::class),
             uriVariables: [],
-            context     : $periodeContext);
+            context: $periodeContext);
 
         //on a les périodes filtrées...
         $result = [];
@@ -61,7 +60,7 @@ readonly class IntervenantServicesFaitsProvider implements ProviderInterface
             $periodeEntity = $this->periodeRHRepository->find($periode->id);
             $servicesFaits = $this->servicesFaitsProvider->init($periodeEntity, $uriVariables['uid']);
             $result[] = $this->servicesFaitsProvider->traiterEvenements(
-                evenements   : $this->servicesFaitsProvider->getEvenements($periodeEntity, $uriVariables['uid']),
+                evenements: $this->servicesFaitsProvider->getEvenements($periodeEntity, $uriVariables['uid']),
                 servicesFaits: $servicesFaits
             );
         }

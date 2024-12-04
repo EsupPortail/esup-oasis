@@ -32,14 +32,14 @@ class DemandeDenormalizer implements DenormalizerInterface
     }
 
     /**
-     * @param mixed       $data
-     * @param string      $type
+     * @param mixed $data
+     * @param string $type
      * @param string|null $format
-     * @param array       $context
+     * @param array $context
      * @return mixed
      * @throws ExceptionInterface
      */
-    #[Override] public function denormalize(mixed $data, string $type, string $format = null, array $context = []): mixed
+    #[Override] public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): mixed
     {
         /**
          * @var Demande $demande
@@ -53,7 +53,7 @@ class DemandeDenormalizer implements DenormalizerInterface
         return $demande;
     }
 
-    #[Override] public function supportsDenormalization(mixed $data, string $type, string $format = null, array $context = []): bool
+    #[Override] public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
         return $type === Demande::class;
     }

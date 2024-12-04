@@ -25,24 +25,29 @@ class CaseInsensitiveOrderFilter extends AbstractFilter
 {
     use OrderFilterTrait;
 
-    public function __construct(ManagerRegistry $managerRegistry, string $orderParameterName = 'order', LoggerInterface $logger = null,
-                                array           $properties = null, NameConverterInterface $nameConverter = null, private readonly ?string $orderNullsComparison = null)
+    public function __construct(ManagerRegistry          $managerRegistry,
+                                string                   $orderParameterName = 'order',
+                                ?LoggerInterface         $logger = null,
+                                ?array                   $properties = null,
+                                ?NameConverterInterface  $nameConverter = null,
+                                private readonly ?string $orderNullsComparison = null)
     {
         $this->orderParameterName = $orderParameterName;
         parent::__construct($managerRegistry, $logger, $properties, $nameConverter);
     }
 
     /**
-     * @param string                      $property
+     * @param string $property
      * @param                             $value
-     * @param QueryBuilder                $queryBuilder
+     * @param QueryBuilder $queryBuilder
      * @param QueryNameGeneratorInterface $queryNameGenerator
-     * @param string                      $resourceClass
-     * @param Operation|null              $operation
-     * @param array                       $context
+     * @param string $resourceClass
+     * @param Operation|null $operation
+     * @param array $context
      * @return void
      */
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = []): void
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator,
+                                      string $resourceClass, ?Operation $operation = null, array $context = []): void
     {
         if ($property !== $this->orderParameterName) {
             return;

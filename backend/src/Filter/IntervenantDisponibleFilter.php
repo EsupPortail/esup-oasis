@@ -22,31 +22,6 @@ use Symfony\Component\PropertyInfo\Type;
 class IntervenantDisponibleFilter extends AbstractFilter
 {
 
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = []): void
-    {
-        if ($property !== 'creneau') {
-            return;
-        }
-        if (!array_key_exists('debut', $value) || !array_key_exists('fin', $value)) {
-            //on sort en silence. log, message...erreur?
-            return;
-        }
-        $alias = $queryBuilder->getRootAliases()[0];
-        $intervenantAlias = $queryNameGenerator->generateJoinAlias('intervenant');
-        $evenementsAlias = $queryNameGenerator->generateJoinAlias('evenements');
-
-        $queryBuilder
-            ->join($alias . '.intervenant', $intervenantAlias)
-            ->leftJoin($intervenantAlias . '.interventions', $evenementsAlias,
-                Join::WITH,
-                $evenementsAlias . '.debut between :debut and :fin or :debut between ' . $evenementsAlias . '.debut and ' . $evenementsAlias . '.fin')
-            ->andWhere($evenementsAlias . '.id is null')
-            ->setParameter('debut', $value['debut'])
-            ->setParameter('fin', $value['fin']);
-
-
-    }
-
     public function getDescription(string $resourceClass): array
     {
         return [
@@ -71,5 +46,32 @@ class IntervenantDisponibleFilter extends AbstractFilter
                 ],
             ],
         ];
+    }
+
+    protected function filterProperty(string                      $property, $value, QueryBuilder $queryBuilder,
+                                      QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass,
+                                      ?Operation                  $operation = null, array $context = []): void
+    {
+        if ($property !== 'creneau') {
+            return;
+        }
+        if (!array_key_exists('debut', $value) || !array_key_exists('fin', $value)) {
+            //on sort en silence. log, message...erreur?
+            return;
+        }
+        $alias = $queryBuilder->getRootAliases()[0];
+        $intervenantAlias = $queryNameGenerator->generateJoinAlias('intervenant');
+        $evenementsAlias = $queryNameGenerator->generateJoinAlias('evenements');
+
+        $queryBuilder
+            ->join($alias . '.intervenant', $intervenantAlias)
+            ->leftJoin($intervenantAlias . '.interventions', $evenementsAlias,
+                Join::WITH,
+                $evenementsAlias . '.debut between :debut and :fin or :debut between ' . $evenementsAlias . '.debut and ' . $evenementsAlias . '.fin')
+            ->andWhere($evenementsAlias . '.id is null')
+            ->setParameter('debut', $value['debut'])
+            ->setParameter('fin', $value['fin']);
+
+
     }
 }

@@ -14,7 +14,7 @@ namespace App\State;
 
 use Doctrine\Common\Util\ClassUtils;
 use Exception;
-use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Contracts\Service\Attribute\Required;
 
 /**
@@ -29,8 +29,8 @@ class TransformerService
     }
 
     /**
-     * @param string   $from
-     * @param string   $to
+     * @param string $from
+     * @param string $to
      * @param callable $callback
      * @return void
      */
@@ -51,7 +51,7 @@ class TransformerService
 
     /**
      * @param ?object $entity
-     * @param string  $to
+     * @param string $to
      * @return ?object
      * @throws Exception
      */
@@ -72,7 +72,7 @@ class TransformerService
      * @param AbstractTransformer[] $handlers
      */
     #[Required]
-    public function initDependencies(#[TaggedIterator('transformateur', indexAttribute: 'key')] iterable $handlers): void
+    public function initDependencies(#[AutowireIterator('transformateur', indexAttribute: 'key')] iterable $handlers): void
     {
         foreach ($handlers as $handler) {
             $handler->setTransformerService($this);
