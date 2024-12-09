@@ -23,7 +23,25 @@ class IntervenantArchiveFilter extends AbstractFilter
 {
     use ClockAwareTrait;
 
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = []): void
+    public function getDescription(string $resourceClass): array
+    {
+        return [
+            'intervenantArchive' => [
+                'property' => 'intervenantArchive',
+                'type' => Type::BUILTIN_TYPE_BOOL,
+                'required' => false,
+                'openapi' => [
+                    'description' => "filtre sur l'état de l'intervenant à l'instant T",
+                    'name' => 'intervenantArchive',
+                    'type' => 'bool',
+                ],
+            ],
+        ];
+    }
+
+    protected function filterProperty(string                      $property, $value, QueryBuilder $queryBuilder,
+                                      QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass,
+                                      ?Operation                  $operation = null, array $context = []): void
     {
         if ($property !== 'intervenantArchive') {
             return;
@@ -40,21 +58,5 @@ class IntervenantArchiveFilter extends AbstractFilter
             $queryBuilder->andWhere($intervenantAlias . '.fin is not null and ' . $intervenantAlias . '.fin <= :' . $nowParam);
         }
         $queryBuilder->setParameter($nowParam, $this->now());
-    }
-
-    public function getDescription(string $resourceClass): array
-    {
-        return [
-            'intervenantArchive' => [
-                'property' => 'intervenantArchive',
-                'type' => Type::BUILTIN_TYPE_BOOL,
-                'required' => false,
-                'openapi' => [
-                    'description' => "filtre sur l'état de l'intervenant à l'instant T",
-                    'name' => 'intervenantArchive',
-                    'type' => 'bool',
-                ],
-            ],
-        ];
     }
 }

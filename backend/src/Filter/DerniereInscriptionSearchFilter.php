@@ -28,7 +28,8 @@ class DerniereInscriptionSearchFilter extends NestedFieldSearchFilter
 
     public function __construct(ManagerRegistry         $managerRegistry,
                                 IriConverterInterface   $iriConverter,
-                                ?LoggerInterface        $logger = null, ?array $properties = null,
+                                ?LoggerInterface        $logger = null,
+                                ?array                  $properties = null,
                                 ?NameConverterInterface $nameConverter = null)
     {
         foreach ($properties as $name => $property) {
@@ -42,9 +43,21 @@ class DerniereInscriptionSearchFilter extends NestedFieldSearchFilter
     }
 
     #[Override]
+    public function getDescription(string $resourceClass): array
+    {
+        $description = [];
+        foreach ($this->decorated as $decorated) {
+            foreach ($decorated->getDescription($resourceClass) as $key => $desc) {
+                $description[$key] = $desc;
+            }
+        }
+        return $description;
+    }
+
+    #[Override]
     protected function filterProperty(string                      $property, $value, QueryBuilder $queryBuilder,
                                       QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass,
-                                      Operation                   $operation = null, array $context = []): void
+                                      ?Operation                  $operation = null, array $context = []): void
     {
         if (!in_array($property, array_keys($this->getProperties()))) {
             return;
@@ -73,18 +86,6 @@ class DerniereInscriptionSearchFilter extends NestedFieldSearchFilter
         $queryBuilder->leftJoin(sprintf('%s.inscriptions', $aliasEtudiant), $aliasInscriptionsPlusRecentes,
             Join::WITH, sprintf('%s.debut > %s.debut', $aliasInscriptionsPlusRecentes, $aliasInscriptions))
             ->andWhere(sprintf('%s.id is null', $aliasInscriptionsPlusRecentes));
-    }
-
-    #[Override]
-    public function getDescription(string $resourceClass): array
-    {
-        $description = [];
-        foreach ($this->decorated as $decorated) {
-            foreach ($decorated->getDescription($resourceClass) as $key => $desc) {
-                $description[$key] = $desc;
-            }
-        }
-        return $description;
     }
 
 }

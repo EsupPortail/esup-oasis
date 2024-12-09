@@ -35,8 +35,8 @@ abstract class AbstractEntityProvider extends AbstractTransformer implements Pro
 
     /**
      * @param Operation $operation
-     * @param array     $uriVariables
-     * @param array     $context
+     * @param array $uriVariables
+     * @param array $context
      * @return PeriodeRH|PeriodeRH[]|null
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
@@ -56,7 +56,7 @@ abstract class AbstractEntityProvider extends AbstractTransformer implements Pro
             }
 
             $data = $this->collectionProvider->provide(
-                $operation->withClass($operation->getStateOptions()->getEntityClass()),
+                $operation->withClass($operation->getStateOptions()?->getEntityClass() ?? $operation->getClass()),
                 $uriVariables,
                 $context);
 

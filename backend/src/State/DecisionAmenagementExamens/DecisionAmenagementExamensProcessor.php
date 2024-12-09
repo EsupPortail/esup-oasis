@@ -33,12 +33,12 @@ readonly class DecisionAmenagementExamensProcessor implements ProcessorInterface
 
     /**
      * @param DecisionAmenagementExamens $data
-     * @param Operation                  $operation
-     * @param array                      $uriVariables
-     * @param array                      $context
+     * @param Operation $operation
+     * @param array $uriVariables
+     * @param array $context
      * @return void
      */
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): mixed
     {
         //PATCH seulement
         $entity = $this->decisionAmenagementExamensRepository->find($data->id);
@@ -51,5 +51,7 @@ readonly class DecisionAmenagementExamensProcessor implements ProcessorInterface
         }
 
         $this->messageBus->dispatch(new RessourceModifieeMessage($data));
+
+        return $data;
     }
 }

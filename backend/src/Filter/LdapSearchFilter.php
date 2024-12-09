@@ -12,7 +12,7 @@
 
 namespace App\Filter;
 
-use ApiPlatform\Api\FilterInterface;
+use ApiPlatform\Metadata\FilterInterface;
 
 class LdapSearchFilter implements FilterInterface
 {

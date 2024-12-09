@@ -61,8 +61,7 @@ class BilanFinancierProvider implements ProviderInterface
             ->withPaginationEnabled(false);
 
         $interventionsOperation = $operation->withClass(InterventionForfait::class)
-            ->withPaginationEnabled(false)
-            ->withStateOptions(new Options(entityClass: InterventionForfait::class));
+            ->withPaginationEnabled(false);
 
         $context['filters']['exists']['intervenant'] = true;
         $context['filters']['intervalle']['debut'] = $uriVariables['debut'];
@@ -116,10 +115,10 @@ class BilanFinancierProvider implements ProviderInterface
                 $taux = $this->getTauxHoraireResource($tauxEntity);
             }
             $intervenants[$item->getIntervenant()->getUtilisateur()->getId()]->ajoutActivite(
-                periode    : $periode,
-                type       : $this->getTypeResource($item->getType()),
+                periode: $periode,
+                type: $this->getTypeResource($item->getType()),
                 tauxHoraire: $taux ?? null,
-                nbHeures   : $duree,
+                nbHeures: $duree,
                 coeffCharge: $coeffChargeParam->getValeurPourDate($dateItem)?->getValeur() ?? '1'
             );
         }
@@ -129,8 +128,8 @@ class BilanFinancierProvider implements ProviderInterface
          * Tri par intervenant-nom, intervenant-prénom, période, type événement
          *
          */
-        usort(array   : $bilan->intervenants,
-              callback: fn(IntervenantBilanFinancier $a, IntervenantBilanFinancier $b) => match (true) {
+        usort(array: $bilan->intervenants,
+            callback: fn(IntervenantBilanFinancier $a, IntervenantBilanFinancier $b) => match (true) {
                 $a->intervenant->nom === $b->intervenant->nom => $a->intervenant->prenom <=> $b->intervenant->prenom,
                 default => $a->intervenant->nom <=> $b->intervenant->nom
             }

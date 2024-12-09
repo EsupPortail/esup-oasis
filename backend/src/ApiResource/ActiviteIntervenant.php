@@ -26,24 +26,26 @@ use App\Filter\NestedUtilisateurFilter;
 use App\State\Evenement\ActiviteIntervenantProvider;
 
 #[ApiResource(
-    operations          : [
+    operations: [
         new GetCollection(
-            uriTemplate      : '/suivis/intervenants',
-            openapi          : new Operation(tags: ['Suivis']),
+            uriTemplate: '/suivis/intervenants',
+            openapi: new Operation(tags: ['Suivis']),
             paginationEnabled: false
         ),
         new Get(
-            uriTemplate : '/suivis/intervenants/{id}',
+            uriTemplate: '/suivis/intervenants/{id}',
             uriVariables: ['id'],
-            status      : 405,
-            openapi     : false,
-            provider    : [self::class, 'methodNotAllowed'],
+            status: 405,
+            openapi: false,
+            provider: [self::class, 'methodNotAllowed'],
         ),
     ],
     normalizationContext: ['groups' => self::OUT],
-    security            : 'is_granted("ROLE_GESTIONNAIRE")',
-    provider            : ActiviteIntervenantProvider::class,
-    stateOptions        : new Options(entityClass: \App\Entity\Evenement::class)
+    security: 'is_granted("ROLE_GESTIONNAIRE")',
+    provider: ActiviteIntervenantProvider::class,
+    stateOptions: new Options(
+        entityClass: \App\Entity\Evenement::class
+    )
 )]
 #[ApiFilter(SearchFilter::class, properties: [
     'type' => 'exact',

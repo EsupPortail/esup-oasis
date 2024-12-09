@@ -27,7 +27,14 @@ class AmenagementBeneficiaireActifFilter extends AbstractFilter
 
     public const string PROPERTY = 'amenagementBeneficiaireActif';
 
-    #[Override] protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
+    #[Override] public function getDescription(string $resourceClass): array
+    {
+        return [];
+    }
+
+    #[Override] protected function filterProperty(string                      $property, $value, QueryBuilder $queryBuilder,
+                                                  QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass,
+                                                  ?Operation                  $operation = null, array $context = []): void
     {
         if (!$operation->getClass() === Amenagement::class || $property !== self::PROPERTY) {
             return;
@@ -41,10 +48,5 @@ class AmenagementBeneficiaireActifFilter extends AbstractFilter
         $queryBuilder->join($alias . '.beneficiaires', $benefAlias, Join::WITH, $withCondition)
             ->setParameter($nowParam, $this->now());
 
-    }
-
-    #[Override] public function getDescription(string $resourceClass): array
-    {
-        return [];
     }
 }

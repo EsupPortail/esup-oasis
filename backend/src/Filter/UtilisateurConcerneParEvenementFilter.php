@@ -12,9 +12,9 @@
 
 namespace App\Filter;
 
-use ApiPlatform\Metadata\IriConverterInterface;
 use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use ApiPlatform\Metadata\IriConverterInterface;
 use ApiPlatform\Metadata\Operation;
 use App\ApiResource\Evenement;
 use App\ApiResource\Utilisateur;
@@ -28,23 +28,25 @@ class UtilisateurConcerneParEvenementFilter extends AbstractFilter
 {
 
     public function __construct(private readonly IriConverterInterface $iriConverter, ManagerRegistry $managerRegistry,
-                                LoggerInterface                        $logger = null, ?array $properties = null,
+                                ?LoggerInterface                       $logger = null, ?array $properties = null,
                                 ?NameConverterInterface                $nameConverter = null)
     {
         parent::__construct($managerRegistry, $logger, $properties, $nameConverter);
     }
 
     /**
-     * @param string                      $property
-     * @param Utilisateur|string          $value
-     * @param QueryBuilder                $queryBuilder
+     * @param string $property
+     * @param Utilisateur|string $value
+     * @param QueryBuilder $queryBuilder
      * @param QueryNameGeneratorInterface $queryNameGenerator
-     * @param string                      $resourceClass
-     * @param Operation|null              $operation
-     * @param array                       $context
+     * @param string $resourceClass
+     * @param Operation|null $operation
+     * @param array $context
      * @return void
      */
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = []): void
+    protected function filterProperty(string                      $property, $value, QueryBuilder $queryBuilder,
+                                      QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass,
+                                      ?Operation                  $operation = null, array $context = []): void
     {
         if (!$operation->getClass() === Evenement::class || $property !== 'utilisateurConcerne') {
             return;

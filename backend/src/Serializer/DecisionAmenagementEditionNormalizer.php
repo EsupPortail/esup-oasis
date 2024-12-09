@@ -35,11 +35,11 @@ readonly class DecisionAmenagementEditionNormalizer implements NormalizerInterfa
 
     /**
      * @param DecisionAmenagementExamens $object
-     * @param string|null                $format
-     * @param array                      $context
+     * @param string|null $format
+     * @param array $context
      * @return array
      */
-    public function normalize(mixed $object, string $format = null, array $context = []): array
+    public function normalize(mixed $object, ?string $format = null, array $context = []): array
     {
         //On génère un tableau contenant l'état de la décision + tous les aménagements d'examen concernés
         $data[0] = $object;
@@ -85,7 +85,7 @@ readonly class DecisionAmenagementEditionNormalizer implements NormalizerInterfa
         return $data;
     }
 
-    public function supportsNormalization(mixed $data, string $format = null, array $context = []): bool
+    public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
         if (!$data instanceof DecisionAmenagementExamens || $format != 'pdf') {
             return false;

@@ -29,23 +29,25 @@ class NestedUtilisateurFilter extends AbstractFilter
     use PropertyHelperTrait;
 
     public function __construct(private readonly IriConverterInterface $iriConverter, ManagerRegistry $managerRegistry,
-                                LoggerInterface                        $logger = null, ?array $properties = null,
+                                ?LoggerInterface                       $logger = null, ?array $properties = null,
                                 ?NameConverterInterface                $nameConverter = null)
     {
         parent::__construct($managerRegistry, $logger, $properties, $nameConverter);
     }
 
     /**
-     * @param string                      $property
+     * @param string $property
      * @param                             $value
-     * @param QueryBuilder                $queryBuilder
+     * @param QueryBuilder $queryBuilder
      * @param QueryNameGeneratorInterface $queryNameGenerator
-     * @param string                      $resourceClass
-     * @param Operation|null              $operation
-     * @param array                       $context
+     * @param string $resourceClass
+     * @param Operation|null $operation
+     * @param array $context
      * @return void
      */
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = []): void
+    protected function filterProperty(string                      $property, $value, QueryBuilder $queryBuilder,
+                                      QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass,
+                                      ?Operation                  $operation = null, array $context = []): void
     {
         if (!in_array($property, array_keys($this->getProperties()))) {
             return;

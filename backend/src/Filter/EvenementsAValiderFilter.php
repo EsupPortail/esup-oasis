@@ -28,15 +28,31 @@ class EvenementsAValiderFilter extends AbstractFilter
 {
 
     public function __construct(ManagerRegistry         $managerRegistry, private readonly Security $security,
-                                LoggerInterface         $logger = null, ?array $properties = null,
+                                ?LoggerInterface        $logger = null, ?array $properties = null,
                                 ?NameConverterInterface $nameConverter = null,)
     {
         parent::__construct($managerRegistry, $logger, $properties, $nameConverter);
     }
 
+    public function getDescription(string $resourceClass): array
+    {
+        return [
+            'aValider' => [
+                'property' => 'aValider',
+                'type' => Type::BUILTIN_TYPE_BOOL,
+                'required' => false,
+                'openapi' => [
+                    'description' => 'uniquement les événements à valider?',
+                    'name' => 'aValider',
+                    'type' => 'string',
+                ],
+            ],
+        ];
+    }
+
     protected function filterProperty(string                      $property, $value, QueryBuilder $queryBuilder,
                                       QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass,
-                                      Operation                   $operation = null, array $context = []): void
+                                      ?Operation                  $operation = null, array $context = []): void
     {
         if ($property !== 'aValider') {
             return;
@@ -60,21 +76,5 @@ class EvenementsAValiderFilter extends AbstractFilter
                     ':user MEMBER OF ' . $renfortServiceAlias . '.utilisateurs')
                 ->setParameter('user', $user);
         }
-    }
-
-    public function getDescription(string $resourceClass): array
-    {
-        return [
-            'aValider' => [
-                'property' => 'aValider',
-                'type' => Type::BUILTIN_TYPE_BOOL,
-                'required' => false,
-                'openapi' => [
-                    'description' => 'uniquement les événements à valider?',
-                    'name' => 'aValider',
-                    'type' => 'string',
-                ],
-            ],
-        ];
     }
 }
