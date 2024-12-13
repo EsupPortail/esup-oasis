@@ -179,30 +179,37 @@ export default function AmenagementTableLayout(props: { modeAffichage: ModeAffic
             modeAffichage={props.modeAffichage}
          />
          <Flex className="w-100" justify="space-between" align="center">
-            <span className="legende">{getCountLibelle(count, "aménagement")}</span>
+            <span className="legende">
+               {getCountLibelle(
+                  count,
+                  props.modeAffichage === ModeAffichageAmenagement.ParAmenagement
+                     ? "aménagement"
+                     : "bénéficiaire",
+               )}
+            </span>
 
             <div className="d-block">
                {JSON.stringify(getFiltreAmenagementDefault(auth.user as Utilisateur)) !==
                   JSON.stringify(filtreAmenagement) && (
-                     <Button.Group>
-                        <FiltreDescription
-                           filtre={filtreAmenagement}
-                           as="modal"
-                           tooltip="Décrire le filtre en cours"
+                  <Button.Group>
+                     <FiltreDescription
+                        filtre={filtreAmenagement}
+                        as="modal"
+                        tooltip="Décrire le filtre en cours"
+                     />
+                     <Tooltip title="Retirer les filtres">
+                        <Button
+                           className="d-flex-inline-center mr-1"
+                           icon={<Icon component={Unfilter} aria-label="Retirer les filtres" />}
+                           onClick={() =>
+                              setFiltreAmenagement(
+                                 getFiltreAmenagementDefault(auth.user as Utilisateur),
+                              )
+                           }
                         />
-                        <Tooltip title="Retirer les filtres">
-                           <Button
-                              className="d-flex-inline-center mr-1"
-                              icon={<Icon component={Unfilter} aria-label="Retirer les filtres" />}
-                              onClick={() =>
-                                 setFiltreAmenagement(
-                                    getFiltreAmenagementDefault(auth.user as Utilisateur),
-                                 )
-                              }
-                           />
-                        </Tooltip>
-                     </Button.Group>
-                  )}
+                     </Tooltip>
+                  </Button.Group>
+               )}
                {auth.user?.isGestionnaire &&
                   props.modeAffichage === ModeAffichageAmenagement.ParAmenagement && (
                      <AmenagementTableExport filtreAmenagement={filtreAmenagement} />

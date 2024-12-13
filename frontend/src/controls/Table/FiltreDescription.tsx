@@ -52,14 +52,14 @@ const filtreDescriptionItem: FiltreDescriptionType[] = [
    {
       key: "avisEse",
       label: `Avis ${env.REACT_APP_ESPACE_SANTE_ABV || "santé"}`,
-      render: (value: string) => <Tag>{value}</Tag>,
+      render: (value: string) => <Tag className="mb-1">{value}</Tag>,
    },
    {
       key: "campagne.typeDemande[]",
       label: "Type de demande",
       render: (value: string[]) =>
          value.map((v) => (
-            <TypeDemandeItem typeDemandeId={v} showAvatar={false} className="mr-1" key={v} />
+            <TypeDemandeItem typeDemandeId={v} showAvatar={false} className="mr-1 mb-1" key={v} />
          )),
    },
    {
@@ -71,59 +71,68 @@ const filtreDescriptionItem: FiltreDescriptionType[] = [
    {
       key: "composante[]",
       label: "Composantes",
-      render: (value: string[]) => value.map((v) => <ComposanteItem key={v} composanteId={v} />),
+      render: (value: string[]) =>
+         value.map((v) => <ComposanteItem className="mb-1" key={v} composanteId={v} />),
    },
-   { key: "demandeur.nom", label: "Nom", render: (value: string) => <Tag>{value}</Tag> },
+   {
+      key: "demandeur.nom",
+      label: "Nom",
+      render: (value: string) => <Tag className="mb-1">{value}</Tag>,
+   },
    {
       key: "domaine",
       label: "Domaine aménagement",
       ignore: (value: string) => value === "Tous",
       render: (value: string) =>
          value === "Tous" ? (
-            <Tag>Tous les domaines</Tag>
+            <Tag className="mb-1">Tous les domaines</Tag>
          ) : (
-            <Tag>{DOMAINES_AMENAGEMENTS_INFOS[value]?.singulier}</Tag>
+            <Tag className="mb-1">{DOMAINES_AMENAGEMENTS_INFOS[value]?.singulier}</Tag>
          ),
    },
    {
       key: "discipline[]",
       label: "Disciplines",
-      render: (value: string[]) => value.map((v) => <DisciplineItem disciplineId={v} key={v} />),
+      render: (value: string[]) =>
+         value.map((v) => <DisciplineItem className="mb-1" disciplineId={v} key={v} />),
    },
    {
       key: "etat[]",
       label: "État demande",
       render: (value: string[]) =>
-         value.map((v) => <EtatDemandeAvatar etatDemandeId={v} key={v} />),
+         value.map((v) => <EtatDemandeAvatar className="mb-1" etatDemandeId={v} key={v} />),
    },
    {
       key: "etat",
       label: "État demande",
-      render: (value: string) => <EtatDemandeAvatar etatDemandeId={value} key={value} />,
+      render: (value: string) => (
+         <EtatDemandeAvatar className="mb-1" etatDemandeId={value} key={value} />
+      ),
    },
    {
       key: "formation[]",
       label: "Formations",
-      render: (value: string[]) => value.map((v) => <FormationItem formationId={v} />),
+      render: (value: string[]) =>
+         value.map((v) => <FormationItem className="mb-1" formationId={v} />),
    },
    {
       key: "gestionnaire[]",
       label: "Chargé•e d'accompagnement",
       render: (value: string[]) =>
-         value.map((v) => <GestionnaireItem key={v} gestionnaireId={v} className="mr-1" />),
+         value.map((v) => <GestionnaireItem key={v} gestionnaireId={v} className="mr-1 mb-1" />),
    },
    {
       key: "intervenant.campuses[]",
       label: "Campus",
       render: (value: string[]) =>
-         value.map((v) => <CampusItem key={v} campusId={v} className="mr-1" />),
+         value.map((v) => <CampusItem key={v} campusId={v} className="mr-1 mb-1" />),
    },
    {
       key: "intervenant.competences[]",
       label: "Compétences",
       render: (value: string[]) =>
          value.map((v) => (
-            <CompetenceItem key={v} competenceId={v} className="mr-1" showAvatar={false} />
+            <CompetenceItem key={v} competenceId={v} className="mr-1 mb-1" showAvatar={false} />
          )),
    },
    {
@@ -131,7 +140,12 @@ const filtreDescriptionItem: FiltreDescriptionType[] = [
       label: "Types événements",
       render: (value: string[]) =>
          value.map((v) => (
-            <TypeEvenementItem key={v} typeEvenementId={v} showAvatar={false} className="mr-1" />
+            <TypeEvenementItem
+               key={v}
+               typeEvenementId={v}
+               showAvatar={false}
+               className="mr-1 mb-1"
+            />
          )),
    },
    {
@@ -140,10 +154,10 @@ const filtreDescriptionItem: FiltreDescriptionType[] = [
       ignore: (value: boolean | "undefined") => value === "undefined",
       render: (value: boolean) => {
          if (value) {
-            return <Tag>Archivé</Tag>;
+            return <Tag className="mb-1">Archivé</Tag>;
          }
 
-         return <Tag>Actif</Tag>;
+         return <Tag className="mb-1">Actif</Tag>;
       },
    },
    { key: "nom", label: "Nom", render: (value: string) => <Tag>{value}</Tag> },
@@ -161,12 +175,14 @@ const filtreDescriptionItem: FiltreDescriptionType[] = [
    {
       key: "suivis[]",
       label: "Suivis aménagements",
-      render: (value: string[]) => value.map((v) => <SuiviAmenagementItem key={v} suiviId={v} />),
+      render: (value: string[]) =>
+         value.map((v) => <SuiviAmenagementItem key={v} suiviId={v} className="mb-1" />),
    },
    {
       key: "tags[]",
       label: "Tags",
-      render: (value: string[]) => value.map((v) => <UtilisateurTag key={v} tagId={v} />),
+      render: (value: string[]) =>
+         value.map((v) => <UtilisateurTag key={v} tagId={v} className="mb-1" />),
    },
    {
       key: "type[]",
