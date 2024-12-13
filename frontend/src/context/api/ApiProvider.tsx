@@ -93,11 +93,11 @@ const ApiContext = React.createContext<ApiContextType>(null!);
  * @returns {ReactElement} The rendered child components wrapped in the ApiProvider.Provider.
  */
 export function ApiProvider({
-                               baseUrl,
-                               auth,
-                               client,
-                               children,
-                            }: {
+   baseUrl,
+   auth,
+   client,
+   children,
+}: {
    baseUrl: string;
    auth?: AuthContextType;
    client: QueryClient;

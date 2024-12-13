@@ -106,9 +106,15 @@ export default function UtilisateurAvatarImage(props: {
          }
 
          return fetch(`${env.REACT_APP_API}${utilisateurData?.["@id"]}/photo`, fetchOptions)
-            .then((response) => response.blob())
+            .then((response) => {
+               if (response.status === 200) {
+                  return response.blob();
+               }
+               return null;
+            })
             .then((blob) => {
-               if (blob.type !== "application/ld+json") {
+               if (blob) {
+                  // image renvoyée
                   return window.URL.createObjectURL(blob);
                } else {
                   return null;
@@ -145,18 +151,16 @@ export default function UtilisateurAvatarImage(props: {
    if (props.as === "img") {
       if (photo.data)
          return (
-            <>
-               <Image
-                  alt={`Photo de ${utilisateurData.prenom} ${utilisateurData.nom}`}
-                  aria-hidden
-                  width={props.width}
-                  height={props.height}
-                  src={photo.data ?? ""}
-                  style={{ objectFit: "contain" }}
-                  className="border-radius"
-                  rootClassName={`${props.className} border-radius`}
-               />
-            </>
+            <Image
+               alt={`Photo de ${utilisateurData.prenom} ${utilisateurData.nom}`}
+               aria-hidden
+               width={props.width}
+               height={props.height}
+               src={photo.data ?? ""}
+               style={{ objectFit: "contain" }}
+               className="border-radius"
+               rootClassName={`${props.className} border-radius`}
+            />
          );
    }
 
