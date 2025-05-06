@@ -90,7 +90,7 @@ vous devrez donc les adapter. Le niveau LMD peut être simplement laissé vide.
 
 Vous pouvez aussi opter pour une réimplémentation locale de l'interfaçage avec le SI scolarité (pour utiliser les WS
 apogée, pour un établissement utilisant Pegase...) en étendant la classe abstraite
-[`App\Service\SiScol\AbstractSiScolDataProvider`](../src/Service/SiScol/AbstractSiScolDataProvider.php).
+[`App\Service\SiScol\AbstractSiScolDataProvider`](../../backend/src/Service/SiScol/AbstractSiScolDataProvider.php).
 
 Les méthodes à implémenter sont le miroir des deux requêtes plus haut : `getInscriptions` doit retourner un tableau des
 inscriptions, `getFormation` retourne un tableau contenant les informations de cette formation. Attention à respecter le

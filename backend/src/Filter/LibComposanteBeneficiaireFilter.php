@@ -15,6 +15,7 @@ namespace App\Filter;
 use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\OpenApi\Model\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\PropertyInfo\Type;
@@ -55,11 +56,11 @@ class LibComposanteBeneficiaireFilter extends AbstractFilter
                 'property' => 'libelleComposante',
                 'type' => Type::BUILTIN_TYPE_STRING,
                 'required' => false,
-                'openapi' => [
-                    'description' => "Recherche sur le libelle de composante d'inscription",
-                    'name' => 'libelleCampus',
-                    'type' => 'string',
-                ],
+                'openapi' => new Parameter(
+                    name: 'libelleComposante',
+                    in: 'query',
+                    description: "Recherche sur le libelle de composante d'inscription",
+                ),
             ],
         ];
     }

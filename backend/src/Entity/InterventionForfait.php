@@ -13,6 +13,7 @@
 namespace App\Entity;
 
 use App\Repository\InterventionForfaitRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -123,7 +124,7 @@ class InterventionForfait implements BeneficiairesManagerInterface
 
     public function setDateCreation(DateTimeInterface $dateCreation): static
     {
-        $this->dateCreation = $dateCreation;
+        $this->dateCreation = DateTime::createFromInterface($dateCreation);
 
         return $this;
     }
@@ -135,7 +136,7 @@ class InterventionForfait implements BeneficiairesManagerInterface
 
     public function setDateModification(DateTimeInterface $dateModification): static
     {
-        $this->dateModification = $dateModification;
+        $this->dateModification = DateTime::createFromInterface($dateModification);
 
         return $this;
     }

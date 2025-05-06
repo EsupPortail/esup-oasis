@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpMissingFieldTypeInspection */
 
 /*
  * Copyright (c) 2024. Esup - Université de Bordeaux.
@@ -26,8 +26,7 @@ class JsonContains extends FunctionNode
     public function getSql(SqlWalker $sqlWalker): string
     {
         //$str = $this->string->dispatch($sqlWalker) . "::jsonb \? " . $this->string->dispatch($sqlWalker);
-        $str = 'jsonb_exists(' . $this->string1->dispatch($sqlWalker) . ', ' . $this->string2->dispatch($sqlWalker) . ')';
-        return $str;
+        return 'jsonb_exists(' . $this->string1->dispatch($sqlWalker) . ', ' . $this->string2->dispatch($sqlWalker) . ')';
     }
 
     public function parse(Parser $parser): void

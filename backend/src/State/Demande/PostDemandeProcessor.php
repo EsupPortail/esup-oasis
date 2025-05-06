@@ -12,7 +12,6 @@
 
 namespace App\State\Demande;
 
-use ApiPlatform\Exception\ItemNotFoundException;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\ApiResource\Demande;
@@ -23,12 +22,10 @@ use App\Repository\DemandeRepository;
 use App\Repository\EtatDemandeRepository;
 use App\Repository\ReponseRepository;
 use App\Repository\TypeDemandeRepository;
-use App\Service\ErreurLdapException;
 use App\State\TransformerService;
 use App\State\Utilisateur\UtilisateurManager;
 use Exception;
 use Override;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -50,10 +47,10 @@ class PostDemandeProcessor implements ProcessorInterface
     }
 
     /**
-     * @param Demande   $data
+     * @param Demande $data
      * @param Operation $operation
-     * @param array     $uriVariables
-     * @param array     $context
+     * @param array $uriVariables
+     * @param array $context
      * @return mixed
      * @throws Exception
      */

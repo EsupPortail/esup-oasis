@@ -18,6 +18,7 @@ use Psr\Log\LoggerInterface;
 use RuntimeException;
 use SensitiveParameter;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -36,7 +37,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  */
 class NuxeoStorageProvider implements StorageProviderInterface
 {
-    private bool $online = true;
+    private bool $online;
 
     public function __construct(private readonly HttpClientInterface       $client, private readonly string $apiUrl,
                                 private readonly string                    $user, #[SensitiveParameter] private readonly string $password,
@@ -47,7 +48,7 @@ class NuxeoStorageProvider implements StorageProviderInterface
         $this->online = '' !== $this->apiUrl;
     }
 
-    #[Override] public function copy(File $file): array
+    #[Override] public function copy(UploadedFile $file): array
     {
         return $this->store(fopen($file->getPathname(), 'r'), $file->getClientOriginalName(), $file->getClientMimeType());
     }
@@ -60,8 +61,8 @@ class NuxeoStorageProvider implements StorageProviderInterface
 
         //simple GET
         $response = $this->client->request(
-            method : 'GET',
-            url    : $this->apiUrl . '/id/' . $metadata['uid'] . '/@blob/file:content',
+            method: 'GET',
+            url: $this->apiUrl . '/id/' . $metadata['uid'] . '/@blob/file:content',
             options: [
                 'auth_basic' => [$this->user, $this->password],
             ]
@@ -82,8 +83,8 @@ class NuxeoStorageProvider implements StorageProviderInterface
         }
 
         $response = $this->client->request(
-            method : 'DELETE',
-            url    : $this->apiUrl . '/id/' . $metadata['uid'],
+            method: 'DELETE',
+            url: $this->apiUrl . '/id/' . $metadata['uid'],
             options: [
                 'auth_basic' => [$this->user, $this->password],
             ]
@@ -95,7 +96,7 @@ class NuxeoStorageProvider implements StorageProviderInterface
     }
 
     /**
-     * @param mixed  $contents
+     * @param mixed $contents
      * @param string $filename
      * @param string $mimeType
      * @param string $description
@@ -123,8 +124,8 @@ class NuxeoStorageProvider implements StorageProviderInterface
          */
         try {
             $batch = $this->client->request(
-                method : 'POST',
-                url    : $this->apiUrl . '/upload/',
+                method: 'POST',
+                url: $this->apiUrl . '/upload/',
                 options: [
                     'auth_basic' => [$this->user, $this->password],
                     'headers' => [
@@ -133,8 +134,8 @@ class NuxeoStorageProvider implements StorageProviderInterface
                 ]
             );
             $result = $this->client->request(
-                method : 'POST',
-                url    : $this->apiUrl . '/upload/' . $batch->toArray()['batchId'] . '/0',
+                method: 'POST',
+                url: $this->apiUrl . '/upload/' . $batch->toArray()['batchId'] . '/0',
                 options: [
                     'auth_basic' => [$this->user, $this->password],
                     'headers' => [
@@ -146,8 +147,8 @@ class NuxeoStorageProvider implements StorageProviderInterface
                 ]
             );
             $result = $this->client->request(
-                method : 'POST',
-                url    : $this->apiUrl . $this->espace,
+                method: 'POST',
+                url: $this->apiUrl . $this->espace,
                 options: [
                     'auth_basic' => [$this->user, $this->password],
                     'headers' => [

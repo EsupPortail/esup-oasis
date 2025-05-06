@@ -17,7 +17,6 @@ use ApiPlatform\State\ProcessorInterface;
 use App\ApiResource\MembreCommission;
 use App\Message\RessourceModifieeMessage;
 use App\Repository\MembreCommissionRepository;
-use App\State\TransformerService;
 use Override;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -32,13 +31,13 @@ readonly class MembreCommissionDeleteProcessor implements ProcessorInterface
 
     /**
      * @param MembreCommission $data
-     * @param Operation        $operation
-     * @param array            $uriVariables
-     * @param array            $context
+     * @param Operation $operation
+     * @param array $uriVariables
+     * @param array $context
      * @return void
      * @throws ExceptionInterface
      */
-    #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): void
     {
         $this->membreCommissionRepository->remove($this->membreCommissionRepository->find($data->id), true);
         $this->messageBus->dispatch(new RessourceModifieeMessage($data));

@@ -45,18 +45,18 @@ class PieceJointeBeneficiaireProcessor implements ProcessorInterface
      * POST et DELETE uniquement
      *
      * @param PieceJointeBeneficiaire $data
-     * @param Operation               $operation
-     * @param array                   $uriVariables
-     * @param array                   $context
+     * @param Operation $operation
+     * @param array $uriVariables
+     * @param array $context
      * @return void
      */
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): ?PieceJointeBeneficiaire
     {
         if ($operation instanceof Delete) {
             $entity = $this->repository->find($data->id);
             $this->repository->remove($entity, true);
             $this->messageBus->dispatch(new RessourceCollectionModifieeMessage($data));
-            return;
+            return null;
         }
 
         //création

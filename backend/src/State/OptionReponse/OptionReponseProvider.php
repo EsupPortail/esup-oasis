@@ -112,7 +112,7 @@ class OptionReponseProvider extends AbstractEntityProvider
 
     /**
      * @param string $tableName
-     * @param int    $questionId
+     * @param int $questionId
      * @return array
      * @throws Exception
      */
@@ -151,11 +151,11 @@ class OptionReponseProvider extends AbstractEntityProvider
 
     /**
      * @param string $tableName
-     * @param mixed  $id
+     * @param mixed $id
      * @return mixed
      * @throws Exception
      */
-    private function getOptionForTable(string $tableName, int $id)
+    private function getOptionForTable(string $tableName, int $id): OptionReponse
     {
         $repo = $this->getRepository($tableName);
         return $this->transformerService->transform($repo->find($id), OptionReponse::class);
@@ -194,8 +194,8 @@ class OptionReponseProvider extends AbstractEntityProvider
 
     /**
      * @param Reponse $reponse
-     * @param string  $tableName
-     * @param array   $optionsChoisies
+     * @param string $tableName
+     * @param array $optionsChoisies
      * @return Reponse
      */
     public function majReponseAvecOptions(Reponse $reponse, string $tableName, array $optionsChoisies): Reponse
@@ -249,7 +249,7 @@ class OptionReponseProvider extends AbstractEntityProvider
     }
 
     /**
-     * @return array
+     * @return DisciplineArtistique[]
      */
     private function getDisciplinesArtistiques(): array
     {
@@ -322,17 +322,17 @@ class OptionReponseProvider extends AbstractEntityProvider
         ]);
     }
 
-    private function getCategoriesAmenagementExamens()
+    private function getCategoriesAmenagementExamens(): array
     {
         return $this->categorieAmenagementRepository->getByType(examens: true);
     }
 
-    private function getCategoriesAmenagementPedagogique()
+    private function getCategoriesAmenagementPedagogique(): array
     {
         return $this->categorieAmenagementRepository->getByType(pedagogique: true);
     }
 
-    private function getEtablissementsArtistiques()
+    private function getEtablissementsArtistiques(): array
     {
         return $this->etablissementEnseignementArtistiqueRepository->findBy([
             'actif' => true,

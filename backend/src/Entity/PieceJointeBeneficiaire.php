@@ -13,6 +13,7 @@
 namespace App\Entity;
 
 use App\Repository\PieceJointeBeneficiaireRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -79,7 +80,7 @@ class PieceJointeBeneficiaire
 
     public function setDateDepot(DateTimeInterface $dateDepot): static
     {
-        $this->dateDepot = $dateDepot;
+        $this->dateDepot = DateTime::createFromInterface($dateDepot);
 
         return $this;
     }

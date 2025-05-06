@@ -18,21 +18,21 @@ use App\Entity\EtablissementEnseignementArtistique;
 use App\State\MappedEntityProcessor;
 use Override;
 
-class EtablissementEnseignementArtistiqueProcessor implements ProcessorInterface
+readonly class EtablissementEnseignementArtistiqueProcessor implements ProcessorInterface
 {
 
-    function __construct(private readonly MappedEntityProcessor $processor)
+    function __construct(private MappedEntityProcessor $processor)
     {
     }
 
     #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
     {
         return $this->processor->process(
-            data        : $data,
-            operation   : $operation,
-            entityClass : EtablissementEnseignementArtistique::class,
+            data: $data,
+            operation: $operation,
+            entityClass: EtablissementEnseignementArtistique::class,
             uriVariables: $uriVariables,
-            context     : $context
+            context: $context
         );
     }
 }

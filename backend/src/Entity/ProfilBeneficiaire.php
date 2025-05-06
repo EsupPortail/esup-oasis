@@ -23,9 +23,9 @@ class ProfilBeneficiaire
     public const int A_DETERMINER = -1;
     public const int HANDICAP_PERMANENT = 1;
     public const int INCAPACITE_TEMPORAIRE = 2;
-    const SPORTIF_HAUT_NIVEAU = 3;
-    const SPORTIF_BON_NIVEAU = 5;
-    const SPORTIF_TRES_BON_NIVEAU = 4;
+    const int SPORTIF_HAUT_NIVEAU = 3;
+    const int SPORTIF_BON_NIVEAU = 5;
+    const int SPORTIF_TRES_BON_NIVEAU = 4;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]

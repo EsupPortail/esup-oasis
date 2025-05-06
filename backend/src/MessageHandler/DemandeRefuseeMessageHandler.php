@@ -24,7 +24,7 @@ readonly class DemandeRefuseeMessageHandler
 
     }
 
-    public function __invoke(DemandeRefuseeMessage $message)
+    public function __invoke(DemandeRefuseeMessage $message): void
     {
         //Envoi d'un mail "désolé, refusé"
         $this->mailService->envoyerNotificationRefusDemande($message->getDemandeur(),

@@ -40,13 +40,13 @@ readonly class MembreCommissionPutProcessor implements ProcessorInterface
 
     /**
      * @param MembreCommission $data
-     * @param Operation        $operation
-     * @param array            $uriVariables
-     * @param array            $context
+     * @param Operation $operation
+     * @param array $uriVariables
+     * @param array $context
      * @return MembreCommission
      * @throws ErreurLdapException
      */
-    #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): MembreCommission
     {
         $entity = match ($data->id) {
             null => new \App\Entity\MembreCommission(),

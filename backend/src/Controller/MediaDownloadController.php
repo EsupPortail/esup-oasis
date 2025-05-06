@@ -16,13 +16,10 @@ use App\Entity\Fichier;
 use App\Repository\FichierRepository;
 use App\Service\FileStorage\StorageProviderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\File\Stream;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 
 class MediaDownloadController extends AbstractController
@@ -45,8 +42,8 @@ class MediaDownloadController extends AbstractController
         }
         $response = new Response($file);
         $disposition = HeaderUtils::makeDisposition(
-            disposition     : HeaderUtils::DISPOSITION_INLINE,
-            filename        : $fichier->getNom(),
+            disposition: HeaderUtils::DISPOSITION_INLINE,
+            filename: $fichier->getNom(),
             filenameFallback: $fichier->getId()
         );
         $response->headers->set('Content-Disposition', $disposition);

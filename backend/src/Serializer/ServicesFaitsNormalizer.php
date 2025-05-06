@@ -20,17 +20,17 @@ class ServicesFaitsNormalizer implements NormalizerInterface
 {
 
     /**
-     * @param ServicesFaits $object
-     * @param string|null   $format
-     * @param array         $context
+     * @param ServicesFaits $data
+     * @param string|null $format
+     * @param array $context
      * @return array
      */
-    public function normalize(mixed $object, ?string $format = null, array $context = []): array
+    public function normalize(mixed $data, ?string $format = null, array $context = []): array
     {
         if ($format === 'customcsv') {
-            return $this->toArray($object);
+            return $this->toArray($data);
         }
-        return [$object];
+        return [$data];
     }
 
     protected function toArray($object): array
@@ -61,9 +61,9 @@ class ServicesFaitsNormalizer implements NormalizerInterface
     }
 
     /**
-     * @param mixed       $data
+     * @param mixed $data
      * @param string|null $format
-     * @param array       $context
+     * @param array $context
      * @return bool
      */
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool

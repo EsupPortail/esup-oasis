@@ -13,6 +13,7 @@
 namespace App\Entity;
 
 use App\Repository\CharteDemandeurRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -78,7 +79,10 @@ class CharteDemandeur
 
     public function setDateValidation(?DateTimeInterface $dateValidation): static
     {
-        $this->dateValidation = $dateValidation;
+        $this->dateValidation = match ($dateValidation) {
+            null => null,
+            default => DateTime::createFromInterface($dateValidation)
+        };
 
         return $this;
     }

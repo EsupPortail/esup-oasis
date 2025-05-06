@@ -16,6 +16,7 @@ use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\IriConverterInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\OpenApi\Model\Parameter;
 use App\ApiResource\Composante;
 use App\ApiResource\Formation;
 use App\Entity\Amenagement;
@@ -39,9 +40,9 @@ class ComposanteFormationFilter extends AbstractFilter
     use ClockAwareTrait;
 
     public function __construct(private readonly Security              $security,
-                                private FormationRepository            $formationRepository,
+                                private readonly FormationRepository   $formationRepository,
                                 private readonly IriConverterInterface $iriConverter,
-                                protected ManagerRegistry              $managerRegistry,
+                                protected ?ManagerRegistry             $managerRegistry,
                                 ?LoggerInterface                       $logger = null,
                                 protected ?array                       $properties = null,
                                 protected ?NameConverterInterface      $nameConverter = null,)
@@ -91,7 +92,7 @@ class ComposanteFormationFilter extends AbstractFilter
         foreach ($values as $value) {
             try {
                 $entity = $this->iriConverter->getResourceFromIri($value);
-            } catch (NotFoundHttpException $e) {
+            } catch (NotFoundHttpException) {
                 throw new NotFoundHttpException(
                     sprintf('Valeur inconnue pour %s ("%s")', $property, $value)
                 );
@@ -119,7 +120,6 @@ class ComposanteFormationFilter extends AbstractFilter
         $queryBuilder->andWhere($orX)
             ->setParameter($nowParam, $this->now());
 
-        return;
     }
 
 
@@ -127,9 +127,10 @@ class ComposanteFormationFilter extends AbstractFilter
      * Vérifie que les composantes demandées sont bien accessibles à l'utilisateur, sinon les retire
      *
      * @param $values
+     * @param $property
      * @return array
      */
-    private function cleanValues($values, $property)
+    private function cleanValues($values, $property): array
     {
         $values = is_array($values) ? $values : [$values];
 
@@ -169,12 +170,12 @@ class ComposanteFormationFilter extends AbstractFilter
         return $values;
     }
 
-    private function getComposanteIri(\App\Entity\Composante $composante)
+    private function getComposanteIri(\App\Entity\Composante $composante): string
     {
         return Composante::COLLECTION_URI . '/' . $composante->getId();
     }
 
-    private function getFormationIri(\App\Entity\Formation $formation)
+    private function getFormationIri(\App\Entity\Formation $formation): string
     {
         return Formation::COLLECTION_URI . '/' . $formation->getId();
     }
@@ -188,22 +189,22 @@ class ComposanteFormationFilter extends AbstractFilter
             'type' => Type::BUILTIN_TYPE_STRING,
             'required' => false,
             'is_collection' => false,
-            'openapi' => [
-                'description' => "composante d'inscription du bénéficiaire",
-                'name' => 'composante',
-                'type' => 'string',
-            ],
+            'openapi' => new Parameter(
+                name: 'composante',
+                in: 'query',
+                description: "composante d'inscription du bénéficiaire",
+            ),
         ];
         $description['composante[]'] = [
             'property' => 'composante',
             'type' => Type::BUILTIN_TYPE_STRING,
             'required' => false,
             'is_collection' => true,
-            'openapi' => [
-                'description' => "composante d'inscription du bénéficiaire",
-                'name' => 'composante',
-                'type' => 'string',
-            ],
+            'openapi' => new Parameter(
+                name: 'composante',
+                in: 'query',
+                description: "composante d'inscription du bénéficiaire",
+            ),
         ];
 
         $description['formation'] = [
@@ -211,22 +212,22 @@ class ComposanteFormationFilter extends AbstractFilter
             'type' => Type::BUILTIN_TYPE_STRING,
             'required' => false,
             'is_collection' => false,
-            'openapi' => [
-                'description' => "formation d'inscription du bénéficiaire",
-                'name' => 'composante',
-                'type' => 'string',
-            ],
+            'openapi' => new Parameter(
+                name: 'formation',
+                in: 'query',
+                description: "formation d'inscription du bénéficiaire",
+            ),
         ];
         $description['formation[]'] = [
             'property' => 'formation',
             'type' => Type::BUILTIN_TYPE_STRING,
             'required' => false,
             'is_collection' => true,
-            'openapi' => [
-                'description' => "formation d'inscription du bénéficiaire",
-                'name' => 'composante',
-                'type' => 'string',
-            ],
+            'openapi' => new Parameter(
+                name: 'formation',
+                in: 'query',
+                description: "formation d'inscription du bénéficiaire",
+            ),
         ];
 
         return $description;

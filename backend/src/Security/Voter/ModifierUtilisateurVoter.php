@@ -38,8 +38,8 @@ final class ModifierUtilisateurVoter extends Voter
     }
 
     /**
-     * @param string         $attribute
-     * @param Utilisateur[]  $subject
+     * @param string $attribute
+     * @param Utilisateur[] $subject
      * @param TokenInterface $token
      * @return bool
      * @throws Exception
@@ -90,8 +90,10 @@ final class ModifierUtilisateurVoter extends Voter
         }
 
 
+        $user = $this->security->getUser();
+        assert($user instanceof UtilisateurEntity);
         return $this->security->isGranted(UtilisateurEntity::ROLE_PLANIFICATEUR)
-            || $this->security->getUser()->getUid() === $new->uid;
+            || $user->getUid() === $new->uid;
     }
 
     private function canChange(string $role): bool

@@ -24,12 +24,12 @@ use Override;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
-class ReponseDenormalizer implements DenormalizerInterface
+readonly class ReponseDenormalizer implements DenormalizerInterface
 {
-    public function __construct(private readonly AbstractItemNormalizer $itemNormalizer,
-                                private readonly QuestionRepository     $questionRepository,
-                                private readonly DemandeRepository      $demandeRepository,
-                                private readonly TransformerService     $transformerService)
+    public function __construct(private AbstractItemNormalizer $itemNormalizer,
+                                private QuestionRepository     $questionRepository,
+                                private DemandeRepository      $demandeRepository,
+                                private TransformerService     $transformerService)
     {
     }
 

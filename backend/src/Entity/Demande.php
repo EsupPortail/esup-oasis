@@ -13,6 +13,7 @@
 namespace App\Entity;
 
 use App\Repository\DemandeRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -99,7 +100,10 @@ class Demande
 
     public function setDateDepot(?DateTimeInterface $dateDepot): static
     {
-        $this->dateDepot = $dateDepot;
+        $this->dateDepot = match ($dateDepot) {
+            null => null,
+            default => DateTime::createFromInterface($dateDepot)
+        };
 
         return $this;
     }

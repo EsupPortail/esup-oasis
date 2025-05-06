@@ -18,20 +18,20 @@ use App\Entity\TypeEngagement;
 use App\State\MappedEntityProcessor;
 use Override;
 
-class TypeEngagementProcessor implements ProcessorInterface
+readonly class TypeEngagementProcessor implements ProcessorInterface
 {
 
-    function __construct(private readonly MappedEntityProcessor $processor)
+    function __construct(private MappedEntityProcessor $processor)
     {
     }
 
     #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
     {
         return $this->processor->process(
-            data        : $data,
-            operation   : $operation,
-            entityClass : TypeEngagement::class,
+            data: $data,
+            operation: $operation,
+            entityClass: TypeEngagement::class,
             uriVariables: $uriVariables,
-            context     : $context);
+            context: $context);
     }
 }

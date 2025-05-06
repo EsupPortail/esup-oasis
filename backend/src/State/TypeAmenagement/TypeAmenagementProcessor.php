@@ -35,13 +35,13 @@ readonly class TypeAmenagementProcessor implements ProcessorInterface
 
     /**
      * @param \App\ApiResource\TypeAmenagement $data
-     * @param Operation                        $operation
-     * @param array                            $uriVariables
-     * @param array                            $context
+     * @param Operation $operation
+     * @param array $uriVariables
+     * @param array $context
      * @return array|mixed|object|null
      * @throws Exception
      */
-    #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): \App\ApiResource\TypeAmenagement
     {
         /**
          * Uniquement POST et PATCH
@@ -68,7 +68,7 @@ readonly class TypeAmenagementProcessor implements ProcessorInterface
         } else {
             $this->messageBus->dispatch(new RessourceCollectionModifieeMessage($resource));
         }
-        
+
         return $resource;
     }
 }

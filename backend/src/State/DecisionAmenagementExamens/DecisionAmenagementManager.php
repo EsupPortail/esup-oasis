@@ -16,7 +16,6 @@ use App\Entity\AvisEse;
 use App\Entity\DecisionAmenagementExamens;
 use App\Entity\Utilisateur;
 use App\Message\ModificationUtilisateurMessage;
-use App\Message\RessourceCollectionModifieeMessage;
 use App\Message\RessourceModifieeMessage;
 use App\Repository\DecisionAmenagementExamensRepository;
 use App\State\TransformerService;
@@ -55,7 +54,7 @@ class DecisionAmenagementManager
      * @param DateTimeInterface $finPeriode
      * @return void
      */
-    public function majEtatDecision(Utilisateur $beneficiaire, DateTimeInterface $debutPeriode, DateTimeInterface $finPeriode)
+    public function majEtatDecision(Utilisateur $beneficiaire, DateTimeInterface $debutPeriode, DateTimeInterface $finPeriode): void
     {
         /**
          * Appelé si:

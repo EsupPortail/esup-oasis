@@ -15,6 +15,7 @@ namespace App\State\TypologieHandicap;
 use App\ApiResource\OptionReponse;
 use App\ApiResource\TypologieHandicap;
 use App\State\AbstractEntityProvider;
+use Override;
 
 class TypologieProvider extends AbstractEntityProvider
 {
@@ -59,8 +60,8 @@ class TypologieProvider extends AbstractEntityProvider
     #[Override] protected function registerTransformations(): void
     {
         $this->transformerService->addTransformation(
-            from    : $this->getEntityClass(),
-            to      : OptionReponse::class,
+            from: $this->getEntityClass(),
+            to: OptionReponse::class,
             callback: $this->transformIntoOptionReponse(...));
         parent::registerTransformations();
     }

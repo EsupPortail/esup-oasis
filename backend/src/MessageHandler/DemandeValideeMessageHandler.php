@@ -27,7 +27,7 @@ readonly class DemandeValideeMessageHandler
     }
 
 
-    public function __invoke(DemandeValideeMessage $message)
+    public function __invoke(DemandeValideeMessage $message): void
     {
         //création du bénéficiaire
         $this->utilisateurManager->creerBeneficiairePourDemande(

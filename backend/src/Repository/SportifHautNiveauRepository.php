@@ -31,7 +31,7 @@ class SportifHautNiveauRepository extends ServiceEntityRepository
         parent::__construct($registry, SportifHautNiveau::class);
     }
 
-    public function truncate()
+    public function truncate(): void
     {
         $connection = $this->getEntityManager()->getConnection();
         $truncateSql = $connection->getDatabasePlatform()->getTruncateTableSQL('sportif_haut_niveau');

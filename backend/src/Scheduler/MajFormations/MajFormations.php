@@ -45,6 +45,7 @@ readonly class MajFormations
             $nbMaj++;
         }
         if ($nbMaj > 0) {
+            /** @noinspection PhpUndefinedVariableInspection */
             $this->formationRepository->save($incomplete, true);
         }
         $this->logger->info($nbMaj . ' formations incomplètes mises à jour.');

@@ -35,14 +35,14 @@ readonly class AvisEsePatchProcessor implements ProcessorInterface
     }
 
     /**
-     * @param AvisEse   $data
+     * @param AvisEse $data
      * @param Operation $operation
-     * @param array     $uriVariables
-     * @param array     $context
+     * @param array $uriVariables
+     * @param array $context
      * @return void
      * @throws Exception
      */
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): AvisEse
     {
         $entity = $this->avisEseRepository->find($data->id);
         $entity->setCommentaire($data->commentaire);

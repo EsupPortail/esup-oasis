@@ -109,7 +109,7 @@ readonly class MailService
     public function envoyerRappelsEnvoiRH(?PeriodeRH $periodeRH): void
     {
         $destinataires = array_reduce(
-            array   : $this->evenementRepository->findAllNotLockedBefore($periodeRH->getFin()),
+            array: $this->evenementRepository->findAllNotLockedBefore($periodeRH->getFin()),
             callback: function ($carry, Evenement $evenement) {
                 if (null === $evenement->getIntervenant()) {
                     return $carry;
@@ -120,7 +120,7 @@ readonly class MailService
                 }
                 return $carry;
             },
-            initial : []
+            initial: []
         );
 
         //copie aux admins tech dans le doute.
@@ -210,9 +210,9 @@ readonly class MailService
 
     /**
      * @param Utilisateur|null $utilisateurConcerne
-     * @param string           $nomAffichage
-     * @param string           $template
-     * @param array            $context
+     * @param string $nomAffichage
+     * @param string $template
+     * @param array $context
      * @return void
      */
     protected function envoyerRappelIndividuel(?Utilisateur $utilisateurConcerne, string $nomAffichage, string $template, array $context): void
@@ -306,7 +306,7 @@ readonly class MailService
         }
     }
 
-    public function envoyerMessageDemandeNonConforme(Utilisateur $demandeur, TypeDemande $typeDemande, ?string $commentaire)
+    public function envoyerMessageDemandeNonConforme(Utilisateur $demandeur, TypeDemande $typeDemande, ?string $commentaire): void
     {
         $destinataire = new Address($demandeur->getEmail(), $this->nomAffichage($demandeur));
 
@@ -326,7 +326,7 @@ readonly class MailService
         }
     }
 
-    public function envoyerConfirmationDemandeValidee(Utilisateur $demandeur, TypeDemande $typeDemande)
+    public function envoyerConfirmationDemandeValidee(Utilisateur $demandeur, TypeDemande $typeDemande): void
     {
         $destinataire = new Address($demandeur->getEmail(), $this->nomAffichage($demandeur));
 
@@ -346,7 +346,7 @@ readonly class MailService
         }
     }
 
-    public function envoyerNotificationRefusDemande(Utilisateur $demandeur, TypeDemande $typeDemande, ?string $commentaire)
+    public function envoyerNotificationRefusDemande(Utilisateur $demandeur, TypeDemande $typeDemande, ?string $commentaire): void
     {
         $destinataire = new Address($demandeur->getEmail(), $this->nomAffichage($demandeur));
 
@@ -367,7 +367,7 @@ readonly class MailService
     }
 
     public function envoyerConfirmationDemandeStatutValide(Utilisateur $demandeur, TypeDemande $typeDemande, ProfilBeneficiaire $profil,
-                                                           bool        $avecAccompagnement)
+                                                           bool        $avecAccompagnement): void
     {
         $destinataire = new Address($demandeur->getEmail(), $this->nomAffichage($demandeur));
 
@@ -388,7 +388,7 @@ readonly class MailService
 
     }
 
-    public function envoyerCharteAValider(Utilisateur $demandeur, TypeDemande $typeDemande)
+    public function envoyerCharteAValider(Utilisateur $demandeur, TypeDemande $typeDemande): void
     {
         $destinataire = new Address($demandeur->getEmail(), $this->nomAffichage($demandeur));
 
@@ -408,7 +408,7 @@ readonly class MailService
         }
     }
 
-    public function envoyerPrendreContact(Utilisateur $demandeur, TypeDemande $typeDemande)
+    public function envoyerPrendreContact(Utilisateur $demandeur, TypeDemande $typeDemande): void
     {
         $destinataire = new Address($demandeur->getEmail(), $this->nomAffichage($demandeur));
 
@@ -428,7 +428,7 @@ readonly class MailService
         }
     }
 
-    public function envoyerMailErreurTechnique(ErreurTechniqueMessage $message)
+    public function envoyerMailErreurTechnique(ErreurTechniqueMessage $message): void
     {
         $destinataires = $this->utilisateurRepository->findBy([
             'destinataireTechnique' => true,
@@ -451,7 +451,7 @@ readonly class MailService
 
     }
 
-    public function envoyerDecision(DecisionAmenagementExamens $decision, string $pdf)
+    public function envoyerDecision(DecisionAmenagementExamens $decision, string $pdf): void
     {
         $destinataire = $decision->getBeneficiaire();
         $destCopie = $destinataire->getBeneficiaires()->current()->getGestionnaire();
@@ -481,7 +481,7 @@ readonly class MailService
 
     }
 
-    public function envoyerRapportNettoyage(int $count, int $removed, int $errors)
+    public function envoyerRapportNettoyage(int $count, int $removed, int $errors): void
     {
         $destinataires = $this->utilisateurRepository->findBy([
             'destinataireTechnique' => true,

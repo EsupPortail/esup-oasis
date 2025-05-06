@@ -17,11 +17,12 @@ use ApiPlatform\State\ProcessorInterface;
 use App\ApiResource\AvisEse;
 use App\Message\AvisEseModifieMessage;
 use App\Message\RessourceCollectionModifieeMessage;
-use App\Message\RessourceModifieeMessage;
 use App\Repository\AvisEseRepository;
 use App\Repository\FichierRepository;
+use App\Service\ErreurLdapException;
 use App\State\TransformerService;
 use App\State\Utilisateur\UtilisateurManager;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 readonly class AvisEsePostProcessor implements ProcessorInterface
@@ -37,13 +38,15 @@ readonly class AvisEsePostProcessor implements ProcessorInterface
     }
 
     /**
-     * @param AvisEse   $data
+     * @param AvisEse $data
      * @param Operation $operation
-     * @param array     $uriVariables
-     * @param array     $context
-     * @return void
+     * @param array $uriVariables
+     * @param array $context
+     * @return AvisEse
+     * @throws ErreurLdapException
+     * @throws ExceptionInterface
      */
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): AvisEse
     {
         $entity = new \App\Entity\AvisEse();
         $entity->setLibelle($data->libelle);

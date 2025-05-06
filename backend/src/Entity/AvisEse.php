@@ -13,6 +13,7 @@
 namespace App\Entity;
 
 use App\Repository\AvisEseRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -63,7 +64,7 @@ class AvisEse
 
     public function setDebut(DateTimeInterface $debut): static
     {
-        $this->debut = $debut;
+        $this->debut = DateTime::createFromInterface($debut);
 
         return $this;
     }
@@ -75,7 +76,10 @@ class AvisEse
 
     public function setFin(?DateTimeInterface $fin): static
     {
-        $this->fin = $fin;
+        $this->fin = match ($fin) {
+            null => null,
+            default => DateTime::createFromInterface($fin)
+        };
 
         return $this;
     }

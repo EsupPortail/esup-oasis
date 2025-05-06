@@ -13,11 +13,9 @@
 namespace App\Service;
 
 use App\Message\ErreurTechniqueMessage;
-use Error;
 use Exception;
 use Niisan\ClamAV\Scanner;
 use Niisan\ClamAV\ScannerFactory;
-use RuntimeException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class AntivirusService

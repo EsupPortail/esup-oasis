@@ -15,10 +15,10 @@ namespace App\State\DecisionAmenagementExamens;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\ApiResource\DecisionAmenagementExamens;
+use App\Entity\Utilisateur;
 use App\Message\DecisionEditionDemandeeMessage;
 use App\Message\RessourceModifieeMessage;
 use App\Repository\DecisionAmenagementExamensRepository;
-use App\State\TransformerService;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -47,7 +47,10 @@ readonly class DecisionAmenagementExamensProcessor implements ProcessorInterface
 
         //on envoie un message de MAJ pour traitement async
         if ($data->etat === \App\Entity\DecisionAmenagementExamens::ETAT_EDITION_DEMANDEE) {
-            $this->messageBus->dispatch(new DecisionEditionDemandeeMessage($entity->getId(), $this->security->getUser()->getUid()));
+            $user = $this->security->getUser();
+            assert($user instanceof Utilisateur);
+
+            $this->messageBus->dispatch(new DecisionEditionDemandeeMessage($entity->getId(), $user->getUid()));
         }
 
         $this->messageBus->dispatch(new RessourceModifieeMessage($data));

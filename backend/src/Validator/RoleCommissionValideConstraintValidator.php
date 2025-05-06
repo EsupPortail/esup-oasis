@@ -28,11 +28,11 @@ class RoleCommissionValideConstraintValidator extends ConstraintValidator
     ];
 
     /**
-     * @param mixed      $value
+     * @param mixed $value
      * @param Constraint $constraint
      * @return void
      */
-    #[Override] public function validate(mixed $value, Constraint $constraint)
+    #[Override] public function validate(mixed $value, Constraint $constraint): void
     {
         if (!$constraint instanceof RoleCommissionValideConstraint) {
             throw new UnexpectedTypeException($constraint, RoleCommissionValideConstraint::class);

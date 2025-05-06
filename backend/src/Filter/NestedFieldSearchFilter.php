@@ -17,6 +17,7 @@ use ApiPlatform\Doctrine\Orm\PropertyHelperTrait;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\IriConverterInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\OpenApi\Model\Parameter;
 use App\ApiResource\Utilisateur;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -59,22 +60,22 @@ class NestedFieldSearchFilter extends AbstractFilter
                 'type' => Type::BUILTIN_TYPE_STRING,
                 'required' => false,
                 'is_collection' => false,
-                'openapi' => [
-                    'description' => $value['desc'],
-                    'name' => $property,
-                    'type' => 'string',
-                ],
+                'openapi' => new Parameter(
+                    name: $property,
+                    in: 'query',
+                    description: $value['desc'],
+                ),
             ];
             $description[$property . '[]'] = [
                 'property' => $property,
                 'type' => Type::BUILTIN_TYPE_STRING,
                 'required' => false,
                 'is_collection' => true,
-                'openapi' => [
-                    'description' => $value['desc'],
-                    'name' => $property,
-                    'type' => 'string',
-                ],
+                'openapi' => new Parameter(
+                    name: $property,
+                    in: 'query',
+                    description: $value['desc'],
+                ),
             ];
         }
         return $description;
@@ -134,6 +135,7 @@ class NestedFieldSearchFilter extends AbstractFilter
      * Implémentation par défaut - on teste l'égalité
      *
      * @param string $alias
+     * @param string $currentResourceClass
      * @param string $targetField
      * @param array $value
      * @param QueryBuilder $queryBuilder
@@ -159,7 +161,7 @@ class NestedFieldSearchFilter extends AbstractFilter
                 } else {
                     $exprs[] = $queryBuilder->expr()->eq($val->id, $alias . '.' . $targetField);
                 }
-            } catch (Exception $e) {
+            } catch (Exception) {
                 $exprs[] = $queryBuilder->expr()->eq($alias . '.' . $targetField, $val);
             }
         }

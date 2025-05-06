@@ -36,12 +36,8 @@ readonly class TagProcessor implements ProcessorInterface
 
     /**
      * @param \App\ApiResource\Tag $data
-     * @param Operation            $operation
-     * @param array                $uriVariables
-     * @param array                $context
-     * @return void
      */
-    #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Tag
     {
         $entity = match ($data->id) {
             null => new Tag(),

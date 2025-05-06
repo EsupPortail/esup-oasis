@@ -1,4 +1,5 @@
 # language: fr
+#noinspection NonAsciiCharacters
 Fonctionnalité: Amenagements
 
   L'application comporte une table de référence des aménagements proposés.

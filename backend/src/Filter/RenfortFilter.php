@@ -27,6 +27,7 @@ class RenfortFilter extends AbstractFilter
                                       QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass,
                                       ?Operation                  $operation = null, array $context = []): void
     {
+        /** @noinspection PhpStrictComparisonWithOperandsOfDifferentTypesInspection */
         if (!$operation->getClass() === Utilisateur::class || $property !== self::PROPERTY) {
             return;
         }

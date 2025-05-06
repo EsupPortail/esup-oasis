@@ -14,7 +14,6 @@ namespace App\State\DisciplineArtistique;
 
 use App\ApiResource\DisciplineArtistique;
 use App\ApiResource\OptionReponse;
-use App\Entity\DisciplineSportive;
 use App\State\AbstractEntityProvider;
 use Override;
 
@@ -59,8 +58,8 @@ class DisciplineArtistiqueProvider extends AbstractEntityProvider
     #[Override] protected function registerTransformations(): void
     {
         $this->transformerService->addTransformation(
-            from    : $this->getEntityClass(),
-            to      : OptionReponse::class,
+            from: $this->getEntityClass(),
+            to: OptionReponse::class,
             callback: $this->transformIntoOptionReponse(...));
         parent::registerTransformations();
     }

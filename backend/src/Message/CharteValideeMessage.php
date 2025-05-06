@@ -14,13 +14,13 @@ namespace App\Message;
 
 use App\Entity\CharteDemandeur;
 
-class CharteValideeMessage
+readonly class CharteValideeMessage
 {
 
     /**
      * @param CharteDemandeur $charte
      */
-    public function __construct(private readonly CharteDemandeur $charte)
+    public function __construct(private CharteDemandeur $charte)
     {
     }
 

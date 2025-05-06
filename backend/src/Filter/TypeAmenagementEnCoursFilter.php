@@ -25,11 +25,11 @@ class TypeAmenagementEnCoursFilter extends AbstractFilter
 
     protected const string PROPERTY = 'type';
 
-    public function __construct(private UtilisateurAmenagementEnCoursFilterHelper $helper,
-                                ManagerRegistry                                   $managerRegistry,
-                                ?LoggerInterface                                  $logger = null,
-                                ?array                                            $properties = null,
-                                ?NameConverterInterface                           $nameConverter = null)
+    public function __construct(private readonly UtilisateurAmenagementEnCoursFilterHelper $helper,
+                                ManagerRegistry                                            $managerRegistry,
+                                ?LoggerInterface                                           $logger = null,
+                                ?array                                                     $properties = null,
+                                ?NameConverterInterface                                    $nameConverter = null)
     {
         parent::__construct($managerRegistry, $logger, $properties, $nameConverter);
     }
@@ -44,7 +44,6 @@ class TypeAmenagementEnCoursFilter extends AbstractFilter
 
         $this->helper->ajouterJointuresType($queryBuilder, $queryNameGenerator, $value);
 
-        return;
     }
 
     public function getDescription(string $resourceClass): array

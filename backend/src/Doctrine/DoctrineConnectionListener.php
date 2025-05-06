@@ -30,8 +30,8 @@ class DoctrineConnectionListener implements EventSubscriberInterface
     private int $lastChecked = 0;
 
     public function __construct(
-        #[Autowire(service: 'service_container')] private ContainerInterface $container,
-        #[Autowire(env: 'DOCTRINE_CHECK_TIMING')] private int                $checkTiming)
+        #[Autowire(service: 'service_container')] private readonly ContainerInterface $container,
+        #[Autowire(env: 'DOCTRINE_CHECK_TIMING')] private readonly int                $checkTiming)
     {
     }
 

@@ -12,7 +12,7 @@
 
 namespace App\State\PeriodeRH;
 
-use ApiPlatform\Exception\ItemNotFoundException;
+use ApiPlatform\Metadata\Exception\ItemNotFoundException;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\LigneServiceFait;
@@ -150,8 +150,9 @@ class ServicesFaitsProvider implements ProviderInterface
     /**
      * @param LigneServiceFait|null $ligne
      * @param Evenement|InterventionForfait $evenement
+     * @param TauxHoraire $tauxHoraire
      * @return LigneServiceFait
-     * @throws ConfigurationIncompleteException
+     * @throws Exception
      */
     protected function append(?LigneServiceFait $ligne, Evenement|InterventionForfait $evenement, TauxHoraire $tauxHoraire): LigneServiceFait
     {

@@ -36,8 +36,6 @@ class UtilisateurRoleFilter extends AbstractFilter
         $queryBuilder->andWhere(sprintf('JSON_CONTAINS(%s.roles, :%s) = true', $rootAlias, $roleParam))
             ->setParameter($roleParam, $value);
 
-        return;
-
     }
 
     public function getDescription(string $resourceClass): array

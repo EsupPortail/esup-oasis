@@ -18,19 +18,19 @@ use App\Entity\Campus;
 use App\State\MappedEntityProcessor;
 use Override;
 
-class CampusProcessor implements ProcessorInterface
+readonly class CampusProcessor implements ProcessorInterface
 {
-    function __construct(private readonly MappedEntityProcessor $processor)
+    function __construct(private MappedEntityProcessor $processor)
     {
     }
 
     #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
     {
         return $this->processor->process(
-            data        : $data,
-            operation   : $operation,
-            entityClass : Campus::class,
+            data: $data,
+            operation: $operation,
+            entityClass: Campus::class,
             uriVariables: $uriVariables,
-            context     : [...$context, 'map_groups' => [\App\ApiResource\Campus::GROUP_IN]]);
+            context: [...$context, 'map_groups' => [\App\ApiResource\Campus::GROUP_IN]]);
     }
 }

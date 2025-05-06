@@ -13,6 +13,7 @@
 namespace App\Entity;
 
 use App\Repository\EvenementRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -66,6 +67,7 @@ class Evenement implements BeneficiairesManagerInterface
     private ?Intervenant $intervenant = null;
 
     #[ORM\ManyToMany(targetEntity: Intervenant::class, inversedBy: 'suppleances')]
+    #[ORM\JoinTable(name: 'evenement_intervenant')]
     private Collection $suppleants;
 
     #[ORM\ManyToOne(inversedBy: 'evenements')]
@@ -182,7 +184,10 @@ class Evenement implements BeneficiairesManagerInterface
 
     public function setDateAnnulation(?DateTimeInterface $dateAnnulation): self
     {
-        $this->dateAnnulation = $dateAnnulation;
+        $this->dateAnnulation = match ($dateAnnulation) {
+            null => null,
+            default => DateTime::createFromInterface($dateAnnulation)
+        };
 
         return $this;
     }
@@ -266,7 +271,10 @@ class Evenement implements BeneficiairesManagerInterface
 
     public function setDateValidation(?DateTimeInterface $dateValidation): self
     {
-        $this->dateValidation = $dateValidation;
+        $this->dateValidation = match ($dateValidation) {
+            null => null,
+            default => DateTime::createFromInterface($dateValidation)
+        };
 
         return $this;
     }
@@ -278,7 +286,7 @@ class Evenement implements BeneficiairesManagerInterface
 
     public function setDateCreation(DateTimeInterface $dateCreation): self
     {
-        $this->dateCreation = $dateCreation;
+        $this->dateCreation = DateTime::createFromInterface($dateCreation);
 
         return $this;
     }
@@ -290,7 +298,10 @@ class Evenement implements BeneficiairesManagerInterface
 
     public function setDateModification(?DateTimeInterface $dateModification): self
     {
-        $this->dateModification = $dateModification;
+        $this->dateModification = match ($dateModification) {
+            null => null,
+            default => DateTime::createFromInterface($dateModification)
+        };
 
         return $this;
     }
@@ -338,7 +349,7 @@ class Evenement implements BeneficiairesManagerInterface
 
     public function setDebut(DateTimeInterface $debut): self
     {
-        $this->debut = $debut;
+        $this->debut = DateTime::createFromInterface($debut);
 
         return $this;
     }
@@ -350,7 +361,7 @@ class Evenement implements BeneficiairesManagerInterface
 
     public function setFin(DateTimeInterface $fin): self
     {
-        $this->fin = $fin;
+        $this->fin = DateTime::createFromInterface($fin);
 
         return $this;
     }

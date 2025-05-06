@@ -13,6 +13,7 @@
 namespace App\Entity;
 
 use App\Repository\IntervenantRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -38,7 +39,6 @@ class Intervenant
     private Collection $interventions;
 
     #[ORM\ManyToMany(targetEntity: Evenement::class, mappedBy: 'suppleants')]
-    #[ORM\JoinTable(name: 'evenement_suppleant')]
     private Collection $suppleances;
 
     #[ORM\ManyToMany(targetEntity: Competence::class, inversedBy: 'intervenants')]
@@ -309,7 +309,7 @@ class Intervenant
 
     public function setDebut(DateTimeInterface $debut): static
     {
-        $this->debut = $debut;
+        $this->debut = DateTime::createFromInterface($debut);
 
         return $this;
     }
@@ -321,7 +321,7 @@ class Intervenant
 
     public function setFin(DateTimeInterface $fin): static
     {
-        $this->fin = $fin;
+        $this->fin = DateTime::createFromInterface($fin);
 
         return $this;
     }

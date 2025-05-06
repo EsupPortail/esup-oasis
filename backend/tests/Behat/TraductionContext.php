@@ -25,7 +25,7 @@ class TraductionContext implements Context
     private JsonContext $jsonContext;
 
     #[Given("(j')envoie une requête :method sur :url")]
-    public function iSendARequestTo($method, $url, PyStringNode $body = null, $files = [])
+    public function iSendARequestTo($method, $url, ?PyStringNode $body = null, $files = [])
     {
         return $this->restContext->iSendARequestTo($method, $url, $body, $files);
     }

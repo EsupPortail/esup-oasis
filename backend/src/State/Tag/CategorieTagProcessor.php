@@ -18,20 +18,20 @@ use App\Entity\CategorieTag;
 use App\State\MappedEntityProcessor;
 use Override;
 
-class CategorieTagProcessor implements ProcessorInterface
+readonly class CategorieTagProcessor implements ProcessorInterface
 {
 
-    function __construct(private readonly MappedEntityProcessor $processor)
+    function __construct(private MappedEntityProcessor $processor)
     {
     }
 
     #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
     {
         return $this->processor->process(
-            data        : $data,
-            operation   : $operation,
-            entityClass : CategorieTag::class,
+            data: $data,
+            operation: $operation,
+            entityClass: CategorieTag::class,
             uriVariables: $uriVariables,
-            context     : $context);
+            context: $context);
     }
 }

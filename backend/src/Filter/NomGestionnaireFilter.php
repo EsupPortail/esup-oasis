@@ -15,6 +15,7 @@ namespace App\Filter;
 use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\OpenApi\Model\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\PropertyInfo\Type;
 
@@ -49,11 +50,11 @@ class NomGestionnaireFilter extends AbstractFilter
                 'property' => 'nomGestionnaire',
                 'type' => Type::BUILTIN_TYPE_STRING,
                 'required' => false,
-                'openapi' => [
-                    'description' => "Recherche sur le nom du gestionnaire du bénéficiaire",
-                    'name' => 'nomGestionnaire',
-                    'type' => 'string',
-                ],
+                'openapi' => new Parameter(
+                    name: 'nomGestionnaire',
+                    in: 'query',
+                    description: 'Recherche sur le nom du gestionnaire du bénéficiaire',
+                ),
             ],
         ];
     }

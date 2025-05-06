@@ -8,11 +8,11 @@ use App\ApiResource\TauxHoraire;
 use App\State\TransformerService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-class TauxHoraireCollectionProvider implements ProviderInterface
+readonly class TauxHoraireCollectionProvider implements ProviderInterface
 {
     public function __construct(
-        #[Autowire(service: 'api_platform.doctrine.orm.state.collection_provider')] private readonly ProviderInterface $collectionProvider,
-        private readonly TransformerService                                                                            $transformerService
+        #[Autowire(service: 'api_platform.doctrine.orm.state.collection_provider')] private ProviderInterface $collectionProvider,
+        private TransformerService                                                                            $transformerService
     )
     {
 

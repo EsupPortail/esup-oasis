@@ -123,6 +123,7 @@ readonly class UtilisateurManager
 
     /**
      * @param string $term
+     * @param bool $etudiantsSeulement
      * @return Utilisateur[]|Generator
      */
     public function search(string $term, bool $etudiantsSeulement = false): array|Generator
@@ -252,7 +253,6 @@ readonly class UtilisateurManager
                 $entity->setAbonneRecapHebdo(true);//abonnement par défaut!
                 $entity->setIntervenant($intervenant);
                 $nouvelIntervenant = true;
-                $this->messageBus->dispatch(new RoleUtilisateursModifiesMessage(Utilisateur::ROLE_INTERVENANT));
             } else {
                 //réactivation / modif des dates
                 $intervenant = $entity->getIntervenant();
@@ -264,8 +264,8 @@ readonly class UtilisateurManager
                     $intervenant->setDebut($debut);
                     $intervenant->setFin($fin);
                 }
-                $this->messageBus->dispatch(new RoleUtilisateursModifiesMessage(Utilisateur::ROLE_INTERVENANT));
             }
+            $this->messageBus->dispatch(new RoleUtilisateursModifiesMessage(Utilisateur::ROLE_INTERVENANT));
 
             $this->majTypesEvenements($data->typesEvenements ?? [], $intervenant);
             $this->majCampus($data->campus ?? [], $intervenant);
@@ -408,6 +408,7 @@ readonly class UtilisateurManager
      * @param int|null $id
      * @param Utilisateur|null $gestionnaire
      * @param TypologieHandicap[] $typologies
+     * @param bool $avecAccompagnement
      * @return Beneficiaire
      * @throws BeneficiaireInconnuException
      */
@@ -661,7 +662,7 @@ readonly class UtilisateurManager
      * @param Tag $tag
      * @return void
      */
-    public function supprimerTag(Utilisateur $utilisateur, Tag $tag)
+    public function supprimerTag(Utilisateur $utilisateur, Tag $tag): void
     {
         foreach ($utilisateur->getBeneficiairesActifs() as $benef) {
             $benef->removeTag($tag);
@@ -678,7 +679,7 @@ readonly class UtilisateurManager
      * @param Demande $demande
      * @return void
      */
-    private function copierDonneesDemande(Demande $demande)
+    private function copierDonneesDemande(Demande $demande): void
     {
         $reponses = $this->reponseRepository->getReponsesARecuperer($demande);
 

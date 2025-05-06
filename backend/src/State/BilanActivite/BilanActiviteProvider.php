@@ -27,7 +27,7 @@ class BilanActiviteProvider extends AbstractEntityProvider
 
     public function __construct(#[Autowire(service: 'api_platform.doctrine.orm.state.item_provider')] ProviderInterface       $itemProvider,
                                 #[Autowire(service: 'api_platform.doctrine.orm.state.collection_provider')] ProviderInterface $collectionProvider,
-                                private IriConverterInterface                                                                 $iriConverter)
+                                private readonly IriConverterInterface                                                        $iriConverter)
     {
         parent::__construct($itemProvider, $collectionProvider);
     }

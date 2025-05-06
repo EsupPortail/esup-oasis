@@ -18,6 +18,7 @@ use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\IdentifiersExtractorInterface;
 use ApiPlatform\Metadata\IriConverterInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\OpenApi\Model\Parameter;
 use App\ApiResource\PeriodeRH;
 use App\Entity\Evenement;
 use App\Entity\InterventionForfait;
@@ -35,7 +36,7 @@ class ActivitePeriodeFilter extends AbstractFilter
                                 private readonly PropertyAccessorInterface     $propertyAccessor,
                                 private readonly IdentifiersExtractorInterface $identifiersExtractor,
                                 ManagerRegistry                                $managerRegistry,
-                                ?LoggerInterface                                $logger = null,
+                                ?LoggerInterface                               $logger = null,
                                 ?array                                         $properties = null,
                                 ?NameConverterInterface                        $nameConverter = null)
     {
@@ -88,7 +89,7 @@ class ActivitePeriodeFilter extends AbstractFilter
             } else {
                 $queryBuilder->join('App\Entity\PeriodeRH', $periodeAlias,
                     Join::WITH, $periodeAlias . '.id = :' . $periodeIdParameter);
-                
+
                 $whereCondition = $alias . '.periodePriseEnCompteRH is null';
                 $whereCondition .= ' and ' . $periodeAlias . '.fin > ' . $alias . '.fin';
                 $whereConditions[] = $whereCondition;
@@ -106,11 +107,11 @@ class ActivitePeriodeFilter extends AbstractFilter
                 'required' => false,
                 'strategy' => 'exact',
                 'is_collection' => false,
-                'openapi' => [
-                    'description' => "Période RH concernée",
-                    'name' => 'periode',
-                    'type' => 'string',
-                ],
+                'openapi' => new Parameter(
+                    name: 'periode',
+                    in: 'query',
+                    description: "Période RH concernée",
+                ),
             ],
             'periode[]' => [
                 'property' => 'periode',
@@ -118,11 +119,11 @@ class ActivitePeriodeFilter extends AbstractFilter
                 'required' => false,
                 'strategy' => 'exact',
                 'is_collection' => true,
-                'openapi' => [
-                    'description' => "Période RH concernée",
-                    'name' => 'periode',
-                    'type' => 'string',
-                ],
+                'openapi' => new Parameter(
+                    name: 'periode',
+                    in: 'query',
+                    description: "Période RH concernée",
+                ),
             ],
         ];
     }

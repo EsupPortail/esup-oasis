@@ -24,6 +24,7 @@ use Exception;
 use Override;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 readonly class PostTagUtilisateurProcessor implements ProcessorInterface
@@ -37,12 +38,9 @@ readonly class PostTagUtilisateurProcessor implements ProcessorInterface
 
     /**
      * @param TagUtilisateur $data
-     * @param Operation $operation
-     * @param array $uriVariables
-     * @param array $context
-     * @return TagUtilisateur
+     * @throws ExceptionInterface
      */
-    #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): TagUtilisateur
     {
         //POST uniquement
         try {

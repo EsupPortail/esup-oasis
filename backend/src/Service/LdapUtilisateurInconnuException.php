@@ -12,7 +12,9 @@
 
 namespace App\Service;
 
-class LdapUtilisateurInconnuException extends \Exception
+use Exception;
+
+class LdapUtilisateurInconnuException extends Exception
 {
 
 }

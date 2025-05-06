@@ -17,9 +17,9 @@ use App\Service\HttpCacheInvalidator;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class RessourceCollectionModifieeMessageHandler
+readonly class RessourceCollectionModifieeMessageHandler
 {
-    public function __construct(private readonly HttpCacheInvalidator $httpCacheInvalidator)
+    public function __construct(private HttpCacheInvalidator $httpCacheInvalidator)
     {
     }
 

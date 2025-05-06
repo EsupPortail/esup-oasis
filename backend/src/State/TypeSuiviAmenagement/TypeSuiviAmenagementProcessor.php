@@ -18,19 +18,19 @@ use App\Entity\TypeSuiviAmenagement;
 use App\State\MappedEntityProcessor;
 use Override;
 
-class TypeSuiviAmenagementProcessor implements ProcessorInterface
+readonly class TypeSuiviAmenagementProcessor implements ProcessorInterface
 {
-    public function __construct(private readonly MappedEntityProcessor $processor)
+    public function __construct(private MappedEntityProcessor $processor)
     {
     }
 
     #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
     {
         return $this->processor->process(
-            data        : $data,
-            operation   : $operation,
-            entityClass : TypeSuiviAmenagement::class,
+            data: $data,
+            operation: $operation,
+            entityClass: TypeSuiviAmenagement::class,
             uriVariables: $uriVariables,
-            context     : $context);
+            context: $context);
     }
 }

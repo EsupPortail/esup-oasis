@@ -140,7 +140,7 @@ class EvenementRepository extends ServiceEntityRepository
 
     /**
      * @param Utilisateur|null $utilisateur
-     * @param QueryBuilder     $qb
+     * @param QueryBuilder $qb
      * @return void
      */
     protected function addUtilisateurFilter(?Utilisateur $utilisateur, QueryBuilder $qb): void
@@ -161,7 +161,7 @@ class EvenementRepository extends ServiceEntityRepository
     /**
      * @param DateTimeImmutable $depuis
      * @param DateTimeImmutable $jusqua
-     * @param bool              $sansIntervenants
+     * @param bool $sansIntervenants
      * @return Evenement[]
      */
     public function evenementsAVenir(DateTimeImmutable $depuis, DateTimeImmutable $jusqua, bool $sansIntervenants): array
@@ -196,8 +196,8 @@ class EvenementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('e')
             ->leftJoin('e.beneficiaires', 'benef')
             ->leftJoin('e.intervenant', 'i')
-            ->join(join     : 'App\Entity\Utilisateur', alias: 'u', conditionType: Join::WITH,
-                   condition: 'u.uid = :uid and (u = benef.utilisateur or u = i.utilisateur)')
+            ->join(join: 'App\Entity\Utilisateur', alias: 'u', conditionType: Join::WITH,
+                condition: 'u.uid = :uid and (u = benef.utilisateur or u = i.utilisateur)')
             ->setParameter('uid', $utilisateur->uid)
             ->andWhere($where)
             ->setParameter('debut', $debutIntervalle)
@@ -208,7 +208,8 @@ class EvenementRepository extends ServiceEntityRepository
 
     /**
      * @param DateTimeInterface $now
-     * @param ?Utilisateur      $utilisateur
+     * @param ?Utilisateur $utilisateur
+     * @param bool $avecRenforts
      * @return Evenement[]
      */
     public function evenementsDuJour(DateTimeInterface $now, ?Utilisateur $utilisateur, $avecRenforts = false): array
@@ -219,7 +220,8 @@ class EvenementRepository extends ServiceEntityRepository
     /**
      * @param DateTimeInterface $debutSemaine
      * @param DateTimeInterface $finSemaine
-     * @param Utilisateur|null  $utilisateur
+     * @param Utilisateur|null $utilisateur
+     * @param bool $avecRenforts
      * @return array
      */
     public function evenementsIntervalle(DateTimeInterface $debutSemaine, DateTimeInterface $finSemaine,

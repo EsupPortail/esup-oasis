@@ -48,6 +48,7 @@ class UtilisateurConcerneParEvenementFilter extends AbstractFilter
                                       QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass,
                                       ?Operation                  $operation = null, array $context = []): void
     {
+        /** @noinspection PhpStrictComparisonWithOperandsOfDifferentTypesInspection */
         if (!$operation->getClass() === Evenement::class || $property !== 'utilisateurConcerne') {
             return;
         }

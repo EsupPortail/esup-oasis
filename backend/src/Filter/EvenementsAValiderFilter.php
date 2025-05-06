@@ -15,6 +15,7 @@ namespace App\Filter;
 use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\OpenApi\Model\Parameter;
 use App\Entity\TypeEvenement;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -41,11 +42,11 @@ class EvenementsAValiderFilter extends AbstractFilter
                 'property' => 'aValider',
                 'type' => Type::BUILTIN_TYPE_BOOL,
                 'required' => false,
-                'openapi' => [
-                    'description' => 'uniquement les événements à valider?',
-                    'name' => 'aValider',
-                    'type' => 'string',
-                ],
+                'openapi' => new Parameter(
+                    name: 'aValider',
+                    in: 'query',
+                    description: 'uniquement les événements à valider ?',
+                ),
             ],
         ];
     }

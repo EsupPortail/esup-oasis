@@ -21,7 +21,7 @@ class RessourceModifieeMessage
     /**
      * @return mixed
      */
-    public function getResource()
+    public function getResource(): mixed
     {
         return $this->resource;
     }

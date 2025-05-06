@@ -26,7 +26,7 @@ readonly class CharteValideeMessageHandler
     }
 
 
-    public function __invoke(CharteValideeMessage $message)
+    public function __invoke(CharteValideeMessage $message): void
     {
         /**
          * On vérifie si toutes les chartes sont validées, si oui, on passe à l'état ATTENTE_VALIDATION_ACCOMPAGNEMENT
@@ -39,10 +39,10 @@ readonly class CharteValideeMessageHandler
         }
 
         $this->demandeManager->modifierDemande(
-            demande    : $demande,
-            idEtat     : EtatDemande::ATTENTE_VALIDATION_ACCOMPAGNEMENT,
+            demande: $demande,
+            idEtat: EtatDemande::ATTENTE_VALIDATION_ACCOMPAGNEMENT,
             commentaire: 'Chartes validées',
-            user       : $demande->getDemandeur()
+            user: $demande->getDemandeur()
         );
     }
 

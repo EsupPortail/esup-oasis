@@ -20,11 +20,11 @@ use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
-class ClientAppUserProvider implements UserProviderInterface
+readonly class ClientAppUserProvider implements UserProviderInterface
 {
 
-    public function __construct(private readonly ApplicationClienteRepository $applicationClienteRepository,
-                                private readonly LoggerInterface              $logger)
+    public function __construct(private ApplicationClienteRepository $applicationClienteRepository,
+                                private LoggerInterface              $logger)
     {
     }
 

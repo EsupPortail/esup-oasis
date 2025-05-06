@@ -14,17 +14,17 @@ namespace App\Serializer\Encoder;
 
 use App\ApiResource\DecisionAmenagementExamens;
 use App\ApiResource\ServicesFaits;
+use App\Serializer\Encoder\Gotenberg\TempfileProcessor;
 use Exception;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Sensiolabs\GotenbergBundle\GotenbergPdfInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
-use Twig\Environment;
 
 class PdfEncoder implements EncoderInterface
 {
-    private $projectRoot;
+    private string $projectRoot;
 
     public function __construct(private readonly GotenbergPdfInterface $pdf,
                                 private readonly LoggerInterface       $logger,
@@ -65,7 +65,7 @@ class PdfEncoder implements EncoderInterface
         }
 
         try {
-            $builder = $this->pdf->html();
+            $builder = $this->pdf->html()->processor(new TempfileProcessor());
             if (null !== $headerTemplate) {
                 $builder->header($headerTemplate, ['data' => $data]);
             }
@@ -73,7 +73,8 @@ class PdfEncoder implements EncoderInterface
                 $builder->footer($footerTemplate, ['data' => $data]);
             }
 
-            return $builder->content($template, ['data' => $data])->generate()->getContent();
+            $resource = $builder->content($template, ['data' => $data])->generate()->process();
+            return stream_get_contents($resource);
         } catch (Exception $e) {
             $this->logger->error($e->getMessage());
             $this->logger->error($e->getTraceAsString());

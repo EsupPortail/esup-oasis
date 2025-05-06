@@ -13,7 +13,6 @@
 namespace App\Util;
 
 use App\Entity\Beneficiaire;
-use App\Message\AmenagementModifieMessage;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -76,7 +75,7 @@ trait AnneeUniversitaireAwareTrait
 
         $anneeDebut = match (true) {
             $mois > 9 => $annee,               // Pour les dates de janvier à juin
-            default => (int)$annee - 1                    // Pour les dates de juillet à août
+            default => $annee - 1                    // Pour les dates de juillet à août
         };
 
         // La date de début de l'année universitaire

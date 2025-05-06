@@ -25,7 +25,7 @@ readonly class DemandeNonConformeMessageHandler
     }
 
 
-    public function __invoke(DemandeNonConformeMessage $message)
+    public function __invoke(DemandeNonConformeMessage $message): void
     {
         //Envoi d'un mail "Désolé, réessayez"
         $this->mailService->envoyerMessageDemandeNonConforme($message->getDemandeur(), $message->getTypeDemande(), $message->getCommentaire());

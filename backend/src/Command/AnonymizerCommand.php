@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUndefinedVariableInspection */
 
 /*
  * Copyright (c) 2024. Esup - Université de Bordeaux.

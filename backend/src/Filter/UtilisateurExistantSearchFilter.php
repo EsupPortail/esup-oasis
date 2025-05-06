@@ -15,6 +15,7 @@ namespace App\Filter;
 use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\OpenApi\Model\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\PropertyInfo\Type;
 
@@ -72,11 +73,11 @@ class UtilisateurExistantSearchFilter extends AbstractFilter
                 'property' => static::PROPERTY,
                 'type' => Type::BUILTIN_TYPE_STRING,
                 'required' => false,
-                'openapi' => [
-                    'description' => 'Recherche sur (' . implode(', ', $this->getProperties()) . ')',
-                    'name' => static::PROPERTY,
-                    'type' => 'string',
-                ],
+                'openapi' => new Parameter(
+                    name: static::PROPERTY,
+                    in: 'query',
+                    description: 'Recherche sur (' . implode(', ', $this->getProperties()) . ')',
+                ),
             ],
         ];
     }

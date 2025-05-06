@@ -1,4 +1,7 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+/** @noinspection PhpMultipleClassDeclarationsInspection */
+/** @noinspection PhpMultipleClassDeclarationsInspection */
+/** @noinspection PhpMultipleClassDeclarationsInspection */
 
 /*
  * Copyright (c) 2024. Esup - Université de Bordeaux.
@@ -16,7 +19,6 @@ use App\Entity\Amenagement;
 use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Clock\DatePoint;
 
 /**
  * @extends ServiceEntityRepository<Amenagement>

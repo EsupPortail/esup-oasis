@@ -26,7 +26,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 class FormationProvider extends AbstractEntityProvider
 {
 
-    public function __construct(private Security                                                                                       $security,
+    public function __construct(private readonly Security                                                                              $security,
                                 #[Autowire(service: 'api_platform.doctrine.orm.state.item_provider')] readonly ProviderInterface       $itemProvider,
                                 #[Autowire(service: 'api_platform.doctrine.orm.state.collection_provider')] readonly ProviderInterface $collectionProvider,
     )

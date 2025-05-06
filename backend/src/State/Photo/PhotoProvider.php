@@ -15,16 +15,16 @@ namespace App\State\Photo;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Photo;
-use App\Service\Photo\PhotoProviderInterface;
 use App\Service\Photo\PhotoIndisponibleException;
+use App\Service\Photo\PhotoProviderInterface;
 use App\State\Utilisateur\UtilisateurManager;
 use Override;
 
-class PhotoProvider implements ProviderInterface
+readonly class PhotoProvider implements ProviderInterface
 {
 
-    public function __construct(private readonly PhotoProviderInterface $photoProvider,
-                                private readonly UtilisateurManager     $utilisateurManager)
+    public function __construct(private PhotoProviderInterface $photoProvider,
+                                private UtilisateurManager     $utilisateurManager)
     {
 
     }

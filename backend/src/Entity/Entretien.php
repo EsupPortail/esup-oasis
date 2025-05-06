@@ -13,6 +13,7 @@
 namespace App\Entity;
 
 use App\Repository\EntretienRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -78,7 +79,7 @@ class Entretien
 
     public function setDate(DateTimeInterface $date): static
     {
-        $this->date = $date;
+        $this->date = DateTime::createFromInterface($date);
 
         return $this;
     }

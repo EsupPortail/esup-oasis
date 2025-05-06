@@ -55,7 +55,7 @@ class DemandeManager
     }
 
     #[Required]
-    public function setUtilisateurManager(UtilisateurManager $utilisateurManager)
+    public function setUtilisateurManager(UtilisateurManager $utilisateurManager): void
     {
         $this->utilisateurManager = $utilisateurManager;
     }
@@ -114,10 +114,10 @@ class DemandeManager
     }
 
     /**
-     * @param Demande                 $demande
-     * @param int                     $idEtat
-     * @param string|null             $commentaire
-     * @param int|null                $profilId
+     * @param Demande $demande
+     * @param int $idEtat
+     * @param string|null $commentaire
+     * @param int|null $profilId
      * @param Utilisateur|string|null $user
      * @return Demande
      * @throws ErreurLdapException
@@ -184,7 +184,7 @@ class DemandeManager
      * @param Demande $demande
      * @return void
      */
-    public function ajouterChartes(Demande $demande)
+    public function ajouterChartes(Demande $demande): void
     {
         $chartesDemandeurExistantes = array_map(
             fn(CharteDemandeur $charteDemandeur) => $charteDemandeur->getCharte()->getId(),
@@ -223,7 +223,7 @@ class DemandeManager
     }
 
     /**
-     * @param mixed         $utilisateur
+     * @param mixed $utilisateur
      * @param TableauDeBord $tdb
      * @return TableauDeBord
      * @throws ErreurLdapException

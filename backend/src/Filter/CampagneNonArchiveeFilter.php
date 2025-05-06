@@ -5,6 +5,7 @@ namespace App\Filter;
 use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\OpenApi\Model\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\PropertyInfo\Type;
@@ -38,11 +39,11 @@ class CampagneNonArchiveeFilter extends AbstractFilter
                 'type' => Type::BUILTIN_TYPE_BOOL,
                 'required' => false,
                 'is_collection' => false,
-                'openapi' => [
-                    'description' => "inclure les demandes des campagnes archivées?",
-                    'name' => 'archivees',
-                    'type' => 'boolean',
-                ],
+                'openapi' => new Parameter(
+                    name: "archivees",
+                    in: 'query',
+                    description: "inclure les demandes des campagnes archivées ?",
+                ),
             ]
         ];
     }

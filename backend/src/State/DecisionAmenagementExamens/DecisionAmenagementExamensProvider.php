@@ -15,7 +15,6 @@ namespace App\State\DecisionAmenagementExamens;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\DecisionAmenagementExamens;
-use App\ApiResource\Telechargement;
 use App\State\AbstractEntityProvider;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 

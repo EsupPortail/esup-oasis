@@ -16,7 +16,6 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\ApiResource\Amenagement;
-use App\Entity\TypeAmenagement;
 use App\Message\AmenagementModifieMessage;
 use App\Message\RessourceCollectionModifieeMessage;
 use App\Message\RessourceModifieeMessage;
@@ -46,9 +45,9 @@ class AmenagementProcessor implements ProcessorInterface
 
     /**
      * @param Amenagement $data
-     * @param Operation   $operation
-     * @param array       $uriVariables
-     * @param array       $context
+     * @param Operation $operation
+     * @param array $uriVariables
+     * @param array $context
      * @return void
      * @throws ErreurLdapException
      */

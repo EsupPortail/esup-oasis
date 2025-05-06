@@ -16,5 +16,10 @@ use App\Entity\Utilisateur;
 
 interface PhotoProviderInterface
 {
+    /**
+     * @param Utilisateur $utilisateur
+     * @return mixed
+     * @throws PhotoIndisponibleException
+     */
     public function getPhotoUtilisateur(Utilisateur $utilisateur);
 }

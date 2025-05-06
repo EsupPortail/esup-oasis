@@ -15,7 +15,6 @@ namespace App\Repository;
 use App\Entity\Formation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -64,7 +63,7 @@ class FormationRepository extends ServiceEntityRepository
     /**
      * @return array<Formation>
      */
-    public function incompletes()
+    public function incompletes(): array
     {
         return $this->createQueryBuilder('f')
             ->andWhere('f.diplome is null')

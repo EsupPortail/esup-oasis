@@ -41,20 +41,23 @@ class EvenementProvider extends AbstractEntityProvider
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
+        $utilisateur = $this->security->getUser();
+
         if ($operation instanceof GetCollection) {
             //calcul de la clé pour mise en cache
             $cacheKey = match (true) {
                 $this->security->isGranted(\App\Entity\Utilisateur::ROLE_PLANIFICATEUR) => 'evenements_role_planificateur_',
-                default => 'evenements_user_' . $this->security->getUser()->getUserIdentifier() . '_'
+                default => 'evenements_user_' . $utilisateur->getUserIdentifier() . '_'
             };
             //Evenements à valider : différences en fonction du service de l'utilisateur!
             if (array_key_exists('filters', $context) && array_key_exists('aValider', $context['filters'])) {
+                assert($utilisateur instanceof \App\Entity\Utilisateur);
                 $cacheKey .= array_reduce(
-                    array   : $this->security->getUser()->getServices()->toArray(),
+                    array: $utilisateur->getServices()->toArray(),
                     callback: function ($carry, Service $item) {
                         return $carry . '_' . $item->getId();
                     },
-                    initial : ''
+                    initial: ''
                 );
             }
 
@@ -63,7 +66,7 @@ class EvenementProvider extends AbstractEntityProvider
 
             //on ajoute "de force" un filtre sur l'utilisateur courant
             if (!$this->security->isGranted(ApplicationCliente::ROLE_APPLICATION_CLIENTE)) {
-                $user = $this->security->getUser();
+                $user = $utilisateur;
                 $context['filters']['utilisateurConcerne'] = Utilisateur::COLLECTION_URI . '/' . $user->getUserIdentifier();
             }
         } else {
@@ -71,7 +74,7 @@ class EvenementProvider extends AbstractEntityProvider
         }
 
         return $this->cache->get(
-            key     : $cacheKey,
+            key: $cacheKey,
             callback: function (ItemInterface $item) use ($operation, $uriVariables, $context) {
                 $result = parent::provide($operation, $uriVariables, $context);
                 $item->expiresAfter(7200);

@@ -12,7 +12,6 @@
 
 namespace App\ApiResource;
 
-use ApiPlatform\Doctrine\Odm\Filter\SearchFilter;
 use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Doctrine\Orm\State\Options;
 use ApiPlatform\Metadata\ApiFilter;
@@ -29,29 +28,29 @@ use App\State\CategorieAmenagement\CategorieAmenagementProvider;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ApiResource(
-    operations            : [
+    operations: [
         new GetCollection(
             uriTemplate: self::COLLECTION_URI
         ),
         new Get(
-            uriTemplate : self::ITEM_URI,
+            uriTemplate: self::ITEM_URI,
             uriVariables: ['id']
         ),
         new Post(
             uriTemplate: self::COLLECTION_URI,
-            security   : "is_granted('ROLE_ADMIN')",
+            security: "is_granted('ROLE_ADMIN')",
         ),
         new Patch(
-            uriTemplate : self::ITEM_URI,
+            uriTemplate: self::ITEM_URI,
             uriVariables: ['id'],
-            security    : "is_granted('ROLE_ADMIN')",
+            security: "is_granted('ROLE_ADMIN')",
         ),
     ],
     denormalizationContext: ['groups' => self::GROUP_IN],
-    openapi               : new Operation(tags: ['Referentiel']),
-    provider              : CategorieAmenagementProvider::class,
-    processor             : CategorieAmenagementProcessor::class,
-    stateOptions          : new Options(entityClass: \App\Entity\CategorieAmenagement::class)
+    openapi: new Operation(tags: ['Referentiel']),
+    provider: CategorieAmenagementProvider::class,
+    processor: CategorieAmenagementProcessor::class,
+    stateOptions: new Options(entityClass: \App\Entity\CategorieAmenagement::class)
 )]
 #[ApiFilter(CaseInsensitiveOrderFilter::class, properties: ['libelle'])]
 #[ApiFilter(BooleanFilter::class, properties: [

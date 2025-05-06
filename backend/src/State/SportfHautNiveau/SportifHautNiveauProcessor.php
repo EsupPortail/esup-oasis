@@ -21,6 +21,7 @@ use App\Message\RessourceModifieeMessage;
 use App\Repository\SportifHautNiveauRepository;
 use App\State\TransformerService;
 use Exception;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 readonly class SportifHautNiveauProcessor implements ProcessorInterface
@@ -35,13 +36,9 @@ readonly class SportifHautNiveauProcessor implements ProcessorInterface
 
     /**
      * @param SportifHautNiveau $data
-     * @param Operation         $operation
-     * @param array             $uriVariables
-     * @param array             $context
-     * @return void
-     * @throws Exception
+     * @throws ExceptionInterface
      */
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): ?SportifHautNiveau
     {
         $entity = match ($data->id) {
             null => new \App\Entity\SportifHautNiveau(),
@@ -51,7 +48,7 @@ readonly class SportifHautNiveauProcessor implements ProcessorInterface
         if ($operation instanceof Delete) {
             $this->sportifHautNiveauRepository->remove($entity, true);
             $this->messageBus->dispatch(new RessourceCollectionModifieeMessage($data));
-            return;
+            return null;
         }
 
         $entity->setNom($data->nom);
@@ -67,7 +64,7 @@ readonly class SportifHautNiveauProcessor implements ProcessorInterface
         } else {
             $this->messageBus->dispatch(new RessourceCollectionModifieeMessage($resource));
         }
-        
+
         return $resource;
     }
 }

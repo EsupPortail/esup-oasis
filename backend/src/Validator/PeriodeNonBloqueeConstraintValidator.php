@@ -59,7 +59,7 @@ class PeriodeNonBloqueeConstraintValidator extends ConstraintValidator
         throw new UnexpectedValueException($value, Evenement::class);
     }
 
-    private function checkEvenement(Evenement $value, Constraint $constraint): void
+    private function checkEvenement(Evenement $value, PeriodeNonBloqueeConstraint $constraint): void
     {
         //la période à considérer est celle incluant la date de début de l'événement
         $periode = $this->periodeRHRepository->findPeriodePourDate($value->debut);
@@ -68,14 +68,14 @@ class PeriodeNonBloqueeConstraintValidator extends ConstraintValidator
                 $this->context->buildViolation($constraint->message)->addViolation();
             }
         } else {
-            //on a une période postérieure?
+            //on a une période postérieure ?
             if ($this->periodeRHRepository->periodeExisteApres($value->debut)) {
                 $this->context->buildViolation($constraint->message)->addViolation();
             }
         }
     }
 
-    private function checkInterventionForfait(InterventionForfait $value, Constraint $constraint): void
+    private function checkInterventionForfait(InterventionForfait $value, PeriodeNonBloqueeConstraint $constraint): void
     {
         if ($value->periode->butoir->format('Ymd') < $this->now()->format('Ymd')) {
             $this->context->buildViolation($constraint->message)->addViolation();

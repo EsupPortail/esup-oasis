@@ -23,21 +23,21 @@ use Exception;
 use Override;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class CharteUtilisateurProcessor implements ProcessorInterface
+readonly class CharteUtilisateurProcessor implements ProcessorInterface
 {
 
-    public function __construct(private readonly CharteDemandeurRepository $charteDemandeurRepository,
-                                private readonly TransformerService        $transformerService,
-                                private readonly MessageBusInterface       $messageBus)
+    public function __construct(private CharteDemandeurRepository $charteDemandeurRepository,
+                                private TransformerService        $transformerService,
+                                private MessageBusInterface       $messageBus)
     {
 
     }
 
     /**
      * @param CharteUtilisateur $data
-     * @param Operation         $operation
-     * @param array             $uriVariables
-     * @param array             $context
+     * @param Operation $operation
+     * @param array $uriVariables
+     * @param array $context
      * @return void
      * @throws Exception
      */

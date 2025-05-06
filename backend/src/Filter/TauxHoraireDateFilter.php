@@ -5,6 +5,7 @@ namespace App\Filter;
 use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\OpenApi\Model\Parameter;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Exception;
@@ -41,12 +42,11 @@ class TauxHoraireDateFilter extends AbstractFilter
                 'property' => 'date',
                 'type' => Type::BUILTIN_TYPE_STRING,
                 'required' => false,
-                'openapi' => [
-                    'description' => 'Taux horaire valide pour la date passée',
-                    'name' => 'profil',
-                    'type' => 'string',
-                    'format' => 'date'
-                ],
+                'openapi' => new Parameter(
+                    name: 'taux',
+                    in: 'query',
+                    description: 'Taux horaire valide pour la date passée',
+                ),
             ],
         ];
     }

@@ -192,7 +192,7 @@ class DemandeProvider extends AbstractEntityProvider implements ResetInterface
                  */
                 $reponse = array_filter(
                     $reponsesExistantes,
-                    fn(Reponse $reponse) => $reponse->getQuestion()->getId() === Question::QUESTION_DEMANDE_ACCOMPAGNEMENT
+                    fn(Reponse $rep) => $rep->getQuestion()->getId() === Question::QUESTION_DEMANDE_ACCOMPAGNEMENT
                 );
                 //on ajoute la question
                 $questionEntity = $this->questionRepository->find(Question::QUESTION_DEMANDE_ACCOMPAGNEMENT);
@@ -261,7 +261,7 @@ class DemandeProvider extends AbstractEntityProvider implements ResetInterface
     }
 
 
-    public function reset()
+    public function reset(): void
     {
         $this->currentContext = [];
     }

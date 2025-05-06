@@ -13,6 +13,7 @@
 namespace App\Service\FileStorage;
 
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 interface StorageProviderInterface
 {
@@ -23,10 +24,10 @@ interface StorageProviderInterface
      * Copie le contenu pointé par $file sur le stockage persistent
      * et retourne un tableau de metadata permettant de le retrouver.
      */
-    public function copy(File $file): array;
+    public function copy(UploadedFile $file): array;
 
     /**
-     * @param mixed  $contents
+     * @param mixed $contents
      * @param string $filename
      * @param string $mimeType
      * @param string $description

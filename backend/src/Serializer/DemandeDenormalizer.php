@@ -22,12 +22,12 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 
-class DemandeDenormalizer implements DenormalizerInterface
+readonly class DemandeDenormalizer implements DenormalizerInterface
 {
 
-    public function __construct(private readonly AbstractItemNormalizer $itemNormalizer,
-                                private readonly Security               $security,
-                                private readonly TransformerService     $transformerService)
+    public function __construct(private AbstractItemNormalizer $itemNormalizer,
+                                private Security               $security,
+                                private TransformerService     $transformerService)
     {
     }
 

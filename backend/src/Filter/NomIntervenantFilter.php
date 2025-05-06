@@ -15,6 +15,7 @@ namespace App\Filter;
 use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\OpenApi\Model\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\PropertyInfo\Type;
 
@@ -50,11 +51,11 @@ class NomIntervenantFilter extends AbstractFilter
                 'property' => 'nomIntervenant',
                 'type' => Type::BUILTIN_TYPE_STRING,
                 'required' => false,
-                'openapi' => [
-                    'description' => "Recherche sur le nom de l'intervenant",
-                    'name' => 'nomIntervenant',
-                    'type' => 'string',
-                ],
+                'openapi' => new Parameter(
+                    name: 'nomIntervenant',
+                    in: 'query',
+                    description: "Recherche sur le nom de l'intervenant",
+                ),
             ],
         ];
     }

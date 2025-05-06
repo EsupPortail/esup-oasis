@@ -17,11 +17,11 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Scheduler\Attribute\AsPeriodicTask;
 
 #[AsPeriodicTask(frequency: '1 day', from: '1:30', jitter: '300', schedule: 'calcul_etats_ese')]
-class CalculEtatsEse
+readonly class CalculEtatsEse
 {
 
-    public function __construct(private readonly UtilisateurRepository $utilisateurRepository,
-                                private readonly LoggerInterface       $logger)
+    public function __construct(private UtilisateurRepository $utilisateurRepository,
+                                private LoggerInterface       $logger)
     {
 
     }

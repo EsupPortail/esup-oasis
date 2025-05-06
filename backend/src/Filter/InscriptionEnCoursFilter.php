@@ -15,6 +15,7 @@ namespace App\Filter;
 use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\OpenApi\Model\Parameter;
 use App\Entity\Formation;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Clock\ClockAwareTrait;
@@ -49,11 +50,11 @@ class InscriptionEnCoursFilter extends AbstractFilter
                 'property' => self::PROPERTY,
                 'type' => Type::BUILTIN_TYPE_BOOL,
                 'required' => false,
-                'openapi' => [
-                    'description' => 'uniquement les formations avec inscription',
-                    'name' => 'aValider',
-                    'type' => 'boolean',
-                ],
+                'openapi' => new Parameter(
+                    name: 'aValider',
+                    in: 'query',
+                    description: 'uniquement les formations avec inscription',
+                ),
             ],
         ];
     }

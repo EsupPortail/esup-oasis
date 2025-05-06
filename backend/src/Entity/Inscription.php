@@ -13,6 +13,7 @@
 namespace App\Entity;
 
 use App\Repository\InscriptionRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -76,7 +77,7 @@ class Inscription
 
     public function setDebut(DateTimeInterface $debut): self
     {
-        $this->debut = $debut;
+        $this->debut = DateTime::createFromInterface($debut);
 
         return $this;
     }
@@ -88,7 +89,7 @@ class Inscription
 
     public function setFin(DateTimeInterface $fin): self
     {
-        $this->fin = $fin;
+        $this->fin = DateTime::createFromInterface($fin);
 
         return $this;
     }

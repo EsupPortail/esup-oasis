@@ -22,28 +22,30 @@ use App\Repository\ComposanteRepository;
 use App\Service\ErreurLdapException;
 use App\State\TransformerService;
 use App\State\Utilisateur\UtilisateurManager;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class PatchComposanteProcessor implements ProcessorInterface
+readonly class PatchComposanteProcessor implements ProcessorInterface
 {
 
-    public function __construct(private readonly UtilisateurManager   $utilisateurManager,
-                                private readonly ComposanteRepository $composanteRepository,
-                                private readonly TransformerService   $transformerService,
-                                private readonly MessageBusInterface  $messageBus)
+    public function __construct(private UtilisateurManager   $utilisateurManager,
+                                private ComposanteRepository $composanteRepository,
+                                private TransformerService   $transformerService,
+                                private MessageBusInterface  $messageBus)
     {
 
     }
 
     /**
      * @param Composante $data
-     * @param Operation  $operation
-     * @param array      $uriVariables
-     * @param array      $context
-     * @return void
+     * @param Operation $operation
+     * @param array $uriVariables
+     * @param array $context
+     * @return Composante
      * @throws ErreurLdapException
+     * @throws ExceptionInterface
      */
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Composante
     {
         $entity = $this->composanteRepository->find($data->id);
 

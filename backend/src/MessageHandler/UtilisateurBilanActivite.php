@@ -42,7 +42,7 @@ class UtilisateurBilanActivite
 
     public int $nbEntretiens;
 
-    public function avecTypeAmenagement(TypeAmenagement $type)
+    public function avecTypeAmenagement(TypeAmenagement $type): bool
     {
         foreach ($this->amenagements as $amenagement) {
             if ($amenagement->typeAmenagement->id == $type->id) {

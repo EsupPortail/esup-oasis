@@ -14,7 +14,6 @@ namespace App\Message;
 
 use App\Entity\Evenement;
 use DateTimeInterface;
-use Symfony\Component\Clock\DatePoint;
 
 class ModificationEvenementMessage
 {

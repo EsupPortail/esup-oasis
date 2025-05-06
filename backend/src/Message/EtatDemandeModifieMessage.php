@@ -12,16 +12,16 @@
 
 namespace App\Message;
 
-class EtatDemandeModifieMessage
+readonly class EtatDemandeModifieMessage
 {
 
     public function __construct(
-        private readonly int     $idDemande,
-        private readonly int     $idEtatprecedent,
-        private readonly int     $idEtat,
-        private readonly string  $uidUtilisateurModif,
-        private readonly ?string $commentaire,
-        private readonly ?int    $idProfil)
+        private int     $idDemande,
+        private int     $idEtatprecedent,
+        private int     $idEtat,
+        private string  $uidUtilisateurModif,
+        private ?string $commentaire,
+        private ?int    $idProfil)
     {
     }
 

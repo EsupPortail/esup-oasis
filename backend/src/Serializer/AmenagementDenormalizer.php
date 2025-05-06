@@ -18,12 +18,12 @@ use Override;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
-class AmenagementDenormalizer implements DenormalizerInterface
+readonly class AmenagementDenormalizer implements DenormalizerInterface
 {
 
     public function __construct(
         #[Autowire(service: 'api_platform.jsonld.normalizer.item')]
-        private readonly AbstractItemNormalizer $itemNormalizer,
+        private AbstractItemNormalizer $itemNormalizer,
     )
     {
     }

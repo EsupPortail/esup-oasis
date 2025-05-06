@@ -13,8 +13,6 @@
 namespace App\State\Commission;
 
 use App\ApiResource\Commission;
-use App\ApiResource\MembreCommission;
-use App\ApiResource\Utilisateur;
 use App\State\AbstractEntityProvider;
 use Exception;
 

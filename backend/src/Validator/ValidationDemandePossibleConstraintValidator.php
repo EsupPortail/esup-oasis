@@ -33,11 +33,11 @@ class ValidationDemandePossibleConstraintValidator extends ConstraintValidator
     }
 
     /**
-     * @param mixed                               $value
+     * @param mixed $value
      * @param ValidationDemandePossibleConstraint $constraint
      * @return void
      */
-    #[Override] public function validate(mixed $value, Constraint $constraint)
+    #[Override] public function validate(mixed $value, Constraint $constraint): void
     {
         if (!$constraint instanceof ValidationDemandePossibleConstraint) {
             throw new UnexpectedTypeException($constraint, ValidationDemandePossibleConstraint::class);
@@ -72,15 +72,15 @@ class ValidationDemandePossibleConstraintValidator extends ConstraintValidator
     }
 
     /**
-     * @param Demande                             $demande
-     * @param QuestionDemande                     $question
+     * @param Demande $demande
+     * @param QuestionDemande $question
      * @param ValidationDemandePossibleConstraint $constraint
      * @return void
      * @throws Exception
      */
     private function validerQuestion(Demande                             $demande,
                                      QuestionDemande                     $question,
-                                     ValidationDemandePossibleConstraint $constraint)
+                                     ValidationDemandePossibleConstraint $constraint): void
     {
         if ($question->obligatoire) {
             //obligatoire...on a une réponse?
@@ -110,7 +110,7 @@ class ValidationDemandePossibleConstraintValidator extends ConstraintValidator
                 //on va chercher la QuestionDemande dans la Demande
                 try {
                     $this->validerQuestion($demande, $demande->getQuestionDemande($questionsLiee), $constraint);
-                } catch (Exception $e) {
+                } catch (Exception) {
                     $this->context->buildViolation($constraint->message)
                         ->setParameter('{{ question }}', $questionsLiee->getLibelle())
                         ->addViolation();

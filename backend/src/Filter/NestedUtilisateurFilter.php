@@ -17,6 +17,7 @@ use ApiPlatform\Doctrine\Orm\PropertyHelperTrait;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\IriConverterInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\OpenApi\Model\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -101,22 +102,22 @@ class NestedUtilisateurFilter extends AbstractFilter
                 'type' => Type::BUILTIN_TYPE_STRING,
                 'required' => false,
                 'is_collection' => false,
-                'openapi' => [
-                    'description' => 'IRI utilisateur',
-                    'name' => $property,
-                    'type' => 'string',
-                ],
+                'openapi' => new Parameter(
+                    name: $property,
+                    in: 'query',
+                    description: 'IRI utilisateur',
+                ),
             ];
             $description[$property . '[]'] = [
                 'property' => $property,
                 'type' => Type::BUILTIN_TYPE_STRING,
                 'required' => false,
                 'is_collection' => true,
-                'openapi' => [
-                    'description' => 'IRIs utilisateur',
-                    'name' => $property,
-                    'type' => 'string',
-                ],
+                'openapi' => new Parameter(
+                    name: $property,
+                    in: 'query',
+                    description: 'IRIs utilisateur',
+                )
             ];
         }
         return $description;

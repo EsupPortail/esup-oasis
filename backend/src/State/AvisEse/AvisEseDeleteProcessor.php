@@ -27,11 +27,11 @@ readonly class AvisEseDeleteProcessor implements ProcessorInterface
     {
     }
 
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): void
     {
         $entity = $this->avisEseRepository->find($data->id);
         $this->avisEseRepository->remove($entity, true);
-        
+
         $this->messageBus->dispatch(new RessourceModifieeMessage($data));
         $this->messageBus->dispatch(new AvisEseModifieMessage($entity));
     }

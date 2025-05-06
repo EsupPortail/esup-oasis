@@ -35,6 +35,7 @@ use Override;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\Clock\DatePoint;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class ReponseProcessor implements ProcessorInterface
@@ -56,13 +57,10 @@ class ReponseProcessor implements ProcessorInterface
 
     /**
      * @param Reponse $data
-     * @param Operation $operation
-     * @param array $uriVariables
-     * @param array $context
-     * @return Reponse
      * @throws Exception
+     * @throws ExceptionInterface
      */
-    #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Reponse
     {
         $demande = $this->demandeRepository->find($uriVariables['demandeId']);
         $question = $this->questionRepository->find($uriVariables['questionId']);

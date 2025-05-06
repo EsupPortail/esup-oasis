@@ -12,8 +12,8 @@
 
 namespace App\State\Utilisateur;
 
-use ApiPlatform\Exception\ItemNotFoundException;
 use ApiPlatform\Metadata\CollectionOperationInterface;
+use ApiPlatform\Metadata\Exception\ItemNotFoundException;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\Pagination\PaginatorInterface;
@@ -57,8 +57,8 @@ class UtilisateurProvider extends AbstractEntityProvider
 
     /**
      * @param Operation $operation
-     * @param array     $uriVariables
-     * @param array     $context
+     * @param array $uriVariables
+     * @param array $context
      * @return Utilisateur|array|PaginatorInterface
      * @throws ErreurLdapException
      */
@@ -68,7 +68,7 @@ class UtilisateurProvider extends AbstractEntityProvider
         if (!($operation instanceof GetCollection)) {
             //mise en cache des résultats pour un utilisateur donné
             return $this->cache->get(
-                key     : 'utilisateur_' . $uriVariables['uid'],
+                key: 'utilisateur_' . $uriVariables['uid'],
                 callback: function (ItemInterface $item) use ($operation, $uriVariables, $context) {
                     //todo: si pas en base, cache à durée très courte!
                     $item->expiresAfter(7200);
@@ -92,8 +92,8 @@ class UtilisateurProvider extends AbstractEntityProvider
 
     /**
      * @param Operation $operation
-     * @param array     $uriVariables
-     * @param array     $context
+     * @param array $uriVariables
+     * @param array $context
      * @return Utilisateur|Utilisateur[]|PaginatorInterface
      * @throws ErreurLdapException
      */

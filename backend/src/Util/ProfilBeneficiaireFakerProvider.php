@@ -12,6 +12,7 @@
 
 namespace App\Util;
 
+use App\Entity\ProfilBeneficiaire;
 use App\Repository\ProfilBeneficiaireRepository;
 use Faker\Generator;
 use Faker\Provider\Base as BaseProvider;
@@ -25,7 +26,7 @@ class ProfilBeneficiaireFakerProvider extends BaseProvider
         parent::__construct($generator);
     }
 
-    public function profilExistant(int $id)
+    public function profilExistant(int $id): ?ProfilBeneficiaire
     {
         return $this->profilBeneficiaireRepository->find($id);
     }

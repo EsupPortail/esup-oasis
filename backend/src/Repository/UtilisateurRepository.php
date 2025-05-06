@@ -31,7 +31,7 @@ class UtilisateurRepository extends ServiceEntityRepository
 {
     use ClockAwareTrait;
 
-    public function __construct(ManagerRegistry $registry, private MessageBusInterface $messageBus)
+    public function __construct(ManagerRegistry $registry, private readonly MessageBusInterface $messageBus)
     {
         parent::__construct($registry, Utilisateur::class);
     }

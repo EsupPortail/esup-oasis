@@ -15,6 +15,7 @@ namespace App\Filter;
 use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\OpenApi\Model\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -24,11 +25,11 @@ use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 class DomaineAmenagementEnCoursFilter extends AbstractFilter
 {
 
-    public function __construct(private UtilisateurAmenagementEnCoursFilterHelper $helper,
-                                ManagerRegistry                                   $managerRegistry,
-                                ?LoggerInterface                                  $logger = null,
-                                ?array                                            $properties = null,
-                                ?NameConverterInterface                           $nameConverter = null)
+    public function __construct(private readonly UtilisateurAmenagementEnCoursFilterHelper $helper,
+                                ManagerRegistry                                            $managerRegistry,
+                                ?LoggerInterface                                           $logger = null,
+                                ?array                                                     $properties = null,
+                                ?NameConverterInterface                                    $nameConverter = null)
     {
         parent::__construct($managerRegistry, $logger, ['examens', 'pedagogique', 'aideHumaine'], $nameConverter);
     }
@@ -43,7 +44,6 @@ class DomaineAmenagementEnCoursFilter extends AbstractFilter
 
         $this->helper->ajouterJointuresDomaine($queryBuilder, $queryNameGenerator, $value, $property);
 
-        return;
     }
 
     public function getDescription(string $resourceClass): array
@@ -55,11 +55,11 @@ class DomaineAmenagementEnCoursFilter extends AbstractFilter
                 'type' => Type::BUILTIN_TYPE_BOOL,
                 'required' => false,
                 'is_collection' => false,
-                'openapi' => [
-                    'description' => $property,
-                    'name' => $property,
-                    'type' => 'bool',
-                ],
+                'openapi' => new Parameter(
+                    name: $property,
+                    in: 'query',
+                    description: $property,
+                ),
             ];
         }
         return $description;

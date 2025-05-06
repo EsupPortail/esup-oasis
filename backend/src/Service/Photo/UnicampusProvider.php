@@ -18,7 +18,6 @@ use Override;
 use Psr\Log\LoggerInterface;
 use SensitiveParameter;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class UnicampusProvider implements PhotoProviderInterface
 {

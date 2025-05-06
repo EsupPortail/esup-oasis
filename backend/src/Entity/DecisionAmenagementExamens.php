@@ -13,6 +13,7 @@
 namespace App\Entity;
 
 use App\Repository\DecisionAmenagementExamensRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -63,7 +64,7 @@ class DecisionAmenagementExamens
 
     public function setDebut(DateTimeInterface $debut): static
     {
-        $this->debut = $debut;
+        $this->debut = DateTime::createFromInterface($debut);
 
         return $this;
     }
@@ -75,7 +76,7 @@ class DecisionAmenagementExamens
 
     public function setFin(DateTimeInterface $fin): static
     {
-        $this->fin = $fin;
+        $this->fin = DateTime::createFromInterface($fin);
 
         return $this;
     }
@@ -87,7 +88,7 @@ class DecisionAmenagementExamens
 
     public function setDateModification(DateTimeInterface $dateModification): static
     {
-        $this->dateModification = $dateModification;
+        $this->dateModification = DateTime::createFromInterface($dateModification);
 
         return $this;
     }

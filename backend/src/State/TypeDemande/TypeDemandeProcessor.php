@@ -25,24 +25,20 @@ use Exception;
 use Override;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class TypeDemandeProcessor implements ProcessorInterface
+readonly class TypeDemandeProcessor implements ProcessorInterface
 {
-    function __construct(private readonly TypeDemandeRepository        $typeDemandeRepository,
-                         private readonly ProfilBeneficiaireRepository $profilBeneficiaireRepository,
-                         private readonly TransformerService           $transformerService,
-                         private MessageBusInterface                   $messageBus)
+    function __construct(private TypeDemandeRepository        $typeDemandeRepository,
+                         private ProfilBeneficiaireRepository $profilBeneficiaireRepository,
+                         private TransformerService           $transformerService,
+                         private MessageBusInterface          $messageBus)
     {
     }
 
     /**
      * @param TypeDemande $data
-     * @param Operation   $operation
-     * @param array       $uriVariables
-     * @param array       $context
-     * @return void
      * @throws Exception
      */
-    #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): TypeDemande
     {
         if (null === $data->id) {
             $entity = new \App\Entity\TypeDemande();

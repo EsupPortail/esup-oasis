@@ -12,14 +12,11 @@
 
 namespace App\Filter;
 
-use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\PropertyHelperTrait;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
 use Doctrine\ORM\QueryBuilder;
-use Exception;
 use Override;
-use Symfony\Component\PropertyInfo\Type;
 
 class CaseInsensitiveSearchFilter extends NestedFieldSearchFilter
 {

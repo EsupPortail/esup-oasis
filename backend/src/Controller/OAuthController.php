@@ -16,7 +16,6 @@ use App\Service\ErreurLdapException;
 use App\Service\OAuthService;
 use App\State\Utilisateur\UtilisateurManager;
 use DateTime;
-use Doctrine\ORM\EntityManagerInterface;
 use JsonException;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
@@ -105,11 +104,11 @@ class OAuthController extends AbstractController
     /**
      * Point d'entrée "normal" pour le front : prend en entrée un accessToken OAuth et retourne un JWT api
      *
-     * @param Request            $request
+     * @param Request $request
      * @param UtilisateurManager $utilisateurManager
-     * @param int                $ttl
-     * @param string             $cookieName
-     * @param string             $cookieDomain
+     * @param int $ttl
+     * @param string $cookieName
+     * @param string $cookieDomain
      * @return Response
      * @throws ErreurLdapException
      */

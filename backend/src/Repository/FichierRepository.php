@@ -31,7 +31,7 @@ class FichierRepository extends ServiceEntityRepository
         parent::__construct($registry, Fichier::class);
     }
 
-    public function save(Fichier $entity, $flush = false)
+    public function save(Fichier $entity, $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 

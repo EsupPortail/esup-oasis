@@ -16,7 +16,6 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\ApiResource\Entretien;
-use App\Entity\Utilisateur;
 use App\Message\RessourceCollectionModifieeMessage;
 use App\Message\RessourceModifieeMessage;
 use App\Repository\EntretienRepository;
@@ -40,11 +39,11 @@ readonly class EntretienProcessor implements ProcessorInterface
     /**
      * @param Entretien $data
      * @param Operation $operation
-     * @param array     $uriVariables
-     * @param array     $context
+     * @param array $uriVariables
+     * @param array $context
      * @return void
      */
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): ?Entretien
     {
         $entity = match ($data->id) {
             null => new \App\Entity\Entretien(),
@@ -55,7 +54,7 @@ readonly class EntretienProcessor implements ProcessorInterface
         if ($operation instanceof Delete) {
             $this->entretienRepository->remove($entity, true);
             $this->messageBus->dispatch(new RessourceCollectionModifieeMessage($data));
-            return;
+            return null;
         }
 
         //POST

@@ -33,6 +33,7 @@ readonly class ModificationEvenementMessageHandler
     public function __invoke(ModificationEvenementMessage $message): void
     {
         $event = $this->evenementRepository->find($message->getId());
+        $collectionTags = [];
         if (null !== $event) { //pas un delete, qui sera géré via dateOrigine
             $collectionTags = ['collection_evenements_' . $event->getDebut()->format('Y-m-d')];
         }

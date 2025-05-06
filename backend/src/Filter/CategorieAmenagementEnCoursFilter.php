@@ -25,11 +25,11 @@ class CategorieAmenagementEnCoursFilter extends AbstractFilter
 
     protected const string PROPERTY = 'categorie';
 
-    public function __construct(private UtilisateurAmenagementEnCoursFilterHelper $helper,
-                                ManagerRegistry                                   $managerRegistry,
-                                ?LoggerInterface                                  $logger = null,
-                                ?array                                            $properties = null,
-                                ?NameConverterInterface                           $nameConverter = null)
+    public function __construct(private readonly UtilisateurAmenagementEnCoursFilterHelper $helper,
+                                ManagerRegistry                                            $managerRegistry,
+                                ?LoggerInterface                                           $logger = null,
+                                ?array                                                     $properties = null,
+                                ?NameConverterInterface                                    $nameConverter = null)
     {
         parent::__construct($managerRegistry, $logger, $properties, $nameConverter);
     }
@@ -42,7 +42,6 @@ class CategorieAmenagementEnCoursFilter extends AbstractFilter
 
         $this->helper->ajouterJointuresCategories($queryBuilder, $queryNameGenerator, $value);
 
-        return;
     }
 
     public function getDescription(string $resourceClass): array

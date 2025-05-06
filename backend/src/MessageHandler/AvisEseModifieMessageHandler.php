@@ -29,7 +29,7 @@ class AvisEseModifieMessageHandler
 
     }
 
-    public function __invoke(AvisEseModifieMessage $message)
+    public function __invoke(AvisEseModifieMessage $message): void
     {
         /**
          * On doit recalculer l'état de décision d'aménagement pour la période correspondante

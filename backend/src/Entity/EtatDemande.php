@@ -26,8 +26,8 @@ class EtatDemande
     public const int PROFIL_VALIDE = 6;
     public const int ATTENTE_COMMISSION = 7;
     public const int NON_CONFORME = 8;
-    public const ATTENTE_VALIDATION_CHARTE = 9;
-    public const ATTENTE_VALIDATION_ACCOMPAGNEMENT = 10;
+    public const int ATTENTE_VALIDATION_CHARTE = 9;
+    public const int ATTENTE_VALIDATION_ACCOMPAGNEMENT = 10;
 
     #[ORM\Id]
     #[ORM\Column]

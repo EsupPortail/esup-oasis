@@ -25,7 +25,7 @@ class AmenagementModifieMessage
     protected Utilisateur $beneficiaire;
     protected bool $isExamens;
 
-    public function __construct(private Amenagement $amenagement)
+    public function __construct(private readonly Amenagement $amenagement)
     {
         $this->beneficiaire = $amenagement->getBeneficiaires()->current()->getUtilisateur();
         $this->isExamens = $this->amenagement->getType()->isExamens();

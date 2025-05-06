@@ -38,6 +38,7 @@ readonly class DecisionAmenagementEditionNormalizer implements NormalizerInterfa
      * @param string|null $format
      * @param array $context
      * @return array
+     * @noinspection PhpParameterNameChangedDuringInheritanceInspection
      */
     public function normalize(mixed $object, ?string $format = null, array $context = []): array
     {

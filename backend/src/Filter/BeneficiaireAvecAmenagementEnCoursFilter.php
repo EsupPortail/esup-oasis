@@ -15,6 +15,7 @@ namespace App\Filter;
 use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\OpenApi\Model\Parameter;
 use App\ApiResource\Utilisateur;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Clock\ClockAwareTrait;
@@ -29,6 +30,7 @@ class BeneficiaireAvecAmenagementEnCoursFilter extends AbstractFilter
 
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
     {
+        /** @noinspection PhpStrictComparisonWithOperandsOfDifferentTypesInspection */
         if (!$operation->getClass() === Utilisateur::class || $property !== self::PROPERTY) {
             return;
         }
@@ -55,11 +57,11 @@ class BeneficiaireAvecAmenagementEnCoursFilter extends AbstractFilter
                 'type' => Type::BUILTIN_TYPE_BOOL,
                 'required' => false,
                 'is_collection' => false,
-                'openapi' => [
-                    'description' => self::class,
-                    'name' => self::class,
-                    'type' => 'bool',
-                ],
+                'openapi' => new Parameter(
+                    name: self::class,
+                    in: 'query',
+                    description: self::class,
+                ),
             ],
         ];
     }

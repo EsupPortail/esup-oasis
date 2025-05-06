@@ -13,6 +13,8 @@
 namespace App\Entity;
 
 use App\Repository\PeriodeRHRepository;
+use DateTime;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -27,19 +29,19 @@ class PeriodeRH
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $debut = null;
+    private ?DateTimeInterface $debut = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $fin = null;
+    private ?DateTimeInterface $fin = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $butoir = null;
+    private ?DateTimeInterface $butoir = null;
 
     #[ORM\OneToMany(mappedBy: 'periodePriseEnCompteRH', targetEntity: Evenement::class)]
     private Collection $evenements;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $dateEnvoi = null;
+    private ?DateTimeInterface $dateEnvoi = null;
 
     #[ORM\ManyToOne]
     private ?Utilisateur $utilisateurEnvoi = null;
@@ -58,38 +60,38 @@ class PeriodeRH
         return $this->id;
     }
 
-    public function getDebut(): ?\DateTimeInterface
+    public function getDebut(): ?DateTimeInterface
     {
         return $this->debut;
     }
 
-    public function setDebut(\DateTimeInterface $debut): self
+    public function setDebut(DateTimeInterface $debut): self
     {
-        $this->debut = $debut;
+        $this->debut = DateTime::createFromInterface($debut);
 
         return $this;
     }
 
-    public function getFin(): ?\DateTimeInterface
+    public function getFin(): ?DateTimeInterface
     {
         return $this->fin;
     }
 
-    public function setFin(\DateTimeInterface $fin): self
+    public function setFin(DateTimeInterface $fin): self
     {
-        $this->fin = $fin;
+        $this->fin = DateTime::createFromInterface($fin);
 
         return $this;
     }
 
-    public function getButoir(): ?\DateTimeInterface
+    public function getButoir(): ?DateTimeInterface
     {
         return $this->butoir;
     }
 
-    public function setButoir(\DateTimeInterface $butoir): self
+    public function setButoir(DateTimeInterface $butoir): self
     {
-        $this->butoir = $butoir;
+        $this->butoir = DateTime::createFromInterface($butoir);
 
         return $this;
     }
@@ -124,14 +126,17 @@ class PeriodeRH
         return $this;
     }
 
-    public function getDateEnvoi(): ?\DateTimeInterface
+    public function getDateEnvoi(): ?DateTimeInterface
     {
         return $this->dateEnvoi;
     }
 
-    public function setDateEnvoi(?\DateTimeInterface $dateEnvoi): self
+    public function setDateEnvoi(?DateTimeInterface $dateEnvoi): self
     {
-        $this->dateEnvoi = $dateEnvoi;
+        $this->dateEnvoi = match ($dateEnvoi) {
+            null => null,
+            default => DateTime::createFromInterface($dateEnvoi)
+        };
 
         return $this;
     }

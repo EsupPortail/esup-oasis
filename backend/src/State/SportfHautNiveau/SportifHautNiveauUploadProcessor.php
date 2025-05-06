@@ -23,24 +23,24 @@ use App\State\TransformerService;
 use Exception;
 use Symfony\Component\HttpFoundation\File\File;
 
-class SportifHautNiveauUploadProcessor implements ProcessorInterface
+readonly class SportifHautNiveauUploadProcessor implements ProcessorInterface
 {
-    public function __construct(private readonly StorageProviderInterface    $storageProvider,
-                                private readonly FichierRepository           $fichierRepository,
-                                private readonly SportifHautNiveauRepository $sportifHautNiveauRepository,
-                                private readonly TransformerService          $transformerService)
+    public function __construct(private StorageProviderInterface    $storageProvider,
+                                private FichierRepository           $fichierRepository,
+                                private SportifHautNiveauRepository $sportifHautNiveauRepository,
+                                private TransformerService          $transformerService)
     {
     }
 
     /**
      * @param SportifHautNiveau $data
-     * @param Operation         $operation
-     * @param array             $uriVariables
-     * @param array             $context
+     * @param Operation $operation
+     * @param array $uriVariables
+     * @param array $context
      * @return ListeSportifsHautNiveau
      * @throws Exception
      */
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): ListeSportifsHautNiveau
     {
         $fichier = $this->fichierRepository->find($data->telechargement->id);
         $contenu = $this->storageProvider->get($fichier->getMetadata());

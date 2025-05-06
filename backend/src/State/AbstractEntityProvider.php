@@ -12,9 +12,11 @@
 
 namespace App\State;
 
-use ApiPlatform\Exception\ItemNotFoundException;
+use ApiPlatform\Doctrine\Orm\State\Options;
 use ApiPlatform\Metadata\CollectionOperationInterface;
+use ApiPlatform\Metadata\Exception\ItemNotFoundException;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\Pagination\PaginatorInterface;
 use ApiPlatform\State\Pagination\TraversablePaginator;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\PeriodeRH;
@@ -41,6 +43,9 @@ abstract class AbstractEntityProvider extends AbstractTransformer implements Pro
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
+        $stateOptions = $operation->getStateOptions();
+        assert(null == $stateOptions || $stateOptions instanceof Options);
+
         if ($operation instanceof CollectionOperationInterface) {
 
             if (array_key_exists('postfiltrage', $context) && $context['postfiltrage'] === true) {
@@ -52,11 +57,11 @@ abstract class AbstractEntityProvider extends AbstractTransformer implements Pro
             if ($pagination = (($operation->getPaginationEnabled() ?? false) || array_key_exists('page', $context['filters'] ?? []))) {
                 $itemsPerPage = (int)$context['filters']['itemsPerPage'] ?? 30;
                 $page = $context['filters']['page'] ?? 1;
-                $first = (($page - 1) * $itemsPerPage);
+//                $first = (($page - 1) * $itemsPerPage);
             }
 
             $data = $this->collectionProvider->provide(
-                $operation->withClass($operation->getStateOptions()?->getEntityClass() ?? $operation->getClass()),
+                $operation->withClass($stateOptions?->getEntityClass() ?? $operation->getClass()),
                 $uriVariables,
                 $context);
 
@@ -73,13 +78,14 @@ abstract class AbstractEntityProvider extends AbstractTransformer implements Pro
 
             //On (re-)pagine si nécessaire!
             if ($pagination && !($postfiltrage ?? false)) {
+                assert($data instanceof PaginatorInterface);
                 return new TraversablePaginator(new ArrayIterator($processed), $data->getCurrentPage(), $data->getItemsPerPage(), $data->getTotalItems());
             }
             return $processed;
         }
 
         $data = $this->itemProvider->provide(
-            $operation->withClass($operation->getStateOptions()->getEntityClass()),
+            $operation->withClass($stateOptions->getEntityClass()),
             $uriVariables,
             $context
         );

@@ -24,9 +24,9 @@ final readonly class PeriodeManager
 {
     use ClockAwareTrait;
 
-    public function __construct(private readonly PeriodeRHRepository $periodeRepository,
-                                private readonly EvenementRepository $evenementRepository,
-                                private readonly Security            $security)
+    public function __construct(private PeriodeRHRepository $periodeRepository,
+                                private EvenementRepository $evenementRepository,
+                                private Security            $security)
     {
 
     }
@@ -108,7 +108,7 @@ final readonly class PeriodeManager
     /**
      * @param DateTimeInterface $debut
      * @param DateTimeInterface $fin
-     * @param bool              $versionFinanciere si oui, on se base sur la date de fin de la période
+     * @param bool $versionFinanciere si oui, on se base sur la date de fin de la période
      * @return PeriodeRHEntity[] la liste des périodes comprises entre les deux dates
      */
     public function periodesDansIntervalle(DateTimeInterface $debut, DateTimeInterface $fin, bool $versionFinanciere = false): array

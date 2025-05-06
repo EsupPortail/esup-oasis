@@ -35,14 +35,14 @@ readonly class MappedEntityProcessor
     }
 
     /**
-     * @param mixed     $data
+     * @param mixed $data
      * @param Operation $operation
-     * @param string    $entityClass
-     * @param array     $uriVariables
-     * @param array     $context
-     * @param ?callable $onCreation     Callback called on successful creation
+     * @param string $entityClass
+     * @param array $uriVariables
+     * @param array $context
+     * @param ?callable $onCreation Callback called on successful creation
      * @param ?callable $onModification Callback called on successful modification
-     * @param ?callable $onDeletion     Callback called on successful deletion
+     * @param ?callable $onDeletion Callback called on successful deletion
      * @return array|mixed|object|null
      * @throws ReflectionException
      * @noinspection PhpUnusedParameterInspection
@@ -103,7 +103,7 @@ readonly class MappedEntityProcessor
      * Ugly but works?
      *
      * @param object|string|null $entity
-     * @param array              $context
+     * @param array $context
      * @param                    $data
      * @return void
      * @throws ReflectionException
@@ -149,6 +149,7 @@ readonly class MappedEntityProcessor
 
     /**
      * @throws ReflectionException
+     * @deprecated
      */
     private function getApiResourceIdentifiers($data): array
     {
@@ -172,7 +173,7 @@ readonly class MappedEntityProcessor
      * @return array
      * @throws ReflectionException
      */
-    private function getEntityIdentifiers($data)
+    private function getEntityIdentifiers($data): array
     {
         $res = [];
         $reflectionClass = new ReflectionClass($data);

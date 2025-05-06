@@ -28,6 +28,7 @@ use App\State\TransformerService;
 use App\State\Utilisateur\UtilisateurManager;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Clock\ClockAwareTrait;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class InterventionForfaitProcessor implements ProcessorInterface
@@ -48,13 +49,14 @@ class InterventionForfaitProcessor implements ProcessorInterface
 
     /**
      * @param InterventionForfait $data
-     * @param Operation           $operation
-     * @param array               $uriVariables
-     * @param array               $context
-     * @return void
+     * @param Operation $operation
+     * @param array $uriVariables
+     * @param array $context
+     * @return InterventionForfait|null
      * @throws ErreurLdapException
+     * @throws ExceptionInterface
      */
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): ?InterventionForfait
     {
         if (null !== $data->id) {
             $entity = $this->repository->find($data->id);
@@ -69,7 +71,7 @@ class InterventionForfaitProcessor implements ProcessorInterface
         if ($operation instanceof Delete) {
             $this->repository->remove($entity, true);
             $this->messageBus->dispatch(new RessourceCollectionModifieeMessage($data));
-            return;
+            return null; //ou data?
         }
 
         $entity->setPeriode($this->periodeRHRepository->find($data->periode->id));

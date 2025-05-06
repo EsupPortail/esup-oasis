@@ -15,6 +15,7 @@ namespace App\Filter;
 use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\OpenApi\Model\Parameter;
 use App\Entity\AvisEse;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -61,7 +62,6 @@ class EtatAvisEseUtilisateurFilter extends AbstractFilter
 
         $addFilters($queryBuilder, $queryNameGenerator, $alias, $avisAlias, $fichierAlias, $nowParam);
 
-        return;
     }
 
     protected function addFilterAucun(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator,
@@ -103,11 +103,11 @@ class EtatAvisEseUtilisateurFilter extends AbstractFilter
                 'property' => self::PROPERTY,
                 'type' => Type::BUILTIN_TYPE_STRING,
                 'required' => false,
-                'openapi' => [
-                    'description' => 'Etat avis ESE',
-                    'name' => self::PROPERTY,
-                    'type' => 'string',
-                ],
+                'openapi' => new Parameter(
+                    name: self::PROPERTY,
+                    in: 'query',
+                    description: 'Etat avis ESE',
+                ),
             ],
         ];
     }

@@ -30,35 +30,35 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
-    operations            : [
+    operations: [
         new GetCollection(
             uriTemplate: self::COLLECTION_URI,
-            security   : "is_granted('" . \App\Entity\Utilisateur::ROLE_GESTIONNAIRE . "')",
+            security: "is_granted('" . \App\Entity\Utilisateur::ROLE_GESTIONNAIRE . "')",
         ),
         new Post(
             uriTemplate: self::COLLECTION_URI,
-            security   : "is_granted('" . \App\Entity\Utilisateur::ROLE_GESTIONNAIRE . "')",
+            security: "is_granted('" . \App\Entity\Utilisateur::ROLE_GESTIONNAIRE . "')",
         ),
         new Get(
-            uriTemplate : self::ITEM_URI,
+            uriTemplate: self::ITEM_URI,
             uriVariables: ['id'],
-            security    : "is_granted('" . \App\Entity\Utilisateur::ROLE_GESTIONNAIRE . "')",
+            security: "is_granted('" . \App\Entity\Utilisateur::ROLE_GESTIONNAIRE . "')",
         ),
         new Delete(
-            uriTemplate : self::ITEM_URI,
+            uriTemplate: self::ITEM_URI,
             uriVariables: ['id'],
-            security    : "object.getUid() == user.getUid()",
+            security: "object.getUid() == user.getUid()",
         ),
     ],
-    cacheHeaders          : [
+    cacheHeaders: [
         'public' => false,
     ],
-    normalizationContext  : ['groups' => [self::GROUP_OUT]],
+    normalizationContext: ['groups' => [self::GROUP_OUT]],
     denormalizationContext: ['groups' => [self::GROUP_IN]],
-    openapi               : new Operation(tags: ['Suivis'], description: 'Bilan activite'),
-    provider              : BilanActiviteProvider::class,
-    processor             : BilanActiviteProcessor::class,
-    stateOptions          : new Options(entityClass: Bilan::class)
+    openapi: new Operation(tags: ['Suivis'], description: 'Bilan activite'),
+    provider: BilanActiviteProvider::class,
+    processor: BilanActiviteProcessor::class,
+    stateOptions: new Options(entityClass: Bilan::class)
 )]
 #[ApiFilter(OrderFilter::class, properties: ['dateDemande'])]
 #[ApiFilter(NestedUtilisateurFilter::class, properties: ['demandeur' => 'demandeur'])]
@@ -75,10 +75,10 @@ class BilanActivite
     #[Groups([self::GROUP_OUT])]
     public Utilisateur $demandeur;
 
-    #[Assert\NotNull()]
+    #[Assert\NotNull]
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
     public DateTimeInterface $debut;
-    #[Assert\NotNull()]
+    #[Assert\NotNull]
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
     public DateTimeInterface $fin;
 

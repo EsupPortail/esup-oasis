@@ -15,6 +15,7 @@ namespace App\Filter;
 use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\OpenApi\Model\Parameter;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\PropertyInfo\Type;
@@ -29,21 +30,21 @@ class IntervenantDisponibleFilter extends AbstractFilter
                 'property' => 'creneau',
                 'type' => Type::BUILTIN_TYPE_STRING,
                 'required' => false,
-                'openapi' => [
-                    'description' => 'début du créneau',
-                    'name' => 'creneau',
-                    'type' => 'string',
-                ],
+                'openapi' => new Parameter(
+                    name: 'creneau',
+                    in: 'query',
+                    description: 'début du créneau',
+                ),
             ],
             'creneau[fin]' => [
                 'property' => 'creneau',
                 'type' => Type::BUILTIN_TYPE_STRING,
                 'required' => false,
-                'openapi' => [
-                    'description' => 'fin du créneau',
-                    'name' => 'creneau',
-                    'type' => 'string',
-                ],
+                'openapi' => new Parameter(
+                    name: 'creneau',
+                    in: 'query',
+                    description: 'fin du créneau',
+                ),
             ],
         ];
     }

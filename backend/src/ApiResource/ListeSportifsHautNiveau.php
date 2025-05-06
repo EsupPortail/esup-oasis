@@ -22,22 +22,22 @@ use Symfony\Component\Serializer\Attribute\Ignore;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
-    operations          : [
+    operations: [
         new Put(
-            uriTemplate           : SportifHautNiveau::COLLECTION_URI,
+            uriTemplate: SportifHautNiveau::COLLECTION_URI,
             denormalizationContext: ['groups' => [self::GROUP_IN]],
-            security              : "is_granted('ROLE_ADMIN')",
-            processor             : SportifHautNiveauUploadProcessor::class,
-            extraProperties       : ['standard_put' => true],
-            allowCreate           : true
+            security: "is_granted('ROLE_ADMIN')",
+            processor: SportifHautNiveauUploadProcessor::class,
+            extraProperties: ['standard_put' => true],
+            allowCreate: true
         ),
         new Get(
             uriTemplate: '/liste_sportifs_haut_niveau'
         ),
     ],
     normalizationContext: ['groups' => [self::GROUP_OUT]],
-    openapi             : new Operation(tags: ['Referentiel']),
-    security            : "is_granted('ROLE_ADMIN_TECHNIQUE')",
+    openapi: new Operation(tags: ['Referentiel']),
+    security: "is_granted('ROLE_ADMIN_TECHNIQUE')",
 )]
 class ListeSportifsHautNiveau
 {
@@ -54,6 +54,6 @@ class ListeSportifsHautNiveau
     public array $sportifs;
 
     #[Groups([self::GROUP_IN])]
-    #[Assert\NotNull()]
+    #[Assert\NotNull]
     public ?Telechargement $telechargement = null;
 }

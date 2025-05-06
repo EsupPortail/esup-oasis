@@ -15,7 +15,6 @@ namespace App\MessageHandler;
 use App\Entity\EtatDemande;
 use App\Message\DemandeProfilValideMessage;
 use App\Repository\ProfilBeneficiaireRepository;
-use App\Service\MailService;
 use App\State\Demande\DemandeManager;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -28,7 +27,7 @@ readonly class DemandeProfilValideMessageHandler
 
     }
 
-    public function __invoke(DemandeProfilValideMessage $message)
+    public function __invoke(DemandeProfilValideMessage $message): void
     {
         /**
          * Si charte liée, création + ATTENTE_VALIDATION_CHARTE
@@ -38,30 +37,30 @@ readonly class DemandeProfilValideMessageHandler
         if ($profil->getChartes()->count() > 0) {
             $this->demandeManager->ajouterChartes($demande);
             $this->demandeManager->modifierDemande(
-                demande    : $demande,
-                idEtat     : EtatDemande::ATTENTE_VALIDATION_CHARTE,
+                demande: $demande,
+                idEtat: EtatDemande::ATTENTE_VALIDATION_CHARTE,
                 commentaire: $message->getCommentaire(),
-                profilId   : $message->getIdProfil(),
-                user       : $message->getUidUtilisateur()
+                profilId: $message->getIdProfil(),
+                user: $message->getUidUtilisateur()
             );
         } else {
             $avecAccompagnement = $this->demandeManager->demandeAvecAccompagnement($demande);
             if ($avecAccompagnement) {
                 //on passe à l'état "attente de validation accompagnement"
                 $this->demandeManager->modifierDemande(
-                    demande    : $demande,
-                    idEtat     : EtatDemande::ATTENTE_VALIDATION_ACCOMPAGNEMENT,
+                    demande: $demande,
+                    idEtat: EtatDemande::ATTENTE_VALIDATION_ACCOMPAGNEMENT,
                     commentaire: $message->getCommentaire(),
-                    profilId   : $message->getIdProfil(),
-                    user       : $message->getUidUtilisateur()
+                    profilId: $message->getIdProfil(),
+                    user: $message->getUidUtilisateur()
                 );
             } else {
                 $this->demandeManager->modifierDemande(
-                    demande    : $demande,
-                    idEtat     : EtatDemande::VALIDEE,
+                    demande: $demande,
+                    idEtat: EtatDemande::VALIDEE,
                     commentaire: $message->getCommentaire(),
-                    profilId   : $message->getIdProfil(),
-                    user       : $message->getUidUtilisateur()
+                    profilId: $message->getIdProfil(),
+                    user: $message->getUidUtilisateur()
                 );
             }
         }

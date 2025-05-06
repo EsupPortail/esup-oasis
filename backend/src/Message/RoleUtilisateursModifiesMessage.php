@@ -12,13 +12,13 @@
 
 namespace App\Message;
 
-class RoleUtilisateursModifiesMessage
+readonly class RoleUtilisateursModifiesMessage
 {
 
     /**
      * @param string $role
      */
-    public function __construct(private readonly string $role)
+    public function __construct(private string $role)
     {
     }
 

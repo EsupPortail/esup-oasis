@@ -30,6 +30,12 @@ readonly class HtmlToPdfConverter
 
     /**
      * @param string $htmlContent
+     * @param string|null $header
+     * @param string|null $footer
+     * @param int $marginTop
+     * @param int $marginBottom
+     * @param int $marginLeft
+     * @param int $marginRight
      * @return string
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
@@ -40,8 +46,8 @@ readonly class HtmlToPdfConverter
                             int    $marginTop = 0, int $marginBottom = 0, int $marginLeft = 0, int $marginRight = 0): string
     {
         $response = $this->client->request(
-            method : 'POST',
-            url    : $this->apiUri . '/connect',
+            method: 'POST',
+            url: $this->apiUri . '/connect',
             options: [
                 'json' => ['appId' => $this->appId, 'apiKey' => $this->apiKey],
             ]
@@ -68,8 +74,8 @@ readonly class HtmlToPdfConverter
         }
 
         $response = $this->client->request(
-            method : 'POST',
-            url    : $this->apiUri . '/conversions',
+            method: 'POST',
+            url: $this->apiUri . '/conversions',
             options: [
                 'json' => $json,
                 'headers' => [

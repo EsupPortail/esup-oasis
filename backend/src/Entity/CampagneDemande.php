@@ -13,6 +13,7 @@
 namespace App\Entity;
 
 use App\Repository\CampagneDemandeRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -87,7 +88,7 @@ class CampagneDemande
 
     public function setDebut(DateTimeInterface $debut): static
     {
-        $this->debut = $debut;
+        $this->debut = DateTime::createFromInterface($debut);
 
         return $this;
     }
@@ -99,7 +100,7 @@ class CampagneDemande
 
     public function setFin(DateTimeInterface $fin): static
     {
-        $this->fin = $fin;
+        $this->fin = DateTime::createFromInterface($fin);
 
         return $this;
     }
@@ -165,7 +166,10 @@ class CampagneDemande
 
     public function setDateCommission(?DateTimeInterface $dateCommission): static
     {
-        $this->dateCommission = $dateCommission;
+        $this->dateCommission = match ($dateCommission) {
+            null => null,
+            default => DateTime::createFromInterface($dateCommission)
+        };
 
         return $this;
     }
@@ -213,7 +217,10 @@ class CampagneDemande
 
     public function setDateArchivage(?DateTimeInterface $dateArchivage): static
     {
-        $this->dateArchivage = $dateArchivage;
+        $this->dateArchivage = match ($dateArchivage) {
+            null => null,
+            default => DateTime::createFromInterface($dateArchivage)
+        };
 
         return $this;
     }

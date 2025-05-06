@@ -12,11 +12,9 @@
 
 namespace App\Message;
 
-use App\ApiResource\ProfilBeneficiaire;
 use App\Entity\Demande;
 use App\Entity\TypeDemande;
 use App\Entity\Utilisateur;
-use App\Repository\DemandeRepository;
 use App\State\Demande\DemandeManager;
 
 abstract class AbstractEtatDemandeMessage

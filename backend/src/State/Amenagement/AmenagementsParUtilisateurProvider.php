@@ -158,6 +158,5 @@ class AmenagementsParUtilisateurProvider extends AbstractEntityProvider
 
     public function registerTransformations(): void
     {
-        return;
     }
 }

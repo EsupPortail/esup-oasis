@@ -17,7 +17,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[AsMessageHandler(handles: RoleUtilisateursModifiesMessage::class)]
-class RoleUtilisateursModifiesMessageHandler
+readonly class RoleUtilisateursModifiesMessageHandler
 {
     public function __construct(private TagAwareCacheInterface $cache)
     {

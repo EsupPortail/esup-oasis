@@ -15,10 +15,7 @@ namespace App\State\Demande;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\ApiResource\Demande;
-use App\Message\EtatDemandeModifieMessage;
 use App\Message\RessourceModifieeMessage;
-use App\Repository\DemandeRepository;
-use App\Repository\EtatDemandeRepository;
 use App\State\TransformerService;
 use Exception;
 use Override;
@@ -35,24 +32,20 @@ readonly class PatchDemandeProcessor implements ProcessorInterface
     }
 
     /**
-     * @param Demande   $data
-     * @param Operation $operation
-     * @param array     $uriVariables
-     * @param array     $context
-     * @return void
+     * @param Demande $data
      * @throws Exception
      */
-    #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Demande
     {
         //soit changement d'état, soit simple commentaire
         $demande = $this->demandeManager->getDemande($data->id);
         if ($demande->getEtat()->getId() !== $data->etat->id) {
             $demande = $this->demandeManager->modifierDemande(
-                demande    : $demande,
-                idEtat     : $data->etat->id,
+                demande: $demande,
+                idEtat: $data->etat->id,
                 commentaire: $data->commentaireChangementEtat,
-                profilId   : $data->profilAttribue?->id,
-                user       : $this->security->getUser()
+                profilId: $data->profilAttribue?->id,
+                user: $this->security->getUser()
             );
         } else {
             $this->demandeManager->ajouterCommentaire($demande, $data->commentaire);

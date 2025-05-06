@@ -15,7 +15,6 @@ namespace App\Message;
 use App\Entity\AvisEse;
 use App\Entity\Utilisateur;
 use App\Util\AnneeUniversitaireAwareTrait;
-use DateTimeImmutable;
 
 class AvisEseModifieMessage
 {

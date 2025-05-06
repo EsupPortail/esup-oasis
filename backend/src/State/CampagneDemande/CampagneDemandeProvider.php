@@ -12,6 +12,7 @@
 
 namespace App\State\CampagneDemande;
 
+use ApiPlatform\Metadata\HttpOperation;
 use ApiPlatform\Metadata\Operation;
 use App\ApiResource\CampagneDemande;
 use App\ApiResource\Commission;
@@ -26,6 +27,7 @@ class CampagneDemandeProvider extends AbstractEntityProvider
         unset($uriVariables['typeId']);
         unset($context['uri_variables']['typeId']);
 
+        assert($operation instanceof HttpOperation);
         $operationUriVariables = [$operation->getUriVariables()['id'] ?? null];
 
         return parent::provide($operation->withUriVariables($operationUriVariables), $uriVariables, $context);

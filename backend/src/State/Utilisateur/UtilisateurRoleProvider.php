@@ -13,12 +13,8 @@
 namespace App\State\Utilisateur;
 
 use ApiPlatform\Metadata\Operation;
-use ApiPlatform\State\Pagination\ArrayPaginator;
 use ApiPlatform\State\ProviderInterface;
-use App\Repository\UtilisateurRepository;
 use App\Service\ErreurLdapException;
-use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 readonly class UtilisateurRoleProvider implements ProviderInterface
 {
@@ -29,8 +25,8 @@ readonly class UtilisateurRoleProvider implements ProviderInterface
 
     /**
      * @param Operation $operation
-     * @param array     $uriVariables
-     * @param array     $context
+     * @param array $uriVariables
+     * @param array $context
      * @return object|array|null
      * @throws ErreurLdapException
      */
@@ -39,5 +35,5 @@ readonly class UtilisateurRoleProvider implements ProviderInterface
         $context['filters']['role'] = $uriVariables['roleId'];
         return $this->utilisateurProvider->provide($operation, [], $context);
     }
-    
+
 }

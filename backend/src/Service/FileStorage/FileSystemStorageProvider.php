@@ -16,8 +16,9 @@ use Exception;
 use Override;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class FileSystemStorageProvider implements StorageProviderInterface
+readonly class FileSystemStorageProvider implements StorageProviderInterface
 {
 
     function __construct(private string $basePath)
@@ -25,7 +26,7 @@ class FileSystemStorageProvider implements StorageProviderInterface
 
     }
 
-    #[Override] public function copy(File $file): array
+    #[Override] public function copy(UploadedFile $file): array
     {
         if (!file_exists($file->getRealPath())) {
             throw new FileNotFoundException();
@@ -39,7 +40,7 @@ class FileSystemStorageProvider implements StorageProviderInterface
         return new File($metadata['cheminComplet']);
     }
 
-    public function delete(array $metadata)
+    public function delete(array $metadata): void
     {
         if (file_exists($metadata['cheminComplet'] ?? '')) {
             unlink($metadata['cheminComplet']);

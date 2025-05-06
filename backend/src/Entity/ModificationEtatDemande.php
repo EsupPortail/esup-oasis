@@ -13,6 +13,8 @@
 namespace App\Entity;
 
 use App\Repository\ModificationEtatDemandeRepository;
+use DateTime;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -46,7 +48,7 @@ class ModificationEtatDemande
     private ?ProfilBeneficiaire $profil = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $dateModification = null;
+    private ?DateTimeInterface $dateModification = null;
 
     public function getId(): ?int
     {
@@ -125,14 +127,14 @@ class ModificationEtatDemande
         return $this;
     }
 
-    public function getDateModification(): ?\DateTimeInterface
+    public function getDateModification(): ?DateTimeInterface
     {
         return $this->dateModification;
     }
 
-    public function setDateModification(\DateTimeInterface $dateModification): static
+    public function setDateModification(DateTimeInterface $dateModification): static
     {
-        $this->dateModification = $dateModification;
+        $this->dateModification = DateTime::createFromInterface($dateModification);
 
         return $this;
     }

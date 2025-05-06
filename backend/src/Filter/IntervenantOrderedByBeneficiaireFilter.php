@@ -16,6 +16,7 @@ use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\IriConverterInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\OpenApi\Model\Parameter;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -69,11 +70,11 @@ class IntervenantOrderedByBeneficiaireFilter extends AbstractFilter
                 'property' => 'beneficiaire',
                 'type' => Type::BUILTIN_TYPE_STRING,
                 'required' => false,
-                'openapi' => [
-                    'description' => 'IRI utilisateur du beneficiaire concerné',
-                    'name' => 'beneficiaire',
-                    'type' => 'string',
-                ],
+                'openapi' => new Parameter(
+                    name: 'beneficiaire',
+                    in: 'query',
+                    description: 'IRI utilisateur du beneficiaire concerné',
+                ),
             ],
         ];
     }

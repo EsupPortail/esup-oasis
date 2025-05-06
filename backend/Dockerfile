@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:builder-php8.3 AS builder
+FROM dunglas/frankenphp:builder-php8.4 AS builder
 COPY --from=caddy:builder /usr/bin/xcaddy /usr/bin/xcaddy
 
 RUN apt-get update && apt-get install --no-install-recommends -y git
@@ -14,7 +14,7 @@ RUN xcaddy build \
     --with github.com/darkweak/souin/plugins/caddy \
     --with github.com/darkweak/storages/otter/caddy
 
-FROM dunglas/frankenphp:php8.3 AS frankenphp_upstream
+FROM dunglas/frankenphp:php8.4 AS frankenphp_upstream
 COPY --from=builder --link /usr/local/bin/frankenphp /usr/local/bin/frankenphp
 
 #force non-https

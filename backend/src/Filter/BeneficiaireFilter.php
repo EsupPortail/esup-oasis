@@ -26,8 +26,9 @@ class BeneficiaireFilter extends AbstractFilter
 
     protected function filterProperty(string                      $property, $value, QueryBuilder $queryBuilder,
                                       QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass,
-                                      ?Operation                   $operation = null, array $context = []): void
+                                      ?Operation                  $operation = null, array $context = []): void
     {
+        /** @noinspection PhpStrictComparisonWithOperandsOfDifferentTypesInspection */
         if (!$operation->getClass() === Utilisateur::class || $property !== 'beneficiairefilter') {
             return;
         }

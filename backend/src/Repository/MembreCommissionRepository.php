@@ -28,7 +28,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
  */
 class MembreCommissionRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, private MessageBusInterface $messageBus)
+    public function __construct(ManagerRegistry $registry, private readonly MessageBusInterface $messageBus)
     {
         parent::__construct($registry, MembreCommission::class);
     }

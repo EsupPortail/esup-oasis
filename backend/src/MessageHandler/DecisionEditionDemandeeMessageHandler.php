@@ -83,9 +83,9 @@ readonly class DecisionEditionDemandeeMessageHandler
             $dateEnvoi = $this->now();
             $description = "Décision d'aménagements au " . $dateEnvoi->format('d/m/Y');
             $metadata = $this->storageProvider->store(
-                contents   : $pdf,
-                filename   : $filename,
-                mimeType   : $mimeType,
+                contents: $pdf,
+                filename: $filename,
+                mimeType: $mimeType,
                 description: $description
             );
             $fichier = new Fichier();
@@ -101,7 +101,7 @@ readonly class DecisionEditionDemandeeMessageHandler
             $pieceJointe->setDateDepot($dateEnvoi);
             $pieceJointe->setLibelle($description);
             $this->pieceJointeBeneficiaireRepository->save($pieceJointe, true);
-        } catch (Exception $e) {
+        } catch (Exception) {
             $this->logger->error('Erreur d\'enregistrement de la copie pdf de la décision');
         }
 

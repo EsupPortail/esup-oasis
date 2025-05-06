@@ -62,7 +62,7 @@ class Utilisateur implements UserInterface
     private ?string $prenom = null;
 
     #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: Beneficiaire::class,
-                    cascade : ['persist', 'remove'], orphanRemoval: true)]
+        cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(["debut" => "DESC"])]
     private Collection $beneficiaires;
 
@@ -121,7 +121,7 @@ class Utilisateur implements UserInterface
     private Collection $fichiers;
 
     #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: MembreCommission::class,
-                    cascade : ['persist'], orphanRemoval: true)]
+        cascade: ['persist'], orphanRemoval: true)]
     private Collection $membreCommissions;
 
     #[ORM\Column(length: 1, nullable: true)]
@@ -835,7 +835,6 @@ class Utilisateur implements UserInterface
      */
     public function getTagsActifs(): array
     {
-        $now = $this->now();
         $tags = [];
         foreach ($this->getBeneficiairesActifs() as $beneficiaire) {
             foreach ($beneficiaire->getTags() as $tag) {

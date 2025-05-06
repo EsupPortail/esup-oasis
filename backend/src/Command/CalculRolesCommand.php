@@ -22,10 +22,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[AsCommand(
-    name       : 'app:calcul-roles',
+    name: 'app:calcul-roles',
     description: 'Initialisation de la version stockée du champ calculé roles des utilisateurs',
 )]
 class CalculRolesCommand extends Command

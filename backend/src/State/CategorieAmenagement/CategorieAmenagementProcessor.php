@@ -17,20 +17,20 @@ use ApiPlatform\State\ProcessorInterface;
 use App\Entity\CategorieAmenagement;
 use App\State\MappedEntityProcessor;
 
-class CategorieAmenagementProcessor implements ProcessorInterface
+readonly class CategorieAmenagementProcessor implements ProcessorInterface
 {
 
-    function __construct(private readonly MappedEntityProcessor $processor)
+    function __construct(private MappedEntityProcessor $processor)
     {
     }
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
     {
         return $this->processor->process(
-            data        : $data,
-            operation   : $operation,
-            entityClass : CategorieAmenagement::class,
+            data: $data,
+            operation: $operation,
+            entityClass: CategorieAmenagement::class,
             uriVariables: $uriVariables,
-            context     : $context);
+            context: $context);
     }
 }

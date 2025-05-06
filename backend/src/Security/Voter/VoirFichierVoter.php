@@ -27,7 +27,7 @@ class VoirFichierVoter extends Voter
 {
     use VoirDemandeTrait;
 
-    public function __construct(private Security                    $security,
+    public function __construct(private readonly Security           $security,
                                 private readonly FichierRepository  $fichierRepository,
                                 private readonly TransformerService $transformerService)
     {
@@ -39,8 +39,8 @@ class VoirFichierVoter extends Voter
     }
 
     /**
-     * @param string         $attribute
-     * @param Fichier        $subject
+     * @param string $attribute
+     * @param Fichier $subject
      * @param TokenInterface $token
      * @return bool
      */

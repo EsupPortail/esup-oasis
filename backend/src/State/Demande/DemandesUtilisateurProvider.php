@@ -14,10 +14,11 @@ namespace App\State\Demande;
 
 use ApiPlatform\Metadata\Operation;
 use App\ApiResource\Utilisateur;
+use Override;
 
 class DemandesUtilisateurProvider extends DemandeProvider
 {
-    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
+    #[Override] public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
         $context['filters']['demandeur'] = Utilisateur::COLLECTION_URI . '/' . $uriVariables['uid'];
 

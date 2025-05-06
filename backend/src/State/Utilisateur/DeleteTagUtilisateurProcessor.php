@@ -40,7 +40,7 @@ readonly class DeleteTagUtilisateurProcessor implements ProcessorInterface
      * @param array $context
      * @return void
      */
-    #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): void
     {
         $utilisateur = $this->utilisateurManager->parUid($data->uid);
         $tag = $this->tagRepository->find($data->id);

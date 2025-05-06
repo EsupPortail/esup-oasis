@@ -39,13 +39,9 @@ readonly class TelechargementProcessor implements ProcessorInterface
 
     /**
      * @param Telechargement $data
-     * @param Operation $operation
-     * @param array $uriVariables
-     * @param array $context
-     * @return mixed
      * @throws Exception
      */
-    #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
+    #[Override] public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Telechargement
     {
         //On envoie le fichier sur le stockage
         $metadata = $this->storageProvider->copy($data->file);

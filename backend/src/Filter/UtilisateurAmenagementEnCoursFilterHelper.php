@@ -14,6 +14,7 @@ namespace App\Filter;
 
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\IriConverterInterface;
+use ApiPlatform\OpenApi\Model\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\PropertyInfo\Type;
@@ -25,7 +26,7 @@ class UtilisateurAmenagementEnCoursFilterHelper implements ResetInterface
 
     private array $joins = [];
 
-    public function __construct(private readonly IriConverterInterface $iriConverter,)
+    public function __construct(private readonly IriConverterInterface $iriConverter)
     {
     }
 
@@ -53,7 +54,7 @@ class UtilisateurAmenagementEnCoursFilterHelper implements ResetInterface
         );
     }
 
-    public function getDescription(string $property)
+    public function getDescription(string $property): array
     {
         return [
             $property => [
@@ -61,22 +62,22 @@ class UtilisateurAmenagementEnCoursFilterHelper implements ResetInterface
                 'type' => Type::BUILTIN_TYPE_STRING,
                 'required' => false,
                 'is_collection' => false,
-                'openapi' => [
-                    'description' => $property,
-                    'name' => $property,
-                    'type' => 'string',
-                ],
+                'openapi' => new Parameter(
+                    name: $property,
+                    in: 'query',
+                    description: $property,
+                ),
             ],
             $property . '[]' => [
                 'property' => $property,
                 'type' => Type::BUILTIN_TYPE_STRING,
                 'required' => false,
                 'is_collection' => true,
-                'openapi' => [
-                    'description' => $property,
-                    'name' => $property,
-                    'type' => 'string',
-                ],
+                'openapi' => new Parameter(
+                    name: $property,
+                    in: 'query',
+                    description: $property,
+                ),
             ],
 
         ];
@@ -142,7 +143,7 @@ class UtilisateurAmenagementEnCoursFilterHelper implements ResetInterface
         return $this->joins['type'];
     }
 
-    public function ajouterJointuresDomaine(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, $value, $property)
+    public function ajouterJointuresDomaine(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, $value, $property): void
     {
         $typeAlias = $this->ajouterJointuresType($queryBuilder, $queryNameGenerator);
         $domaineParam = $queryNameGenerator->generateParameterName('domaine');

@@ -21,14 +21,14 @@ class PhotoNormalizer implements NormalizerInterface
 {
 
     /**
-     * @param Photo       $object
+     * @param Photo $data
      * @param string|null $format
-     * @param array       $context
+     * @param array $context
      * @return array|string|int|float|bool|ArrayObject|null
      */
-    #[Override] public function normalize(mixed $object, ?string $format = null, array $context = []): array|string|int|float|bool|ArrayObject|null
+    #[Override] public function normalize(mixed $data, ?string $format = null, array $context = []): array|string|int|float|bool|ArrayObject|null
     {
-        return [$object->data];
+        return [$data->data];
     }
 
     #[Override] public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
