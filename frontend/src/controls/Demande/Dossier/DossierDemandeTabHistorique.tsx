@@ -71,7 +71,7 @@ export function DossierDemandeTabHistorique(): React.ReactElement {
                            <Space wrap>
                               <span>avec le profil</span>
                               <span>
-                                 <ProfilItem profil={histo.profil} />
+                                 <ProfilItem profil={histo.profil} className={"mt-0"} />
                               </span>
                            </Space>
                         </List.Item>

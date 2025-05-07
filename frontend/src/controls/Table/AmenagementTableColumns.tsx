@@ -52,16 +52,16 @@ export function amenagementTableColumns(props: {
                onClick: () => {
                   if (!props.isGestionnaire) return;
                   props.navigate(
-                     (record.beneficiaire as string).replace("/utilisateurs/", "/beneficiaires/"),
+                     (record.beneficiaire?.["@id"] as string).replace("/utilisateurs/", "/beneficiaires/"),
                   );
                },
             };
          },
-         render: (value: string) => {
+         render: (_value: string, record: IAmenagement) => {
             return (
                <Flex justify="space-between" align="center">
                   <EtudiantItem
-                     utilisateurId={value}
+                     utilisateurId={record.beneficiaire?.["@id"]}
                      responsive="lg"
                      role={RoleValues.ROLE_BENEFICIAIRE}
                      highlight={props.filtre.nom}
@@ -76,7 +76,7 @@ export function amenagementTableColumns(props: {
                            onClick={(e) => {
                               e.stopPropagation();
                               window.open(
-                                 value.replace("/utilisateurs/", "/beneficiaires/"),
+                                 record.beneficiaire?.["@id"]?.replace("/utilisateurs/", "/beneficiaires/"),
                                  "_blank",
                               );
                            }}
@@ -91,7 +91,7 @@ export function amenagementTableColumns(props: {
          title: "Inscription",
          dataIndex: "inscription",
          render: (_value: string, record: IAmenagement) => {
-            return <InscriptionItem utilisateurId={record.beneficiaire} />;
+            return <InscriptionItem utilisateurId={record.beneficiaire?.["@id"]} />;
          },
       },
       {
@@ -189,7 +189,7 @@ export function amenagementTableColumns(props: {
          title: <div style={{ width: 200 }}>Tags</div>,
          dataIndex: "tags",
          render: (_value: string, record: IAmenagement) => {
-            return <ListeUtilisateurTag utilisateurId={record.beneficiaire as string} />;
+            return <ListeUtilisateurTag utilisateurId={record.beneficiaire?.["@id"] as string} />;
          },
       },
 
@@ -205,7 +205,7 @@ export function amenagementTableColumns(props: {
          title: <span aria-label="Chargés d'accompagnement">Chargé•es d'acc.</span>,
          dataIndex: "cas",
          render: (_value: string, record: IAmenagement) => {
-            return <ChargesAccompagnementsItem utilisateurId={record.beneficiaire} />;
+            return <ChargesAccompagnementsItem utilisateurId={record.beneficiaire?.["@id"]} />;
          },
       },
       {
@@ -233,7 +233,7 @@ export function amenagementTableColumns(props: {
                      icon={<EyeOutlined />}
                      onClick={() =>
                         props.navigate(
-                           `${record.beneficiaire?.replace("/utilisateurs/", "/beneficiaires/")}?amenagement=${record["@id"]}&domaine=${
+                           `${(record.beneficiaire?.["@id"])?.replace("/utilisateurs/", "/beneficiaires/")}?amenagement=${record["@id"]}&domaine=${
                               getDomaineAmenagement(
                                  props.typesAmenagements?.find(
                                     (ta) => ta["@id"] === record.typeAmenagement,
@@ -251,7 +251,7 @@ export function amenagementTableColumns(props: {
                         icon={<Icon component={ExternalLink} className="fs-08" />}
                         onClick={() => {
                            window.open(
-                              `${record.beneficiaire?.replace("/utilisateurs/", "/beneficiaires/")}?amenagement=${record["@id"]}&domaine=${
+                              `${(record.beneficiaire?.["@id"])?.replace("/utilisateurs/", "/beneficiaires/")}?amenagement=${record["@id"]}&domaine=${
                                  getDomaineAmenagement(
                                     props.typesAmenagements?.find(
                                        (ta) => ta["@id"] === record.typeAmenagement,

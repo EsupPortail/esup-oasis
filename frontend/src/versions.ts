@@ -41,6 +41,17 @@ export interface IVersion {
  */
 export const VERSIONS: IVersion[] = [
    {
+      version: "2.2.0",
+      date: "2025-05-06",
+      description: "Accompagnement des bénéficiaires",
+      changes: [
+         {
+            description: "GEstion de l'accompagnement des bénéficiaires : filtre + modification",
+            type: "add",
+         },
+      ],
+   },
+   {
       version: "2.1.7",
       date: "2025-01-22",
       description: "Correctifs divers",

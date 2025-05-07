@@ -11,8 +11,10 @@ import { useApi } from "../../context/api/ApiProvider";
 import ProfilItem from "./ProfilItem";
 import React from "react";
 import { isEnCoursSurPeriode } from "../../utils/dates";
-import { Skeleton } from "antd";
+import { Skeleton, Space, Tooltip } from "antd";
 import { useInView } from "react-intersection-observer";
+import { InfoCircleOutlined } from "@ant-design/icons";
+import { env } from "../../env";
 
 export function BeneficiaireProfilItem(props: {
    profilBeneficiaire: string;
@@ -34,5 +36,14 @@ export function BeneficiaireProfilItem(props: {
 
    if (props.masquerSiInactif && !isEnCoursSurPeriode(data?.debut, data?.fin)) return null;
 
-   return <ProfilItem profil={data?.profil as string} maxWidth={170} />;
+   return (
+      <Space size={2} align={"center"}>
+         <ProfilItem profil={data?.profil as string} maxWidth={170} />
+         {data.avecAccompagnement === false && (
+            <Tooltip title={"Bénéficiaire sans accompagnement " + env.REACT_APP_SERVICE}>
+               <InfoCircleOutlined />
+            </Tooltip>
+         )}
+      </Space>
+   );
 }

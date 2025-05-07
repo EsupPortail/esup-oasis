@@ -44,7 +44,7 @@ export interface FiltreBeneficiaire {
    nomGestionnaire?: string;
    "gestionnaire[]"?: string[];
    "order[nom]"?: "asc" | "desc" | undefined;
-   "beneficiaires.avecAccompagnement"?: boolean;
+   "beneficiaires.avecAccompagnement"?: boolean | undefined;
    "composante[]"?: string[];
    "formation[]"?: string[];
    page: number;

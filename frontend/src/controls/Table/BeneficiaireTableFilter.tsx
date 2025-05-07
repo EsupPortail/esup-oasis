@@ -26,6 +26,18 @@ import { FiltreFavoriDropDown } from "./FiltreFavoriDropDown";
 import { EtatDecisionEtablissement } from "../Avatars/DecisionEtablissementAvatar";
 import { env } from "../../env";
 
+function booleanToString(value: boolean | undefined): string | undefined {
+   if (value === undefined) return "undefined";
+   return value ? "true" : "false";
+}
+
+function stringToBoolean(value: string | undefined): boolean | undefined {
+   if (value === "undefined") return undefined;
+   if (value === "true") return true;
+   if (value === "false") return false;
+   return undefined;
+}
+
 export function BeneficiaireTableFilter(props: {
    filtreBeneficiaire: FiltreBeneficiaire;
    setFiltreBeneficiaire: React.Dispatch<React.SetStateAction<FiltreBeneficiaire>>;
@@ -124,25 +136,27 @@ export function BeneficiaireTableFilter(props: {
                            />
                         </Col>
 
-                        <Col xs={24} sm={24} md={6} className="d-none">
-                           Accompagnement
+                        <Col xs={24} sm={24} md={6}>
+                           Accompagnement {env.REACT_APP_SERVICE}
                         </Col>
-                        <Col xs={24} sm={24} md={18} className="d-none">
+                        <Col xs={24} sm={24} md={18}>
                            <Segmented
                               style={{ overflowX: "auto", maxWidth: "100%" }}
-                              value={
-                                 props.filtreBeneficiaire["beneficiaires.avecAccompagnement"]
-                                    ? "true"
-                                    : "false"
-                              }
+                              value={booleanToString(
+                                 props.filtreBeneficiaire["beneficiaires.avecAccompagnement"],
+                              )}
                               onChange={(value) => {
                                  props.setFiltreBeneficiaire((prev) => ({
                                     ...prev,
-                                    "beneficiaires.avecAccompagnement": value === "true",
+                                    "beneficiaires.avecAccompagnement": stringToBoolean(value),
                                     page: 1,
                                  }));
                               }}
                               options={[
+                                 {
+                                    label: "Tous",
+                                    value: "undefined",
+                                 },
                                  {
                                     label: "Avec accompagnement",
                                     value: "true",

@@ -10,7 +10,6 @@
 import {
    IAmenagement,
    ICategorieAmenagement,
-   IComposante,
    ITag,
    ITypeAmenagement,
    ITypeSuiviAmenagement,
@@ -25,7 +24,6 @@ import { getDomaineAmenagement } from "../../lib/amenagements";
 import dayjs from "dayjs";
 import {
    PREFETCH_CATEGORIES_AMENAGEMENTS,
-   PREFETCH_COMPOSANTES,
    PREFETCH_TAGS,
    PREFETCH_TYPES_AMENAGEMENTS,
    PREFETCH_TYPES_SUIVI_AMENAGEMENTS,
@@ -33,6 +31,8 @@ import {
 import { RoleValues } from "../../lib/Utilisateur";
 import { ModeAffichageAmenagement } from "../../routes/gestionnaire/beneficiaires/Amenagements";
 import { env } from "../../env";
+import SplitFetcher from "../../api/SplitFetcher";
+import { ExportOutlined } from "@ant-design/icons";
 
 const headers = [
    { label: "Nom", key: "nom" },
@@ -59,23 +59,20 @@ function getAmenagementsData(
    amenagements: IAmenagement[],
    categories: ICategorieAmenagement[] | undefined,
    types: ITypeAmenagement[] | undefined,
-   beneficiaires: IUtilisateur[] | undefined,
    suivis: ITypeSuiviAmenagement[] | undefined,
-   composantes: IComposante[] | undefined,
    cas: IUtilisateur[] | undefined,
    tags: ITag[] | undefined,
 ) {
    return amenagements.map((amenagement) => {
+      const beneficiaire = amenagement.beneficiaire;
+
       return {
          key: amenagement["@id"],
          "@id": amenagement["@id"],
-         nom: beneficiaires
-            ?.find((b) => b["@id"] === amenagement.beneficiaire)
-            ?.nom?.toLocaleUpperCase(),
-         prenom: beneficiaires?.find((b) => b["@id"] === amenagement.beneficiaire)?.prenom,
-         email: beneficiaires?.find((b) => b["@id"] === amenagement.beneficiaire)?.email,
-         numeroEtudiant: beneficiaires?.find((b) => b["@id"] === amenagement.beneficiaire)
-            ?.numeroEtudiant,
+         nom: beneficiaire?.nom?.toLocaleUpperCase(),
+         prenom: beneficiaire?.prenom,
+         email: beneficiaire?.email,
+         numeroEtudiant: beneficiaire?.numeroEtudiant,
          domaine:
             getDomaineAmenagement(
                types?.find((ta) => ta["@id"] === amenagement.typeAmenagement),
@@ -96,33 +93,20 @@ function getAmenagementsData(
          fin: amenagement.fin ? dayjs(amenagement.fin).format("DD/MM/YYYY") : undefined,
          commentaire: amenagement.commentaire?.replaceAll('"', '""'),
          suivi: suivis?.find((s) => s["@id"] === amenagement.suivi)?.libelle?.replaceAll('"', '""'),
-         composante: composantes
-            ?.find(
-               (c) =>
-                  c["@id"] ===
-                  (
-                     beneficiaires?.find((b) => b["@id"] === amenagement.beneficiaire)
-                        ?.inscriptions || []
-                  ).sort((i1, i2) => i2.debut?.localeCompare(i1.debut || "") || 0)[0]?.formation
-                     ?.composante,
-            )
-            ?.libelle?.replaceAll('"', '""'),
-         formation: (
-            beneficiaires?.find((b) => b["@id"] === amenagement.beneficiaire)?.inscriptions || []
-         )
-            .sort((i1, i2) => i2.debut?.localeCompare(i1.debut || "") || 0)[0]
-            ?.formation?.libelle?.replaceAll('"', '""'),
-         chargeAccompagnement: (
-            beneficiaires?.find((b) => b["@id"] === amenagement.beneficiaire)
-               ?.gestionnairesActifs || []
-         )
+         composante: (beneficiaire?.inscriptions ||
+            [])[0]?.formation?.composante?.libelle?.replaceAll('"', '""'),
+         formation: (beneficiaire?.inscriptions || [])[0]?.formation?.libelle?.replaceAll(
+            '"',
+            '""',
+         ),
+         chargeAccompagnement: (beneficiaire?.gestionnairesActifs || [])
             .map((g) => {
                const ca = cas?.find((c) => c["@id"] === g);
                return ca ? `${ca.nom?.toLocaleUpperCase()} ${ca.prenom}` : "";
             })
             .join(", "),
-         avisESE: beneficiaires?.find((b) => b["@id"] === amenagement.beneficiaire)?.etatAvisEse,
-         tags: (beneficiaires?.find((b) => b["@id"] === amenagement.beneficiaire)?.tags || [])
+         avisESE: beneficiaire?.etatAvisEse,
+         tags: (beneficiaire?.tags || [])
             ?.map((tag) => {
                return tags?.find((t) => t["@id"] === tag);
             })
@@ -144,6 +128,7 @@ export default function AmenagementTableExport({
    const [exportSubmit, setExportSubmit] = useState(false);
    const [downloaded, setDownloaded] = useState(false);
    const [loading, setLoading] = useState(false);
+   const [fetchingAmenagements, setFetchingAmenagements] = useState(false);
    const { data: categories, isFetching: isFetchingCategories } = useApi().useGetCollection({
       ...PREFETCH_CATEGORIES_AMENAGEMENTS,
       enabled: exportSubmit,
@@ -152,13 +137,6 @@ export default function AmenagementTableExport({
       ...PREFETCH_TYPES_AMENAGEMENTS,
       enabled: exportSubmit,
    });
-   const { data: beneficiaires, isFetching: isFetchingBeneficiaires } =
-      useApi().useGetCollectionPaginated({
-         path: "/beneficiaires",
-         page: 1,
-         itemsPerPage: NB_MAX_ITEMS_PER_PAGE,
-         enabled: exportSubmit,
-      });
    const { data: suivis, isFetching: isFetchingSuivis } = useApi().useGetCollection({
       ...PREFETCH_TYPES_SUIVI_AMENAGEMENTS,
       enabled: exportSubmit,
@@ -170,36 +148,23 @@ export default function AmenagementTableExport({
       parameters: { roleId: `/roles/${RoleValues.ROLE_GESTIONNAIRE}` },
       enabled: exportSubmit,
    });
-   const { data: composantes, isFetching: isFetchingComposantes } = useApi().useGetCollection({
-      ...PREFETCH_COMPOSANTES,
-      enabled: exportSubmit,
-   });
    const { data: tags, isFetching: isFetchingTags } = useApi().useGetCollection({
       ...PREFETCH_TAGS,
       enabled: exportSubmit,
    });
 
-   const { data: amenagements, isFetching: isFetchingAmenagements } =
-      useApi().useGetCollectionPaginated({
-         path: "/amenagements",
-         page: 1,
-         itemsPerPage: NB_MAX_ITEMS_PER_PAGE,
-         query: {
-            ...filtreAmenagementToApi(filtreAmenagement, ModeAffichageAmenagement.ParAmenagement),
-            page: 1,
-            itemsPerPage: NB_MAX_ITEMS_PER_PAGE,
-         },
-         enabled: exportSubmit,
-      });
+   const [amenagements, setAmenagements] = useState<IAmenagement[] | null>(null);
+
+   useEffect(() => {
+      setAmenagements(null)
+   }, [filtreAmenagement])
 
    useEffect(() => {
       if (
          categories?.items &&
          types?.items &&
-         amenagements?.items &&
-         beneficiaires?.items &&
+         fetchingAmenagements &&
          suivis?.items &&
-         composantes?.items &&
          cas?.items &&
          tags?.items
       ) {
@@ -208,48 +173,39 @@ export default function AmenagementTableExport({
          setLoading(
             isFetchingCategories ||
                isFetchingTypes ||
-               isFetchingAmenagements ||
-               isFetchingBeneficiaires ||
+               fetchingAmenagements ||
                isFetchingSuivis ||
-               isFetchingComposantes ||
                isFetchingTags ||
                isFetchingCas,
          );
       }
    }, [
       exportSubmit,
-      isFetchingAmenagements,
-      amenagements?.items,
+      amenagements,
       categories?.items,
       types?.items,
       isFetchingCategories,
       isFetchingTypes,
-      beneficiaires?.items,
-      isFetchingBeneficiaires,
       suivis?.items,
       isFetchingSuivis,
-      composantes?.items,
-      isFetchingComposantes,
       cas?.items,
       isFetchingCas,
       tags?.items,
       isFetchingTags,
    ]);
 
-   return (
+   return amenagements ? (
       <TableExportButton
          loading={loading}
          setLoading={setLoading}
-         submitted={exportSubmit}
+         submitted={true}
          setSubmitted={setExportSubmit}
          getData={() =>
             getAmenagementsData(
-               amenagements?.items || [],
+               amenagements || [],
                categories?.items,
                types?.items,
-               beneficiaires?.items,
                suivis?.items,
-               composantes?.items,
                cas?.items,
                tags?.items,
             )
@@ -259,5 +215,19 @@ export default function AmenagementTableExport({
          headers={headers}
          filename="amenagements"
       />
+   ) : (
+      <>
+         <SplitFetcher
+            itemsPerPage={200}
+            query={filtreAmenagementToApi(
+               filtreAmenagement,
+               ModeAffichageAmenagement.ParAmenagement,
+            )}
+            setData={setAmenagements}
+            setIsFetching={setFetchingAmenagements}
+            icon={<ExportOutlined />}
+            label={"Exporter"}
+         />
+      </>
    );
 }

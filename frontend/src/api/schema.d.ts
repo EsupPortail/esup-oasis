@@ -1381,11 +1381,7 @@ export interface components {
          suivi?: string | null;
       };
       "Amenagement-amenagement.out": {
-         /**
-          * Format: iri-reference
-          * @example https://example.com/
-          */
-         beneficiaire?: string;
+         beneficiaire?: components["schemas"]["Utilisateur-amenagement.out"];
          /**
           * Format: iri-reference
           * @example https://example.com/
@@ -1442,11 +1438,7 @@ export interface components {
          >;
          "@id"?: string;
          "@type"?: string;
-         /**
-          * Format: iri-reference
-          * @example https://example.com/
-          */
-         beneficiaire?: string;
+         beneficiaire?: components["schemas"]["Utilisateur.jsonld-amenagement.out"];
          /**
           * Format: iri-reference
           * @example https://example.com/
@@ -2189,6 +2181,9 @@ export interface components {
           */
          actif?: boolean;
       };
+      "Composante-amenagement.out": {
+         libelle?: string;
+      };
       "Composante-amenagements_utilisateurs.out": {
          libelle?: string;
       };
@@ -2199,6 +2194,22 @@ export interface components {
          id?: number;
          libelle?: string;
          referents?: string[];
+      };
+      "Composante.jsonld-amenagement.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         libelle?: string;
       };
       "Composante.jsonld-amenagements_utilisateurs.out": {
          "@context"?: OneOf<
@@ -2884,6 +2895,10 @@ export interface components {
          discipline?: string | null;
          diplome?: string | null;
       };
+      "Formation-amenagement.out": {
+         composante?: components["schemas"]["Composante-amenagement.out"];
+         libelle?: string;
+      };
       "Formation-amenagements_utilisateurs.out": {
          composante?: components["schemas"]["Composante-amenagements_utilisateurs.out"];
          libelle?: string;
@@ -2933,6 +2948,23 @@ export interface components {
          niveau?: string | null;
          discipline?: string | null;
          diplome?: string | null;
+      };
+      "Formation.jsonld-amenagement.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         composante?: components["schemas"]["Composante.jsonld-amenagement.out"];
+         libelle?: string;
       };
       "Formation.jsonld-amenagements_utilisateurs.out": {
          "@context"?: OneOf<
@@ -2997,6 +3029,9 @@ export interface components {
          discipline?: string | null;
          diplome?: string | null;
       };
+      "Inscription-amenagement.out": {
+         formation?: components["schemas"]["Formation-amenagement.out"];
+      };
       "Inscription-amenagements_utilisateurs.out": {
          formation?: components["schemas"]["Formation-amenagements_utilisateurs.out"];
          /** Format: date-time */
@@ -3017,6 +3052,22 @@ export interface components {
          debut?: string;
          /** Format: date-time */
          fin?: string;
+      };
+      "Inscription.jsonld-amenagement.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         formation?: components["schemas"]["Formation.jsonld-amenagement.out"];
       };
       "Inscription.jsonld-amenagements_utilisateurs.out": {
          "@context"?: OneOf<
@@ -4837,6 +4888,17 @@ export interface components {
          nom?: string;
          prenom?: string;
       };
+      "Utilisateur-amenagement.out": {
+         uid?: string;
+         email?: string;
+         nom?: string;
+         prenom?: string;
+         numeroEtudiant?: number | null;
+         etatAvisEse?: string;
+         tags?: string[];
+         gestionnairesActifs?: string[];
+         inscriptions?: components["schemas"]["Inscription-amenagement.out"][];
+      };
       "Utilisateur-amenagements_utilisateurs.out": {
          uid?: string;
          email?: string;
@@ -4948,6 +5010,30 @@ export interface components {
          email?: string;
          nom?: string;
          prenom?: string;
+      };
+      "Utilisateur.jsonld-amenagement.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         uid?: string;
+         email?: string;
+         nom?: string;
+         prenom?: string;
+         numeroEtudiant?: number | null;
+         etatAvisEse?: string;
+         tags?: string[];
+         gestionnairesActifs?: string[];
+         inscriptions?: components["schemas"]["Inscription.jsonld-amenagement.out"][];
       };
       "Utilisateur.jsonld-amenagements_utilisateurs.out": {
          "@id"?: string;
