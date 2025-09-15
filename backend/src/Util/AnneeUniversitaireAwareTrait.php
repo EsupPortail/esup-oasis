@@ -33,14 +33,15 @@ trait AnneeUniversitaireAwareTrait
         $anneeDebut = $this->anneeDuJour($jour);
 
         return [
-            'debut' => new DateTime($anneeDebut . '-09-01'),
-            'fin' => new DateTime(($anneeDebut + 1) . '-08-31'),
+            'debut' => new DateTime($anneeDebut.'-09-01'),
+            'fin' => new DateTime(($anneeDebut + 1).'-08-31'),
         ];
     }
 
     public function anneeDuJour(?DateTimeImmutable $jour = null): int
     {
         $jour = $jour ?? $this->now();
+
         return match (true) {
             $jour->format('m') > '08' => (int)$jour->format('Y'),
             default => (int)$jour->format('Y') - 1
@@ -74,12 +75,12 @@ trait AnneeUniversitaireAwareTrait
         $mois = (int)$dateReference->format('m');
 
         $anneeDebut = match (true) {
-            $mois > 9 => $annee,               // Pour les dates de janvier à juin
-            default => $annee - 1                    // Pour les dates de juillet à août
+            $mois >= 9 => $annee,               // Après septembre, année N
+            default => $annee - 1               // Avant septembre, année N-1
         };
 
         // La date de début de l'année universitaire
-        return DateTimeImmutable::createFromFormat('Y-m-d', $anneeDebut . '-09-01');
+        return DateTimeImmutable::createFromFormat('Y-m-d', $anneeDebut.'-09-01');
     }
 
     /**
@@ -88,12 +89,13 @@ trait AnneeUniversitaireAwareTrait
      */
     protected function getDernierBeneficiaire(array $benefs): Beneficiaire
     {
-        usort($benefs,
+        usort(
+            $benefs,
             fn(Beneficiaire $a, Beneficiaire $b) => match (true) {
                 null == $a->getFin() => 1,
                 null == $b->getFin() => -1,
                 default => $b->getDebut() <=> $a->getDebut(),
-            }
+            },
         );
 
         return current($benefs);
@@ -105,7 +107,7 @@ trait AnneeUniversitaireAwareTrait
      */
     private function getDebutSemestre1(): DateTimeInterface
     {
-        return new DateTime($this->anneeDuJour() . '-09-01');
+        return new DateTime($this->anneeDuJour().'-09-01');
     }
 
     /**
@@ -114,7 +116,7 @@ trait AnneeUniversitaireAwareTrait
      */
     private function getDebutSemestre2(): DateTimeInterface
     {
-        return new DateTime(($this->anneeDuJour() + 1) . '-01-01');
+        return new DateTime(($this->anneeDuJour() + 1).'-01-01');
     }
 
     /**
@@ -123,7 +125,7 @@ trait AnneeUniversitaireAwareTrait
      */
     private function getFinSemestre1(): DateTimeInterface
     {
-        return new DateTime($this->anneeDuJour() . '-12-31');
+        return new DateTime($this->anneeDuJour().'-12-31');
     }
 
     /**
@@ -132,7 +134,7 @@ trait AnneeUniversitaireAwareTrait
      */
     private function getFinSemestre2(): DateTimeInterface
     {
-        return new DateTime(($this->anneeDuJour() + 1) . '-08-31');
+        return new DateTime(($this->anneeDuJour() + 1).'-08-31');
     }
 
 }
