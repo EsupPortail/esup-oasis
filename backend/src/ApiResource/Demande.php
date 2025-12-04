@@ -28,6 +28,7 @@ use App\Filter\DemandeDisciplineSportiveFilter;
 use App\Filter\DemandeFormatFilter;
 use App\Filter\DerniereInscriptionSearchFilter;
 use App\Filter\NestedUtilisateurFilter;
+use App\Filter\PreloadAssociationsFilter;
 use App\State\Demande\DemandeProvider;
 use App\State\Demande\DemandesUtilisateurProvider;
 use App\State\Demande\PatchDemandeProcessor;
@@ -120,6 +121,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiFilter(OrderFilter::class, properties: ['demandeur.nom', 'dateDepot'])]
 #[ApiFilter(DemandeFormatFilter::class)]
 #[ApiFilter(CampagneNonArchiveeFilter::class)]
+#[ApiFilter(PreloadAssociationsFilter::class)]
 #[DemandeUniqueParCampagneConstraint]
 #[DemandeWorkflowConstraint]
 class Demande

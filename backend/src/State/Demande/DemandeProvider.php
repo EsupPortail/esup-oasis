@@ -27,6 +27,7 @@ use App\ApiResource\Utilisateur;
 use App\Entity\OptionReponse;
 use App\Entity\Question;
 use App\Entity\Reponse;
+use App\Filter\PreloadAssociationsFilter;
 use App\Repository\QuestionRepository;
 use App\Repository\ReponseRepository;
 use App\Repository\TypeDemandeRepository;
@@ -53,7 +54,8 @@ class DemandeProvider extends AbstractEntityProvider implements ResetInterface
         parent::__construct($itemProvider, $collectionProvider);
     }
 
-    #[Override] public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
+    #[Override]
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
 
         if ($operation instanceof GetCollection) {
@@ -71,6 +73,105 @@ class DemandeProvider extends AbstractEntityProvider implements ResetInterface
      */
     private function addFilters(array $context): array
     {
+        $context['filters'][PreloadAssociationsFilter::PROPERTY] = [
+            'demandeur' => [
+                'sourceEntity' => 'root',
+                'relationName' => 'demandeur'
+            ],
+            'inscriptions' => [
+                'sourceEntity' => 'demandeur',
+                'relationName' => 'inscriptions'
+            ],
+            'formation' => [
+                'sourceEntity' => 'inscriptions',
+                'relationName' => 'formation'
+            ],
+            'intervenant' => [
+                'sourceEntity' => 'demandeur',
+                'relationName' => 'intervenant',
+            ],
+            'services' => [
+                'sourceEntity' => 'demandeur',
+                'relationName' => 'services'
+            ],
+            'beneficiaires' => [
+                'sourceEntity' => 'demandeur',
+                'relationName' => 'beneficiaires'
+            ],
+            'profilBeneficiaire' => [
+                'sourceEntity' => 'beneficiaires',
+                'relationName' => 'profil'
+            ],
+            'decisions' => [
+                'sourceEntity' => 'demandeur',
+                'relationName' => 'decisionsAmenagementExamens'
+            ],
+            'campagne' => [
+                'sourceEntity' => 'root',
+                'relationName' => 'campagne'
+            ],
+            'typeDemande' => [
+                'sourceEntity' => 'campagne',
+                'relationName' => 'typeDemande'
+            ],
+            'etatDemande' => [
+                'sourceEntity' => 'root',
+                'relationName' => 'etat'
+            ],
+            'profilAttribue' => [
+                'sourceEntity' => 'root',
+                'relationName' => 'profilAttribue'
+            ],
+            'reponses' => [
+                'sourceEntity' => 'demandeur',
+                'relationName' => 'reponses'
+            ],
+            'question' => [
+                'sourceEntity' => 'reponses',
+                'relationName' => 'question'
+            ],
+            'optionsChoisies' => [
+                'sourceEntity' => 'reponses',
+                'relationName' => 'optionsChoisies'
+            ],
+            'optionsReponse' => [
+                'sourceEntity' => 'question',
+                'relationName' => 'optionsReponse'
+            ],
+            'questionsLiees' => [
+                'sourceEntity' => 'optionsChoisies',
+                'relationName' => 'questionsLiees'
+            ],
+            'optionsReponseLiees' => [
+                'sourceEntity' => 'questionsLiees',
+                'relationName' => 'optionsReponse'
+            ],
+            'pieces' => [
+                'sourceEntity' => 'reponses',
+                'relationName' => 'piecesJustificatives'
+            ],
+            'avis_ese' => [
+                'sourceEntity' => 'pieces',
+                'relationName' => 'avisEse'
+            ],
+            'entretien' => [
+                'sourceEntity' => 'pieces',
+                'relationName' => 'entretien'
+            ],
+            'bilan' => [
+                'sourceEntity' => 'pieces',
+                'relationName' => 'bilan'
+            ],
+            'piece_jointe_beneficiaire' => [
+                'sourceEntity' => 'pieces',
+                'relationName' => 'pieceJointeBeneficiaire'
+            ],
+            'decisions_amenagement_examens' => [
+                'sourceEntity' => 'pieces',
+                'relationName' => 'decisionAmenagementExamens'
+            ]
+        ];
+
         if ($this->security->isGranted(\App\Entity\Utilisateur::ROLE_GESTIONNAIRE)) {
             return $context;
         }
@@ -137,12 +238,14 @@ class DemandeProvider extends AbstractEntityProvider implements ResetInterface
         return $context;
     }
 
-    #[Override] protected function getResourceClass(): string
+    #[Override]
+    protected function getResourceClass(): string
     {
         return Demande::class;
     }
 
-    #[Override] protected function getEntityClass(): string
+    #[Override]
+    protected function getEntityClass(): string
     {
         return \App\Entity\Demande::class;
     }
@@ -152,7 +255,8 @@ class DemandeProvider extends AbstractEntityProvider implements ResetInterface
      * @return Demande
      * @throws Exception
      */
-    #[Override] public function transform($entity): mixed
+    #[Override]
+    public function transform($entity): mixed
     {
         $resource = new Demande();
         $resource->id = $entity->getId();

@@ -28,6 +28,7 @@ use App\ApiResource\Tag;
 use App\ApiResource\TypeEvenement;
 use App\ApiResource\Utilisateur;
 use App\Entity\Beneficiaire;
+use App\Filter\PreloadAssociationsFilter;
 use App\Service\ErreurLdapException;
 use App\State\AbstractEntityProvider;
 use App\State\DecisionAmenagementExamens\DecisionAmenagementManager;
@@ -62,7 +63,8 @@ class UtilisateurProvider extends AbstractEntityProvider
      * @return Utilisateur|array|PaginatorInterface
      * @throws ErreurLdapException
      */
-    #[Override] public function provide(Operation $operation, array $uriVariables = [], array $context = []): Utilisateur|array|PaginatorInterface
+    #[Override]
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): Utilisateur|array|PaginatorInterface
     {
         //recherche dans le ldap
         if (!($operation instanceof GetCollection)) {
@@ -86,6 +88,65 @@ class UtilisateurProvider extends AbstractEntityProvider
         if ($operation->getName() === Utilisateur::BENEFICIAIRE_COLLECTION_URI) {
             $context['filters']['beneficiairefilter'] = true;
         }
+
+        $context['filters'][PreloadAssociationsFilter::PROPERTY] = [
+            'beneficiaires' => [
+                'sourceEntity' => 'root',
+                'relationName' => 'beneficiaires'
+            ],
+            'tags_beneficiaires' => [
+                'sourceEntity' => 'beneficiaires',
+                'relationName' => 'tags'
+            ],
+            'categorie_tag' => [
+                'sourceEntity' => 'tags_beneficiaires',
+                'relationName' => 'categorie'
+            ],
+            'profilBeneficiaire' => [
+                'sourceEntity' => 'beneficiaires',
+                'relationName' => 'profil'
+            ],
+            'gestionnaire' => [
+                'sourceEntity' => 'beneficiaires',
+                'relationName' => 'gestionnaire'
+            ],
+            'decisionsAmenagementExamens' => [
+                'sourceEntity' => 'root',
+                'relationName' => 'decisionsAmenagementExamens'
+            ],
+            'typologiesHandicap' => [
+                'sourceEntity' => 'beneficiaires',
+                'relationName' => 'typologies'
+            ],
+            'inscriptions' => [
+                'sourceEntity' => 'root',
+                'relationName' => 'inscriptions'
+            ],
+            'formation' => [
+                'sourceEntity' => 'inscriptions',
+                'relationName' => 'formation'
+            ],
+            'composante' => [
+                'sourceEntity' => 'formation',
+                'relationName' => 'composante'
+            ],
+            'intervenant' => [
+                'sourceEntity' => 'root',
+                'relationName' => 'intervenant'
+            ],
+            'competences' => [
+                'sourceEntity' => 'intervenant',
+                'relationName' => 'competences'
+            ],
+            'campuses' => [
+                'sourceEntity' => 'intervenant',
+                'relationName' => 'campuses'
+            ],
+            'services' => [
+                'sourceEntity' => 'root',
+                'relationName' => 'services'
+            ]
+        ];
 
         return parent::provide($operation, $uriVariables, $context);
     }
