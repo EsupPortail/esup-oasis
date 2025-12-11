@@ -87,7 +87,7 @@ class DecisionAmenagementManager
             return;
         }
 
-        //si avis ESE ou aménagement examens en cours, on veut pouvoir valider/revalider pour édition!
+        //si avis ESE ou aménagement pour la décision en cours, on veut pouvoir valider/revalider pour édition!
 
         //création?
         if (null === $decision) {
