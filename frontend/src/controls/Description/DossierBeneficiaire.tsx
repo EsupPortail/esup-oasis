@@ -30,7 +30,7 @@ import { useSearchParams } from "react-router-dom";
 import { TabAvisEse } from "../TabsContent/TabAvisEse";
 import { BeneficiaireAvisEseAvatar } from "../Avatars/BeneficiaireAvisEseAvatar";
 import { TabEntretiens } from "../TabsContent/TabEntretiens";
-import AmenagementDomaineBadge from "../Badge/AmenagementDomaineBadge";
+import AmenagementBadge from "../Badge/AmenagementBadge";
 import EntretiensBadge from "../Badge/EntretiensBadge";
 import DemandesBadge from "../Badge/DemandesBadge";
 import { TabDocuments } from "../TabsContent/TabDocuments";
@@ -97,7 +97,7 @@ export default function DossierBeneficiaire(props: { beneficiaireId: string }): 
                         label: (
                            <Space>
                               {domaineAmenagement.libelleLongPluriel}
-                              <AmenagementDomaineBadge
+                              <AmenagementBadge
                                  utilisateurId={props.beneficiaireId}
                                  domaineAmenagement={domaineAmenagement}
                               />
