@@ -53,6 +53,9 @@ class TypeAmenagement
     #[ORM\ManyToOne(inversedBy: 'typesAmenagement')]
     private ?CategorieAmenagement $categorie = null;
 
+    #[ORM\Column]
+    private ?bool $decision = null;
+
 
     public function __construct()
     {
@@ -202,6 +205,18 @@ class TypeAmenagement
     public function setLibelleLong(?string $libelleLong): static
     {
         $this->libelleLong = $libelleLong;
+
+        return $this;
+    }
+
+    public function isDecision(): ?bool
+    {
+        return $this->decision;
+    }
+
+    public function setDecision(bool $decision): static
+    {
+        $this->decision = $decision;
 
         return $this;
     }

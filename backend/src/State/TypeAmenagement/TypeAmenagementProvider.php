@@ -45,6 +45,7 @@ class TypeAmenagementProvider extends AbstractEntityProvider
         $resource->examens = $entity->isExamens();
         $resource->pedagogique = $entity->isPedagogique();
         $resource->aideHumaine = $entity->isAideHumaine();
+        $resource->decision = $entity->isDecision();
         $resource->categorie = $this->transformerService->transform($entity->getCategorie(), CategorieAmenagement::class);
 
         return $resource;

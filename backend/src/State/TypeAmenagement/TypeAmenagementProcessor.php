@@ -59,6 +59,7 @@ readonly class TypeAmenagementProcessor implements ProcessorInterface
         $entity->setAideHumaine($data->aideHumaine);
         $entity->setPedagogique($data->pedagogique);
         $entity->setCategorie($this->categorieAmenagementRepository->find($data->categorie->id));
+        $entity->setDecision($data->decision);
 
         $this->typeAmenagementRepository->save($entity, true);
 
