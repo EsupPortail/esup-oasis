@@ -81,9 +81,6 @@ export function TabAmenagements(props: {
                {props.domaineAmenagement.libelleLongPluriel}
             </Typography.Title>
             <div className={`text-right${!screens.lg ? " mt-2" : ""}`}>
-               {props.domaineAmenagement.id === AmenagementDomaine.examen && (
-                  <BoutonDecisionEtab utilisateurId={props.utilisateurId} />
-               )}
                <ButtonAddAmenagement
                   utilisateurId={props.utilisateurId}
                   domaineAmenagement={props.domaineAmenagement}
