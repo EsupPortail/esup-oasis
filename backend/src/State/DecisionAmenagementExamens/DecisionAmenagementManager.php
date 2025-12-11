@@ -70,10 +70,10 @@ class DecisionAmenagementManager
             default => $debutPeriode
         };
 
-        $amenagementsEnCours = array_filter($beneficiaire->getAmenagementsActifs(), fn($amenagement) => $amenagement->getType()->isExamens());
+        $amenagementsEnCours = array_filter($beneficiaire->getAmenagementsActifs(), fn($amenagement) => $amenagement->getType()->isDecision());
 
 
-        //si pas d'avis ESE en cours ni d'aménagement d'examens en cours pour la période, pas de décision!
+        //si pas d'avis ESE en cours ni d'aménagement pour la décision en cours pour la période, pas de décision!
         if ($beneficiaire->getEtatAvisEse($dateConsideree) !== AvisEse::ETAT_EN_COURS && count($amenagementsEnCours) === 0) {
             // décision existante, si supprimable on supprime
             if (null !== $decision && $decision->getEtat() !== DecisionAmenagementExamens::ETAT_EDITE) {
@@ -82,7 +82,7 @@ class DecisionAmenagementManager
             return;
         }
 
-        //si avis ESE ou aménagement examens en cours, on veut pouvoir valider/revalider pour édition!
+        //si avis ESE ou aménagement pour la décision en cours, on veut pouvoir valider/revalider pour édition!
 
         //création?
         if (null === $decision) {
