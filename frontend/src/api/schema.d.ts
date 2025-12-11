@@ -4434,6 +4434,7 @@ export interface components {
          pedagogique?: boolean | null;
          examens?: boolean | null;
          aideHumaine?: boolean | null;
+         decision?: boolean;
       };
       "TypeAmenagement-type_amenagement.out": {
          id?: number | null;
@@ -4452,6 +4453,7 @@ export interface components {
          pedagogique?: boolean | null;
          examens?: boolean | null;
          aideHumaine?: boolean | null;
+         decision?: boolean;
       };
       "TypeAmenagement.jsonld-amenagements_utilisateurs.out": {
          "@context"?: OneOf<
@@ -4490,6 +4492,7 @@ export interface components {
          pedagogique?: boolean | null;
          examens?: boolean | null;
          aideHumaine?: boolean | null;
+         decision?: boolean;
       };
       "TypeAmenagement.jsonld-type_amenagement.out": {
          "@context"?: OneOf<
@@ -4521,6 +4524,7 @@ export interface components {
          pedagogique?: boolean | null;
          examens?: boolean | null;
          aideHumaine?: boolean | null;
+         decision?: boolean;
       };
       "TypeDemande-type_demande.in": {
          libelle?: string;
