@@ -8,7 +8,6 @@
  */
 
 import {
-   AmenagementDomaine,
    DomaineAmenagementInfos,
    getAmenagementsByCategories,
 } from "../../lib/amenagements";
@@ -19,23 +18,14 @@ import {
    PREFETCH_CATEGORIES_AMENAGEMENTS,
    PREFETCH_TYPES_AMENAGEMENTS,
 } from "../../api/ApiPrefetchHelpers";
+import { CardAmenagement } from "../Card/CardAmenagement";
 import { NB_MAX_ITEMS_PER_PAGE } from "../../constants";
-import { Avatar, Button, Card, Col, Empty, Flex, Row, Space, Tag, Tooltip, Typography } from "antd";
-import {
-   ArrowRightOutlined,
-   CalendarOutlined,
-   CommentOutlined,
-   EditOutlined,
-   HarmonyOSOutlined,
-} from "@ant-design/icons";
+import { Avatar, Empty, Flex, Row, Typography } from "antd";
+
 import { ModalAmenagement } from "../Modals/ModalAmenagement";
-import { getLibellePeriode } from "../../utils/dates";
-import SuiviAmenagementItem from "../Items/SuiviAmenagementItem";
 import { useSearchParams } from "react-router-dom";
 import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
-import { EllipsisParagraph } from "../Typography/EllipsisParagraph";
 import { ButtonAddAmenagement } from "./ButtonAddAmenagement";
-import { BoutonDecisionEtab } from "./BoutonDecisionEtab";
 
 export function TabAmenagements(props: {
    utilisateurId: string;
@@ -71,15 +61,13 @@ export function TabAmenagements(props: {
       typesAmenagements?.items,
    ]);
 
-   const highlightAmenagement = searchParams.get("amenagement");
-
    return (
       <>
          <Flex justify="space-between" align="center" className="mt-1 mb-2" wrap>
             <Typography.Title level={3} className="mt-0 mb-0">
                <Avatar size="small" className={`mr-2 bg-${props.domaineAmenagement.couleur}`} />
                {props.domaineAmenagement.libelleLongPluriel}
-            </Typography.Title>
+            </Typography.Title> 
             <div className={`text-right${!screens.lg ? " mt-2" : ""}`}>
                <ButtonAddAmenagement
                   utilisateurId={props.utilisateurId}
@@ -108,95 +96,13 @@ export function TabAmenagements(props: {
                         {c.typeAmenagements.map((ta) => (
                            <span key={ta["@id"]} style={{ width: "100%", display: "contents" }}>
                               {ta.amenagements.map((a) => (
-                                 <Col key={a["@id"]} xs={24} sm={24} md={24} lg={12} xl={8} xxl={6}>
-                                    <Card
-                                       style={{ borderColor: "#e0e0e0" }}
-                                       styles={
-                                          screens.lg ? { body: { minHeight: 195 } } : undefined
-                                       }
-                                       className={`${
-                                          highlightAmenagement === a["@id"]
-                                             ? "highlightAmenagement"
-                                             : ""
-                                       } bg-${props.domaineAmenagement.couleur}-xxlight`}
-                                    >
-                                       <Card.Meta
-                                          title={
-                                             <Flex
-                                                wrap="wrap"
-                                                className="w-100"
-                                                justify="space-between"
-                                                align="start"
-                                             >
-                                                <div>
-                                                   <h5
-                                                      className="mt-0 mb-0 fs-11"
-                                                      style={{ whiteSpace: "pre-wrap" }}
-                                                   >
-                                                      {ta.libelle}
-                                                   </h5>
-                                                   <span
-                                                      className={`text-${props.domaineAmenagement.couleur}-dark fs-09`}
-                                                   >
-                                                      <ArrowRightOutlined className="mr-1" />
-                                                      {c.libelle}
-                                                   </span>
-                                                </div>
-                                                <Button
-                                                   className="mr-0 pr-0"
-                                                   type="text"
-                                                   icon={<EditOutlined aria-label="Menu" />}
-                                                   onClick={() => setEditedAmenagement(a)}
-                                                />
-                                             </Flex>
-                                          }
-                                          description={
-                                             <Space orientation="vertical" className="text-text">
-                                                {a.debut || a.fin ? (
-                                                   <Space align="start" size={[8, 2]} wrap>
-                                                      <CalendarOutlined />
-                                                      <Tag>
-                                                         {getLibellePeriode(a.debut, a.fin, "MMM")}
-                                                      </Tag>
-                                                      <Space size={0}>
-                                                         {a.semestre1 && (
-                                                            <Tooltip title="Semestre 1">
-                                                               <Tag>S1</Tag>
-                                                            </Tooltip>
-                                                         )}
-                                                         {a.semestre2 && (
-                                                            <Tooltip title="Semestre 2">
-                                                               <Tag>S2</Tag>
-                                                            </Tooltip>
-                                                         )}
-                                                      </Space>
-                                                   </Space>
-                                                ) : null}
-                                                {a.commentaire && a.commentaire.length > 0 && (
-                                                   <Space align="start" size={12}>
-                                                      <CommentOutlined />
-                                                      <EllipsisParagraph
-                                                         content={a.commentaire}
-                                                         className="light mb-0 fs-09"
-                                                         type="secondary"
-                                                      />
-                                                   </Space>
-                                                )}
-                                                {a.suivi ? (
-                                                   <Space align="start" size={12}>
-                                                      <HarmonyOSOutlined />
-                                                      <SuiviAmenagementItem
-                                                         suiviId={a.suivi}
-                                                         className="float-right"
-                                                         couleur={props.domaineAmenagement.couleur}
-                                                      />
-                                                   </Space>
-                                                ) : null}
-                                             </Space>
-                                          }
-                                       />
-                                    </Card>
-                                 </Col>
+                                 <CardAmenagement 
+                                    couleur={props.domaineAmenagement.couleur} 
+                                    categorie={c.libelle!} 
+                                    amenagement={a} 
+                                    type={ta.libelle}
+                                    onClickEdit={ setEditedAmenagement }>
+                                 </CardAmenagement>
                               ))}
                            </span>
                         ))}
