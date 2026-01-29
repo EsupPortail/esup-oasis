@@ -15,14 +15,20 @@ namespace App\State\TypeEvenement;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\TypeEvenement;
+use App\Repository\TauxHoraireRepository;
+use App\Repository\TypeEvenementRepository;
 use App\State\MappedEntityProcessor;
+use App\State\TransformerService;
 use ReflectionException;
 
+/** @mago-ignore analysis:unused-property */
 readonly class TypeEvenementProcessor implements ProcessorInterface
 {
-    public function __construct(private MappedEntityProcessor $processor)
-    {
-    }
+    public function __construct(
+        private TypeEvenementRepository $typeEvenementRepository,
+        private TauxHoraireRepository $tauxHoraireRepository,
+        private TransformerService $transformerService,
+    ) {}
 
     /**
      * @param \App\ApiResource\TypeEvenement $data
@@ -34,13 +40,35 @@ readonly class TypeEvenementProcessor implements ProcessorInterface
      */
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): mixed
     {
-        $context['existingEntities'] = ['tauxHoraires'];
+        //POST et PATCH
+        $entity = match ($data->id) {
+            null => new TypeEvenement(),
+            default => $this->typeEvenementRepository->find($data->id),
+        };
 
-        return $this->processor->process(
-            data        : $data,
-            operation   : $operation,
-            entityClass : TypeEvenement::class,
-            uriVariables: $uriVariables,
-            context     : $context);
+        $entity->setLibelle($data->libelle);
+        $entity->setActif($data->actif);
+        $entity->setVisibleParDefaut($data->visibleParDefaut);
+        $entity->setCouleur($data->couleur);
+        $entity->setAvecValidation($data->avecValidation);
+        $entity->setForfait($data->forfait);
+
+        //on met également à jour les taux horaires
+        $tauxIds = [];
+        foreach ($data->tauxHoraires as $tauxHoraire) {
+            $tauxExistant = $this->tauxHoraireRepository->find($tauxHoraire->id);
+            $entity->addTauxHoraire($tauxExistant);
+            $tauxIds[] = $tauxHoraire->id;
+        }
+        foreach ($entity->getTauxHoraires() as $tauxHoraire) {
+            if (in_array($tauxHoraire->getId(), $tauxIds)) {
+                continue;
+            }
+            $entity->removeTauxHoraire($tauxHoraire);
+        }
+
+        $this->typeEvenementRepository->save($entity, true);
+
+        return $this->transformerService->transform($entity, \App\ApiResource\TypeEvenement::class);
     }
 }
