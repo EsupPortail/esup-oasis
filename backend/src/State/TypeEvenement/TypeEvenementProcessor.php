@@ -15,11 +15,14 @@ namespace App\State\TypeEvenement;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\TypeEvenement;
+use App\Message\RessourceCollectionModifieeMessage;
+use App\Message\RessourceModifieeMessage;
 use App\Repository\TauxHoraireRepository;
 use App\Repository\TypeEvenementRepository;
 use App\State\MappedEntityProcessor;
 use App\State\TransformerService;
 use ReflectionException;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /** @mago-ignore analysis:unused-property */
 readonly class TypeEvenementProcessor implements ProcessorInterface
@@ -28,6 +31,7 @@ readonly class TypeEvenementProcessor implements ProcessorInterface
         private TypeEvenementRepository $typeEvenementRepository,
         private TauxHoraireRepository $tauxHoraireRepository,
         private TransformerService $transformerService,
+        private MessageBusInterface $messageBus,
     ) {}
 
     /**
@@ -40,7 +44,7 @@ readonly class TypeEvenementProcessor implements ProcessorInterface
      */
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): mixed
     {
-        //POST et PATCH
+        //POST et PATCH uniquement
         $entity = match ($data->id) {
             null => new TypeEvenement(),
             default => $this->typeEvenementRepository->find($data->id),
@@ -68,6 +72,11 @@ readonly class TypeEvenementProcessor implements ProcessorInterface
         }
 
         $this->typeEvenementRepository->save($entity, true);
+
+        if ($data->id !== null) {
+            $this->messageBus->dispatch(new RessourceModifieeMessage($data));
+        }
+        $this->messageBus->dispatch(new RessourceCollectionModifieeMessage($data));
 
         return $this->transformerService->transform($entity, \App\ApiResource\TypeEvenement::class);
     }
