@@ -20,7 +20,7 @@ Feature: Types Equipements
   Scenario: As an admin I can patch types
     Given I send an authentication token for "admin"
     When I add "Content-Type" header equal to "application/merge-patch+json"
-    And I send a "PATCH" request to "/types_evenements/1" with body:
+    And I send a "PATCH" request to "/types_equipements/1" with body:
     """
 {
       "libelle" : "nouveau"
