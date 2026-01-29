@@ -25,14 +25,14 @@ use ReflectionException;
 use ReflectionProperty;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-
+/** @mago-ignore analysis:unused-method */
 readonly class MappedEntityProcessor
 {
-    public function __construct(private ManagerRegistry         $managerRegistry,
-                                private MappedEntityTransformer $transformer,
-                                private MessageBusInterface     $messageBus)
-    {
-    }
+    public function __construct(
+        private ManagerRegistry $managerRegistry,
+        private MappedEntityTransformer $transformer,
+        private MessageBusInterface $messageBus,
+    ) {}
 
     /**
      * @param mixed $data
@@ -47,11 +47,16 @@ readonly class MappedEntityProcessor
      * @throws ReflectionException
      * @noinspection PhpUnusedParameterInspection
      */
-    public function process(mixed     $data, Operation $operation, string $entityClass,
-                            array     $uriVariables = [], array $context = [],
-                            ?callable $onCreation = null, ?callable $onModification = null,
-                            ?callable $onDeletion = null): mixed
-    {
+    public function process(
+        mixed $data,
+        Operation $operation,
+        string $entityClass,
+        array $uriVariables = [],
+        array $context = [],
+        ?callable $onCreation = null,
+        ?callable $onModification = null,
+        ?callable $onDeletion = null,
+    ): mixed {
         $manager = $this->managerRegistry->getManagerForClass($entityClass);
         $repository = $manager->getRepository($entityClass);
         //Si POST, il faut prendre tout ce qu'il y a en entrée tel quel...
@@ -124,7 +129,12 @@ readonly class MappedEntityProcessor
                 if (count($value) == 0) {
                     return;
                 }
-                $classname = get_class($value[0]);
+                /** @mago-ignore analysis:mixed-assignment */
+                foreach ($value as $elem) {
+                    $firstElement = $elem;
+                    break;
+                }
+                $classname = get_class($firstElement);
                 $registry = $this->managerRegistry->getManagerForClass($classname);
 
                 foreach ($value as $key => $item) {
@@ -135,7 +145,6 @@ readonly class MappedEntityProcessor
                         $value->add($entityItem);
                     }
                 }
-
             } else {
                 $classname = get_class($value);
                 $registry = $this->managerRegistry->getManagerForClass($classname);
@@ -183,7 +192,6 @@ readonly class MappedEntityProcessor
             if (!empty($attributes)) {
                 $res[$property->name] = $property->getValue($data);
             }
-
         }
         return $res;
     }
