@@ -188,7 +188,9 @@ export function TabPaiement({ evenement, form, setEvenement }: ITabPaiement): Re
                      Soit
                   </ColStyled>
                   <Col md={9} xs={24} sm={24}>
-                     <TarifEvenementField evenement={form.getFieldsValue() as Evenement} />
+                     <TarifEvenementField
+                        evenement={{ ...evenement, ...form.getFieldsValue() } as Evenement}
+                     />
                   </Col>
                </>
             )}

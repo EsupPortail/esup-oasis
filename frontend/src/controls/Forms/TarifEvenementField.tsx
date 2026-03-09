@@ -7,7 +7,7 @@
  * @author Julien Lemonnier <julien.lemonnier@u-bordeaux.fr>
  */
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Input, Skeleton, Space } from "antd";
 import dayjs from "dayjs";
 import { useApi } from "../../context/api/ApiProvider";
@@ -26,6 +26,8 @@ export default function TarifEvenementField({
 }: ITarifEvenementFieldProps) {
    const { data: typesEvenements, isFetching: isFetchingTypeEvenement } =
       useApi().useGetCollection(PREFETCH_TYPES_EVENEMENTS);
+   const [dureeTotale, setDureeTotale] = React.useState<number>(0);
+
    const { data: taux } = useApi().useGetCollection({
       path: "/types_evenements/{typeId}/taux",
       parameters: {
@@ -40,10 +42,13 @@ export default function TarifEvenementField({
          !!typesEvenements?.items.find((t) => t["@id"] === evenement.type)?.tauxActif,
    });
 
-   // get nb minutes between evenement.debut and evenement.fin
-   const nbMinutes = dayjs(evenement.fin).diff(dayjs(evenement.debut), "minute");
-   const dureeTotale =
-      nbMinutes + (evenement.tempsPreparation || 0) + (evenement.tempsSupplementaire || 0);
+   useEffect(() => {
+      // get nb minutes between evenement.debut and evenement.fin
+      const nbMinutes = dayjs(evenement.fin).diff(dayjs(evenement.debut), "minute");
+      setDureeTotale(
+         nbMinutes + (evenement.tempsPreparation || 0) + (evenement.tempsSupplementaire || 0),
+      );
+   }, [evenement.tempsPreparation, evenement.tempsSupplementaire, evenement.debut, evenement.fin]);
 
    if (isFetchingTypeEvenement) {
       return <Skeleton active />;
@@ -71,8 +76,10 @@ export default function TarifEvenementField({
             <div className="legende">
                Tarif horaire des évènements de la catégorie "
                {typesEvenements?.items.find((t) => t["@id"] === evenement.type)?.libelle}"&nbsp;:{" "}
-               {taux.items[0].montant || "?"}
-               &nbsp;€ / heure
+               <span className="no-wrap">
+                  {taux.items[0].montant || "?"}
+                  &nbsp;€ brut / heure
+               </span>
             </div>
          </>
       );
