@@ -30,6 +30,7 @@ import { PREFETCH_TYPES_EVENEMENTS } from "../../api/ApiPrefetchHelpers";
 import CalendarTable from "./Table/CalendarTable";
 import { ApiPathMethodQuery } from "../../api/SchemaHelpers";
 import { IEvenement } from "../../api/ApiTypeHelpers";
+import { TimezoneAlert } from "./TimezoneAlert";
 
 interface IComponentWithSider {
    saisieEvtRenfort?: boolean;
@@ -120,6 +121,7 @@ export default function PlanningWithSider({
          <CalendarSider saisieEvtRenfort={saisieEvtRenfort} />
          <Layout.Content className="calendar-table-content">
             <Toolbar saisieEvtRenfort={saisieEvtRenfort} evenements={events} />
+            <TimezoneAlert />
             {isFetching && (
                <div
                   className="d-flex-center"

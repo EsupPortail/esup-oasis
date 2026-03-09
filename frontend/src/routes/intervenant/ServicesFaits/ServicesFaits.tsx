@@ -22,6 +22,7 @@ import { useSearchParams } from "react-router-dom";
 import { to2Digits } from "../../../utils/number";
 import { EvenementsEnCoursTable } from "../../../controls/ServicesFaits/EvenementsEnCoursTable";
 import { InterventionsForfaitEnCoursTable } from "../../../controls/ServicesFaits/InterventionsForfaitEnCoursTable";
+import { TimezoneAlert } from "../../../controls/Calendar/TimezoneAlert";
 
 /**
  * Renders a table displaying services made by an intervenant.
@@ -169,6 +170,7 @@ export function ServicesFaits(): ReactElement {
       <Layout.Content style={{ padding: "0 50px" }}>
          <Typography.Title level={1}>Services faits</Typography.Title>
          <Card>
+            <TimezoneAlert />
             <Tabs
                defaultActiveKey={defaultTab}
                tabPosition={screens.lg ? "left" : undefined}
