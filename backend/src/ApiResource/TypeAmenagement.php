@@ -88,4 +88,7 @@ class TypeAmenagement
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
     public ?bool $aideHumaine = null;
+
+    #[Groups([self::GROUP_IN, self::GROUP_OUT])]
+    public bool $decision = false;
 }

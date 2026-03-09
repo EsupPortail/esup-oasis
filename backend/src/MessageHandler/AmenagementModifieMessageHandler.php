@@ -31,8 +31,9 @@ readonly class AmenagementModifieMessageHandler
         $bornesAnneeConcernee = $message->getBornesAnnee();
         $this->logger->info('Aménagement modifié pour  : ' . $message->getBeneficiaire()->getUid() . ', année : ' . json_encode($bornesAnneeConcernee));
         $beneficiaire = $message->getBeneficiaire();
-
-        if ($message->isExamens()) {
+        
+        // Appliquer à tous les aménagements pouvant apparaître dans le document décision
+        if ($message->isDecision()) {
             $this->decisionAmenagementManager->majEtatDecision($beneficiaire, $bornesAnneeConcernee['debut'], $bornesAnneeConcernee['fin']);
         }
     }

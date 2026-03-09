@@ -23,12 +23,12 @@ class AmenagementModifieMessage
     use AnneeUniversitaireAwareTrait;
 
     protected Utilisateur $beneficiaire;
-    protected bool $isExamens;
+    protected bool $isDecision;
 
     public function __construct(private readonly Amenagement $amenagement)
     {
         $this->beneficiaire = $amenagement->getBeneficiaires()->current()->getUtilisateur();
-        $this->isExamens = $this->amenagement->getType()->isExamens();
+        $this->isDecision = $this->amenagement->getType()->isDecision();
     }
 
     /**
@@ -50,9 +50,9 @@ class AmenagementModifieMessage
         return $this->beneficiaire;
     }
 
-    public function isExamens(): bool
+    public function isDecision(): bool
     {
-        return $this->isExamens;
+        return $this->isDecision;
     }
 
 }
