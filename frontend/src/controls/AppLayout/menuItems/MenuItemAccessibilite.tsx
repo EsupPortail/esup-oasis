@@ -42,9 +42,10 @@ export function menuItemAccessibilite(
          label: (
             <Button
                type="text"
-               className="bg-transparent"
+               className="bg-transparent p-0 pt-1"
                aria-label="Ajuster les préférences d'accessibilité"
             >
+               <span className="show-on-overflow">Accessibilité</span>
                <Icon component={IconeAccessibilite} aria-hidden className="hide-on-overflow" />
             </Button>
          ),

@@ -11,7 +11,7 @@ import { Utilisateur } from "../../../lib/Utilisateur";
 import { NavigateFunction } from "react-router-dom";
 import { Dispatch } from "redux";
 import { IStatistiquesEvenements } from "../../../api/ApiTypeHelpers";
-import { Badge, MenuProps } from "antd";
+import { Badge, Button, MenuProps } from "antd";
 import { PlanningLayout, TypeAffichageValues } from "../../../redux/context/IAffichageFiltres";
 import { AffectationFilterValues } from "../../Filters/Affectation/AffectationFilter";
 import { setAffichageFiltres } from "../../../redux/actions/AffichageFiltre";
@@ -112,7 +112,11 @@ export function menuItemNotifications(
       {
          key: "notifications",
          label: (
-            <>
+            <Button
+               type="text"
+               className="bg-transparent p-0 pt-1"
+               aria-label="Notifications de l'application"
+            >
                <Badge
                   count={
                      (stats?.evenementsNonAffectesJour || 0) +
@@ -125,11 +129,12 @@ export function menuItemNotifications(
                   }
                   size="small"
                   offset={[-17, 15]}
+                  className={"hide-on-overflow"}
                >
                   <BellOutlined className="hide-on-overflow" />
-                  <span className="show-on-overflow ml-0">Notifications</span>
                </Badge>
-            </>
+               <span className={"show-on-overflow"}>Notifications</span>
+            </Button>
          ),
          className: "menu-small-item no-indicator notifications",
          children: [

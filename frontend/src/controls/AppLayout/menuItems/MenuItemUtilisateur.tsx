@@ -37,13 +37,22 @@ export const menuItemUtilisateur = (
       {
          key: "user",
          label: (
-            <Button type="text" className="bg-transparent">
-               <LabelUtilisateurMenu
-                  auth={auth}
-                  apiFetching={apiFetching}
-                  isImpersonate={auth.impersonate !== undefined}
-               />
-            </Button>
+            <>
+               <Button type="text" className="bg-transparent hide-on-overflow">
+                  <LabelUtilisateurMenu
+                     auth={auth}
+                     apiFetching={apiFetching}
+                     isImpersonate={auth.impersonate !== undefined}
+                  />
+               </Button>
+               <Button type="text" className="bg-transparent show-on-overflow p-0">
+                  <LabelUtilisateurMenu
+                     auth={auth}
+                     apiFetching={apiFetching}
+                     isImpersonate={auth.impersonate !== undefined}
+                  />
+               </Button>
+            </>
          ),
          className: `user no-indicator`,
          style: { fontWeight: 300 },
