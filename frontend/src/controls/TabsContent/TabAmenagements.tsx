@@ -132,12 +132,7 @@ export function TabAmenagements(props: {
                                                 align="start"
                                              >
                                                 <div>
-                                                   <h5
-                                                      className="mt-0 mb-0 fs-11"
-                                                      style={{ whiteSpace: "pre-wrap" }}
-                                                   >
-                                                      {ta.libelle}
-                                                   </h5>
+                                                   <h5 className="mt-0 mb-0 fs-11">{ta.libelle}</h5>
                                                    <span
                                                       className={`text-${props.domaineAmenagement.couleur}-dark fs-09`}
                                                    >

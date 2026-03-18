@@ -54,11 +54,7 @@ export function ModalAmenagement(props: {
 
    const mutateDeleteAmenagement = useApi().useDelete({
       path: "/utilisateurs/{uid}/amenagements/{id}",
-      invalidationQueryKeys: [
-         "/utilisateurs/{uid}/amenagements",
-         "/beneficiaires",
-         "/amenagements/utilisateurs",
-      ],
+      invalidationQueryKeys: ["/utilisateurs/{uid}/amenagements", "/beneficiaires"],
       onSuccess: () => {
          props.setOpen(false);
          message.success("Aménagement supprimé").then();
