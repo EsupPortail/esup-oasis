@@ -46,9 +46,10 @@ RUN composer install \
     --optimize-autoloader \
     --no-scripts
 
-
 # Puis le reste de l’application
 COPY ./ ./
+
+RUN php bin/console assets:install # suivant les envs il est nécessaire de forcer l'installation des assets
 
 COPY --link --chmod=755 ./docker/entrypoint.sh /usr/local/bin/docker-entrypoint
 COPY --link --chmod=644 ./docker/php-overrides.ini /usr/local/etc/php/conf.d/99-overrides.ini
