@@ -170,7 +170,7 @@ readonly class UtilisateurManager
             $user->setUid($entry['uid'][0]);
             $user->setNom($entry['sn'][0] ?? $entry['uid'][0]);
             $user->setPrenom($entry['givenname'][0] ?? $entry['uid'][0]);
-            $user->setEmail($entry['mail'][0]);
+            $user->setEmail($entry['mail'][0] ?? '');
             if (array_key_exists($this->ldapChampEtuId, $entry)) {
                 $user->setNumeroEtudiant((int) $entry[$this->ldapChampEtuId][0]);
             }

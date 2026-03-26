@@ -48,6 +48,10 @@ readonly class UtilisateurProcessor implements ProcessorInterface
         //Si plus rattaché à un service, le rôle gestionnaire est perdu!
         $data->roles = $entity->getRoles();
 
+        $this->messageBus->dispatch(new RessourceModifieeMessage($data));
+        //Un patch ici peut impacter des collections (ajout/retrait de la liste des intervenants par ex.)
+        $this->messageBus->dispatch(new RessourceCollectionModifieeMessage($data));
+
         return $data;
     }
 }
