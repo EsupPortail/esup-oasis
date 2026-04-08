@@ -1,0 +1,31 @@
+App\Entity\TypologieHandicap:
+  typo-1:
+    libelle: "troubles des fonctions cognitives"
+    actif: true
+  typo-2:
+    libelle: "troubles du spectre de l'autisme"
+    actif: true
+  typo-3:
+    libelle: "troubles du psychisme"
+    actif: true
+  typo-4:
+    libelle: "troubles du langage ou de la parole"
+    actif: true
+  typo-5:
+    libelle: "troubles des fonctions motrices"
+    actif: true
+  typo-6:
+    libelle: "maladies invalidantes"
+    actif: true
+  typo-7:
+    libelle: "pathologies cancéreuses"
+    actif: true
+  typo-8:
+    libelle: "troubles des fonctions visuelles"
+    actif: true
+  typo-9:
+    libelle: "troubles des fonctions auditives"
+    actif: true
+  typo-10:
+    libelle: "autres troubles"
+    actif: true

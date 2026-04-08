@@ -30,37 +30,6 @@ final class Version20230706074245 extends AbstractMigration
         $this->addSql('ALTER TABLE intervenant ALTER fin DROP DEFAULT');
         $this->addSql('ALTER TABLE profil_beneficiaire ADD avec_typologie BOOLEAN DEFAULT false NOT NULL');
 
-        $this->initData();
-    }
-
-    protected function initData(): void
-    {
-        //Création des typo
-        $this->addSql("insert into typologie_handicap(id, libelle) 
-                            values(nextval('typologie_handicap_id_seq'), 'troubles des fonctions cognitives')");
-        $this->addSql("insert into typologie_handicap(id, libelle) 
-                            values(nextval('typologie_handicap_id_seq'), 'troubles du spectre de l''autisme')");
-        $this->addSql("insert into typologie_handicap(id, libelle) 
-                            values(nextval('typologie_handicap_id_seq'), 'troubles du psychisme')");
-        $this->addSql("insert into typologie_handicap(id, libelle) 
-                            values(nextval('typologie_handicap_id_seq'), 'troubles du langage ou de la parole')");
-        $this->addSql("insert into typologie_handicap(id, libelle) 
-                            values(nextval('typologie_handicap_id_seq'), 'troubles des fonctions motrices')");
-        $this->addSql("insert into typologie_handicap(id, libelle) 
-                            values(nextval('typologie_handicap_id_seq'), 'maladies invalidantes')");
-        $this->addSql("insert into typologie_handicap(id, libelle) 
-                            values(nextval('typologie_handicap_id_seq'), 'pathologies cancéreuses')");
-        $this->addSql("insert into typologie_handicap(id, libelle) 
-                            values(nextval('typologie_handicap_id_seq'), 'troubles des fonctions visuelles')");
-        $this->addSql("insert into typologie_handicap(id, libelle) 
-                            values(nextval('typologie_handicap_id_seq'), 'troubles des fonctions auditives')");
-        $this->addSql("insert into typologie_handicap(id, libelle) 
-                            values(nextval('typologie_handicap_id_seq'), 'autres troubles')");
-
-        //Activation des typologies sur les profils dédiés
-        $this->addSql("update profil_beneficiaire set avec_typologie=true
-                            where id in (1,2)");
-
     }
 
     public function down(Schema $schema): void
