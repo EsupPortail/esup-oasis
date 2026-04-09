@@ -34,6 +34,7 @@ class InitDonneesCommand extends Command
         $this->fixtures = [
             'campus',
             'competences',
+            'typologies_handicap',
             'profils_beneficiaires',
             'services',
             'types_equipements',
