@@ -247,7 +247,7 @@ final class Evenement
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
     public ?int $tempsPreparation = null {
         get {
-            if (null == $this->tempsPreparation && $this->entity !== null) {
+            if (null === $this->tempsPreparation && $this->entity !== null) {
                 $this->tempsPreparation = $this->entity->getTempsPreparation();
             }
             return $this->tempsPreparation ?? 0;
@@ -257,7 +257,7 @@ final class Evenement
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
     public ?int $tempsSupplementaire = null {
         get {
-            if (null == $this->tempsSupplementaire && $this->entity !== null) {
+            if (null === $this->tempsSupplementaire && $this->entity !== null) {
                 $this->tempsSupplementaire = $this->entity->getTempsSupplementaire();
             }
             return $this->tempsSupplementaire ?? 0;
