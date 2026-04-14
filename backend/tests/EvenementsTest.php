@@ -233,6 +233,55 @@ class EvenementsTest extends ApiTestCaseCustom
         $this->assertResponseIsSuccessful();
     }
 
+    public function testAdminCanPatchTempsPreparationAndSupplementaire(): void
+    {
+        $client = $this->createClientWithCredentials('admin');
+        $client->request('PATCH', '/evenements/1', [
+            'headers' => ['Content-Type' => 'application/merge-patch+json'],
+            'json' => [
+                'tempsPreparation' => 15,
+                'tempsSupplementaire' => 30,
+            ],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonContains([
+            '@id' => '/evenements/1',
+            'tempsPreparation' => 15,
+            'tempsSupplementaire' => 30,
+        ]);
+    }
+
+    public function testAdminCanResetTempsPreparationAndSupplementaireToZero(): void
+    {
+        $client = $this->createClientWithCredentials('admin');
+        // On s'assure d'abord qu'ils ont une valeur non nulle
+        $client->request('PATCH', '/evenements/1', [
+            'headers' => ['Content-Type' => 'application/merge-patch+json'],
+            'json' => [
+                'tempsPreparation' => 15,
+                'tempsSupplementaire' => 30,
+            ],
+        ]);
+        $this->assertResponseIsSuccessful();
+
+        // Puis on repasse à 0
+        $client->request('PATCH', '/evenements/1', [
+            'headers' => ['Content-Type' => 'application/merge-patch+json'],
+            'json' => [
+                'tempsPreparation' => 0,
+                'tempsSupplementaire' => 0,
+            ],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonContains([
+            '@id' => '/evenements/1',
+            'tempsPreparation' => 0,
+            'tempsSupplementaire' => 0,
+        ]);
+    }
+
     public function testPlanificateurCanDeleteEvent(): void
     {
         $client = $this->createClientWithCredentials('renfort');
