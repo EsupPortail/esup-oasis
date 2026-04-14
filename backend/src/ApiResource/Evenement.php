@@ -245,21 +245,22 @@ final class Evenement
         }
     }
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public int $tempsPreparation = 0 {
+    public ?int $tempsPreparation = null {
         get {
-            if ($this->entity !== null) {
-                return $this->entity->getTempsPreparation();
+            if (null == $this->tempsPreparation && $this->entity !== null) {
+                $this->tempsPreparation = $this->entity->getTempsPreparation();
             }
-            return $this->tempsPreparation;
+            return $this->tempsPreparation ?? 0;
         }
     }
+
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public int $tempsSupplementaire = 0 {
+    public ?int $tempsSupplementaire = null {
         get {
-            if ($this->entity !== null) {
-                return $this->entity->getTempsSupplementaire();
+            if (null == $this->tempsSupplementaire && $this->entity !== null) {
+                $this->tempsSupplementaire = $this->entity->getTempsSupplementaire();
             }
-            return $this->tempsSupplementaire;
+            return $this->tempsSupplementaire ?? 0;
         }
     }
 

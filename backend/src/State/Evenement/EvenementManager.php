@@ -65,14 +65,10 @@ class EvenementManager
     public function maj(EvenementResource $data): Evenement
     {
         if (null !== $data->id) {
-            $creation = false;
             $entity = $this->evenementRepository->find($data->id);
             $entity->setUtilisateurModification($this->security->getUser());
             $entity->setDateModification($this->now());
-            $dateOrigine = $entity->getDebut();
         } else {
-            $creation = true;
-            $dateOrigine = null;
             $entity = new Evenement();
             $entity->setUtilisateurCreation($this->security->getUser());
             $entity->setDateCreation($this->now());
