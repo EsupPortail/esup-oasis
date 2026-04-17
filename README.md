@@ -41,6 +41,13 @@ tout-en-un:
 * [backend](docs/backend/README.md)
 * [installation](docs/installation/README.md)
 
+## Communauté et entraide
+
+Pour échanger avec les autres utilisateurs d'Esup-Oasis, deux salons RocketChat sont à votre disposition sur l'instance d'EsupPortail :
+
+- Sujets fonctionnels : [https://rocket.esup-portail.org/channel/oasis-fonctionnel](https://rocket.esup-portail.org/channel/oasis-fonctionnel) 
+- Sujets techniques : [https://rocket.esup-portail.org/channel/oasis-technique](https://rocket.esup-portail.org/channel/oasis-technique)
+
 ---
 
 _Application développée par la Direction des Systèmes d'Information (DSI) de
