@@ -9,9 +9,11 @@ dépôt du projet.
 
 1. **Forkez** le dépôt.
 2. Créez une **branche** pour votre modification (ex: `feat/ma-nouvelle-fonctionnalite` ou `fix/mon-correctif`).
-3. Effectuez vos modifications en suivant les standards de code du projet.
+3. Effectuez vos modifications.
 4. Assurez-vous que votre code compile et que les tests passent.
-5. Soumettez une **Pull Request** vers la branche principale du projet original.
+5. Soumettez une **Pull Request** vers la branche cible du projet :
+    * "main" pour les évolutions
+    * "x.y" pour un correctif sur une version spécifique
 
 # Configuration du projet
 
