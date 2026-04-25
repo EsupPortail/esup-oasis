@@ -14,14 +14,16 @@ namespace App\ApiResource;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ApiResource(operations: [new Get()], openapi: false)]
 class ReponseDemande
 {
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -29,9 +31,10 @@ class ReponseDemande
     }
 
     #[Groups([Demande::GROUP_OUT])]
-    public ?string $commentaire = null {
+    public ?string $commentaire {
         get {
-            if ($this->commentaire === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'commentaire');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->commentaire = $this->entity->getCommentaire();
             }
             return $this->commentaire ?? null;
@@ -42,9 +45,10 @@ class ReponseDemande
      * @var OptionReponse[]
      */
     #[Groups([Demande::GROUP_OUT])]
-    public ?array $optionsReponses = null {
+    public ?array $optionsReponses {
         get {
-            if ($this->optionsReponses === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'optionsReponses');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->optionsReponses = array_map(fn($option) => $option instanceof \App\Entity\OptionReponse
                     ? new OptionReponse($option)
                     : OptionReponse::fromReference($option), $this->entity->getOptionsChoisiesTousTypes());
@@ -62,9 +66,10 @@ class ReponseDemande
      * @var Telechargement[]
      */
     #[Groups([Demande::GROUP_OUT])]
-    public ?array $piecesJustificatives = null {
+    public ?array $piecesJustificatives {
         get {
-            if ($this->piecesJustificatives === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'piecesJustificatives');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->piecesJustificatives = array_map(
                     fn($pj) => new Telechargement($pj),
                     $this->entity->getPiecesJustificatives()->toArray(),

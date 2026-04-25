@@ -24,6 +24,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model\Operation;
 use App\State\TypeEvenement\TypeEvenementProcessor;
 use App\State\TypeEvenement\TypeEvenementProvider;
+use ReflectionProperty;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -68,9 +69,10 @@ final class TypeEvenement
 
     #[ApiProperty(identifier: true)]
     #[Groups([self::GROUP_OUT])]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -80,39 +82,45 @@ final class TypeEvenement
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
     public string $libelle {
         get {
-            if (!isset($this->libelle) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'libelle');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->libelle = $this->entity->getLibelle() ?? '';
             }
             return $this->libelle;
         }
     }
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public bool $actif = true {
+    public bool $actif {
         get {
-            if ($this->entity !== null) {
-                return $this->entity->isActif() ?? true;
+            $prop = new ReflectionProperty(self::class, 'actif');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->actif = $this->entity->isActif();
             }
-            return $this->actif;
+            return $this->actif ?? true;
         }
     }
+
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public ?string $couleur = null {
+    public ?string $couleur {
         get {
-            if ($this->couleur === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'couleur');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->couleur = $this->entity->getCouleur();
             }
             return $this->couleur ?? null;
         }
     }
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public bool $visibleParDefaut = true {
+    public bool $visibleParDefaut {
         get {
-            if ($this->entity !== null) {
-                return $this->entity->isVisibleParDefaut() ?? true;
+            $prop = new ReflectionProperty(self::class, 'visibleParDefaut');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->visibleParDefaut = $this->entity->isVisibleParDefaut();
             }
-            return $this->visibleParDefaut;
+            return $this->visibleParDefaut ?? true;
         }
     }
+
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
     public bool $avecValidation = false {
         get {
@@ -128,36 +136,39 @@ final class TypeEvenement
      */
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
     #[Assert\All([new Assert\Type(TauxHoraire::class)])]
-    public array $tauxHoraires = [] {
+    public array $tauxHoraires {
         get {
-            if (empty($this->tauxHoraires) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'tauxHoraires');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->tauxHoraires = array_map(
                     fn($entity) => new TauxHoraire($entity),
                     $this->entity->getTauxHoraires()->toArray(),
                 );
             }
-            return $this->tauxHoraires;
+            return $this->tauxHoraires ?? [];
         }
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?TauxHoraire $tauxActif = null {
+    public ?TauxHoraire $tauxActif {
         get {
-            if ($this->tauxActif === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'tauxActif');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $actif = $this->entity->getTauxHoraireActif();
                 $this->tauxActif = $actif ? new TauxHoraire($actif) : null;
             }
-            return $this->tauxActif;
+            return $this->tauxActif ?? null;
         }
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public bool $forfait = false {
+    public bool $forfait {
         get {
-            if ($this->entity !== null) {
-                return $this->entity->isForfait();
+            $prop = new ReflectionProperty(self::class, 'forfait');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->forfait = $this->entity->isForfait();
             }
-            return $this->forfait;
+            return $this->forfait ?? false;
         }
     }
 

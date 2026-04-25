@@ -24,6 +24,7 @@ use App\Filter\CaseInsensitiveOrderFilter;
 use App\Filter\PreloadAssociationsFilter;
 use App\State\Composante\ComposanteProvider;
 use App\State\Composante\PatchComposanteProcessor;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ApiResource(
@@ -52,7 +53,8 @@ final class Composante
     #[Groups([self::GROUP_OUT])]
     public int $id {
         get {
-            if (!isset($this->id) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id;
@@ -62,7 +64,8 @@ final class Composante
     #[Groups([Utilisateur::AMENAGEMENTS_UTILISATEURS_OUT, Amenagement::GROUP_OUT, self::GROUP_OUT])]
     public string $libelle {
         get {
-            if (!isset($this->libelle) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'libelle');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->libelle = $this->entity->getLibelle() ?? '';
             }
             return $this->libelle;
@@ -75,7 +78,8 @@ final class Composante
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
     public array $referents {
         get {
-            if (!isset($this->referents) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'referents');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->referents = array_map(fn($u) => new Utilisateur($u), $this->entity->getReferents()->toArray());
             }
             return $this->referents ?? [];

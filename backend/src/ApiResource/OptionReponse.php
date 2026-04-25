@@ -17,6 +17,7 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use App\State\OptionReponse\OptionReponseProvider;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
 
@@ -34,9 +35,10 @@ class OptionReponse
 
     #[ApiProperty(identifier: true)]
     #[Groups([Question::GROUP_OUT, Reponse::GROUP_OUT, Demande::GROUP_OUT])]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -44,9 +46,10 @@ class OptionReponse
     }
 
     #[Ignore]
-    public ?int $questionId = null {
+    public int $questionId {
         get {
-            if ($this->questionId === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'questionId');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->questionId = $this->entity->getQuestion()->getId();
             }
             return $this->questionId ?? null;
@@ -54,19 +57,21 @@ class OptionReponse
     }
 
     #[Groups([Question::GROUP_OUT, Reponse::GROUP_OUT, Demande::GROUP_OUT])]
-    public ?string $libelle = null {
+    public string $libelle {
         get {
-            if ($this->libelle === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'libelle');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->libelle = $this->entity->getLibelle();
             }
-            return $this->libelle ?? null;
+            return $this->libelle;
         }
     }
 
     #[Groups([Question::GROUP_OUT, Reponse::GROUP_OUT])]
-    public ?array $questionsLiees = null {
+    public array $questionsLiees {
         get {
-            if ($this->questionsLiees === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'questionsLiees');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->questionsLiees = array_map(
                     fn($entity) => new Question($entity),
                     $this->entity->getQuestionsLiees()->toArray(),

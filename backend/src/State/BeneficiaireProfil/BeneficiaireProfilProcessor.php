@@ -36,7 +36,6 @@ final readonly class BeneficiaireProfilProcessor implements ProcessorInterface
         private UtilisateurManager $utilisateurManager,
         private ProfilBeneficiaireRepository $profilBeneficiaireRepository,
         private TypologieHandicapRepository $typologieHandicapRepository,
-        private MessageBusInterface $messageBus,
         private ValidatorInterface $validator,
     ) {}
 

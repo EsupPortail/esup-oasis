@@ -20,6 +20,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\OpenApi\Model\Operation;
 use App\Entity\QuestionEtapeDemande;
 use App\State\EtapeDemande\EtapeDemandeProvider;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ApiResource(
@@ -41,9 +42,10 @@ class EtapeDemande
 
     #[ApiProperty(identifier: true)]
     #[Groups([TypeDemande::GROUP_OUT, Demande::GROUP_OUT, self::GROUP_OUT])]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -51,22 +53,24 @@ class EtapeDemande
     }
 
     #[Groups([TypeDemande::GROUP_OUT, Demande::GROUP_OUT, self::GROUP_OUT, self::GROUP_IN])]
-    public ?string $libelle = null {
+    public string $libelle {
         get {
-            if ($this->libelle === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'libelle');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->libelle = $this->entity->getLibelle();
             }
-            return $this->libelle ?? null;
+            return $this->libelle;
         }
     }
 
     #[Groups([TypeDemande::GROUP_OUT, Demande::GROUP_OUT, self::GROUP_OUT, self::GROUP_IN])]
-    public ?int $ordre = null {
+    public int $ordre {
         get {
-            if ($this->ordre === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'ordre');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->ordre = $this->entity->getOrdre();
             }
-            return $this->ordre ?? null;
+            return $this->ordre;
         }
     }
 
@@ -74,9 +78,10 @@ class EtapeDemande
      * @var Question[]
      */
     #[Groups([TypeDemande::GROUP_OUT, self::GROUP_OUT, self::GROUP_IN])]
-    public ?array $questions = null {
+    public array $questions {
         get {
-            if ($this->questions === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'questions');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->questions = array_map(
                     callback: fn(QuestionEtapeDemande $questionEtapeDemande) => new Question(
                         $questionEtapeDemande->getQuestion(),

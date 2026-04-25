@@ -22,6 +22,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model\Operation;
 use App\Filter\CaseInsensitiveOrderFilter;
+use ReflectionProperty;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -49,9 +50,10 @@ class ClubSportif
 
     #[ApiProperty(identifier: true)]
     #[Groups([self::GROUP_OUT])]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -60,20 +62,21 @@ class ClubSportif
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
     #[Assert\NotBlank]
-    public ?string $libelle = null {
+    public string $libelle {
         get {
-            if ($this->libelle === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'libelle');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->libelle = $this->entity->getLibelle();
             }
             return $this->libelle ?? null;
         }
-        set => $value;
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?bool $actif = null {
+    public bool $actif {
         get {
-            if ($this->actif === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'actif');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->actif = $this->entity->isActif();
             }
             return $this->actif ?? true;
@@ -81,9 +84,10 @@ class ClubSportif
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?bool $centreFormation = null {
+    public bool $centreFormation {
         get {
-            if ($this->centreFormation === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'centreFormation');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->centreFormation = $this->entity->isCentreFormation();
             }
             return $this->centreFormation ?? false;
@@ -91,9 +95,10 @@ class ClubSportif
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?bool $professionnel = null {
+    public bool $professionnel {
         get {
-            if ($this->professionnel === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'professionnel');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->professionnel = $this->entity->isProfessionnel();
             }
             return $this->professionnel ?? false;

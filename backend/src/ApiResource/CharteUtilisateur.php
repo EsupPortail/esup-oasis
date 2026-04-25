@@ -24,6 +24,7 @@ use App\Filter\CharteUtilisateurFilter;
 use App\State\Charte\CharteUtilisateurProcessor;
 use App\State\Charte\CharteUtilisateurProvider;
 use DateTimeInterface;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
 
@@ -51,58 +52,62 @@ class CharteUtilisateur
     public const string GROUP_IN = 'charte_utilisateur:in';
 
     #[Ignore]
-    public ?string $uid = null {
+    public string $uid {
         get {
-            if ($this->uid === null && $this->entity !== null) {
-                $this->uid = $this->entity
-                    ->getDemande()
-                    ->getDemandeur()
-                    ->getUid();
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->uid = $this->entity->getDemande()->getDemandeur()->getUid();
             }
-            return $this->uid ?? null;
+            return $this->uid;
         }
     }
 
     #[Ignore]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
         }
     }
 
-    public ?string $libelle = null {
+    public string $libelle {
         get {
-            if ($this->libelle === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'libelle');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->libelle = $this->entity->getLibelle();
             }
-            return $this->libelle ?? null;
-        }
-    }
-    public ?string $contenu = null {
-        get {
-            if ($this->contenu === null && $this->entity !== null) {
-                $this->contenu = $this->entity->getContenu();
-            }
-            return $this->contenu ?? null;
+            return $this->libelle;
         }
     }
 
-    public ?Demande $demande = null {
+    public string $contenu {
         get {
-            if ($this->demande === null && $this->entity !== null && null !== $this->entity->getDemande()) {
+            $prop = new ReflectionProperty(self::class, 'contenu');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->contenu = $this->entity->getContenu();
+            }
+            return $this->contenu;
+        }
+    }
+
+    public Demande $demande {
+        get {
+            $prop = new ReflectionProperty(self::class, 'demande');
+            if (!$prop->isInitialized($this) && $this->entity !== null && null !== $this->entity->getDemande()) {
                 $this->demande = new Demande($this->entity->getDemande());
             }
-            return $this->demande ?? null;
+            return $this->demande;
         }
     }
 
     #[Groups([self::GROUP_IN])]
-    public ?DateTimeInterface $dateValidation = null {
+    public ?DateTimeInterface $dateValidation {
         get {
-            if ($this->dateValidation === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'dateValidation');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->dateValidation = $this->entity->getDateValidation();
             }
             return $this->dateValidation;

@@ -24,6 +24,7 @@ use App\State\Commission\MembreCommissionDeleteProcessor;
 use App\State\Commission\MembreCommissionProvider;
 use App\State\Commission\MembreCommissionPutProcessor;
 use App\Validator\RoleCommissionValideConstraint;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
 
@@ -80,9 +81,10 @@ class MembreCommission
     public const string GROUP_OUT = 'membre_commission:out';
 
     #[Ignore]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -90,22 +92,24 @@ class MembreCommission
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?Utilisateur $utilisateur = null {
+    public Utilisateur $utilisateur {
         get {
-            if ($this->utilisateur === null && $this->entity !== null && $this->entity->getUtilisateur() !== null) {
+            $prop = new ReflectionProperty(self::class, 'utilisateur');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getUtilisateur() !== null) {
                 $this->utilisateur = new Utilisateur($this->entity->getUtilisateur());
             }
-            return $this->utilisateur ?? null;
+            return $this->utilisateur;
         }
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?Commission $commission = null {
+    public Commission $commission {
         get {
-            if ($this->commission === null && $this->entity !== null && $this->entity->getCommission() !== null) {
+            $prop = new ReflectionProperty(self::class, 'commission');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getCommission() !== null) {
                 $this->commission = new Commission($this->entity->getCommission());
             }
-            return $this->commission ?? null;
+            return $this->commission;
         }
     }
 
@@ -114,9 +118,10 @@ class MembreCommission
      */
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
     #[RoleCommissionValideConstraint]
-    public ?array $roles = null {
+    public array $roles {
         get {
-            if ($this->roles === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'roles');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->roles = $this->entity->getRoles();
             }
             return $this->roles ?? [];

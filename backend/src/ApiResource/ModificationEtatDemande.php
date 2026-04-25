@@ -24,6 +24,7 @@ use ApiPlatform\Metadata\Link;
 use ApiPlatform\OpenApi\Model\Operation;
 use App\State\Demande\ModificationEtatDemandeProvider;
 use DateTimeInterface;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[ApiResource(
@@ -53,71 +54,80 @@ class ModificationEtatDemande
     public const string ITEM_URI = '/demandes/{demandeId}/modifications/{id}';
 
     #[Ignore]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
         }
     }
 
-    public ?Demande $demande = null {
+    public Demande $demande {
         get {
-            if ($this->demande === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'demande');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->demande = new Demande($this->entity->getDemande());
             }
             return $this->demande ?? null;
         }
     }
 
-    public ?EtatDemande $etat = null {
+    public EtatDemande $etat {
         get {
-            if ($this->etat === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'etat');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->etat = new EtatDemande($this->entity->getEtat());
             }
             return $this->etat ?? null;
         }
     }
-    public ?EtatDemande $etatPrecedent = null {
+
+    public EtatDemande $etatPrecedent {
         get {
-            if ($this->etatPrecedent === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'etatPrecedent');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->etatPrecedent = new EtatDemande($this->entity->getEtatPrecedent());
             }
-            return $this->etatPrecedent ?? null;
+            return $this->etatPrecedent;
         }
     }
 
-    public ?Utilisateur $utilisateurModification = null {
+    public Utilisateur $utilisateurModification {
         get {
-            if ($this->utilisateurModification === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'utilisateurModification');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->utilisateurModification = new Utilisateur($this->entity->getUtilisateur());
             }
-            return $this->utilisateurModification ?? null;
+            return $this->utilisateurModification;
         }
     }
 
-    public ?ProfilBeneficiaire $profil = null {
+    public ?ProfilBeneficiaire $profil {
         get {
-            if ($this->profil === null && $this->entity !== null && $this->entity->getProfil() !== null) {
+            $prop = new ReflectionProperty(self::class, 'profil');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getProfil() !== null) {
                 $this->profil = new ProfilBeneficiaire($this->entity->getProfil());
             }
             return $this->profil ?? null;
         }
     }
 
-    public ?string $commentaire = null {
+    public ?string $commentaire {
         get {
-            if ($this->commentaire === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'commentaire');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->commentaire = $this->entity->getCommentaire();
             }
             return $this->commentaire ?? null;
         }
     }
 
-    public ?DateTimeInterface $dateModification = null {
+    public ?DateTimeInterface $dateModification {
         get {
-            if ($this->dateModification === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'dateModification');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->dateModification = $this->entity->getDateModification();
             }
             return $this->dateModification ?? null;

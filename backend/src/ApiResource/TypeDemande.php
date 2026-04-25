@@ -25,8 +25,9 @@ use App\Filter\CaseInsensitiveOrderFilter;
 use App\Filter\PreloadAssociationsFilter;
 use App\State\TypeDemande\TypeDemandeProcessor;
 use App\State\TypeDemande\TypeDemandeProvider;
-use Symfony\Component\ObjectMapper\Attribute\Map;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     operations: [
@@ -53,9 +54,10 @@ final class TypeDemande
 
     #[ApiProperty(identifier: true)]
     #[Groups([self::GROUP_OUT])]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -64,19 +66,21 @@ final class TypeDemande
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
     #[Assert\NotBlank]
-    public ?string $libelle = null {
+    public string $libelle {
         get {
-            if ($this->libelle === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'libelle');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->libelle = $this->entity->getLibelle();
             }
-            return $this->libelle ?? null;
+            return $this->libelle;
         }
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public ?bool $actif = null {
+    public bool $actif {
         get {
-            if ($this->actif === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'actif');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->actif = $this->entity->isActif();
             }
             return $this->actif ?? true;
@@ -87,9 +91,10 @@ final class TypeDemande
      * @var ProfilBeneficiaire[]
      */
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public ?array $profilsCibles = null {
+    public array $profilsCibles {
         get {
-            if ($this->profilsCibles === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'profilsCibles');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->profilsCibles = array_map(
                     fn($profil) => new ProfilBeneficiaire($profil),
                     $this->entity->getProfilsAssocies()->toArray(),
@@ -110,9 +115,10 @@ final class TypeDemande
      * @var EtapeDemande[]
      */
     #[Groups([self::GROUP_OUT])]
-    public ?array $etapes = null {
+    public array $etapes {
         get {
-            if ($this->etapes === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'etapes');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->etapes = array_map(
                     fn($etape) => new EtapeDemande($etape),
                     $this->entity->getEtapes()->toArray(),
@@ -123,9 +129,10 @@ final class TypeDemande
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?bool $visibiliteLimitee = null {
+    public bool $visibiliteLimitee {
         get {
-            if ($this->visibiliteLimitee === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'visibiliteLimitee');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->visibiliteLimitee = $this->entity->isVisibiliteLimitee();
             }
             return $this->visibiliteLimitee ?? true;
@@ -133,9 +140,10 @@ final class TypeDemande
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?bool $accompagnementOptionnel = null {
+    public bool $accompagnementOptionnel {
         get {
-            if ($this->accompagnementOptionnel === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'accompagnementOptionnel');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->accompagnementOptionnel = $this->entity->isAccompagnementOptionnel();
             }
             return $this->visibiliteLimitee ?? false;

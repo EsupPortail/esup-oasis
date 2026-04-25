@@ -18,12 +18,14 @@ use DateTime;
 use DateTimeInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
+use SensitiveParameter;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class ApogeeProvider extends AbstractSiScolDataProvider
 {
     public function __construct(
         private readonly string $username,
+        #[SensitiveParameter]
         private readonly string $password,
         private readonly string $db,
         private readonly LoggerInterface $logger,

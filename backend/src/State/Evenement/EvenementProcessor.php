@@ -28,7 +28,6 @@ readonly class EvenementProcessor implements ProcessorInterface
     public function __construct(
         private EvenementManager $evenementManager,
         private ValidatorInterface $validator,
-        private MessageBusInterface $messageBus,
     ) {}
 
     /**

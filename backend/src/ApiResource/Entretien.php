@@ -25,6 +25,7 @@ use ApiPlatform\Metadata\Post;
 use App\State\Entretien\EntretienProcessor;
 use App\State\Entretien\EntretienProvider;
 use DateTimeInterface;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ApiResource(
@@ -73,19 +74,21 @@ class Entretien
     public const string GROUP_IN = 'entretien:in';
     public const string GROUP_OUT = 'entretien:out';
 
-    public ?Utilisateur $utilisateur = null {
+    public Utilisateur $utilisateur {
         get {
-            if ($this->utilisateur === null && $this->entity !== null && null !== $this->entity->getUtilisateur()) {
+            $prop = new ReflectionProperty(self::class, 'utilisateur');
+            if (!$prop->isInitialized($this) && $this->entity !== null && null !== $this->entity->getUtilisateur()) {
                 $this->utilisateur = new Utilisateur($this->entity->getUtilisateur());
             }
-            return $this->utilisateur ?? null;
+            return $this->utilisateur;
         }
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -93,9 +96,10 @@ class Entretien
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?string $commentaire = null {
+    public ?string $commentaire {
         get {
-            if ($this->commentaire === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'commentaire');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->commentaire = $this->entity->getCommentaire();
             }
             return $this->commentaire ?? null;
@@ -103,19 +107,21 @@ class Entretien
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?DateTimeInterface $date = null {
+    public DateTimeInterface $date {
         get {
-            if ($this->date === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'date');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->date = $this->entity->getDate();
             }
-            return $this->date ?? null;
+            return $this->date;
         }
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?Telechargement $fichier = null {
+    public ?Telechargement $fichier {
         get {
-            if ($this->fichier === null && $this->entity !== null && null !== $this->entity->getFichier()) {
+            $prop = new ReflectionProperty(self::class, 'fichier');
+            if (!$prop->isInitialized($this) && $this->entity !== null && null !== $this->entity->getFichier()) {
                 $this->fichier = new Telechargement($this->entity->getFichier());
             }
             return $this->fichier ?? null;
@@ -123,12 +129,13 @@ class Entretien
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?Utilisateur $gestionnaire = null {
+    public Utilisateur $gestionnaire {
         get {
-            if ($this->gestionnaire === null && $this->entity !== null && null !== $this->entity->getGestionnaire()) {
+            $prop = new ReflectionProperty(self::class, 'gestionnaire');
+            if (!$prop->isInitialized($this) && $this->entity !== null && null !== $this->entity->getGestionnaire()) {
                 $this->gestionnaire = new Utilisateur($this->entity->getGestionnaire());
             }
-            return $this->gestionnaire ?? null;
+            return $this->gestionnaire;
         }
     }
 

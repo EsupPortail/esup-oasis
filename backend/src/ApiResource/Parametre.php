@@ -19,6 +19,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\OpenApi\Model\Operation;
 use App\State\Parametre\ParametreProvider;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ApiResource(
@@ -43,19 +44,21 @@ class Parametre
 
     #[ApiProperty(identifier: true)]
     #[Groups(self::GROUP_OUT)]
-    public ?string $cle = null {
+    public string $cle {
         get {
-            if ($this->cle === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'cle');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->cle = $this->entity->getCle();
             }
-            return $this->cle ?? null;
+            return $this->cle;
         }
     }
 
     #[Groups(self::GROUP_OUT)]
-    public ?bool $fichier = null {
+    public ?bool $fichier {
         get {
-            if ($this->fichier === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'fichier');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->fichier = $this->entity->isFichier();
             }
             return $this->fichier ?? false;
@@ -67,9 +70,10 @@ class Parametre
      */
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
     #[ApiProperty(readableLink: false, writableLink: false)]
-    public ?array $valeurs = null {
+    public array $valeurs {
         get {
-            if ($this->valeurs === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'valeurs');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->valeurs = array_map(
                     fn($val) => new ValeurParametre($val),
                     $this->entity->getValeursParametres()->toArray(),
@@ -83,9 +87,10 @@ class Parametre
      * @var ValeurParametre[]
      */
     #[Groups(self::GROUP_OUT)]
-    public ?array $valeursCourantes = null {
+    public array $valeursCourantes {
         get {
-            if ($this->valeursCourantes === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'valeursCourantes');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->valeursCourantes = array_map(
                     fn($val) => new ValeurParametre($val),
                     $this->entity->getValeurCourante(multiple: true),
@@ -97,7 +102,5 @@ class Parametre
 
     public function __construct(
         private readonly ?\App\Entity\Parametre $entity = null,
-    ) {
-        //dd($entity);
-    }
+    ) {}
 }

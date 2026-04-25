@@ -31,6 +31,7 @@ use App\Filter\PreloadAssociationsFilter;
 use App\State\InterventionForfait\InterventionForfaitProcessor;
 use App\State\InterventionForfait\InterventionForfaitProvider;
 use DateTimeInterface;
+use ReflectionProperty;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -83,9 +84,10 @@ class InterventionForfait
 
     #[ApiProperty(identifier: true)]
     #[Groups([self::GROUP_OUT])]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -94,9 +96,10 @@ class InterventionForfait
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
     #[Assert\NotNull]
-    public ?Utilisateur $intervenant = null {
+    public Utilisateur $intervenant {
         get {
-            if ($this->intervenant === null && $this->entity !== null && $this->entity->getIntervenant()) {
+            $prop = new ReflectionProperty(self::class, 'intervenant');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getIntervenant()) {
                 $this->intervenant = new Utilisateur($this->entity->getIntervenant()->getUtilisateur());
             }
             return $this->intervenant;
@@ -110,7 +113,8 @@ class InterventionForfait
     #[Assert\All([new Assert\Type(Utilisateur::class)])]
     public array $beneficiaires {
         get {
-            if (!isset($this->beneficiaires) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'beneficiaires');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $utilisateursBeneficiaires = array_reduce(
                     $this->entity->getBeneficiaires()->toArray(),
                     function ($carry, Beneficiaire $item) {
@@ -132,9 +136,10 @@ class InterventionForfait
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
     #[Assert\NotNull]
-    public ?PeriodeRH $periode = null {
+    public PeriodeRH $periode {
         get {
-            if ($this->periode === null && $this->entity !== null && $this->entity->getPeriode()) {
+            $prop = new ReflectionProperty(self::class, 'periode');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->periode = new PeriodeRH($this->entity->getPeriode());
             }
             return $this->periode;
@@ -143,9 +148,10 @@ class InterventionForfait
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
     #[Assert\NotNull]
-    public ?TypeEvenement $type = null {
+    public TypeEvenement $type {
         get {
-            if ($this->type === null && $this->entity !== null && $this->entity->getType()) {
+            $prop = new ReflectionProperty(self::class, 'type');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getType()) {
                 $this->type = new TypeEvenement($this->entity->getType());
             }
             return $this->type;
@@ -158,9 +164,10 @@ class InterventionForfait
     #[Assert\Type('numeric')]
     #[Assert\LessThan(10000)] //decimal(5,1)
     #[Assert\Positive]
-    public ?string $heures = null {
+    public string $heures {
         get {
-            if ($this->heures === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'heures');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->heures = $this->entity->getHeures() ?? '0';
             }
             return $this->heures;
@@ -168,22 +175,20 @@ class InterventionForfait
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?DateTimeInterface $dateCreation = null {
+    public DateTimeInterface $dateCreation {
         get {
-            if ($this->dateCreation === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'dateCreation');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->dateCreation = $this->entity->getDateCreation();
             }
             return $this->dateCreation ?? null;
         }
     }
     #[Groups([self::GROUP_OUT])]
-    public ?Utilisateur $utilisateurCreation = null {
+    public ?Utilisateur $utilisateurCreation {
         get {
-            if (
-                $this->utilisateurCreation === null
-                && $this->entity !== null
-                && $this->entity->getUtilisateurCreation()
-            ) {
+            $prop = new ReflectionProperty(self::class, 'utilisateurCreation');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getUtilisateurCreation()) {
                 $this->utilisateurCreation = new Utilisateur($this->entity->getUtilisateurCreation());
             }
             return $this->utilisateurCreation;
@@ -191,22 +196,21 @@ class InterventionForfait
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?DateTimeInterface $dateModification = null {
+    public ?DateTimeInterface $dateModification {
         get {
-            if ($this->dateModification === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'dateModification');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->dateModification = $this->entity->getDateModification();
             }
             return $this->dateModification ?? null;
         }
     }
+
     #[Groups([self::GROUP_OUT])]
-    public ?Utilisateur $utilisateurModification = null {
+    public ?Utilisateur $utilisateurModification {
         get {
-            if (
-                $this->utilisateurModification === null
-                && $this->entity !== null
-                && $this->entity->getUtilisateurModification()
-            ) {
+            $prop = new ReflectionProperty(self::class, 'utilisateurModification');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getUtilisateurModification()) {
                 $this->utilisateurModification = new Utilisateur($this->entity->getUtilisateurModification());
             }
             return $this->utilisateurModification ?? null;

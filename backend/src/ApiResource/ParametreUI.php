@@ -22,6 +22,7 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\OpenApi\Model\Operation;
 use App\State\ParametreUI\ParametreUIProcessor;
 use App\State\ParametreUI\ParametreUIProvider;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[ApiResource(
@@ -45,9 +46,10 @@ class ParametreUI
     public const string ITEM_URI = '/utilisateurs/{uid}/parametres_ui/{cle}';
 
     #[Ignore]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -55,41 +57,45 @@ class ParametreUI
     }
 
     #[Ignore]
-    public ?string $uid = null {
+    public string $uid {
         get {
-            if ($this->uid === null && $this->entity !== null && null !== $this->entity->getUtilisateur()) {
+            $prop = new ReflectionProperty(self::class, 'uid');
+            if (!$prop->isInitialized($this) && $this->entity !== null && null !== $this->entity->getUtilisateur()) {
                 $this->uid = $this->entity->getUtilisateur()->getUid();
             }
-            return $this->uid ?? null;
+            return $this->uid;
         }
     }
 
     #[Ignore]
-    public ?Utilisateur $utilisateur = null {
+    public Utilisateur $utilisateur {
         get {
-            if ($this->utilisateur === null && $this->entity !== null && null !== $this->entity->getUtilisateur()) {
+            $prop = new ReflectionProperty(self::class, 'utilisateur');
+            if (!$prop->isInitialized($this) && $this->entity !== null && null !== $this->entity->getUtilisateur()) {
                 $this->utilisateur = new Utilisateur($this->entity->getUtilisateur());
             }
-            return $this->utilisateur ?? null;
+            return $this->utilisateur;
         }
     }
 
     #[Ignore]
-    public ?string $cle = null {
+    public string $cle {
         get {
-            if ($this->cle === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'cle');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->cle = $this->entity->getCle();
             }
-            return $this->cle ?? null;
+            return $this->cle;
         }
     }
 
-    public ?string $valeur = null {
+    public string $valeur {
         get {
-            if ($this->valeur === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'valeur');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->valeur = $this->entity->getValeur();
             }
-            return $this->valeur ?? null;
+            return $this->valeur;
         }
     }
 

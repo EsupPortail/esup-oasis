@@ -17,6 +17,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\OpenApi\Model\Operation;
+use ReflectionProperty;
 
 #[ApiResource(
     operations: [
@@ -33,7 +34,8 @@ final class EtatDemande
 
     public ?int $id {
         get {
-            if (!isset($this->id) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 return $this->entity->getId();
             }
             return $this->id ?? null;
@@ -42,8 +44,9 @@ final class EtatDemande
 
     public string $libelle {
         get {
-            if (!isset($this->libelle) && $this->entity !== null) {
-                return $this->entity->getLibelle() ?? '';
+            $prop = new ReflectionProperty(self::class, 'libelle');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                return $this->entity->getLibelle();
             }
             return $this->libelle;
         }

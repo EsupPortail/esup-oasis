@@ -19,6 +19,7 @@ use ApiPlatform\Metadata\Patch;
 use App\State\DecisionAmenagementExamens\DecisionAmenagementExamensProcessor;
 use App\State\DecisionAmenagementExamens\DecisionAmenagementExamensProvider;
 use App\Validator\EtatDecisionValideConstraint;
+use ReflectionProperty;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
@@ -53,9 +54,10 @@ class DecisionAmenagementExamens
     public const string GROUP_OUT = 'decision:out';
 
     #[Ignore]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -64,7 +66,8 @@ class DecisionAmenagementExamens
     #[Ignore]
     public string $uid {
         get {
-            if (!isset($this->uid) && $this->entity !== null && $this->entity->getBeneficiaire()) {
+            $prop = new ReflectionProperty(self::class, 'uid');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getBeneficiaire()) {
                 $this->uid = $this->entity->getBeneficiaire()->getUid();
             }
             return $this->uid;
@@ -73,7 +76,8 @@ class DecisionAmenagementExamens
     #[Ignore]
     public int $annee {
         get {
-            if (!isset($this->annee) && $this->entity !== null && $this->entity->getDebut()) {
+            $prop = new ReflectionProperty(self::class, 'annee');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getDebut()) {
                 $this->annee = (int) $this->entity->getDebut()->format('Y');
             }
             return $this->annee;
@@ -84,7 +88,8 @@ class DecisionAmenagementExamens
     #[EtatDecisionValideConstraint]
     public string $etat {
         get {
-            if (!isset($this->etat) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'etat');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->etat = $this->entity->getEtat() ?? '';
             }
             return $this->etat;
@@ -92,9 +97,10 @@ class DecisionAmenagementExamens
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?string $urlContenu = null {
+    public ?string $urlContenu {
         get {
-            if ($this->urlContenu === null && $this->entity !== null && $this->entity->getFichier()) {
+            $prop = new ReflectionProperty(self::class, 'urlContenu');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getFichier()) {
                 $this->urlContenu = '/fichiers/' . $this->entity->getFichier()->getId();
             }
             return $this->urlContenu ?? null;

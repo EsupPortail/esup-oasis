@@ -23,6 +23,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model\Operation;
 use App\State\Charte\CharteProcessor;
 use App\State\Charte\CharteProvider;
+use ReflectionProperty;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\ObjectMapper\Transform\MapCollection;
 use Symfony\Component\Serializer\Attribute\Ignore;
@@ -47,9 +48,10 @@ class Charte
 
     #[ApiProperty(identifier: true)]
     #[Ignore]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -58,7 +60,8 @@ class Charte
 
     public string $libelle {
         get {
-            if (!isset($this->libelle) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'libelle');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->libelle = $this->entity->getLibelle() ?? '';
             }
             return $this->libelle;
@@ -67,7 +70,8 @@ class Charte
 
     public string $contenu {
         get {
-            if (!isset($this->contenu) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'contenu');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->contenu = $this->entity->getContenu() ?? '';
             }
             return $this->contenu;
@@ -79,8 +83,9 @@ class Charte
      */
     public array $profilsAssocies {
         get {
+            $prop = new ReflectionProperty(self::class, 'profilsAssocies');
             if (
-                !isset($this->profilsAssocies)
+                !$prop->isInitialized($this)
                 && $this->entity !== null
                 && $this->entity->getProfilsAssocies() !== null
             ) {

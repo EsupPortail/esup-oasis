@@ -37,6 +37,7 @@ use App\State\Amenagement\AmenagementSansFiltreProvider;
 use App\Validator\AmenagementDatesConstraint;
 use App\Validator\UtilisateurBeneficiaireAmenagementConstraint;
 use DateTimeInterface;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -130,19 +131,21 @@ class Amenagement
 
     //pour uriVariables uniquement
     #[Groups([Utilisateur::AMENAGEMENTS_UTILISATEURS_OUT])]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
-            return $this->id;
+            return $this->id ?? null;
         }
     }
 
     #[Ignore]
-    public ?string $uid = null {
+    public ?string $uid {
         get {
-            if (!isset($this->uid) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'uid');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->uid = $this->beneficiaire->uid;
             }
             return $this->uid;
@@ -152,8 +155,9 @@ class Amenagement
     #[Groups([self::GROUP_OUT])]
     public Utilisateur $beneficiaire {
         get {
+            $prop = new ReflectionProperty(self::class, 'beneficiaire');
             if (
-                !isset($this->beneficiaire)
+                !$prop->isInitialized($this)
                 && $this->entity !== null
                 && !$this->entity->getBeneficiaires()->isEmpty()
             ) {
@@ -166,9 +170,10 @@ class Amenagement
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN, Utilisateur::AMENAGEMENTS_UTILISATEURS_OUT])]
     #[Assert\NotNull]
-    public ?TypeAmenagement $typeAmenagement = null {
+    public TypeAmenagement $typeAmenagement {
         get {
-            if (null == $this->typeAmenagement && $this->entity !== null && $this->entity->getType()) {
+            $prop = new ReflectionProperty(self::class, 'typeAmenagement');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getType()) {
                 $this->typeAmenagement = new TypeAmenagement($this->entity->getType());
             }
             return $this->typeAmenagement;
@@ -176,18 +181,20 @@ class Amenagement
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public ?bool $semestre1 = null {
+    public bool $semestre1 {
         get {
-            if (null == $this->semestre1 && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'semestre1');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->semestre1 = $this->entity->isSemestre1();
             }
             return $this->semestre1 ?? false;
         }
     }
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public ?bool $semestre2 = null {
+    public bool $semestre2 {
         get {
-            if (null == $this->semestre2 && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'semestre2');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->semestre2 = $this->entity->isSemestre2();
             }
             return $this->semestre2 ?? false;
@@ -195,42 +202,46 @@ class Amenagement
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public ?DateTimeInterface $debut = null {
+    public ?DateTimeInterface $debut {
         get {
-            if (!isset($this->debut) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'debut');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->debut = $this->entity->getDebut();
             }
-            return $this->debut;
+            return $this->debut ?? null;
         }
     }
     #[Assert\GreaterThan(propertyPath: 'debut', message: 'fin doit être postérieur à debut')]
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public ?DateTimeInterface $fin = null {
+    public ?DateTimeInterface $fin {
         get {
-            if (!isset($this->fin) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'fin');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->fin = $this->entity->getFin();
             }
-            return $this->fin;
+            return $this->fin ?? null;
         }
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN, Utilisateur::AMENAGEMENTS_UTILISATEURS_OUT])]
-    public ?string $commentaire = null {
+    public ?string $commentaire {
         get {
-            if (!isset($this->commentaire) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'commentaire');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->commentaire = $this->entity->getCommentaire();
             }
-            return $this->commentaire;
+            return $this->commentaire ?? null;
         }
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public ?TypeSuiviAmenagement $suivi = null {
+    public ?TypeSuiviAmenagement $suivi {
         get {
-            if (!isset($this->suivi) && $this->entity !== null && $this->entity->getSuivi()) {
+            $prop = new ReflectionProperty(self::class, 'suivi');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getSuivi()) {
                 $this->suivi = new TypeSuiviAmenagement($this->entity->getSuivi());
             }
-            return $this->suivi;
+            return $this->suivi ?? null;
         }
     }
 

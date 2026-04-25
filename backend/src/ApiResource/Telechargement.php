@@ -25,6 +25,7 @@ use App\State\PieceJustificative\TelechargementProcessor;
 use App\State\PieceJustificative\TelechargementProvider;
 use App\Validator\NoVirusConstraint;
 use ArrayObject;
+use ReflectionProperty;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Serializer\Attribute\Groups;
 
@@ -67,9 +68,10 @@ class Telechargement
     public const string GROUP_OUT = 'telechargement:out';
 
     #[ApiProperty(identifier: true)]
-    public ?string $id = null {
+    public ?string $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -77,12 +79,13 @@ class Telechargement
     }
 
     #[Groups(self::GROUP_OUT)]
-    public ?Utilisateur $proprietaire = null {
+    public Utilisateur $proprietaire {
         get {
-            if ($this->proprietaire === null && $this->entity !== null && $this->entity->getProprietaire() !== null) {
+            $prop = new ReflectionProperty(self::class, 'proprietaire');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getProprietaire() !== null) {
                 $this->proprietaire = new Utilisateur($this->entity->getProprietaire());
             }
-            return $this->proprietaire ?? null;
+            return $this->proprietaire;
         }
     }
 
@@ -90,19 +93,21 @@ class Telechargement
     public UploadedFile $file;
 
     #[Groups([self::GROUP_OUT])]
-    public ?string $nom = null {
+    public string $nom {
         get {
-            if ($this->nom === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'nom');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->nom = $this->entity->getNom();
             }
-            return $this->nom ?? null;
+            return $this->nom;
         }
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?string $typeMime = null {
+    public string $typeMime {
         get {
-            if ($this->typeMime === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'typeMime');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->typeMime = $this->entity->getTypeMime();
             }
             return $this->typeMime ?? null;
@@ -110,9 +115,10 @@ class Telechargement
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?string $urlContenu = null {
+    public string $urlContenu {
         get {
-            if ($this->urlContenu === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'urlContenu');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->urlContenu = '/fichiers/' . $this->id; //en dur, c'est moche
             }
             return $this->urlContenu ?? null;

@@ -28,6 +28,7 @@ use App\State\PeriodeRH\PeriodeProcessor;
 use App\State\PeriodeRH\PeriodeProvider;
 use App\Validator\PeriodesSansChevauchementConstraint;
 use DateTimeInterface;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -60,9 +61,10 @@ final class PeriodeRH
     public const string GROUP_OUT = 'periode:out';
 
     #[Groups([self::GROUP_OUT, ServicesFaits::GROUP_OUT])]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -71,21 +73,23 @@ final class PeriodeRH
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT, ServicesFaits::GROUP_OUT])]
     #[Assert\NotBlank]
-    public ?DateTimeInterface $debut = null {
+    public DateTimeInterface $debut {
         get {
-            if ($this->debut === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'debut');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->debut = $this->entity->getDebut();
             }
-            return $this->debut ?? null;
+            return $this->debut;
         }
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT, ServicesFaits::GROUP_OUT])]
     #[Assert\NotBlank]
     #[Assert\GreaterThan(propertyPath: 'debut')]
-    public ?DateTimeInterface $fin = null {
+    public DateTimeInterface $fin {
         get {
-            if ($this->fin === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'fin');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->fin = $this->entity->getFin();
             }
             return $this->fin ?? null;
@@ -96,19 +100,21 @@ final class PeriodeRH
     #[Assert\NotBlank]
     #[Assert\GreaterThan(propertyPath: 'debut')]
     #[Assert\LessThanOrEqual(propertyPath: 'fin')]
-    public ?DateTimeInterface $butoir = null {
+    public DateTimeInterface $butoir {
         get {
-            if ($this->butoir === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'butoir');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->butoir = $this->entity->getButoir();
             }
-            return $this->butoir ?? null;
+            return $this->butoir;
         }
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?bool $envoyee = null {
+    public bool $envoyee {
         get {
-            if ($this->envoyee === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'envoyee');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->envoyee = $this->entity->getDateEnvoi() !== null;
             }
             return $this->envoyee ?? false;
@@ -116,9 +122,10 @@ final class PeriodeRH
     }
 
     #[Groups([self::GROUP_OUT, ServicesFaits::GROUP_OUT])]
-    public ?DateTimeInterface $dateEnvoi = null {
+    public ?DateTimeInterface $dateEnvoi {
         get {
-            if ($this->dateEnvoi === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'dateEnvoi');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->dateEnvoi = $this->entity->getDateEnvoi();
             }
             return $this->dateEnvoi ?? null;
@@ -126,9 +133,10 @@ final class PeriodeRH
     }
 
     #[Groups([self::GROUP_OUT, ServicesFaits::GROUP_OUT])]
-    public ?Utilisateur $utilisateurEnvoi = null {
+    public ?Utilisateur $utilisateurEnvoi {
         get {
-            if ($this->utilisateurEnvoi === null && $this->entity !== null && $this->entity->getUtilisateurEnvoi()) {
+            $prop = new ReflectionProperty(self::class, 'utilisateurEnvoi');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->utilisateurEnvoi = new Utilisateur($this->entity->getUtilisateurEnvoi());
             }
             return $this->utilisateurEnvoi ?? null;

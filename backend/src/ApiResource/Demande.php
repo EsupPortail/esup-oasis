@@ -37,6 +37,7 @@ use App\Validator\DemandeUniqueParCampagneConstraint;
 use App\Validator\DemandeWorkflowConstraint;
 use DateTimeInterface;
 use Exception;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -138,9 +139,10 @@ class Demande
 
     #[Groups([self::GROUP_OUT])]
     #[ApiProperty(identifier: true)]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -149,49 +151,54 @@ class Demande
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
     #[Assert\NotNull(message: 'Impossible si le DemandeDenormalizer fait son job')]
-    public ?Utilisateur $demandeur = null {
+    public ?Utilisateur $demandeur {
         get {
-            if ($this->demandeur === null && $this->entity !== null && $this->entity->getDemandeur() !== null) {
+            $prop = new ReflectionProperty(self::class, 'demandeur');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getDemandeur() !== null) {
                 $this->demandeur = new Utilisateur($this->entity->getDemandeur());
             }
             return $this->demandeur ?? null;
         }
     }
 
-    public ?string $uid = null {
+    public string $uid {
         get {
-            if ($this->uid === null && $this->entity !== null && $this->entity->getDemandeur() !== null) {
+            $prop = new ReflectionProperty(self::class, 'uid');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getDemandeur() !== null) {
                 $this->uid = $this->entity->getDemandeur()->getUid();
             }
-            return $this->uid ?? null;
+            return $this->uid;
         }
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?CampagneDemande $campagne = null {
+    public CampagneDemande $campagne {
         get {
-            if ($this->campagne === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'campagne');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->campagne = new CampagneDemande($this->entity->getCampagne());
             }
-            return $this->campagne ?? null;
+            return $this->campagne;
         }
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
     #[Assert\NotNull(message: 'Pour créer une demande il faut en spécifier le type.')]
-    public ?TypeDemande $typeDemande = null {
+    public TypeDemande $typeDemande {
         get {
-            if ($this->typeDemande === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'typeDemande');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->typeDemande = new TypeDemande($this->entity->getCampagne()->getTypeDemande());
             }
-            return $this->typeDemande ?? null;
+            return $this->typeDemande;
         }
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?int $idCommission = null {
+    public ?int $idCommission {
         get {
-            if ($this->idCommission === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'idCommission');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->idCommission = $this->entity
                     ->getCampagne()
                     ->getCommission()
@@ -202,9 +209,10 @@ class Demande
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?DateTimeInterface $dateDepot = null {
+    public ?DateTimeInterface $dateDepot {
         get {
-            if ($this->dateDepot === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'dateDepot');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->dateDepot = $this->entity->getDateDepot();
             }
             return $this->dateDepot ?? null;
@@ -212,9 +220,10 @@ class Demande
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_CHANGEMENT_ETAT])]
-    public ?EtatDemande $etat = null {
+    public ?EtatDemande $etat {
         get {
-            if ($this->etat === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'etat');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->etat = new EtatDemande($this->entity->getEtat());
             }
             return $this->etat ?? null;
@@ -234,13 +243,10 @@ class Demande
     public ?string $commentaireChangementEtat = null; //non stocké dans l'entité
 
     #[Groups([self::GROUP_CHANGEMENT_ETAT, self::GROUP_OUT])]
-    public ?ProfilBeneficiaire $profilAttribue = null {
+    public ?ProfilBeneficiaire $profilAttribue {
         get {
-            if (
-                $this->profilAttribue === null
-                && $this->entity !== null
-                && $this->entity->getProfilAttribue() !== null
-            ) {
+            $prop = new ReflectionProperty(self::class, 'profilAttribue');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getProfilAttribue() !== null) {
                 $this->profilAttribue = new ProfilBeneficiaire($this->entity->getProfilAttribue());
             }
             return $this->profilAttribue ?? null;
@@ -248,9 +254,10 @@ class Demande
     }
 
     #[Groups([self::GROUP_CHANGEMENT_ETAT, self::GROUP_OUT])]
-    public ?string $commentaire = null {
+    public ?string $commentaire {
         get {
-            if ($this->commentaire === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'commentaire');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->commentaire = $this->entity->getCommentaire();
             }
             return $this->commentaire ?? null;

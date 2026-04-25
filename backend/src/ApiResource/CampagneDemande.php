@@ -23,6 +23,7 @@ use ApiPlatform\OpenApi\Model\Operation;
 use App\State\CampagneDemande\CampagneDemandeProcessor;
 use App\State\CampagneDemande\CampagneDemandeProvider;
 use DateTimeInterface;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
 
@@ -59,20 +60,22 @@ class CampagneDemande
     public const string GROUP_OUT = 'campagne:out';
 
     #[Ignore]
-    public ?int $typeId = null {
+    public ?int $typeId {
         get {
-            if ($this->typeId === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'typeId');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->typeId = $this->entity->getTypeDemande()->getId();
             }
-            return $this->typeId ?? null;
+            return $this->typeId;
         }
     }
 
     #[ApiProperty(identifier: true)]
     #[Groups([self::GROUP_OUT])]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -80,39 +83,43 @@ class CampagneDemande
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public ?string $libelle = null {
+    public string $libelle {
         get {
-            if ($this->libelle === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'libelle');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->libelle = $this->entity->getLibelle();
             }
-            return $this->libelle ?? null;
+            return $this->libelle;
         }
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public ?DateTimeInterface $debut = null {
+    public DateTimeInterface $debut {
         get {
-            if ($this->debut === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'debut');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->debut = $this->entity->getDebut();
             }
-            return $this->debut ?? null;
+            return $this->debut;
         }
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public ?DateTimeInterface $fin = null {
+    public DateTimeInterface $fin {
         get {
-            if ($this->fin === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'fin');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->fin = $this->entity->getFin();
             }
-            return $this->fin ?? null;
+            return $this->fin;
         }
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public ?DateTimeInterface $dateCommission = null {
+    public ?DateTimeInterface $dateCommission {
         get {
-            if ($this->dateCommission === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'dateCommission');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->dateCommission = $this->entity->getDateCommission();
             }
             return $this->dateCommission ?? null;
@@ -120,9 +127,10 @@ class CampagneDemande
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public ?DateTimeInterface $dateArchivage = null {
+    public ?DateTimeInterface $dateArchivage {
         get {
-            if ($this->dateArchivage === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'dateArchivage');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->dateArchivage = $this->entity->getDateArchivage();
             }
             return $this->dateArchivage ?? null;
@@ -130,9 +138,10 @@ class CampagneDemande
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public ?Commission $commission = null {
+    public ?Commission $commission {
         get {
-            if ($this->commission === null && $this->entity !== null && $this->entity->getCommission() !== null) {
+            $prop = new ReflectionProperty(self::class, 'commission');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getCommission() !== null) {
                 $this->commission = new Commission($this->entity->getCommission());
             }
             return $this->commission ?? null;
@@ -140,9 +149,10 @@ class CampagneDemande
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public ?int $anneeCible = null {
+    public ?int $anneeCible {
         get {
-            if ($this->anneeCible === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'anneeCible');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->anneeCible = $this->entity->getAnneeCible();
             }
             return $this->anneeCible ?? null;

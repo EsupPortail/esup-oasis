@@ -22,6 +22,7 @@ use ApiPlatform\OpenApi\Model\Operation;
 use App\State\Parametre\ValeurParametreProcessor;
 use App\State\Parametre\ValeurParametreProvider;
 use DateTimeInterface;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -49,9 +50,10 @@ class ValeurParametre
 
     #[ApiProperty(identifier: true)]
     #[Groups([self::GROUP_OUT, Parametre::GROUP_OUT])]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -59,19 +61,21 @@ class ValeurParametre
     }
 
     //copie pour simplifier la gestion de l'IRI
-    public ?string $cle = null {
+    public string $cle {
         get {
-            if ($this->cle === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'cle');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->cle = $this->entity->getParametre()->getCle();
             }
-            return $this->cle ?? null;
+            return $this->cle;
         }
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN, Parametre::GROUP_OUT])]
-    public ?string $valeur = null {
+    public ?string $valeur {
         get {
-            if ($this->valeur === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'valeur');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->valeur = $this->entity->getValeur();
             }
             return $this->valeur ?? null;
@@ -79,9 +83,10 @@ class ValeurParametre
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN, Parametre::GROUP_OUT])]
-    public ?Telechargement $fichier = null {
+    public ?Telechargement $fichier {
         get {
-            if ($this->fichier === null && $this->entity !== null && $this->entity->getFichier() !== null) {
+            $prop = new ReflectionProperty(self::class, 'fichier');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getFichier() !== null) {
                 $this->fichier = new Telechargement($this->entity->getFichier());
             }
             return $this->fichier ?? null;
@@ -90,20 +95,22 @@ class ValeurParametre
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN, Parametre::GROUP_OUT])]
     #[Assert\NotBlank]
-    public ?DateTimeInterface $debut = null {
+    public DateTimeInterface $debut {
         get {
-            if ($this->debut === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'debut');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->debut = $this->entity->getDebut();
             }
-            return $this->debut ?? null;
+            return $this->debut;
         }
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN, Parametre::GROUP_OUT])]
     #[Assert\GreaterThan(propertyPath: 'debut')]
-    public ?DateTimeInterface $fin = null {
+    public ?DateTimeInterface $fin {
         get {
-            if ($this->fin === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'fin');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->fin = $this->entity->getFin();
             }
             return $this->fin ?? null;

@@ -18,6 +18,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use App\State\Inscription\InscriptionProvider;
 use DateTimeInterface;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ApiResource(operations: [
@@ -37,7 +38,8 @@ final class Inscription
     #[ApiProperty(identifier: true)]
     public int $id {
         get {
-            if (!isset($this->id) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id;
@@ -52,7 +54,8 @@ final class Inscription
     ])]
     public Formation $formation {
         get {
-            if (!isset($this->formation) && $this->entity !== null && $this->entity->getFormation()) {
+            $prop = new ReflectionProperty(self::class, 'formation');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getFormation()) {
                 $this->formation = new Formation($this->entity->getFormation());
             }
             return $this->formation;
@@ -62,7 +65,8 @@ final class Inscription
     #[Groups([Utilisateur::GROUP_OUT, Demande::GROUP_OUT, Utilisateur::AMENAGEMENTS_UTILISATEURS_OUT])]
     public DateTimeInterface $debut {
         get {
-            if (!isset($this->debut) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'debut');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->debut = $this->entity->getDebut();
             }
             return $this->debut;
@@ -71,7 +75,8 @@ final class Inscription
     #[Groups([Utilisateur::GROUP_OUT, Demande::GROUP_OUT, Utilisateur::AMENAGEMENTS_UTILISATEURS_OUT])]
     public DateTimeInterface $fin {
         get {
-            if (!isset($this->fin) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'fin');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->fin = $this->entity->getFin();
             }
             return $this->fin;

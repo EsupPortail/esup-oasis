@@ -57,6 +57,7 @@ use App\State\Utilisateur\UtilisateurProvider;
 use App\State\Utilisateur\UtilisateurRoleProvider;
 use App\Validator\NumeroAnonymeUniqueConstraint;
 use DateTimeInterface;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -197,7 +198,8 @@ final class Utilisateur
     ])]
     public string $uid {
         get {
-            if (!isset($this->uid) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'uid');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->uid = $this->entity->getUid() ?? '';
             }
             return $this->uid;
@@ -217,8 +219,9 @@ final class Utilisateur
     ])]
     public string $email {
         get {
-            if (!isset($this->email) && $this->entity !== null) {
-                $this->email = $this->entity->getEmail() ?? '';
+            $prop = new ReflectionProperty(self::class, 'email');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->email = $this->entity->getEmail();
             }
             return $this->email;
         }
@@ -234,8 +237,9 @@ final class Utilisateur
     ])]
     public string $nom {
         get {
-            if (!isset($this->nom) && $this->entity !== null) {
-                $this->nom = $this->entity->getNom() ?? '';
+            $prop = new ReflectionProperty(self::class, 'nom');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->nom = $this->entity->getNom();
             }
             return $this->nom;
         }
@@ -251,17 +255,19 @@ final class Utilisateur
     ])]
     public string $prenom {
         get {
-            if (!isset($this->prenom) && $this->entity !== null) {
-                $this->prenom = $this->entity->getPrenom() ?? '';
+            $prop = new ReflectionProperty(self::class, 'prenom');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->prenom = $this->entity->getPrenom();
             }
             return $this->prenom;
         }
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?DateTimeInterface $dateNaissance = null {
+    public ?DateTimeInterface $dateNaissance {
         get {
-            if ($this->dateNaissance === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'dateNaissance');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->dateNaissance = $this->entity->getDateNaissance();
             }
             return $this->dateNaissance ?? null;
@@ -269,9 +275,10 @@ final class Utilisateur
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?string $genre = null {
+    public ?string $genre {
         get {
-            if ($this->genre === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'genre');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->genre = $this->entity->getGenre();
             }
             return $this->genre ?? null;
@@ -279,9 +286,10 @@ final class Utilisateur
     }
 
     #[Groups([self::GROUP_OUT, self::AMENAGEMENTS_UTILISATEURS_OUT, Amenagement::GROUP_OUT])]
-    public ?int $numeroEtudiant = null {
+    public ?int $numeroEtudiant {
         get {
-            if ($this->numeroEtudiant === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'numeroEtudiant');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->numeroEtudiant = $this->entity->getNumeroEtudiant();
             }
             return $this->numeroEtudiant ?? null;
@@ -294,9 +302,10 @@ final class Utilisateur
         security: "object == null or object.uid == user.getUserIdentifier() or is_granted('ROLE_PLANIFICATEUR')",
         securityPostDenormalize: "is_granted('" . self::VOIR_INFOS_PERSO . "', object)",
     )]
-    public ?string $emailPerso = null {
+    public ?string $emailPerso {
         get {
-            if ($this->emailPerso === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'emailPerso');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->emailPerso = $this->entity->getEmailPerso();
             }
             return $this->emailPerso ?? null;
@@ -309,9 +318,10 @@ final class Utilisateur
         security: "object == null or object.uid == user.getUserIdentifier() or is_granted('ROLE_PLANIFICATEUR')",
         securityPostDenormalize: "is_granted('" . self::VOIR_INFOS_PERSO . "', object)",
     )]
-    public ?string $telPerso = null {
+    public ?string $telPerso {
         get {
-            if ($this->telPerso === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'telPerso');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->telPerso = $this->entity->getTelPerso();
             }
             return $this->telPerso ?? null;
@@ -323,9 +333,10 @@ final class Utilisateur
         security: "object == null or object.uid == user.getUserIdentifier() or is_granted('ROLE_PLANIFICATEUR')",
         securityPostDenormalize: "is_granted('" . self::VOIR_INFOS_PERSO . "', object)",
     )]
-    public ?string $contactUrgence = null {
+    public ?string $contactUrgence {
         get {
-            if ($this->contactUrgence === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'contactUrgence');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->contactUrgence = $this->entity->getContactUrgence();
             }
             return $this->contactUrgence ?? null;
@@ -336,7 +347,8 @@ final class Utilisateur
     #[Assert\Choice(choices: self::TOUS_ROLES, multiple: true)]
     public array $roles {
         get {
-            if (!isset($this->roles) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'roles');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->roles = $this->entity->getRoles();
             }
             return $this->roles ?? [];
@@ -350,7 +362,8 @@ final class Utilisateur
     #[Assert\All([new Assert\Type(Service::class)])]
     public array $services {
         get {
-            if (!isset($this->services) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'services');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->services = array_map(fn($s) => new Service($s), $this->entity->getServices()->toArray());
             }
             return $this->services ?? [];
@@ -362,9 +375,10 @@ final class Utilisateur
      */
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
     #[Assert\All([new Assert\Type(Campus::class)])]
-    public ?array $campus {
+    public array $campus {
         get {
-            if (!isset($this->campus) && $this->entity !== null && $this->entity->getIntervenant()) {
+            $prop = new ReflectionProperty(self::class, 'campus');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getIntervenant()) {
                 $this->campus = array_map(
                     fn($c) => new Campus($c),
                     $this->entity
@@ -382,9 +396,10 @@ final class Utilisateur
      */
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
     #[Assert\All([new Assert\Type(Competence::class)])]
-    public ?array $competences {
+    public array $competences {
         get {
-            if (!isset($this->competences) && $this->entity !== null && $this->entity->getIntervenant()) {
+            $prop = new ReflectionProperty(self::class, 'competences');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getIntervenant()) {
                 $this->competences = array_map(
                     fn($c) => new Competence($c),
                     $this->entity
@@ -402,9 +417,10 @@ final class Utilisateur
      */
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
     #[Assert\All([new Assert\Type(TypeEvenement::class)])]
-    public ?array $typesEvenements {
+    public array $typesEvenements {
         get {
-            if (!isset($this->typesEvenements) && $this->entity !== null && $this->entity->getIntervenant()) {
+            $prop = new ReflectionProperty(self::class, 'typesEvenements');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getIntervenant()) {
                 $this->typesEvenements = array_map(
                     fn($t) => new TypeEvenement($t),
                     $this->entity
@@ -425,7 +441,8 @@ final class Utilisateur
     #[ApiProperty(security: "is_granted('ROLE_GESTIONNAIRE')")]
     public array $profils {
         get {
-            if (!isset($this->profils) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'profils');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->profils = array_map(
                     fn($b) => new BeneficiaireProfil($b),
                     $this->entity->getBeneficiaires()->toArray(),
@@ -439,7 +456,8 @@ final class Utilisateur
     #[ApiProperty(security: "is_granted('ROLE_GESTIONNAIRE')")]
     public string $etatAvisEse {
         get {
-            if (!isset($this->etatAvisEse) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'etatAvisEse');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->etatAvisEse = $this->entity->getEtatAvisEse() ?? '';
             }
             return $this->etatAvisEse;
@@ -452,8 +470,8 @@ final class Utilisateur
     #[Groups([self::AMENAGEMENTS_UTILISATEURS_OUT])]
     public array $amenagements {
         get {
-            if (!isset($this->amenagements) && $this->entity !== null) {
-                // Using getAmenagementsActifs from Entity logic
+            $prop = new ReflectionProperty(self::class, 'amenagements');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->amenagements = array_values(array_map(
                     fn($a) => new Amenagement($a),
                     $this->entity->getAmenagementsActifs(),
@@ -470,7 +488,8 @@ final class Utilisateur
     #[ApiProperty(security: "is_granted('ROLE_PLANIFICATEUR')")]
     public array $tags {
         get {
-            if (!isset($this->tags) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'tags');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->tags = array_values(array_map(fn($t) => new Tag($t), $this->entity->getTagsActifs()));
             }
             return $this->tags ?? [];
@@ -493,18 +512,20 @@ final class Utilisateur
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public ?DateTimeInterface $intervenantDebut = null {
+    public ?DateTimeInterface $intervenantDebut {
         get {
-            if ($this->intervenantDebut === null && $this->entity !== null && $this->entity->getIntervenant()) {
+            $prop = new ReflectionProperty(self::class, 'intervenantDebut');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getIntervenant()) {
                 $this->intervenantDebut = $this->entity->getIntervenant()->getDebut();
             }
             return $this->intervenantDebut ?? null;
         }
     }
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public ?DateTimeInterface $intervenantFin = null {
+    public ?DateTimeInterface $intervenantFin {
         get {
-            if ($this->intervenantFin === null && $this->entity !== null && $this->entity->getIntervenant()) {
+            $prop = new ReflectionProperty(self::class, 'intervenantFin');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getIntervenant()) {
                 $this->intervenantFin = $this->entity->getIntervenant()->getFin();
             }
             return $this->intervenantFin ?? null;
@@ -517,7 +538,8 @@ final class Utilisateur
     #[Groups([self::GROUP_OUT, Demande::GROUP_OUT, self::AMENAGEMENTS_UTILISATEURS_OUT, Amenagement::GROUP_OUT])]
     public array $inscriptions {
         get {
-            if (!isset($this->inscriptions) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'inscriptions');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->inscriptions = array_map(
                     fn($i) => new Inscription($i),
                     $this->entity->getInscriptions()->toArray(),
@@ -531,12 +553,13 @@ final class Utilisateur
     #[ApiProperty(
         security: "object == null or object.uid == user.getUserIdentifier() or is_granted('ROLE_PLANIFICATEUR')",
     )]
-    public ?bool $boursier = null {
+    public ?bool $boursier {
         get {
-            if ($this->boursier === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'boursier');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->boursier = $this->entity->isBoursier();
             }
-            return $this->boursier ?? null;
+            return $this->boursier ?? false;
         }
     }
 
@@ -544,9 +567,10 @@ final class Utilisateur
     #[ApiProperty(
         security: "object == null or object.uid == user.getUserIdentifier() or is_granted('ROLE_PLANIFICATEUR')",
     )]
-    public ?string $statutEtudiant = null {
+    public ?string $statutEtudiant {
         get {
-            if ($this->statutEtudiant === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'statutEtudiant');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->statutEtudiant = $this->entity->getStatutEtudiant();
             }
             return $this->statutEtudiant ?? null;
@@ -558,12 +582,13 @@ final class Utilisateur
         security: "object == null or object.uid == user.getUserIdentifier() or is_granted('ROLE_PLANIFICATEUR')",
         securityPostDenormalize: "is_granted('" . self::VOIR_INFOS_PERSO . "', object)",
     )]
-    public bool $abonneImmediat = false {
+    public bool $abonneImmediat {
         get {
-            if ($this->entity !== null) {
-                return $this->entity->isAbonneImmediat();
+            $prop = new ReflectionProperty(self::class, 'abonneImmediat');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->abonneImmediat = $this->entity->isAbonneImmediat();
             }
-            return $this->abonneImmediat;
+            return $this->abonneImmediat ?? false;
         }
     }
 
@@ -572,12 +597,13 @@ final class Utilisateur
         security: "object == null or object.uid == user.getUserIdentifier() or is_granted('ROLE_PLANIFICATEUR')",
         securityPostDenormalize: "is_granted('" . self::VOIR_INFOS_PERSO . "', object)",
     )]
-    public bool $abonneVeille = false {
+    public bool $abonneVeille {
         get {
-            if ($this->entity !== null) {
-                return $this->entity->isAbonneVeille();
+            $prop = new ReflectionProperty(self::class, 'abonneVeille');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->abonneVeille = $this->entity->isAbonneVeille();
             }
-            return $this->abonneVeille;
+            return $this->abonneVeille ?? false;
         }
     }
 
@@ -586,12 +612,13 @@ final class Utilisateur
         security: "object == null or object.uid == user.getUserIdentifier() or is_granted('ROLE_PLANIFICATEUR')",
         securityPostDenormalize: "is_granted('" . self::VOIR_INFOS_PERSO . "', object)",
     )]
-    public bool $abonneAvantVeille = false {
+    public bool $abonneAvantVeille {
         get {
-            if ($this->entity !== null) {
-                return $this->entity->isAbonneAvantVeille();
+            $prop = new ReflectionProperty(self::class, 'abonneAvantVeille');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->abonneAvantVeille = $this->entity->isAbonneAvantVeille();
             }
-            return $this->abonneAvantVeille;
+            return $this->abonneAvantVeille ?? false;
         }
     }
 
@@ -600,12 +627,13 @@ final class Utilisateur
         security: "object == null or object.uid == user.getUserIdentifier() or is_granted('ROLE_PLANIFICATEUR')",
         securityPostDenormalize: "is_granted('" . self::VOIR_INFOS_PERSO . "', object)",
     )]
-    public bool $abonneRecapHebdo = false {
+    public bool $abonneRecapHebdo {
         get {
-            if ($this->entity !== null) {
-                return $this->entity->isAbonneRecapHebdo();
+            $prop = new ReflectionProperty(self::class, 'abonneRecapHebdo');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->abonneRecapHebdo = $this->entity->isAbonneRecapHebdo();
             }
-            return $this->abonneRecapHebdo;
+            return $this->abonneRecapHebdo ?? false;
         }
     }
 
@@ -620,9 +648,10 @@ final class Utilisateur
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
     #[ApiProperty(security: "is_granted('" . self::VOIR_INFOS_PERSO . "', object)")]
-    public ?int $numeroAnonyme = null {
+    public ?int $numeroAnonyme {
         get {
-            if ($this->numeroAnonyme === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'numeroAnonyme');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->numeroAnonyme = $this->entity->getNumeroAnonyme();
             }
             return $this->numeroAnonyme ?? null;

@@ -18,6 +18,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\OpenApi\Model\Operation;
 use App\State\Question\QuestionProvider;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ApiResource(
@@ -35,9 +36,10 @@ class Question
 
     #[Groups([self::GROUP_OUT])]
     #[ApiProperty(identifier: true)]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -45,19 +47,21 @@ class Question
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?string $libelle = null {
+    public string $libelle {
         get {
-            if ($this->libelle === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'libelle');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->libelle = $this->entity->getLibelle();
             }
-            return $this->libelle ?? null;
+            return $this->libelle;
         }
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?string $aide = null {
+    public ?string $aide {
         get {
-            if ($this->aide === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'aide');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->aide = $this->entity->getAide();
             }
             return $this->aide ?? null;
@@ -65,19 +69,21 @@ class Question
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?string $typeReponse = null {
+    public string $typeReponse {
         get {
-            if ($this->typeReponse === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'typeReponse');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->typeReponse = $this->entity->getTypeReponse();
             }
-            return $this->typeReponse ?? null;
+            return $this->typeReponse;
         }
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?bool $obligatoire = null {
+    public bool $obligatoire {
         get {
-            if ($this->obligatoire === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'obligatoire');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->obligatoire = $this->entity->isObligatoire();
             }
             return $this->obligatoire ?? false;
@@ -85,9 +91,10 @@ class Question
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?bool $choixMultiple = null {
+    public bool $choixMultiple {
         get {
-            if ($this->choixMultiple === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'choixMultiple');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->choixMultiple = $this->entity->isChoixMultiple();
             }
             return $this->choixMultiple ?? false;
@@ -98,22 +105,24 @@ class Question
      * @var OptionReponse[]
      */
     #[Groups([self::GROUP_OUT])]
-    public ?array $optionsReponses = null {
+    public array $optionsReponses {
         get {
-            if ($this->optionsReponses === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'optionsReponses');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->optionsReponses = array_map(
                     fn($option) => new OptionReponse($option),
                     $this->entity->getOptionsReponse()->toArray(),
                 );
             }
-            return $this->optionsReponses ?? null;
+            return $this->optionsReponses ?? [];
         }
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?string $tableOptions = null {
+    public ?string $tableOptions {
         get {
-            if ($this->tableOptions === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'tableOptions');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->tableOptions = $this->entity->getTableOptions();
             }
             return $this->tableOptions ?? null;

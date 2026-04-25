@@ -24,6 +24,7 @@ use App\Filter\PieceJointeBeneficiaireUidFilter;
 use App\State\PieceJointeBeneficiaire\PieceJointeBeneficiaireProcessor;
 use App\State\PieceJointeBeneficiaire\PieceJointeBeneficiaireProvider;
 use DateTimeInterface;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
 
@@ -52,19 +53,21 @@ class PieceJointeBeneficiaire
     public const string GROUP_IN = 'piece_beneficiaire:in';
 
     #[Ignore]
-    public ?string $uid = null {
+    public string $uid {
         get {
-            if ($this->uid === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'uid');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->uid = $this->entity->getBeneficiaire()->getUid();
             }
-            return $this->uid ?? null;
+            return $this->uid;
         }
     }
 
     #[Ignore]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -72,19 +75,21 @@ class PieceJointeBeneficiaire
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?string $libelle = null {
+    public string $libelle {
         get {
-            if ($this->libelle === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'libelle');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->libelle = $this->entity->getLibelle();
             }
-            return $this->libelle ?? null;
+            return $this->libelle;
         }
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?DateTimeInterface $dateDepot = null {
+    public ?DateTimeInterface $dateDepot {
         get {
-            if ($this->dateDepot === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'dateDepot');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->dateDepot = $this->entity->getDateDepot();
             }
             return $this->dateDepot ?? null;
@@ -92,23 +97,25 @@ class PieceJointeBeneficiaire
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?Utilisateur $utilisateurCreation = null {
+    public Utilisateur $utilisateurCreation {
         get {
+            $prop = new ReflectionProperty(self::class, 'utilisateurCreation');
             if (
-                $this->utilisateurCreation === null
+                !$prop->isInitialized($this)
                 && $this->entity !== null
                 && null !== $this->entity->getUtilisateurCreation()
             ) {
                 $this->utilisateurCreation = new Utilisateur($this->entity->getUtilisateurCreation());
             }
-            return $this->utilisateurCreation ?? null;
+            return $this->utilisateurCreation;
         }
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?Telechargement $fichier = null {
+    public Telechargement $fichier {
         get {
-            if ($this->fichier === null && $this->entity !== null && $this->entity->getFichier() !== null) {
+            $prop = new ReflectionProperty(self::class, 'fichier');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getFichier() !== null) {
                 $this->fichier = new Telechargement($this->entity->getFichier());
             }
             return $this->fichier ?? null;

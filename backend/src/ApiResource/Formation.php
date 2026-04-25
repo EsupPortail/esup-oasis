@@ -22,6 +22,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\OpenApi\Model\Operation;
 use App\Filter\CaseInsensitiveOrderFilter;
 use App\Filter\InscriptionEnCoursFilter;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ApiResource(
@@ -41,9 +42,10 @@ final class Formation
     public const string ITEM_URI = self::COLLECTION_URI . '/{id}';
 
     #[ApiProperty(identifier: true)]
-    public int $id {
+    public int $id { //pas nullable, vient toujours de la base
         get {
-            if (!isset($this->id) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id;
@@ -58,7 +60,8 @@ final class Formation
     ])]
     public Composante $composante {
         get {
-            if (!isset($this->composante) && $this->entity !== null && $this->entity->getComposante()) {
+            $prop = new ReflectionProperty(self::class, 'composante');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getComposante()) {
                 $this->composante = new Composante($this->entity->getComposante());
             }
             return $this->composante;
@@ -73,27 +76,30 @@ final class Formation
     ])]
     public string $libelle {
         get {
-            if (!isset($this->libelle) && $this->entity !== null) {
-                $this->libelle = $this->entity->getLibelle() ?? '';
+            $prop = new ReflectionProperty(self::class, 'libelle');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->libelle = $this->entity->getLibelle();
             }
-            return $this->libelle;
+            return $this->libelle ?? '';
         }
     }
 
     #[Groups([Utilisateur::GROUP_OUT])]
     public string $codeExterne {
         get {
-            if (!isset($this->codeExterne) && $this->entity !== null) {
-                $this->codeExterne = $this->entity->getCodeExterne() ?? '';
+            $prop = new ReflectionProperty(self::class, 'codeExterne');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->codeExterne = $this->entity->getCodeExterne();
             }
-            return $this->codeExterne;
+            return $this->codeExterne ?? '';
         }
     }
 
     #[Groups([Utilisateur::GROUP_OUT])]
-    public ?string $niveau = null {
+    public ?string $niveau {
         get {
-            if ($this->niveau === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'niveau');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->niveau = $this->entity->getNiveau();
             }
             return $this->niveau ?? null;
@@ -101,9 +107,10 @@ final class Formation
     }
 
     #[Groups([Utilisateur::GROUP_OUT])]
-    public ?string $discipline = null {
+    public ?string $discipline {
         get {
-            if ($this->discipline === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'discipline');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->discipline = $this->entity->getDiscipline();
             }
             return $this->discipline ?? null;
@@ -111,9 +118,10 @@ final class Formation
     }
 
     #[Groups([Utilisateur::GROUP_OUT])]
-    public ?string $diplome = null {
+    public ?string $diplome {
         get {
-            if ($this->diplome === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'diplome');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->diplome = $this->entity->getDiplome();
             }
             return $this->diplome ?? null;

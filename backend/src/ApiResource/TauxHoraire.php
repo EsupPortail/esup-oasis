@@ -28,6 +28,7 @@ use App\State\TauxHoraire\TauxHoraireCollectionProvider;
 use App\State\TauxHoraire\TauxHoraireProcessor;
 use App\State\TauxHoraire\TauxHoraireProvider;
 use DateTimeInterface;
+use ReflectionProperty;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -92,9 +93,10 @@ class TauxHoraire
 
     #[ApiProperty(identifier: true)]
     #[Groups([self::GROUP_OUT, ServicesFaits::GROUP_OUT, ActiviteBeneficiaire::OUT, ActiviteIntervenant::OUT])]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -104,15 +106,18 @@ class TauxHoraire
     //copie juste pour gérer facilement les IRI
     public int $typeId {
         get {
-            if (!isset($this->typeId) && $this->entity !== null && $this->entity->getTypeEvenement()) {
+            $prop = new ReflectionProperty(self::class, 'typeId');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getTypeEvenement()) {
                 $this->typeId = $this->entity->getTypeEvenement()->getId();
             }
             return $this->typeId;
         }
     }
+
     public TypeEvenement $typeEvenement {
         get {
-            if (!isset($this->typeEvenement) && $this->entity !== null && $this->entity->getTypeEvenement()) {
+            $prop = new ReflectionProperty(self::class, 'typeEvenement');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getTypeEvenement()) {
                 $this->typeEvenement = new TypeEvenement($this->entity->getTypeEvenement());
             }
             return $this->typeEvenement;
@@ -133,17 +138,19 @@ class TauxHoraire
     ])]
     public string $montant {
         get {
-            if (!isset($this->montant) && $this->entity !== null) {
-                $this->montant = $this->entity->getMontant() ?? '';
+            $prop = new ReflectionProperty(self::class, 'montant');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->montant = $this->entity->getMontant();
             }
-            return $this->montant;
+            return $this->montant ?? '';
         }
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
     public DateTimeInterface $debut {
         get {
-            if (!isset($this->debut) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'debut');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->debut = $this->entity->getDebut();
             }
             return $this->debut;
@@ -151,9 +158,10 @@ class TauxHoraire
     }
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
     #[Assert\GreaterThan(propertyPath: 'debut')]
-    public ?DateTimeInterface $fin = null {
+    public ?DateTimeInterface $fin {
         get {
-            if ($this->fin === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'fin');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->fin = $this->entity->getFin();
             }
             return $this->fin ?? null;

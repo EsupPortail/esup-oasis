@@ -282,6 +282,32 @@ class EvenementsTest extends ApiTestCaseCustom
         ]);
     }
 
+    public function testAdminCanResetIntervenantToNull(): void
+    {
+        $client = $this->createClientWithCredentials('admin');
+        // On s'assure d'abord qu'il y a un intervenant (ce qui est le cas en fixtures pour /evenements/1)
+        $client->request('GET', '/evenements/1');
+        $this->assertResponseIsSuccessful();
+        $data = $client->getResponse()->toArray();
+        $this->assertNotNull($data['intervenant']);
+
+        // Puis on le repasse à null
+        $client->request('PATCH', '/evenements/1', [
+            'headers' => ['Content-Type' => 'application/merge-patch+json'],
+            'json' => [
+                'intervenant' => null,
+            ],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $responseData = $client->getResponse()->toArray();
+
+        $this->assertArrayNotHasKey('intervenant', $responseData);
+        $this->assertJsonContains([
+            '@id' => '/evenements/1',
+        ]);
+    }
+
     public function testPlanificateurCanDeleteEvent(): void
     {
         $client = $this->createClientWithCredentials('renfort');

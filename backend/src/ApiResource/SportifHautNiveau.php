@@ -24,6 +24,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model\Operation;
 use App\Filter\CaseInsensitiveOrderFilter;
+use ReflectionProperty;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
@@ -66,9 +67,10 @@ class SportifHautNiveau
     public const string GROUP_PATCH = 'sportif_haut_niveau:patch';
 
     #[Ignore]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -79,35 +81,39 @@ class SportifHautNiveau
     #[Groups([self::GROUP_OUT, self::GROUP_POST])]
     public string $identifiantExterne {
         get {
-            if (!isset($this->identifiantExterne) && $this->entity !== null) {
-                $this->identifiantExterne = $this->entity->getIdentifiantExterne() ?? '';
+            $prop = new ReflectionProperty(self::class, 'identifiantExterne');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->identifiantExterne = $this->entity->getIdentifiantExterne();
             }
             return $this->identifiantExterne;
         }
     }
 
     #[Groups([self::GROUP_PATCH, self::GROUP_POST, self::GROUP_OUT])]
-    public ?string $nom = null {
+    public ?string $nom {
         get {
-            if ($this->nom === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'nom');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->nom = $this->entity->getNom();
             }
             return $this->nom ?? null;
         }
     }
     #[Groups([self::GROUP_PATCH, self::GROUP_POST, self::GROUP_OUT])]
-    public ?string $prenom = null {
+    public ?string $prenom {
         get {
-            if ($this->prenom === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'prenom');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->prenom = $this->entity->getPrenom();
             }
             return $this->prenom ?? null;
         }
     }
     #[Groups([self::GROUP_PATCH, self::GROUP_POST, self::GROUP_OUT])]
-    public ?int $anneeNaissance = null {
+    public ?int $anneeNaissance {
         get {
-            if ($this->anneeNaissance === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'anneeNaissance');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->anneeNaissance = $this->entity->getAnneeNaissance();
             }
             return $this->anneeNaissance ?? null;

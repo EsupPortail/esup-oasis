@@ -15,6 +15,7 @@ namespace App\ApiResource;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\State\Options;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -27,6 +28,7 @@ use App\Filter\NestedUtilisateurFilter;
 use App\State\BilanActivite\BilanActiviteProcessor;
 use App\State\BilanActivite\BilanActiviteProvider;
 use DateTimeInterface;
+use ReflectionProperty;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -71,9 +73,11 @@ class BilanActivite
     public const string GROUP_OUT = 'bilan-activite:out';
 
     #[Groups([self::GROUP_OUT])]
-    public ?int $id = null {
+    #[ApiProperty(identifier: true)]
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -81,51 +85,56 @@ class BilanActivite
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?Utilisateur $demandeur = null {
+    public Utilisateur $demandeur {
         get {
-            if ($this->demandeur === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'demandeur');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->demandeur = new Utilisateur($this->entity->getDemandeur());
             }
-            return $this->demandeur ?? null;
+            return $this->demandeur;
         }
     }
 
     #[Assert\NotNull]
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?DateTimeInterface $debut = null {
+    public DateTimeInterface $debut {
         get {
-            if ($this->debut === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'debut');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->debut = $this->entity->getDebut();
             }
-            return $this->debut ?? null;
+            return $this->debut;
         }
     }
 
     #[Assert\NotNull]
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?DateTimeInterface $fin = null {
+    public DateTimeInterface $fin {
         get {
-            if ($this->fin === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'fin');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->fin = $this->entity->getFin();
             }
-            return $this->fin ?? null;
+            return $this->fin;
         }
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?DateTimeInterface $dateDemande = null {
+    public DateTimeInterface $dateDemande {
         get {
-            if ($this->dateDemande === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'dateDemande');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->dateDemande = $this->entity->getDateDemande();
             }
-            return $this->dateDemande ?? null;
+            return $this->dateDemande;
         }
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?DateTimeInterface $dateGeneration = null {
+    public ?DateTimeInterface $dateGeneration {
         get {
-            if ($this->dateGeneration === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'dateGeneration');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->dateGeneration = $this->entity->getDateGeneration();
             }
             return $this->dateGeneration ?? null;
@@ -133,9 +142,10 @@ class BilanActivite
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?Telechargement $fichier = null {
+    public ?Telechargement $fichier {
         get {
-            if ($this->fichier === null && $this->entity !== null && null !== $this->entity->getFichier()) {
+            $prop = new ReflectionProperty(self::class, 'fichier');
+            if (!$prop->isInitialized($this) && $this->entity !== null && null !== $this->entity->getFichier()) {
                 $this->fichier = new Telechargement($this->entity->getFichier());
             }
             return $this->fichier ?? null;
@@ -146,15 +156,16 @@ class BilanActivite
      * @var Utilisateur[]
      */
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?array $gestionnaires = null {
+    public array $gestionnaires {
         get {
-            if ($this->gestionnaires === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'gestionnaires');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->gestionnaires = array_map(
                     callback: fn($iri) => $this->iriConverter->getResourceFromIri($iri),
                     array: $this->entity->getParametre('gestionnaires') ?? [],
                 );
             }
-            return $this->gestionnaires ?? null;
+            return $this->gestionnaires ?? [];
         }
     }
 
@@ -162,15 +173,16 @@ class BilanActivite
      * @var ProfilBeneficiaire[]
      */
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?array $profils = null {
+    public array $profils {
         get {
-            if ($this->profils === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'profils');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->profils = array_map(
                     callback: fn($iri) => $this->iriConverter->getResourceFromIri($iri),
                     array: $this->entity->getParametre('profils') ?? [],
                 );
             }
-            return $this->profils ?? null;
+            return $this->profils ?? [];
         }
     }
 
@@ -178,15 +190,16 @@ class BilanActivite
      * @var Composante[]
      */
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?array $composantes = null {
+    public array $composantes {
         get {
-            if ($this->composantes === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'composantes');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->composantes = array_map(
                     callback: fn($iri) => $this->iriConverter->getResourceFromIri($iri),
                     array: $this->entity->getParametre('composantes') ?? [],
                 );
             }
-            return $this->composantes ?? null;
+            return $this->composantes ?? [];
         }
     }
 
@@ -194,19 +207,20 @@ class BilanActivite
      * @var Formation[]
      */
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?array $formations = null {
+    public array $formations {
         get {
-            if ($this->formations === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'formations');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->formations = array_map(
                     callback: fn($iri) => $this->iriConverter->getResourceFromIri($iri),
                     array: $this->entity->getParametre('formations') ?? [],
                 );
             }
-            return $this->formations ?? null;
+            return $this->formations ?? [];
         }
     }
 
-    public function getuid()
+    public function getuid(): string
     {
         return $this->demandeur->uid;
     }

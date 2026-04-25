@@ -28,6 +28,7 @@ use App\State\AvisEse\AvisEsePatchProcessor;
 use App\State\AvisEse\AvisEsePostProcessor;
 use App\State\AvisEse\AvisEseProvider;
 use DateTimeInterface;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ApiResource(
@@ -102,9 +103,10 @@ class AvisEse
 
     #[Groups([self::GROUP_OUT])]
     #[ApiProperty(identifier: true)]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -112,19 +114,21 @@ class AvisEse
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?string $libelle = null {
+    public string $libelle {
         get {
-            if ($this->libelle === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'libelle');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->libelle = $this->entity->getLibelle();
             }
-            return $this->libelle ?? null;
+            return $this->libelle;
         }
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?string $commentaire = null {
+    public ?string $commentaire {
         get {
-            if ($this->commentaire === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'commentaire');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->commentaire = $this->entity->getCommentaire();
             }
             return $this->commentaire ?? null;
@@ -132,28 +136,31 @@ class AvisEse
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?DateTimeInterface $debut = null {
+    public DateTimeInterface $debut {
         get {
-            if ($this->debut === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'debut');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->debut = $this->entity->getDebut();
             }
-            return $this->debut ?? null;
+            return $this->debut;
         }
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?DateTimeInterface $fin = null {
+    public ?DateTimeInterface $fin {
         get {
-            if ($this->fin === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'fin');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->fin = $this->entity->getFin();
             }
             return $this->fin ?? null;
         }
     }
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
-    public ?Telechargement $fichier = null {
+    public ?Telechargement $fichier {
         get {
-            if ($this->fichier === null && $this->entity !== null && $this->entity->getFichier() !== null) {
+            $prop = new ReflectionProperty(self::class, 'fichier');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getFichier() !== null) {
                 $this->fichier = new Telechargement($this->entity->getFichier());
             }
             return $this->fichier ?? null;

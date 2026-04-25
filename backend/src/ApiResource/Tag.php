@@ -24,6 +24,7 @@ use ApiPlatform\OpenApi\Model\Operation;
 use App\Filter\CaseInsensitiveOrderFilter;
 use App\State\Tag\TagProcessor;
 use App\State\Tag\TagProvider;
+use ReflectionProperty;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -53,38 +54,43 @@ class Tag
     public const string GROUP_OUT = 'tag:out';
 
     #[Groups([self::GROUP_OUT])]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
         }
     }
+
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
     #[Assert\NotBlank]
     public string $libelle {
         get {
-            if (!isset($this->libelle) && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'libelle');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->libelle = $this->entity->getLibelle() ?? '';
             }
             return $this->libelle;
         }
     }
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public bool $actif = true {
+    public bool $actif {
         get {
-            if ($this->entity !== null) {
-                return $this->entity->isActif() ?? true;
+            $prop = new ReflectionProperty(self::class, 'actif');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->actif = $this->entity->isActif();
             }
-            return $this->actif;
+            return $this->actif ?? true;
         }
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
     public CategorieTag $categorie {
         get {
-            if (!isset($this->categorie) && $this->entity !== null && $this->entity->getCategorie()) {
+            $prop = new ReflectionProperty(self::class, 'categorie');
+            if (!$prop->isInitialized($this) && $this->entity !== null && $this->entity->getCategorie()) {
                 $this->categorie = new CategorieTag($this->entity->getCategorie());
             }
             return $this->categorie;

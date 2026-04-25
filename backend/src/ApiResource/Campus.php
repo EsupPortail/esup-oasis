@@ -23,6 +23,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model\Operation;
 use App\Filter\CaseInsensitiveOrderFilter;
 use App\State\Campus\CampusProcessor;
+use ReflectionProperty;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -50,9 +51,10 @@ final class Campus
 
     #[Groups([self::GROUP_OUT])]
     #[ApiProperty(identifier: true)]
-    public ?int $id = null {
+    public ?int $id {
         get {
-            if ($this->id === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'id');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->id = $this->entity->getId();
             }
             return $this->id ?? null;
@@ -61,19 +63,21 @@ final class Campus
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
     #[Assert\NotBlank]
-    public ?string $libelle = null {
+    public string $libelle {
         get {
-            if ($this->libelle === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'libelle');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->libelle = $this->entity->getLibelle();
             }
-            return $this->libelle ?? null;
+            return $this->libelle;
         }
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN])]
-    public ?bool $actif = null {
+    public bool $actif {
         get {
-            if ($this->actif === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'actif');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->actif = $this->entity->isActif();
             }
             return $this->actif ?? true;

@@ -22,6 +22,7 @@ use App\State\Reponse\ReponseProvider;
 use App\Validator\IdentifiantSportifHautNiveauValideConstraint;
 use App\Validator\ValidationDemandePossibleConstraint;
 use DateTimeInterface;
+use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -61,52 +62,57 @@ class Reponse
 
     //copies pour simplifier la gestion des variables d'url
     #[Ignore]
-    public ?int $demandeId = null {
+    public int $demandeId {
         get {
-            if ($this->demandeId === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'demandeId');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->demandeId = $this->entity->getDemande()->getId();
             }
-            return $this->demandeId ?? null;
+            return $this->demandeId;
         }
     }
 
     #[Ignore]
-    public ?int $questionId = null {
+    public int $questionId {
         get {
-            if ($this->questionId === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'questionId');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->questionId = $this->entity->getQuestion()->getId();
             }
-            return $this->questionId ?? null;
+            return $this->questionId;
         }
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?Utilisateur $repondant = null {
+    public Utilisateur $repondant {
         get {
-            if ($this->repondant === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'repondant');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->repondant = new Utilisateur($this->entity->getRepondant());
             }
-            return $this->repondant ?? null;
+            return $this->repondant;
         }
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?Demande $demande = null {
+    public Demande $demande {
         get {
-            if ($this->demande === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'demande');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->demande = new Demande($this->entity->getDemande());
             }
-            return $this->demande ?? null;
+            return $this->demande;
         }
     }
 
     #[Groups([self::GROUP_OUT])]
-    public ?Question $question = null {
+    public Question $question {
         get {
-            if ($this->question === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'question');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->question = new Question($this->entity->getQuestion());
             }
-            return $this->question ?? null;
+            return $this->question;
         }
     }
 
@@ -117,9 +123,10 @@ class Reponse
     public array $optionsChoisies = []; //rempli dans le provider
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT, Demande::GROUP_OUT])]
-    public ?string $commentaire = null {
+    public ?string $commentaire {
         get {
-            if ($this->commentaire === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'commentaire');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->commentaire = $this->entity->getCommentaire();
             }
             return $this->commentaire ?? null;
@@ -130,9 +137,10 @@ class Reponse
      * @var Telechargement[]
      */
     #[Groups([self::GROUP_IN, self::GROUP_OUT, Demande::GROUP_OUT])]
-    public ?array $piecesJustificatives = null {
+    public ?array $piecesJustificatives {
         get {
-            if ($this->piecesJustificatives === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'piecesJustificatives');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->piecesJustificatives = array_map(
                     fn($piece) => new Telechargement($piece),
                     $this->entity->getPiecesJustificatives()->toArray(),
@@ -143,9 +151,10 @@ class Reponse
     }
 
     #[Groups([self::GROUP_OUT, Demande::GROUP_OUT])]
-    public ?DateTimeInterface $dateModification = null {
+    public ?DateTimeInterface $dateModification {
         get {
-            if ($this->dateModification === null && $this->entity !== null) {
+            $prop = new ReflectionProperty(self::class, 'dateModification');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->dateModification = $this->entity->getDateModification();
             }
             return $this->dateModification ?? null;
