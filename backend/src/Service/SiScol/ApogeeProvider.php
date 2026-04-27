@@ -87,9 +87,12 @@ class ApogeeProvider extends AbstractSiScolDataProvider
         }
         if (isset($dateNai)) {
             $etudiant->setDateNaissance(new DateTime($dateNai));
+        }
+        if (isset($codSexEtu)) {
             /** @noinspection PhpUndefinedVariableInspection */
             $etudiant->setGenre($codSexEtu);
         }
+
         return $formations;
     }
 
