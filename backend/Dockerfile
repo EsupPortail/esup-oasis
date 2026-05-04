@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:1.11.3-builder-php8.4 AS builder
+FROM dunglas/frankenphp:1.12.2-builder-php8.5 AS builder
 COPY --from=caddy:builder /usr/bin/xcaddy /usr/bin/xcaddy
 
 RUN apt-get update && \
@@ -19,7 +19,7 @@ RUN CGO_ENABLED=1 \
     --with github.com/darkweak/souin/plugins/caddy \
     --with github.com/darkweak/storages/otter/caddy
 
-FROM dunglas/frankenphp:1.11.3-php8.4 AS frankenphp_upstream
+FROM dunglas/frankenphp:1.12.2-php8.5 AS frankenphp_upstream
 COPY --from=builder --link /usr/local/bin/frankenphp /usr/local/bin/frankenphp
 
 #force non-https, TZ, ...
