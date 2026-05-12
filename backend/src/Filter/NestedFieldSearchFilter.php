@@ -64,11 +64,11 @@ class NestedFieldSearchFilter extends AbstractFilter
                 'openapi' => new Parameter(name: $property, in: 'query', description: $value['desc']),
             ];
             $description[$property . '[]'] = [
-                'property' => $property,
+                'property' => $property . '[]',
                 'type' => TypeIdentifier::STRING->value,
                 'required' => false,
                 'is_collection' => true,
-                'openapi' => new Parameter(name: $property, in: 'query', description: $value['desc']),
+                'openapi' => new Parameter(name: $property . '[]', in: 'query', description: $value['desc']),
             ];
         }
         return $description;

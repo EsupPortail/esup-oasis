@@ -85,12 +85,12 @@ class BeneficiaireActifTagFilter extends AbstractFilter
                 ),
             ];
             $description[$property . '[]'] = [
-                'property' => $property,
+                'property' => $property . '[]',
                 'type' => TypeIdentifier::STRING->value,
                 'required' => false,
                 'is_collection' => true,
                 'openapi' => new Parameter(
-                    name: $property,
+                    name: $property . '[]',
                     in: 'query',
                     description: $value['description'] ?? $property,
                 ),
