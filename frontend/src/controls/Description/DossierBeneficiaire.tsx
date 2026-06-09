@@ -23,13 +23,14 @@ import { TabIdentite } from "../TabsContent/TabIdentite";
 import { TabDemandes } from "../TabsContent/TabDemandes";
 import { DOMAINES_AMENAGEMENTS_INFOS } from "../../lib/amenagements";
 import { TabAmenagements } from "../TabsContent/TabAmenagements";
+import { TabDecisionEtab } from "../TabsContent/TabDecisionEtab";
 import { useAuth } from "../../auth/AuthProvider";
 import { UtilisateurTags } from "../Tags/UtilisateurTags";
 import { useSearchParams } from "react-router-dom";
 import { TabAvisEse } from "../TabsContent/TabAvisEse";
 import { BeneficiaireAvisEseAvatar } from "../Avatars/BeneficiaireAvisEseAvatar";
 import { TabEntretiens } from "../TabsContent/TabEntretiens";
-import AmenagementDomaineBadge from "../Badge/AmenagementDomaineBadge";
+import AmenagementBadge from "../Badge/AmenagementBadge";
 import EntretiensBadge from "../Badge/EntretiensBadge";
 import DemandesBadge from "../Badge/DemandesBadge";
 import { TabDocuments } from "../TabsContent/TabDocuments";
@@ -96,7 +97,7 @@ export default function DossierBeneficiaire(props: { beneficiaireId: string }): 
                         label: (
                            <Space>
                               {domaineAmenagement.libelleLongPluriel}
-                              <AmenagementDomaineBadge
+                              <AmenagementBadge
                                  utilisateurId={props.beneficiaireId}
                                  domaineAmenagement={domaineAmenagement}
                               />
@@ -111,6 +112,24 @@ export default function DossierBeneficiaire(props: { beneficiaireId: string }): 
                         icon: <AppstoreAddOutlined />,
                      };
                   }),
+               {
+                  key: "decision",
+                  label: (
+                     <Space>
+                        Décision d'étab
+                        <AmenagementBadge
+                           utilisateurId={props.beneficiaireId}
+                           decision
+                        />
+                     </Space>
+                  ),
+                  children: (
+                     <TabDecisionEtab
+                        utilisateurId={props.beneficiaireId}
+                     />
+                  ),
+                  icon: <FileDoneOutlined />,
+               },
                {
                   key: "ese",
                   label: (

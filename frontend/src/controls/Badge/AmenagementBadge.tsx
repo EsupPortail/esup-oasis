@@ -15,13 +15,14 @@ import { DomaineAmenagementInfos, getDomaineAmenagement } from "../../lib/amenag
 import { PREFETCH_TYPES_AMENAGEMENTS } from "../../api/ApiPrefetchHelpers";
 
 /**
- * Badge pour afficher le nombre d'aménagements d'un domaine pour un utilisateur
+ * Badge pour afficher le nombre d'aménagements d'un domaine ou de la décision pour un utilisateur
  * @param props
  * @constructor
  */
-export default function AmenagementDomaineBadge(props: {
+export default function AmenagementBadge(props: {
    utilisateurId: string;
    domaineAmenagement?: DomaineAmenagementInfos;
+   decision?: boolean;
 }) {
    const { data: types } = useApi().useGetCollection(PREFETCH_TYPES_AMENAGEMENTS);
    const { data: amenagements } = useApi().useGetCollectionPaginated({
@@ -32,16 +33,25 @@ export default function AmenagementDomaineBadge(props: {
       page: 1,
       itemsPerPage: NB_MAX_ITEMS_PER_PAGE,
    });
-
    const nb = useMemo(() => {
-      return amenagements?.items
-         .map((a) => {
-            const type = types?.items.find((t) => t["@id"] === a.typeAmenagement);
-            return getDomaineAmenagement(type);
-         })
-         .filter((d) => !props.domaineAmenagement?.id || props.domaineAmenagement.id === d?.id)
-         .length;
-   }, [amenagements, types, props.domaineAmenagement]);
+      if (props.decision) {
+         return amenagements?.items
+            .map((a) => {
+               const type = types?.items.find((t) => t["@id"] === a.typeAmenagement);
+               return type;
+            })
+            .filter((t) => t?.decision)
+            .length;
+      } else {
+         return amenagements?.items
+            .map((a) => {
+               const type = types?.items.find((t) => t["@id"] === a.typeAmenagement);
+               return getDomaineAmenagement(type);
+            })
+            .filter((d) => !props.domaineAmenagement?.id || props.domaineAmenagement.id === d?.id)
+            .length;
+      }
+   }, [amenagements, types, props.domaineAmenagement, props.decision]);
 
    return nb && nb > 0 ? <Badge color="cyan" size="small" count={nb} /> : null;
 }

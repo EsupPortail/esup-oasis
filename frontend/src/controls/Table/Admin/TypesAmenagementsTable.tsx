@@ -75,6 +75,16 @@ export function TypesAmenagementsTable({
                ),
             },
             {
+               title: "Décision",
+               dataIndex: "decision",
+               width: 120,
+               className: "text-center",
+               key: "decision",
+               render: (decision) => (
+                  <BooleanState value={decision} onLabel="Oui" offLabel="Non" tooltip="Présence dans la décision d'établissement"/>
+               ),
+            },
+            {
                key: "actions",
                className: "text-right commandes",
                width: 150,
