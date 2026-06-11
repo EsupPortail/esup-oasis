@@ -46,6 +46,7 @@ class ValeurParametre
     private ?Parametre $parametre = null;
 
     #[ORM\ManyToOne(inversedBy: 'valeurParametres')]
+    #[Map(if: false)]
     private ?Fichier $fichier = null;
 
     public function getId(): ?int
