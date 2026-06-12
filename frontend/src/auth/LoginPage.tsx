@@ -80,7 +80,7 @@ export default function LoginPage(): ReactElement {
               </a>
             </div>
           )}
-          <HomepageImage className="pointer" />
+          <HomepageImage />
         </Col>
         <Col xs={24} sm={24} md={24} lg={8} className="login-form">
           <main className="content" style={{ minHeight: "50vh" }}>

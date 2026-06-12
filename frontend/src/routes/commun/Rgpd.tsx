@@ -10,7 +10,7 @@
 import { Card, Layout } from "antd";
 import PageTitle from "@utils/PageTitle/PageTitle";
 import { env } from "@/env";
-import { sanitizeHtml } from "@utils/sanitize";
+import { mailtoHref } from "@utils/url";
 import { useEffectiveTheme } from "@utils/theme/useEffectiveTheme";
 
 export default function Rgpd() {
@@ -99,18 +99,18 @@ export default function Rgpd() {
               <>
                 <br />
                 - Par courrier postal :<br />
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: sanitizeHtml(env.REACT_APP_ADRESSE_DPD),
-                  }}
-                />
+                {/* `whiteSpace: pre-line` + remplacement des éventuels <br> : l'adresse
+                    peut être configurée avec des retours à la ligne (\n) ou des balises HTML. */}
+                <span style={{ whiteSpace: "pre-line" }}>
+                  {env.REACT_APP_ADRESSE_DPD.replace(/<br\s*\/?>/gi, "\n")}
+                </span>
               </>
             )}
             {env.REACT_APP_EMAIL_DPD && (
               <>
                 <br />
                 - Par messagerie :<br />
-                <a href={`mailto:${env.REACT_APP_EMAIL_DPD}`}>{env.REACT_APP_EMAIL_DPD}</a>
+                <a href={mailtoHref(env.REACT_APP_EMAIL_DPD)}>{env.REACT_APP_EMAIL_DPD}</a>
               </>
             )}
           </p>

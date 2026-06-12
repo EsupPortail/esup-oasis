@@ -12,7 +12,20 @@ import { AuthContextType } from "@/auth/AuthProvider";
 import { env } from "@/env";
 
 /**
+ * Neutralise les caractères dangereux d'un nom de fichier (séparateurs de chemin,
+ * caractères de contrôle) avant de l'utiliser comme attribut `download`.
+ */
+function sanitizeFilename(filename: string): string {
+  // eslint-disable-next-line no-control-regex
+  const sain = filename.replace(/[/\\\x00-\x1f]/g, "_").trim();
+  return sain || "fichier";
+}
+
+/**
  * Télécharger un fichier généré par l'API en utilisant un lien de téléchargement direct.
+ *
+ * Si un header `Accept` est fourni, le `Content-Type` de la réponse est vérifié :
+ * une réponse d'un autre type (ex. une page HTML à la place d'un PDF) est rejetée.
  *
  * @param {string} url - The URL of the file to download.
  * @param auth
@@ -50,6 +63,16 @@ const apiDownloader = async (
   fetch(url, fetchOptions)
     .then((response) => {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const accept = new Headers(headers).get("Accept");
+      if (accept && accept !== "*/*") {
+        const typeAttendu = accept.split(";")[0].trim();
+        const contentType = response.headers.get("Content-Type") ?? "";
+        if (!contentType.startsWith(typeAttendu)) {
+          throw new Error(`Type de contenu inattendu : ${contentType || "inconnu"}`);
+        }
+      }
+
       return response.blob();
     })
     .then((blob) => {
@@ -57,7 +80,7 @@ const apiDownloader = async (
       const a = document.createElement("a");
       a.style.display = "none";
       a.href = privateUrl;
-      a.download = filename;
+      a.download = sanitizeFilename(filename);
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

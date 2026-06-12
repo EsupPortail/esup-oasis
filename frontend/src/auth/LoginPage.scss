@@ -7,7 +7,6 @@
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  cursor: pointer;
 
   // Fond neutre avec lavis de couleur primaire en superposition
   background-color: variables.$light-grey;
@@ -235,25 +234,36 @@ body.dark-mode {
   }
 
   .login-image {
-    background-color: var(--noir);
+    background-color: var(--ant-color-bg-layout);
 
-    &:before {
-      background: none;
+    // Lavis primaire plus intense sur fond sombre
+    &::before {
+      background:
+        radial-gradient(
+          ellipse 95% 65% at 50% 68%,
+          color-mix(in srgb, var(--color-primary) 70%, transparent),
+          transparent
+        ),
+        linear-gradient(170deg, rgba(255, 255, 255, 0.03) 0%, transparent 55%);
+      opacity: 0.22;
     }
 
-    &:after {
-      background: none;
+    // Spot très discret + vignette basse plus marquée
+    &::after {
+      background:
+        radial-gradient(ellipse 55% 45% at 12% 13%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+        linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.2) 100%);
     }
   }
 
   .login-form {
-    background: var(--noir-mid);
+    background: var(--ant-color-bg-container);
     color: var(--blanc);
-    box-shadow: none;
+    box-shadow: -6px 0 32px rgba(0, 0, 0, 0.15);
 
     .content .info {
-      background: var(--noir);
-      border: none;
+      background: var(--ant-color-bg-layout);
+      border: 1px solid var(--ant-color-border);
     }
   }
 }

@@ -9,5 +9,4 @@
 
 export const OAUTH_STATE_KEY = "react-use-oauth2-state-key";
 export const DEFAULT_EXCHANGE_CODE_FOR_TOKEN_METHOD = "POST";
-export const OAUTH_CALLBACK_PAYLOAD_KEY = "react-use-oauth2-callback-payload";
 export const OAUTH_NONCE_KEY = "react-use-oauth2-nonce-key";

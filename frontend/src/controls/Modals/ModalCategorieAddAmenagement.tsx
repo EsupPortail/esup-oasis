@@ -146,12 +146,7 @@ export function ModalCategorieAddAmenagement(props: {
         form={form}
         onFinish={handleSubmit}
         initialValues={{
-          types:
-            typesAmenagements?.items.filter(
-              (ta) => ta.actif && ta.categorie === props.categorieAmenagementAjoute?.["@id"],
-            ).length === 1
-              ? [typesAmenagements?.items.filter((ta) => ta.actif)[0]["@id"]]
-              : [],
+          types: [],
           dateDebut: dayjs(),
         }}
       >

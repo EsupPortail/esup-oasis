@@ -121,12 +121,6 @@ export function CampagneEdition({
     }
   }, [editedItem, form]);
 
-  useEffect(() => {
-    if (editedItem && editedItem["@id"]) {
-      form.setFieldsValue(editedItem);
-    }
-  }, [editedItem, form]);
-
   if (!editedItem) return <></>;
 
   return (

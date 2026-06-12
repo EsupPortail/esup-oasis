@@ -62,6 +62,7 @@ Cette version constitue une refonte technique majeure du frontend. La stack de b
 
 - **`REACT_APP_VERSION` supprimée** : la version est désormais injectée automatiquement lors de l'étape de build.
 - **`REACT_APP_GERER_DEMANDES`** : nouvelle variable permettant de désactiver la gestion des demandes pour les établissements qui n'en ont pas l'usage.
+- **`REACT_APP_MAX_FILE_SIZE`** : taille max des fichiers en upload (en Mo) - 10Mo par défaut.
 - **Remplacement de Nginx par Caddy** pour la configuration du reverse proxy.
 - Compression **zstd** (prioritaire) et **gzip** (fallback) activées.
 - Cache granulaire : assets JS/CSS/fonts immuables (1 an), images (30 jours), `index.html` sans cache.

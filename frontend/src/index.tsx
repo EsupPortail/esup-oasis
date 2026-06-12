@@ -11,7 +11,12 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 
 import AppWrapper from "@/AppWrapper";
-import { validateEnv } from "@/env";
+import { env, validateEnv } from "@/env";
+
+// Titre par défaut depuis la configuration runtime ; PageTitle l'affine ensuite par route.
+if (env.REACT_APP_TITRE) {
+  document.title = `[${env.REACT_APP_ETABLISSEMENT_ABV}] ${env.REACT_APP_TITRE}`;
+}
 
 try {
   validateEnv();

@@ -14,6 +14,7 @@ import { PhoneOutlined } from "@ant-design/icons";
 import { useAuth } from "@/auth/AuthProvider";
 import Highlighter from "react-highlight-words";
 import { removeAccents } from "@utils/string";
+import { mailtoHref } from "@utils/url";
 
 interface IUtilisateurBeneficiaire {
   utilisateur?: IUtilisateur;
@@ -81,7 +82,7 @@ export function UtilisateurContent({
           type="text"
           className="legende fs-08 m-0 p-0 d-block contrast-no-border"
           onClick={() => {
-            window.location.href = `mailto:${utilisateur?.email}`;
+            window.location.href = mailtoHref(utilisateur?.email ?? "");
           }}
           aria-label={`Envoyer un email au gestionnaire (${utilisateur?.prenom} ${utilisateur?.nom})`}
         >

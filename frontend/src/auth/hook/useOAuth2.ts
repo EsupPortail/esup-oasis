@@ -8,10 +8,8 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  DEFAULT_EXCHANGE_CODE_FOR_TOKEN_METHOD,
-  OAUTH_CALLBACK_PAYLOAD_KEY,
-} from "@/auth/hook/constants";
+import { DEFAULT_EXCHANGE_CODE_FOR_TOKEN_METHOD } from "@/auth/hook/constants";
+import { OAuthCallbackMessage, subscribeCallbackMessage } from "@/auth/hook/callbackPayload";
 import {
   generateNonce,
   generateState,
@@ -63,14 +61,10 @@ export type Oauth2Props<TData = AuthTokenPayload> = {
  *
  * - `getAuth()` redirige la fenêtre principale vers le provider OAuth.
  *   Un `state` (CSRF) et un `nonce` (replay) sont générés en sessionStorage.
- * - Au retour (après `/callback`), `OAuthCallback` valide le state, stocke le payload
- *   en sessionStorage et redirige vers la racine.
- * - Un `useEffect` au montage lit ce payload, vérifie le nonce si le serveur l'a
+ * - Au retour (après `/callback`), `OAuthCallback` valide le state, transmet le payload
+ *   en mémoire (voir `callbackPayload.ts`) et revient à la racine via une navigation SPA.
+ * - Un `useEffect` au montage s'abonne à ce payload, vérifie le nonce si le serveur l'a
  *   inclus dans la réponse (OIDC), puis appelle `onSuccess`/`onError`.
- *
- * Note : pour les providers OAuth2 pur (non OIDC), le nonce est envoyé mais ne peut
- * pas être vérifié côté client (il n'est pas inclus dans l'access_token). La vérification
- * est assurée côté serveur si le provider supporte OIDC.
  */
 const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
   const {
@@ -104,64 +98,61 @@ const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
     onErrorRef.current = onError;
   }, [onError]);
 
-  // Au montage, traiter le payload laissé par OAuthCallback après le redirect
+  // Au montage, s'abonner au payload transmis en mémoire par OAuthCallback après le redirect
   useEffect(() => {
-    const stored = sessionStorage.getItem(OAUTH_CALLBACK_PAYLOAD_KEY);
-    if (!stored) return;
+    const traiterMessage = (message: OAuthCallbackMessage) => {
+      setUI({ loading: true, error: null });
 
-    sessionStorage.removeItem(OAUTH_CALLBACK_PAYLOAD_KEY);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setUI({ loading: true, error: null });
+      void (async () => {
+        try {
+          if (message.error) {
+            setUI({ loading: false, error: message.error });
+            onErrorRef.current?.(message.error);
+            return;
+          }
 
-    void (async () => {
-      try {
-        const message: { error?: string; payload?: Record<string, string> } = JSON.parse(stored);
+          // Vérification du nonce si le serveur l'a inclus dans la réponse (providers OIDC)
+          const storedNonce = getNonce();
+          if (storedNonce && message.payload?.nonce && message.payload.nonce !== storedNonce) {
+            setUI({ loading: false, error: "OAuth error: Nonce mismatch." });
+            onErrorRef.current?.("OAuth error: Nonce mismatch.");
+            return;
+          }
 
-        if (message.error) {
-          setUI({ loading: false, error: message.error });
-          onErrorRef.current?.(message.error);
-          return;
+          let payload: TData | Record<string, string> | undefined = message.payload;
+
+          if (responseType === "code" && exchangeCodeForTokenServerURL) {
+            const state = message.payload?.state ?? "";
+            const response = await fetch(
+              formatExchangeCodeForTokenServerURL(
+                exchangeCodeForTokenServerURL,
+                clientId,
+                message.payload?.code ?? "",
+                redirectUri,
+                state,
+              ),
+              {
+                method: exchangeCodeForTokenMethod || DEFAULT_EXCHANGE_CODE_FOR_TOKEN_METHOD,
+              },
+            );
+            payload = await response.json();
+          }
+
+          setUI({ loading: false, error: null });
+          onSuccessRef.current?.(payload as TData);
+        } catch (err: unknown) {
+          setUI({
+            loading: false,
+            error: err instanceof Error ? err.message : String(err),
+          });
+        } finally {
+          removeState();
+          removeNonce();
         }
+      })();
+    };
 
-        // Vérification du nonce si le serveur l'a inclus dans la réponse (providers OIDC)
-        const storedNonce = getNonce();
-        if (storedNonce && message.payload?.nonce && message.payload.nonce !== storedNonce) {
-          setUI({ loading: false, error: "OAuth error: Nonce mismatch." });
-          onErrorRef.current?.("OAuth error: Nonce mismatch.");
-          return;
-        }
-
-        let payload: TData | Record<string, string> | undefined = message.payload;
-
-        if (responseType === "code" && exchangeCodeForTokenServerURL) {
-          const state = message.payload?.state ?? "";
-          const response = await fetch(
-            formatExchangeCodeForTokenServerURL(
-              exchangeCodeForTokenServerURL,
-              clientId,
-              message.payload?.code ?? "",
-              redirectUri,
-              state,
-            ),
-            {
-              method: exchangeCodeForTokenMethod || DEFAULT_EXCHANGE_CODE_FOR_TOKEN_METHOD,
-            },
-          );
-          payload = await response.json();
-        }
-
-        setUI({ loading: false, error: null });
-        onSuccessRef.current?.(payload as TData);
-      } catch (err: unknown) {
-        setUI({
-          loading: false,
-          error: err instanceof Error ? err.message : String(err),
-        });
-      } finally {
-        removeState();
-        removeNonce();
-      }
-    })();
+    return subscribeCallbackMessage(traiterMessage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Intentionnellement vide : s'exécute uniquement au montage
 

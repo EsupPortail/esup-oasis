@@ -35,7 +35,6 @@ export interface AuthContextType {
   impersonate: string | undefined;
   setImpersonate: (impersonate: string) => void;
   removeImpersonate: VoidFunction;
-  isExpired: () => boolean;
 }
 
 const AuthContext = React.createContext<AuthContextType>(null!);
@@ -57,11 +56,13 @@ export function AuthProvider({
 }): React.ReactElement {
   const navigate = useNavigate();
   const [user, setUser] = React.useState<IUtilisateur>();
+  // `login` est un simple marqueur de reconnexion automatique : le cookie de session étant
+  // HttpOnly, le JS ne peut pas savoir qu'une session existe sans lui. Ce n'est pas une preuve
+  // d'authentification (l'API revalide chaque requête) — ne jamais y adjoindre de donnée sensible.
   const [login, setLogin, { removeItem: removeLocalStorageLogin }] =
     useLocalStorageState<State>(`login`);
   const [impersonateLS, setImpersonateLS, { removeItem: removeLocalStorageImpersonate }] =
     useLocalStorageState<State>(`impersonate`);
-  const [expiration, setExpiration] = useLocalStorageState<State<number>>("expiration");
 
   const [loadingUser, setLoadingUser] = useState(false);
   const [errorUser, setErrorUser] = useState<string | null>(null);
@@ -73,17 +74,13 @@ export function AuthProvider({
     setToken(undefined);
     setUser(undefined);
     setImpersonate(undefined);
-    localStorage.clear();
+    // Suppression ciblée des clés de session : ne pas effacer les préférences
+    removeLocalStorageLogin();
+    removeLocalStorageImpersonate();
     Object.keys(sessionStorage)
       .filter((k) => k.startsWith("oasis:filter:"))
       .forEach((k) => sessionStorage.removeItem(k));
     if (callback) setTimeout(callback, 100);
-  };
-
-  // -- Vérification de l'expiration
-  const isExpired = (): boolean => {
-    if (!expiration) return true;
-    return expiration < Date.now();
   };
 
   // -- Gestion de l'impersonation
@@ -97,22 +94,17 @@ export function AuthProvider({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [impersonate]);
 
-  // -- Gestion de la connexion : lorsque le login a été récupéré dans le token
+  // -- Gestion de la connexion : lorsque le login a été récupéré dans le token.
+  // La validité de la session est tranchée par l'API (cookie HttpOnly) : un 401 signifie
+  // simplement « pas de session », il n'y a pas d'échéance suivie côté client.
   useEffect(() => {
     let mounted = true;
-
-    if (isExpired()) {
-      // Différer les setState hors du corps synchrone de l'effet pour éviter les renders en cascade
-      setTimeout(() => signOut(() => {}), 0);
-      return;
-    }
 
     if (!env.REACT_APP_API || !(impersonate || login)) return;
 
     const controller = new AbortController();
     setTimeout(() => setLoadingUser(true), 0);
 
-    // Récupération des infos de l'utilisateur
     fetch(
       new URL(
         `${env.REACT_APP_API_PREFIX}/utilisateurs/${impersonate || login}`,
@@ -131,6 +123,15 @@ export function AuthProvider({
         if (!mounted) return;
         setErrorUser(null);
 
+        if (userResponse.status === 401 || userResponse.status === 403) {
+          // 401 « attendu » : cookie absent ou expiré — retour silencieux à l'écran
+          // de connexion, sans message d'erreur ni notification.
+          removeLocalStorageLogin();
+          setUser(undefined);
+          setLoadingUser(false);
+          return;
+        }
+
         if (!userResponse.ok) {
           removeLocalStorageLogin();
           setUser(undefined);
@@ -144,7 +145,6 @@ export function AuthProvider({
         if (!mounted) return;
 
         if (userData.roles && userData.roles.length === 1) {
-          // Le seul rôle est ROLE_USER, l'utilisateur n'est pas affecté
           notification.error({
             title: "Erreur",
             description: "Vous ne possédez pas de rôle valide pour vous connecter à l'application.",
@@ -176,18 +176,14 @@ export function AuthProvider({
       mounted = false;
       controller.abort();
     };
-    // isExpired/signOut/removeLocalStorageLogin sont des fonctions stables définies dans le même scope — les inclure créerait une boucle infinie
+    // signOut/removeLocalStorageLogin sont des fonctions stables définies dans le même scope — les inclure créerait une boucle infinie
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [impersonate, login, env.REACT_APP_API]);
 
   function removeImpersonate() {
-    setImpersonate(() => {
-      queryClient.clear();
-      window.setTimeout(() => {
-        navigate("/");
-      }, 1000);
-      return undefined;
-    });
+    setImpersonate(undefined);
+    queryClient.clear();
+    window.setTimeout(() => navigate("/"), 1000);
   }
 
   const { loading, error, getAuth } = useOAuth2({
@@ -202,7 +198,6 @@ export function AuthProvider({
       setImpersonate(undefined);
 
       if (!loadingUser && payload && payload.access_token) {
-        // Récupération du token d'authentification
         setLoadingUser(true);
         fetch(
           new URL(`${env.REACT_APP_API_PREFIX}/connect/oauth/token?json=1`, env.REACT_APP_API),
@@ -241,14 +236,11 @@ export function AuthProvider({
               // Exposé uniquement en local pour faciliter le débogage via les devtools React Query
               if (env.REACT_APP_ENVIRONMENT === "local") setToken(apiData.token);
 
-              // Décodage du JWT pour extraire le login et la date d'expiration
-              const { username, exp } = jwtDecode<{
-                username: string;
-                exp: number;
-              }>(apiData.token as string);
+              // Décodage du JWT pour extraire le login (l'expiration est gérée par
+              // le cookie côté serveur : un 401 déclenchera la déconnexion)
+              const { username } = jwtDecode<{ username: string }>(apiData.token as string);
 
               setLogin(username);
-              setExpiration(exp * 1000);
             }
           })
           .catch((err) => {
@@ -284,7 +276,6 @@ export function AuthProvider({
       setImpersonate(uid);
     },
     removeImpersonate,
-    isExpired,
   };
 
   return <AuthContext.Provider value={authenticator}>{children}</AuthContext.Provider>;

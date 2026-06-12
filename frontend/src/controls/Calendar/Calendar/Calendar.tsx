@@ -204,14 +204,13 @@ export default function Calendar({ events, setEvent }: ICalendar): ReactElement 
   );
 
   // Custom n'est valable que pour le layout Table
-  if (appAffichageFiltres.affichage.type === "custom") {
-    setAffichage({ type: "work_week" });
-    return (
-      <>
-        <Spinner />
-      </>
-    );
-  }
+  useEffect(() => {
+    if (appAffichageFiltres.affichage.type === "custom") {
+      setAffichage({ type: "work_week" });
+    }
+  }, [appAffichageFiltres.affichage.type, setAffichage]);
+
+  if (appAffichageFiltres.affichage.type === "custom") return <Spinner />;
 
   if (isFetchingTypesEvenements)
     return (

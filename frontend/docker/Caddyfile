@@ -7,7 +7,9 @@
         Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' {$REACT_APP_API} {$REACT_APP_OAUTH_PROVIDER}; frame-ancestors 'none'; object-src 'none';"
         X-Frame-Options "DENY"
         X-Content-Type-Options "nosniff"
-        X-XSS-Protection "1; mode=block"
+        # HSTS : ignoré par les navigateurs en HTTP pur, ne prend effet que servi en HTTPS
+        # (la terminaison TLS est assurée par le reverse proxy en amont de ce Caddy).
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
         Referrer-Policy "strict-origin-when-cross-origin"
         Permissions-Policy "geolocation=(), microphone=(), camera=()"
     }

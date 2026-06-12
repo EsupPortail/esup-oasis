@@ -50,9 +50,10 @@ export function lastDayOfMonth(date: Date): Date {
  * @return {Date} - The first Monday before the given date.
  */
 export function firstMondayBefore(date: Date): Date {
-  const day = date.getDay();
-  const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-  return new Date(date.setDate(diff));
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  return new Date(d.setDate(diff));
 }
 
 /**
@@ -62,9 +63,10 @@ export function firstMondayBefore(date: Date): Date {
  * @returns {Date} The first Sunday date after the given date.
  */
 export function firstSundayAfter(date: Date): Date {
-  const day = date.getDay();
-  const diff = date.getDate() - day + (day === 0 ? 0 : 7);
-  return new Date(date.setDate(diff));
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? 0 : 7);
+  return new Date(d.setDate(diff));
 }
 
 /**
@@ -74,9 +76,10 @@ export function firstSundayAfter(date: Date): Date {
  * @return {Date} - The date of the first Friday after the given date.
  */
 export function firstFridayAfter(date: Date): Date {
-  const day = date.getDay();
-  const diff = date.getDate() - day + 5;
-  return new Date(date.setDate(diff));
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() - day + 5;
+  return new Date(d.setDate(diff));
 }
 
 /**
@@ -110,7 +113,7 @@ export const calculateRange = (
 
   switch (affichage) {
     case "day":
-      to = from;
+      to = new Date(from);
       break;
     case "work_week":
       from = firstMondayBefore(debut);

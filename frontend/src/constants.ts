@@ -43,12 +43,14 @@ export const BENEFICIAIRE_PROFIL_A_DETERMINER = "/profils/-1";
 export const PARAMETRE_COEF_COUT_CHARGE = "/parametres/COEFFICIENT_CHARGES";
 
 /**
- * Taille max des fichiers en upload
+ * Taille max des fichiers en upload, en Mo.
+ * Configurable via la variable d'environnement REACT_APP_MAX_FILE_SIZE (10 Mo par défaut).
  *
  * @example 10
- * @constant {string}
+ * @constant {number}
  */
-export const MAX_FILE_SIZE = 10; // 10 Mo
+export const MAX_FILE_SIZE =
+  Number(env.REACT_APP_MAX_FILE_SIZE) > 0 ? Number(env.REACT_APP_MAX_FILE_SIZE) : 10;
 
 /**
  * Couleurs de l'application : récupérées depuis les variables d'environnement.

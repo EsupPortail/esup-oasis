@@ -11,6 +11,7 @@ import { App, Upload, UploadProps } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useAuth } from "@/auth/AuthProvider";
 import { envoyerFichierFetch } from "@utils/upload";
+import { ACCEPT_FICHIERS, validerFichier } from "@utils/fichierValidation";
 import { ITelechargement } from "@api";
 import { env } from "@/env";
 
@@ -24,6 +25,15 @@ export function FichierDepot(props: {
   const uploadProps: UploadProps = {
     name: "file",
     multiple: false,
+    accept: ACCEPT_FICHIERS,
+    beforeUpload: (file) => {
+      const erreur = validerFichier(file);
+      if (erreur) {
+        message.error(`${file.name} : ${erreur}`).then();
+        return Upload.LIST_IGNORE;
+      }
+      return true;
+    },
     customRequest: async ({ onSuccess, onError, file }) => {
       // envoi du fichier
       await envoyerFichierFetch(

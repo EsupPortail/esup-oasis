@@ -7,7 +7,6 @@
  * @author Julien Lemonnier <julien.lemonnier@u-bordeaux.fr>
  */
 
-// API Response
 import { Button, notification, Space } from "antd";
 import { CopyOutlined, LoginOutlined } from "@ant-design/icons";
 import { NavigateFunction } from "react-router-dom";
@@ -30,6 +29,10 @@ export interface IErreurNotification {
 // simultanées différentes d'être toutes les deux affichées sans s'écraser.
 const activeErrors = new Set<string>();
 
+// Garde contre les rafales de 401 : une seule déconnexion doit être déclenchée
+// même si plusieurs requêtes échouent simultanément.
+let signOutEnCours = false;
+
 function getErrorKey(notif: IErreurNotification): string {
   return `${notif.title}|${notif.statusText ?? ""}`;
 }
@@ -38,7 +41,7 @@ function getErrorKey(notif: IErreurNotification): string {
  * Traite la réponse brute d'un `fetch` API Platform et lève une erreur React Query si le statut HTTP ≥ 400.
  *
  * Comportements non évidents :
- * - **401** : déconnecte automatiquement l'utilisateur (`auth.signOut`) et vide le cache React Query après 1 s.
+ * - **401** : déconnecte immédiatement l'utilisateur (`auth.signOut`) et vide le cache React Query (une seule fois en cas de rafale).
  * - **204** : retourne `undefined` (DELETE réussi).
  * - Erreurs dupliquées (même titre + statusText dans la fenêtre de 1,5 s) : affichées une seule fois.
  * - Si `onError` est fourni, il reçoit la notification et supprime l'affichage global (`notification.error`).
@@ -60,20 +63,16 @@ export async function handleApiResponse(
 
     const key = getErrorKey(notif);
     if (!activeErrors.has(key)) {
-      // Nouvelle erreur : l'enregistrer et afficher la notification
       activeErrors.add(key);
       notification.error({ ...notif, duration: notif.duration || 5 });
       logger.error(response, options);
 
-      window.setTimeout(() => {
-        // Libérer la clé après 1,5 s pour permettre l'affichage futur de la même erreur
-        activeErrors.delete(key);
-      }, 1500);
+      // Fenêtre de déduplication de 1,5 s : même erreur → une seule notification
+      window.setTimeout(() => activeErrors.delete(key), 1500);
     }
   }
 
   if (response.status >= 400) {
-    // Gestion des erreurs
     try {
       let notif: IErreurNotification = {
         title: "Erreur",
@@ -88,11 +87,17 @@ export async function handleApiResponse(
 
       const data = await response.json();
       if (response.status === 401) {
-        window.setTimeout(() => {
+        // Déconnexion immédiate : l'UI ne doit pas continuer à afficher des données
+        // alors que la session est invalide. La notification (portail Ant Design)
+        // reste visible après la navigation.
+        if (!signOutEnCours) {
+          signOutEnCours = true;
           queryClient.clear();
-          auth.signOut(() => navigate("/"));
-        }, 1000);
-        // Erreur d'authentification
+          auth.signOut(() => {
+            navigate("/");
+            signOutEnCours = false;
+          });
+        }
         notif = {
           title: "Erreur d'authentification",
           description: (
@@ -111,7 +116,6 @@ export async function handleApiResponse(
         };
       } else if (data["hydra:description"] || data.detail) {
         const msg = data["hydra:description"] || data.detail;
-        // Erreur avec message emabarqué
         notif = {
           title: "Une erreur a été détectée",
           statusText: msg,
@@ -144,7 +148,6 @@ export async function handleApiResponse(
 
       afficherErreur(notif);
     } catch {
-      // Erreur inconnue
       afficherErreur({
         description: (
           <>
@@ -160,7 +163,6 @@ export async function handleApiResponse(
     throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
   }
 
-  // No content
   if (response.status === 204) return;
 
   return response.json();

@@ -142,6 +142,8 @@ export function ModalAmenagement(props: {
         dateDebut: amenagement.debut ? dayjs(amenagement.debut) : undefined,
         dateFin: amenagement.fin ? dayjs(amenagement.fin) : undefined,
       });
+    } else {
+      form.resetFields();
     }
   }, [form, amenagement]);
 

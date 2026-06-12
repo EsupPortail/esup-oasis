@@ -166,15 +166,34 @@ describe("handleApiResponse — erreur 401", () => {
   });
   afterEach(() => vi.useRealTimers());
 
-  it("vide le cache React Query et déconnecte l'utilisateur après 1 s", async () => {
+  // La garde anti-rafale est un état de module : on rejoue le callback de signOut
+  // après chaque test pour la réinitialiser (comme le ferait le vrai signOut).
+  function resetSignOutGuard(auth: AuthContextType) {
+    const callback = vi.mocked(auth.signOut).mock.calls[0]?.[0];
+    callback?.();
+  }
+
+  it("vide le cache React Query et déconnecte immédiatement l'utilisateur", async () => {
     const auth = makeAuth();
     await expect(
       handleApiResponse(GET, makeResponse(401, {}, "Unauthorized"), navigate, auth),
     ).rejects.toThrow();
-    expect(queryClient.clear).not.toHaveBeenCalled();
-    vi.advanceTimersByTime(1000);
     expect(queryClient.clear).toHaveBeenCalledOnce();
     expect(auth.signOut).toHaveBeenCalledOnce();
+    resetSignOutGuard(auth);
+  });
+
+  it("rafale de 401 → une seule déconnexion", async () => {
+    const auth = makeAuth();
+    await expect(
+      handleApiResponse(GET, makeResponse(401, {}, "Unauthorized-A"), navigate, auth),
+    ).rejects.toThrow();
+    await expect(
+      handleApiResponse(GET, makeResponse(401, {}, "Unauthorized-B"), navigate, auth),
+    ).rejects.toThrow();
+    expect(queryClient.clear).toHaveBeenCalledOnce();
+    expect(auth.signOut).toHaveBeenCalledOnce();
+    resetSignOutGuard(auth);
   });
 });
 

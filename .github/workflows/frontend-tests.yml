@@ -1,0 +1,36 @@
+name: Frontend Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main", "2.2", "2.3" ]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'yarn'
+          cache-dependency-path: frontend/yarn.lock
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install Dependencies
+        working-directory: frontend
+        run: yarn install --frozen-lockfile
+
+      - name: Type Check
+        working-directory: frontend
+        run: yarn tsc --noEmit
+
+      - name: Run Tests
+        working-directory: frontend
+        run: yarn test:run

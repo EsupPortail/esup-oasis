@@ -29,21 +29,22 @@ export function createDateAsUTC(
   date: Date,
   heure: TypeOperationHeure = TypeOperationHeure.Inchangee,
 ): Date {
+  const d = new Date(date);
   if (heure === TypeOperationHeure.debutJournee) {
-    date.setHours(0, 0, 0, 0);
+    d.setHours(0, 0, 0, 0);
   }
   if (heure === TypeOperationHeure.finJournee) {
-    date.setHours(23, 59, 59, 999);
+    d.setHours(23, 59, 59, 999);
   }
 
   return new Date(
     Date.UTC(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate(),
-      date.getHours(),
-      date.getMinutes(),
-      date.getSeconds(),
+      d.getFullYear(),
+      d.getMonth(),
+      d.getDate(),
+      d.getHours(),
+      d.getMinutes(),
+      d.getSeconds(),
     ),
   );
 }

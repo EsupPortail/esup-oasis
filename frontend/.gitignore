@@ -29,3 +29,4 @@ yarn-error.log*
 compose.overrides.yml
 
 /src/api/OpenApi.yml
+/.env

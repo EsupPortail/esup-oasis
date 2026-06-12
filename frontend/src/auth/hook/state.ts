@@ -9,16 +9,12 @@
 
 import { OAUTH_NONCE_KEY, OAUTH_STATE_KEY } from "@/auth/hook/constants";
 
-// https://medium.com/@dazcyril/generating-cryptographic-random-state-in-javascript-in-the-browser-c538b3daae50
-const TOKEN_LENGTH = 40;
-const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-const getCharacter = (value: number): string => ALPHABET[value % ALPHABET.length];
+const TOKEN_BYTES = 20; // 40 caractères hexadécimaux (hex : distribution uniforme)
 
 const generateToken = (): string => {
-  const randomValues = new Uint8Array(TOKEN_LENGTH);
+  const randomValues = new Uint8Array(TOKEN_BYTES);
   window.crypto.getRandomValues(randomValues);
-  return Array.from(randomValues, getCharacter).join("");
+  return Array.from(randomValues, (byte) => byte.toString(16).padStart(2, "0")).join("");
 };
 
 // --- State (protection CSRF)

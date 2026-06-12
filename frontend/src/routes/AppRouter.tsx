@@ -30,7 +30,10 @@ export default function AppRouter(): ReactElement {
   const routes = useMemo<ReactElement | null>(() => {
     const user = auth.user;
 
-    // Routes accessibles par l'utilisateur connecté selon ses rôles
+    // Routes accessibles par l'utilisateur connecté selon ses rôles.
+    // Ce filtrage est purement ergonomique (éviter d'afficher des écrans inutilisables) :
+    // il ne constitue PAS une barrière de sécurité, le JS étant modifiable par l'utilisateur.
+    // Le contrôle d'accès effectif est assuré par l'API à chaque requête.
     const userAuthorizedRoutes = APP_ROUTES.filter(
       (route) =>
         route.roles === null ||
@@ -47,8 +50,9 @@ export default function AppRouter(): ReactElement {
       />
     ));
 
-    // Si l'utilisateur n'est pas connecté ou session expirée
-    if (!user?.uid || auth.isExpired()) {
+    // Si l'utilisateur n'est pas connecté (la validité de la session est tranchée
+    // par l'API : un 401 déclenche la déconnexion via HandleApiResponse)
+    if (!user?.uid) {
       // Routes publiques (sans rôles requis)
       const publicRoutes = APP_ROUTES.filter((route) => route.roles === null).map((route) => (
         <Route

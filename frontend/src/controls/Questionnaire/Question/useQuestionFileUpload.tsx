@@ -10,8 +10,8 @@
 import { useRef, useState } from "react";
 import { App, UploadFile, UploadProps } from "antd";
 import { RcFile } from "antd/es/upload";
-import { MAX_FILE_SIZE } from "@/constants";
 import { envoyerFichierFetch } from "@utils/upload";
+import { ACCEPT_FICHIERS, validerFichier } from "@utils/fichierValidation";
 import { useAuth } from "@/auth/AuthProvider";
 import { env } from "@/env";
 import { QuestionnaireQuestion, useQuestionnaire } from "@context/demande/QuestionnaireProvider";
@@ -70,6 +70,7 @@ export function useQuestionFileUpload(question: QuestionnaireQuestion) {
     fileList: fileList,
     multiple: question.choixMultiple ?? false,
     disabled: mode === "preview",
+    accept: ACCEPT_FICHIERS,
     customRequest: async (options) => {
       const { onSuccess, onError, file } = options;
 
@@ -77,12 +78,15 @@ export function useQuestionFileUpload(question: QuestionnaireQuestion) {
         return;
       }
 
-      if (typeof file === "object" && (file as RcFile).size > MAX_FILE_SIZE * 1024 * 1024) {
-        notification.error({
-          title: `Le fichier "${question.libelle}" dépasse la taille maximum autorisée (${MAX_FILE_SIZE} Mo).`,
-          icon: <UploadOutlined className="text-danger" aria-hidden />,
-        });
-        return;
+      if (typeof file === "object") {
+        const erreur = validerFichier(file as RcFile);
+        if (erreur) {
+          notification.error({
+            title: `Fichier "${question.libelle}" refusé : ${erreur}`,
+            icon: <UploadOutlined className="text-danger" aria-hidden />,
+          });
+          return;
+        }
       }
 
       setUploadingCount((c) => c + 1);

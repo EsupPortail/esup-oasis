@@ -7,8 +7,7 @@ import { notification, message } from "antd";
 import { server } from "@/mocks/server";
 import { AuthProvider, useAuth } from "./AuthProvider";
 
-// use-local-storage-state inspecte localStorage à l'import (avant le polyfill setupTests).
-// On le remplace intégralement pour contrôler l'état de chaque test.
+// use-local-storage-state inspecte localStorage à l'import, avant le polyfill de setupTests.
 const { mockUseLocalStorageState } = vi.hoisted(() => ({
   mockUseLocalStorageState: vi.fn(),
 }));
@@ -45,15 +44,12 @@ function makeUser(overrides: Record<string, unknown> = {}) {
 
 function setupStorage({
   login = null,
-  expiration = null,
   impersonate = null,
-}: { login?: string | null; expiration?: number | null; impersonate?: string | null } = {}) {
+}: { login?: string | null; impersonate?: string | null } = {}) {
   mockUseLocalStorageState.mockImplementation((key: string) => {
     switch (key) {
       case "login":
         return [login, vi.fn(), { removeItem: vi.fn() }];
-      case "expiration":
-        return [expiration, vi.fn(), { removeItem: vi.fn() }];
       case "impersonate":
         return [impersonate, vi.fn(), { removeItem: vi.fn() }];
       default:
@@ -80,7 +76,7 @@ describe("AuthProvider", () => {
   });
 
   it("chargement utilisateur réussi → user peuplé, onSuccess appelé", async () => {
-    setupStorage({ login: "user@test.fr", expiration: Date.now() + 60_000 });
+    setupStorage({ login: "user@test.fr" });
     server.use(http.get(USER_URL, () => HttpResponse.json(makeUser())));
 
     const onSuccess = vi.fn();
@@ -91,9 +87,20 @@ describe("AuthProvider", () => {
     await waitFor(() => expect(onSuccess).toHaveBeenCalled(), { timeout: 2000 });
   });
 
-  it("réponse non-ok → user undefined, error défini", async () => {
-    setupStorage({ login: "user@test.fr", expiration: Date.now() + 60_000 });
+  it("réponse 401 (session absente ou expirée) → retour silencieux, sans erreur", async () => {
+    setupStorage({ login: "user@test.fr" });
     server.use(http.get(USER_URL, () => new HttpResponse(null, { status: 401 })));
+
+    const { result } = renderHook(() => useAuth(), { wrapper: makeWrapper() });
+
+    await waitFor(() => expect(result.current.loading).toBe(false), { timeout: 2000 });
+    expect(result.current.user).toBeUndefined();
+    expect(result.current.error).toBeNull();
+  });
+
+  it("réponse non-ok (hors 401/403) → user undefined, error défini", async () => {
+    setupStorage({ login: "user@test.fr" });
+    server.use(http.get(USER_URL, () => new HttpResponse(null, { status: 500 })));
 
     const { result } = renderHook(() => useAuth(), { wrapper: makeWrapper() });
 
@@ -102,7 +109,7 @@ describe("AuthProvider", () => {
   });
 
   it("utilisateur avec ROLE_USER uniquement → notification.error, pas de user", async () => {
-    setupStorage({ login: "user@test.fr", expiration: Date.now() + 60_000 });
+    setupStorage({ login: "user@test.fr" });
     server.use(http.get(USER_URL, () => HttpResponse.json(makeUser({ roles: ["ROLE_USER"] }))));
 
     const { result } = renderHook(() => useAuth(), { wrapper: makeWrapper() });
@@ -111,18 +118,8 @@ describe("AuthProvider", () => {
     expect(result.current.user).toBeUndefined();
   });
 
-  it("token expiré → signOut automatique, aucun fetch déclenché", async () => {
-    setupStorage({ login: "user@test.fr", expiration: Date.now() - 1000 });
-
-    const { result } = renderHook(() => useAuth(), { wrapper: makeWrapper() });
-
-    await new Promise((r) => setTimeout(r, 100));
-    expect(result.current.user).toBeUndefined();
-    expect(result.current.loading).toBe(false);
-  });
-
   it("setImpersonate avec son propre uid → message.error, impersonate inchangé", async () => {
-    setupStorage({ login: "user@test.fr", expiration: Date.now() + 60_000 });
+    setupStorage({ login: "user@test.fr" });
     server.use(http.get(USER_URL, () => HttpResponse.json(makeUser())));
 
     const { result } = renderHook(() => useAuth(), { wrapper: makeWrapper() });
@@ -135,7 +132,7 @@ describe("AuthProvider", () => {
   });
 
   it("AbortController : pas de mise à jour après unmount", async () => {
-    setupStorage({ login: "user@test.fr", expiration: Date.now() + 60_000 });
+    setupStorage({ login: "user@test.fr" });
     server.use(
       http.get(USER_URL, async () => {
         await new Promise<never>(() => {});

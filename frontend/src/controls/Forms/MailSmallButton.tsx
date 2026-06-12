@@ -11,6 +11,7 @@ import React from "react";
 import { App, Button, Dropdown } from "antd";
 import { CopyOutlined, MailOutlined, SendOutlined } from "@ant-design/icons";
 import { IUtilisateur } from "@api";
+import { mailtoHref } from "@utils/url";
 
 export function MailSmallButton(props: {
   utilisateur: IUtilisateur | undefined;
@@ -46,7 +47,7 @@ export function MailSmallButton(props: {
               message.success("Email copié dans le presse-papier").then();
             });
           } else if (e.key === "envoyer") {
-            window.open(`mailto:${email}`);
+            window.open(mailtoHref(email));
           }
         },
       }}

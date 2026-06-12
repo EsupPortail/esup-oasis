@@ -11,6 +11,18 @@
 import { ApiPathMethodParameters, ApiPathMethodQuery, Method, Path } from "@api";
 import { env } from "@/env";
 
+/**
+ * Construit l'URL complète d'un appel API.
+ *
+ * **Contrat IRI pour `parameters`** : chaque valeur doit être une IRI API Platform complète
+ * (ex. `"/types_evenements/1"`), pas un id scalaire. L'algorithme supprime le segment de
+ * path qui précède le placeholder (`{key}`) et le remplace par la valeur — ce qui ne
+ * fonctionne correctement que si la valeur ré-apporte ce segment (comportement d'une IRI).
+ * Passer un scalaire (`"1"`) produit une URL silencieusement fausse.
+ *
+ * Si `url` est fourni (IRI concrète), il est utilisé tel quel à la place de `path` et
+ * `parameters` est ignoré (l'IRI est déjà résolu).
+ */
 export function buildUrl<P extends Path, M extends Method>(
   baseUrl: string,
   path: P,

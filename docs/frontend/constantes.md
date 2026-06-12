@@ -8,7 +8,6 @@ Les constantes de l'application sont définies dans le fichier `src/constants.ts
 | `TYPE_EVENEMENT_RENFORT`           | Id du type d'évènements "Renfort au service"                                                            | "/types_evenements/-1"            | Oui             |
 | `BENEFICIAIRE_PROFIL_A_DETERMINER` | Id du profil bénéficiaire "À déterminer"                                                                | "/profils/-1"                     | Oui             |
 | `PARAMETRE_COEF_COUT_CHARGE`       | Id du paramètre "Coefficient de charges"                                                                | "/parametres/COEFFICIENT_CHARGES" | Oui             |
-| `MAX_FILE_SIZE`                    | Taille max des fichiers en upload (en Mo)                                                               | 10                                | Oui             |
 
 Ces constantes sont utilisées pour assurer le bon fonctionnement de l'application. Dans le cadre d'une installation
 classique, il n'est généralement pas nécessaire de les modifier.

@@ -27,7 +27,6 @@ import {
 import { usePatch, UsePatchHook } from "@context/api/ApiContextFn/UsePatch";
 import { usePost, UsePostHook } from "@context/api/ApiContextFn/UsePost";
 import { useDelete, UseDeleteHook } from "@context/api/ApiContextFn/UseDelete";
-import { usePrefetch, UsePrefetchHook } from "@context/api/ApiContextFn/UsePrefetch";
 import { AuthContextType } from "@/auth/AuthProvider";
 import {
   ApiContentType,
@@ -81,7 +80,6 @@ export interface MutationDeleteParams {
 }
 
 export interface ApiContextType {
-  usePrefetch: UsePrefetchHook;
   useGetItem: UseGetItemHook;
   useGetCollection: UseGetCollectionHook;
   useGetCollectionPaginated: UseGetCollectionPaginatedHook;
@@ -229,14 +227,6 @@ export function ApiProvider({
 
       useInvalidation: (queryKeys: string[], onSuccess?: VoidFunction): void =>
         handleInvalidation(client, queryKeys, onSuccess),
-
-      usePrefetch: <P extends Path>(options: {
-        path: P;
-        query?: ApiPathMethodQuery<P, "get">;
-        parameters?: ApiPathMethodParameters<P, "get">;
-      }): Promise<void> => {
-        return usePrefetch(baseUrl, fetchOptions, client, options);
-      },
     };
   }, [baseUrl, client, auth]);
 

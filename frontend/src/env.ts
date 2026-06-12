@@ -46,6 +46,7 @@ type EnvType = {
   REACT_APP_MSG_ACCUEIL: string | null;
   REACT_APP_DARKMODE: boolean;
   REACT_APP_GERER_DEMANDES: boolean;
+  REACT_APP_MAX_FILE_SIZE: string | null;
 
   // Variables liées aux couleurs de l'application
   REACT_APP_PRIMARY_COLOR: string;

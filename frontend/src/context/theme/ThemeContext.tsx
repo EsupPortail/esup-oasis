@@ -18,10 +18,20 @@ interface IThemeContext {
 
 const ThemeContext = createContext<IThemeContext | undefined>(undefined);
 
+const THEME_STORAGE_KEY = "theme-mode";
+
+function readStoredTheme(): ThemeMode {
+  const stored = localStorage.getItem(THEME_STORAGE_KEY);
+  return (["light", "dark", "system"] as ThemeMode[]).includes(stored as ThemeMode)
+    ? (stored as ThemeMode)
+    : "system";
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [themeMode, setThemeModeState] = useState<ThemeMode>("system");
+  const [themeMode, setThemeModeState] = useState<ThemeMode>(readStoredTheme);
 
   const setThemeMode = useCallback((value: ThemeMode) => {
+    localStorage.setItem(THEME_STORAGE_KEY, value);
     setThemeModeState(value);
   }, []);
 

@@ -38,6 +38,7 @@ lors du redémarrage du conteneur, évitant ainsi les problèmes de cache.
 | `REACT_APP_PHOTO_DEMO`      | Remplacer les photos par un avatar                   | false                                               | Non             |
 | `REACT_APP_DARKMODE`        | Activer le dark mode pour les utilisateurs *         | false                                               | Non             |
 | `REACT_APP_GERER_DEMANDES`  | Activer la gestion des demandes dans l'application   | true                                                | Non             |
+| `REACT_APP_MAX_FILE_SIZE`   | Taille max des fichiers en upload (en Mo)            | 10                                                  | Non             |
 
 > **\* REACT_APP_DARKMODE :** en version beta, le dark-mode est désactivé par défaut, mais peut être activé en modifiant
 > la variable

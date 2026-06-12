@@ -16,6 +16,7 @@ export function montantToString(
   if (coefCoutCharge) {
     montant = montant * parseFloat(coefCoutCharge);
   }
+  if (Number.isNaN(montant)) return "—";
   return montant.toFixed(2).toString().replace(".", ",");
 }
 
@@ -23,5 +24,7 @@ export function to2Digits(value?: string | number, defaultValue = "0.00") {
   if (value === undefined) {
     return defaultValue;
   }
-  return parseFloat(value.toString()).toFixed(2).replace(".", ",");
+  const parsed = parseFloat(value.toString());
+  if (Number.isNaN(parsed)) return "—";
+  return parsed.toFixed(2).replace(".", ",");
 }

@@ -34,9 +34,6 @@ vi.mock("@context/api/ApiContextFn/UsePost", () => ({
 vi.mock("@context/api/ApiContextFn/UseDelete", () => ({
   useDelete: vi.fn(() => ({ mutate: vi.fn(), status: "idle" })),
 }));
-vi.mock("@context/api/ApiContextFn/UsePrefetch", () => ({
-  usePrefetch: vi.fn(() => Promise.resolve()),
-}));
 vi.mock("@context/api/ApiContextFn/HandleInvalidation", () => ({
   handleInvalidation: vi.fn(),
 }));

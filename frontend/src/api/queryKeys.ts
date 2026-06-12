@@ -27,7 +27,11 @@ export const QK_TYPES_EVENEMENTS = "/types_evenements";
 
 // --- Utilisateurs ---
 export const QK_UTILISATEURS = "/utilisateurs";
-/** Invalide un utilisateur spécifique et toutes ses sous-ressources (plus précis que QK_UTILISATEURS). */
+/**
+ * Invalide les clés dont un segment de chemin commence par le template `/utilisateurs/{uid}` :
+ * l'item utilisateur (mis en cache avec ce template) et ses sous-ressources. Le matching est par
+ * préfixe de chaîne, placeholder littéral compris : ne cible pas un `uid` concret.
+ */
 export const QK_UTILISATEURS_ITEM = "/utilisateurs/{uid}";
 export const QK_UTILISATEURS_AMENAGEMENTS = "/utilisateurs/{uid}/amenagements";
 export const QK_UTILISATEURS_AVIS_ESE = "/utilisateurs/{uid}/avis_ese";

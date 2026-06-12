@@ -13,11 +13,9 @@ import { Button } from "antd";
 import { ITypeDemande, QK_DEMANDES, QK_UTILISATEURS_DEMANDES } from "@api";
 import { useApi } from "@context/api/ApiProvider";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 
 export default function PostulerButton(props: { typeDemande: ITypeDemande; demandeurId: string }) {
   const navigate = useNavigate();
-  const [submitted, setSubmitted] = useState(false);
   const { data: demandesEnCours } = useApi().useGetFullCollection({
     path: "/demandes",
     query: {
@@ -57,13 +55,10 @@ export default function PostulerButton(props: { typeDemande: ITypeDemande; deman
   ) : (
     props.typeDemande.campagneEnCours && (
       <Button
-        loading={submitted}
-        disabled={submitted}
+        loading={mutationPostuler.isPending}
+        disabled={mutationPostuler.isPending}
         icon={<PlusOutlined aria-hidden />}
-        onClick={() => {
-          setSubmitted(true);
-          deposerNouvelleDemande(props.typeDemande);
-        }}
+        onClick={() => deposerNouvelleDemande(props.typeDemande)}
         aria-label={`Déposer une demande : ${props.typeDemande.libelle}`}
       >
         Déposer une demande

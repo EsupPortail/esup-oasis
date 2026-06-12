@@ -15,6 +15,7 @@ import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
 import { useApi } from "@context/api/ApiProvider";
 import { MinusOutlined } from "@ant-design/icons";
 import { IUtilisateur } from "@api";
+import { mailtoHref } from "@utils/url";
 
 interface IItemGestionnaire {
   gestionnaire?: IUtilisateur;
@@ -89,7 +90,7 @@ function GestionnaireItem({
             type="text"
             className="legende fs-08 m-0 p-0 d-block contrast-no-border"
             onClick={() => {
-              window.location.href = `mailto:${item?.email}`;
+              window.location.href = mailtoHref(item?.email ?? "");
             }}
             aria-label={`Envoyer un email au gestionnaire (${item?.prenom} ${item?.nom})`}
           >
