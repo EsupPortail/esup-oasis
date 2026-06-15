@@ -42,26 +42,44 @@ class OAuthController extends AbstractController
      * l'accestoken étant ensuite passé à l'api pour obtenir un jwt api)
      */
     #[Route(path: '/accessToken', name: 'accesstoken')]
-    public function getAccessToken(): Response
-    {
+    public function getAccessToken(
+        Request $request,
+        #[Autowire('%env(JWT_COOKIE_DOMAIN)%')] string $cookieDomain,
+    ): Response {
+        $cookieDomainNorm = empty($cookieDomain) ? null : $cookieDomain;
+        if ($cookieDomainNorm !== null) {
+            $host = $request->getHost();
+            $cleanDomain = ltrim($cookieDomainNorm, '.');
+            if ($host !== $cleanDomain && !str_ends_with($host, '.' . $cleanDomain)) {
+                $cookieDomainNorm = null;
+            }
+        }
         try {
-            $token = $this->oauthService->getAccessToken($this->generateUrl(
+            $token = $this->oauthService->getAccessToken($request, $this->generateUrl(
                 'connect_oauth_accesstoken',
                 [],
                 UrlGeneratorInterface::ABSOLUTE_URL,
-            ));
-            return new JsonResponse(['token' => $token]);
+            ), $cookieDomainNorm);
+            if ($token instanceof Response) {
+                return $token;
+            }
+            $response = new JsonResponse(['token' => $token]);
+            $response->headers->clearCookie('oauth_state', '/', $cookieDomainNorm, $request->isSecure(), true, Cookie::SAMESITE_LAX);
+            return $response;
         } catch (IdentityProviderException|UnexpectedValueException $exception) {
-            return new Response($exception->getMessage(), 500);
+            $response = new Response($exception->getMessage(), 500);
+            $response->headers->clearCookie('oauth_state', '/', $cookieDomainNorm, $request->isSecure(), true, Cookie::SAMESITE_LAX);
+            return $response;
         }
     }
 
     /**
-     * Réalise une auth complète telle que le ferait une appli monobloc et retourne tous les attributs récupérés via
+     * Réalise une auth complète telle que le ferait une appli monobloc et retourne tous les attributé récupérés via
      * le serveur d'auth + un JWT valide pour l'api
      */
     #[Route(path: '/', name: 'login')]
     public function fullAuthentication(
+        Request $request,
         UtilisateurManager $utilisateurManager,
         #[Autowire('%env(JWT_TOKEN_TTL)%')] int $ttl,
         #[Autowire('%env(JWT_COOKIE_NAME)%')] string $cookieName,
@@ -71,12 +89,24 @@ class OAuthController extends AbstractController
          * https://oauth2-client.thephpleague.com/usage/
          * https://apereo.github.io/cas/6.0.x/installation/OAuth-OpenId-Authentication.html#authorization-code
          */
+        $cookieDomainNorm = empty($cookieDomain) ? null : $cookieDomain;
+        if ($cookieDomainNorm !== null) {
+            $host = $request->getHost();
+            $cleanDomain = ltrim($cookieDomainNorm, '.');
+            if ($host !== $cleanDomain && !str_ends_with($host, '.' . $cleanDomain)) {
+                $cookieDomainNorm = null;
+            }
+        }
         try {
-            $token = $this->oauthService->getAccessToken($this->generateUrl(
+            $token = $this->oauthService->getAccessToken($request, $this->generateUrl(
                 'connect_oauth_login',
                 [],
                 UrlGeneratorInterface::ABSOLUTE_URL,
-            ));
+            ), $cookieDomainNorm);
+
+            if ($token instanceof Response) {
+                return $token;
+            }
 
             $resourceOwner = $this->oauthService->getResourceOwnerFromToken($token);
             $uid = $resourceOwner->getId();
@@ -92,16 +122,20 @@ class OAuthController extends AbstractController
                 $infos['tokenApi'],
                 new DateTime()->modify(sprintf('+ %s seconds', $ttl)),
                 '/',
-                $cookieDomain,
+                $cookieDomainNorm,
                 true,
                 true,
                 false,
                 Cookie::SAMESITE_STRICT,
             ));
 
+            $jsonResponse->headers->clearCookie('oauth_state', '/', $cookieDomainNorm, $request->isSecure(), true, Cookie::SAMESITE_LAX);
+
             return $jsonResponse;
         } catch (IdentityProviderException|UnexpectedValueException $exception) {
-            return new Response($exception->getMessage(), 500);
+            $response = new Response($exception->getMessage(), 500);
+            $response->headers->clearCookie('oauth_state', '/', $cookieDomainNorm, $request->isSecure(), true, Cookie::SAMESITE_LAX);
+            return $response;
         }
     }
 

@@ -117,4 +117,52 @@ class SecurityAuditTest extends ApiTestCaseCustom
         $this->assertResponseStatusCodeSame(422);
         $this->assertJsonContains(['hydra:description' => 'Type de fichier non autorisé : json.']);
     }
+
+    /**
+     * Vérifie la sécurité du state OAuth contre les attaques CSRF
+     */
+     public function testOAuthStateSecurity(): void
+    {
+        $client = static::createClient();
+
+        // 1. Démarrer le flux : redirection vers le serveur CAS/OAuth
+        $client->request('GET', '/connect/oauth/');
+        $this->assertResponseStatusCodeSame(302);
+
+        $headers = $client->getResponse()->getHeaders(false);
+        $location = $headers['location'][0] ?? '';
+        static::assertStringStartsWith('https://cas.univ.fr/cas/oauth2.0/authorize', $location);
+
+        // Extraire le state généré par le serveur
+        $parts = parse_url($location);
+        parse_str($parts['query'] ?? '', $queryParams);
+        $generatedState = $queryParams['state'] ?? null;
+        static::assertNotEmpty($generatedState);
+
+        // 2. Retour de CAS avec un state invalide -> doit être rejeté (CSRF protection)
+        $client->request('GET', '/connect/oauth/?code=fake_code&state=bad_state');
+        $this->assertResponseStatusCodeSame(500);
+        static::assertStringContainsString('Invalid state', $client->getResponse()->getContent(false));
+
+        // 3. Retour de CAS sans state -> doit être rejeté
+        $client->request('GET', '/connect/oauth/?code=fake_code');
+        $this->assertResponseStatusCodeSame(500);
+        static::assertStringContainsString('Invalid state', $client->getResponse()->getContent(false));
+    }
+
+    /**
+     * Vérifie que le redirect_uri dynamique est validé par rapport à une liste blanche
+     */
+    public function testOAuthRedirectUriWhitelist(): void
+    {
+        $oauthService = static::getContainer()->get(\App\Service\OAuthService::class);
+
+        $this->expectException(\UnexpectedValueException::class);
+        $this->expectExceptionMessage('Invalid redirect URI');
+
+        $oauthService->getAccessToken(
+            new \Symfony\Component\HttpFoundation\Request(),
+            'https://attacker.com/callback'
+        );
+    }
 }

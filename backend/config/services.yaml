@@ -36,6 +36,7 @@ services:
       $urlAuthorize: '%env(resolve:OAUTH_URLAUTHORIZE)%'
       $urlAccessToken: '%env(resolve:OAUTH_URLACCESSTOKEN)%'
       $urlResourceOwnerDetails: '%env(resolve:OAUTH_URLRESOURCEOWNERDETAILS)%'
+      $urlGenerator: '@router'
 
   #LDAP
   App\Service\LdapService:
