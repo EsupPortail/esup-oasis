@@ -17,8 +17,9 @@ use Exception;
 use Niisan\ClamAV\Scanner;
 use Niisan\ClamAV\ScannerFactory;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Contracts\Service\ResetInterface;
 
-class AntivirusService
+class AntivirusService implements ResetInterface
 {
     protected Scanner $clamav;
     private bool $online = true;
@@ -63,5 +64,10 @@ class AntivirusService
             $this->messageBus->dispatch(new ErreurTechniqueMessage($e, 'Antivirus indisponible'));
             return false;
         }
+    }
+
+    public function reset(): void
+    {
+        $this->online = true;
     }
 }
