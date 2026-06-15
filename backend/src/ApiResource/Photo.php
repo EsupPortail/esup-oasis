@@ -23,12 +23,13 @@ use App\State\Photo\PhotoProvider;
         new Get(uriTemplate: self::ITEM_URI, formats: ['jpeg' => 'image/jpeg'], uriVariables: ['uid']),
     ],
     openapi: new Operation(tags: ['Utilisateurs']),
-    security: "is_granted('ROLE_GESTIONNAIRE') or is_granted('ROLE_MEMBRE_COMMISSION')",
+    security: "is_granted('VOIR_PHOTO', object)",
     provider: PhotoProvider::class,
 )]
 class Photo
 {
     public const string ITEM_URI = '/utilisateurs/{uid}/photo';
+    public const string VOIR_PHOTO = 'VOIR_PHOTO';
 
     #[ApiProperty(identifier: true)]
     public string $uid;
