@@ -198,4 +198,38 @@ class EvenementsVisibilityTest extends ApiTestCaseCustom
             $this->assertResponseStatusCodeSame(403);
         }
     }
+
+    public function testIntervenantCannotBypassVisibilityFilter(): void
+    {
+        $client = $this->createClientWithCredentials('intervenant');
+        // Try to bypass by requesting admin's events
+        $client->request('GET', '/evenements?utilisateurConcerne=/utilisateurs/admin');
+        $this->assertResponseIsSuccessful();
+        
+        $ownIds = $this->getEventIds('intervenant');
+        $this->assertJsonContains(['hydra:totalItems' => count($ownIds)]);
+
+        $data = $client->getResponse()->toArray();
+        foreach ($data['hydra:member'] as $member) {
+            $id = (int)str_replace('/evenements/', '', $member['@id']);
+            $this->assertContains($id, $ownIds);
+        }
+    }
+
+    public function testBeneficiaireCannotBypassVisibilityFilter(): void
+    {
+        $client = $this->createClientWithCredentials('beneficiaire');
+        // Try to bypass by requesting admin's events
+        $client->request('GET', '/evenements?utilisateurConcerne=/utilisateurs/admin');
+        $this->assertResponseIsSuccessful();
+        
+        $ownIds = $this->getEventIds('beneficiaire');
+        $this->assertJsonContains(['hydra:totalItems' => count($ownIds)]);
+
+        $data = $client->getResponse()->toArray();
+        foreach ($data['hydra:member'] as $member) {
+            $id = (int)str_replace('/evenements/', '', $member['@id']);
+            $this->assertContains($id, $ownIds);
+        }
+    }
 }

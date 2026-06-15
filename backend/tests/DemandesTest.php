@@ -51,6 +51,108 @@ class DemandesTest extends ApiTestCaseCustom
         ]);
     }
 
+    public function testDemandeurCannotBypassVisibilityFilter(): void
+    {
+        $client = $this->createClientWithCredentials('demandeur');
+        // Try to query another demandeur's demands
+        $client->request('GET', '/demandes?demandeur=/utilisateurs/demandeur3');
+
+        $this->assertResponseIsSuccessful();
+        // It should still only return the logged-in user's own demands (total = 1)
+        $this->assertJsonContains([
+            '@id' => '/demandes',
+            'hydra:totalItems' => 1,
+        ]);
+        
+        $data = $client->getResponse()->toArray();
+        $this->assertEquals('/demandes/1', $data['hydra:member'][0]['@id']);
+    }
+
+    public function testMembreCommissionOnlySeesCampaignDemandes(): void
+    {
+        $em = static::getContainer()->get('doctrine')->getManager();
+
+        // 1. Create a demand for a campaign with no commission (campagne_artistes / type_demande_artistes)
+        $client = $this->createClientWithCredentials('admin');
+        $client->request('POST', '/demandes', [
+            'json' => [
+                'typeDemande' => '/types_demandes/2',
+                'demandeur' => '/utilisateurs/utilisateur-ancien-beneficiaire',
+            ],
+        ]);
+        $this->assertResponseStatusCodeSame(201);
+        $data = $client->getResponse()->toArray();
+        $newDemandeId = $data['@id'];
+        $dbId = $data['id'] ?? null;
+        if (!$dbId) {
+            $dbId = (int)str_replace('/demandes/', '', $newDemandeId);
+        }
+
+        try {
+            // Admin should see 4 demands in total
+            $client->request('GET', '/demandes');
+            $this->assertResponseIsSuccessful();
+            $this->assertJsonContains(['hydra:totalItems' => 4]);
+
+            // 2. Log in as membrecommission
+            $client = $this->createClientWithCredentials('membrecommission');
+            $client->request('GET', '/demandes');
+            $this->assertResponseIsSuccessful();
+            
+            // membrecommission should only see demands associated with their commission's campaigns (3 items)
+            $this->assertJsonContains(['hydra:totalItems' => 3]);
+            
+            // And they shouldn't see the new demand in the list
+            $data = $client->getResponse()->toArray();
+            foreach ($data['hydra:member'] as $member) {
+                $this->assertNotEquals($newDemandeId, $member['@id']);
+            }
+        } finally {
+            // Clean up the created demand to keep database clean for other tests
+            $demandeEntity = $em->find(\App\Entity\Demande::class, $dbId);
+            if ($demandeEntity) {
+                $em->remove($demandeEntity);
+                $em->flush();
+            }
+        }
+    }
+
+    public function testRenfortOnlySeesNonLimitedVisibilityDemandes(): void
+    {
+        // 1. Initially, renfort sees all 3 demands
+        $client = $this->createClientWithCredentials('renfort');
+        $client->request('GET', '/demandes');
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonContains(['hydra:totalItems' => 3]);
+
+        // 2. Update typeDemande 1 to have visibiliteLimitee = true
+        $em = static::getContainer()->get('doctrine')->getManager();
+        $typeDemande = $em->find(\App\Entity\TypeDemande::class, 1);
+        
+        try {
+            $typeDemande->setVisibiliteLimitee(true);
+            $em->flush();
+
+            // 3. renfort should now see 0 demands (since all 3 are of type 1 which is now limited)
+            $client->request('GET', '/demandes');
+            $this->assertResponseIsSuccessful();
+            $this->assertJsonContains(['hydra:totalItems' => 0]);
+
+            // 4. admin should still see all 3 demands
+            $client = $this->createClientWithCredentials('admin');
+            $client->request('GET', '/demandes');
+            $this->assertResponseIsSuccessful();
+            $this->assertJsonContains(['hydra:totalItems' => 3]);
+        } finally {
+            $currentEm = static::getContainer()->get('doctrine')->getManager();
+            $typeDemande = $currentEm->find(\App\Entity\TypeDemande::class, 1);
+            if ($typeDemande) {
+                $typeDemande->setVisibiliteLimitee(false);
+                $currentEm->flush();
+            }
+        }
+    }
+
     public function testDemandeurCanReprendreDemande(): void
     {
         $client = $this->createClientWithCredentials('demandeur');
