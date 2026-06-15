@@ -84,8 +84,11 @@ class OAuthService
      * @return string|RedirectResponse
      * @throws IdentityProviderException
      */
-    public function getAccessToken(Request $request, ?string $redirectUrl = null, ?string $cookieDomain = null): string|RedirectResponse
-    {
+    public function getAccessToken(
+        Request $request,
+        ?string $redirectUrl = null,
+        ?string $cookieDomain = null,
+    ): string|AccessToken|RedirectResponse {
         if (null !== $redirectUrl) {
             $this->validateRedirectUri($redirectUrl);
             $this->options['redirectUri'] = $redirectUrl;
@@ -105,7 +108,7 @@ class OAuthService
             $response->headers->setCookie(Cookie::create(
                 'oauth_state',
                 $state,
-                (new DateTime())->modify('+ 10 minutes'),
+                new DateTime()->modify('+ 10 minutes'),
                 '/',
                 $cookieDomain,
                 $request->isSecure(), // Secure dynamically (allows local HTTP dev)
@@ -129,7 +132,7 @@ class OAuthService
                 'code' => $code,
             ]);
             $accessToken->getExpires();
-            return $accessToken->getToken();
+            return $accessToken;
         } catch (IdentityProviderException|UnexpectedValueException $e) {
             // Failed to get the access token or user details.
             throw $e;
@@ -140,26 +143,28 @@ class OAuthService
      * @param string $accessToken
      * @return ResourceOwnerInterface
      */
-    public function getResourceOwnerFromToken(#[SensitiveParameter] string $accessToken): ResourceOwnerInterface
-    {
-        $accessTokenObj = new AccessToken(['access_token' => $accessToken]);
+    public function getResourceOwnerFromToken(
+        #[SensitiveParameter]
+        AccessToken|string $accessToken,
+    ): ResourceOwnerInterface {
+        $accessTokenObj = $accessToken instanceof AccessToken
+            ? $accessToken
+            : new AccessToken(['access_token' => $accessToken]);
 
-        try {
-            if ($accessTokenObj->hasExpired()) {
-                //try to refresh it
-                try {
-                    $newAccessToken = $this->getProvider($this->options)->getAccessToken('refresh_token', [
-                        'refresh_token' => $accessTokenObj->getRefreshToken(),
-                    ]);
-                    $accessTokenObj = $newAccessToken;
-                } catch (IdentityProviderException) {
-                    throw new ExpiredTokenException('OAuth AccessToken has expired and couldnt be refreshed');
+        if ($accessTokenObj instanceof AccessToken) {
+            try {
+                if ($accessTokenObj->hasExpired()) {
+                    throw new ExpiredTokenException('OAuth AccessToken has expired');
                 }
+            } catch (RuntimeException) {
+                // Expiration inconnue : on laisse le provider valider le token.
             }
-        } catch (RuntimeException) {
-            //À voir :un moyen de vérifier ça...quel impact sur l'appel suivant si c'est expiré?
         }
 
-        return $this->getProvider($this->options)->getResourceOwner($accessTokenObj);
+        try {
+            return $this->getProvider($this->options)->getResourceOwner($accessTokenObj);
+        } catch (IdentityProviderException $exception) {
+            throw new ExpiredTokenException('OAuth AccessToken is expired or invalid', 0, $exception);
+        }
     }
 }
