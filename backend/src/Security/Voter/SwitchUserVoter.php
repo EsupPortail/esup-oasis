@@ -14,6 +14,7 @@ namespace App\Security\Voter;
 
 use App\Entity\Utilisateur;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -22,6 +23,8 @@ class SwitchUserVoter extends Voter
 {
     public function __construct(
         private readonly Security $security,
+        #[Autowire(env: 'APP_ENV')]
+        private readonly string $environment,
     ) {}
 
     protected function supports(string $attribute, mixed $subject): bool
@@ -35,6 +38,10 @@ class SwitchUserVoter extends Voter
         TokenInterface $token,
         ?Vote $vote = null,
     ): bool {
+        if ($this->environment === 'prod') {
+            return false;
+        }
+
         return $this->security->isGranted(Utilisateur::ROLE_ADMIN);
     }
 }
