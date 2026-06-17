@@ -44,10 +44,18 @@ class NoVirusConstraintValidator extends ConstraintValidator
 
         try {
             if (!$this->antivirusService->ping()) {
-                return; //todo: log?
+                if ($this->antivirusService->strictMode) {
+                    $this->context
+                        ->buildViolation('Antivirus indisponible, veuillez réessayer plus tard')
+                        ->addViolation();
+                }
+                return;
             }
         } catch (RuntimeException) {
-            return; //todo: log?
+            if ($this->antivirusService->strictMode) {
+                $this->context->buildViolation('Antivirus indisponible, veuillez réessayer plus tard')->addViolation();
+            }
+            return;
         }
 
         if (!$this->antivirusService->scan($value->file->getPathname())) {

@@ -78,6 +78,7 @@ services:
       DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-!ChangeMe!}@postgres:5432/${POSTGRES_DB:-app}?serverVersion=15&charset=utf8}
       CLAMAV_SERVER: ${CLAMAV_SERVER:-clamav}
       CLAMAV_PORT: ${CLAMAV_PORT:-3310}
+      CLAMAV_STRICT_MODE: ${CLAMAV_STRICT_MODE:-true}
       GOTENBERG_DSN: ${GOTENBERG_DSN:-http://gotenberg:3000}
     env_file:
       - .env
