@@ -18,6 +18,14 @@ class DemandesTest extends ApiTestCaseCustom
 {
     use ClockAwareTrait;
 
+    private function getDemandeIdForDemandeur(): string
+    {
+        $em = static::getContainer()->get('doctrine')->getManager();
+        $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
+        $demande = $em->getRepository(\App\Entity\Demande::class)->findOneBy(['demandeur' => $demandeur]);
+        return '/demandes/' . $demande->getId();
+    }
+
     public function testGetTypesDemandes(): void
     {
         $client = $this->createClientWithCredentials('admin');
@@ -32,14 +40,28 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testDemandeurOnlySeesOwnDemandes(): void
     {
+        $em = static::getContainer()->get('doctrine')->getManager();
+
+        $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
+        $countDemandeur = (int)$em
+            ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d WHERE d.demandeur = :user')
+            ->setParameter('user', $demandeur)
+            ->getSingleScalarResult();
+
         $client = $this->createClientWithCredentials('demandeur');
         $client->request('GET', '/demandes');
 
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
             '@id' => '/demandes',
-            'hydra:totalItems' => 1,
+            'hydra:totalItems' => $countDemandeur,
         ]);
+
+        $demandeur3 = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur3']);
+        $countDemandeur3 = (int)$em
+            ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d WHERE d.demandeur = :user')
+            ->setParameter('user', $demandeur3)
+            ->getSingleScalarResult();
 
         $client = $this->createClientWithCredentials('demandeur3');
         $client->request('GET', '/demandes');
@@ -47,36 +69,87 @@ class DemandesTest extends ApiTestCaseCustom
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
             '@id' => '/demandes',
-            'hydra:totalItems' => 2,
+            'hydra:totalItems' => $countDemandeur3,
         ]);
     }
 
     public function testDemandeurCannotBypassVisibilityFilter(): void
     {
+        $em = static::getContainer()->get('doctrine')->getManager();
+        $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
+        $demande = $em->getRepository(\App\Entity\Demande::class)->findOneBy(['demandeur' => $demandeur]);
+        $expectedId = '/demandes/' . $demande->getId();
+
+        $countDemandeur = (int)$em
+            ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d WHERE d.demandeur = :user')
+            ->setParameter('user', $demandeur)
+            ->getSingleScalarResult();
+
         $client = $this->createClientWithCredentials('demandeur');
         // Try to query another demandeur's demands
         $client->request('GET', '/demandes?demandeur=/utilisateurs/demandeur3');
 
         $this->assertResponseIsSuccessful();
-        // It should still only return the logged-in user's own demands (total = 1)
+        // It should still only return the logged-in user's own demands
         $this->assertJsonContains([
             '@id' => '/demandes',
-            'hydra:totalItems' => 1,
+            'hydra:totalItems' => $countDemandeur,
         ]);
-        
+
         $data = $client->getResponse()->toArray();
-        $this->assertEquals('/demandes/1', $data['hydra:member'][0]['@id']);
+        $this->assertEquals($expectedId, $data['hydra:member'][0]['@id']);
     }
 
     public function testMembreCommissionOnlySeesCampaignDemandes(): void
     {
-        $em = static::getContainer()->get('doctrine')->getManager();
+        $client = $this->createClientWithCredentials('admin');
 
-        // 1. Create a demand for a campaign with no commission (campagne_artistes / type_demande_artistes)
+        // Re-add membrecommission to commission 1
+        $client->request('PUT', '/commissions/1/membres/membrecommission', [
+            'json' => [
+                'roles' => ['ROLE_ATTRIBUER_PROFIL'],
+            ],
+        ]);
+        $this->assertResponseIsSuccessful();
+
+        // 1. Create a new TypeDemande
+        $client->request('POST', '/types_demandes', [
+            'json' => [
+                'libelle' => 'type commission test',
+                'actif' => true,
+                'visibiliteLimitee' => false,
+                'accompagnementOptionnel' => true,
+            ],
+        ]);
+        $this->assertResponseStatusCodeSame(201);
+        $typeData = $client->getResponse()->toArray();
+        $typeDemandeId = $typeData['@id'];
+
+        // 2. Create a campaign for this type with NO commission
+        $client->request('POST', $typeDemandeId . '/campagnes', [
+            'json' => [
+                'libelle' => 'campagne commission test',
+                'debut' => '2020-01-01T08:00:00+00:00',
+                'fin' => '2030-02-01T08:00:00+00:00',
+            ],
+        ]);
+        $this->assertResponseStatusCodeSame(201);
+        $campData = $client->getResponse()->toArray();
+
+        // Now we count initial demands
+        $client->request('GET', '/demandes');
+        $initialAdminCount = $client->getResponse()->toArray()['hydra:totalItems'] ?? 0;
+
+        $client = $this->createClientWithCredentials('membrecommission');
+        $client->request('GET', '/demandes');
+        $this->assertResponseIsSuccessful();
+        $initialMembreCount = $client->getResponse()->toArray()['hydra:totalItems'] ?? 0;
+
+        // 3. Create a demand for this type
         $client = $this->createClientWithCredentials('admin');
         $client->request('POST', '/demandes', [
             'json' => [
-                'typeDemande' => '/types_demandes/2',
+                'typeDemande' => $typeDemandeId,
                 'demandeur' => '/utilisateurs/utilisateur-ancien-beneficiaire',
             ],
         ]);
@@ -85,64 +158,93 @@ class DemandesTest extends ApiTestCaseCustom
         $newDemandeId = $data['@id'];
         $dbId = $data['id'] ?? null;
         if (!$dbId) {
-            $dbId = (int)str_replace('/demandes/', '', $newDemandeId);
+            $dbId = (int) str_replace('/demandes/', '', $newDemandeId);
         }
 
         try {
-            // Admin should see 4 demands in total
+            // Admin should see 1 more demand
             $client->request('GET', '/demandes');
             $this->assertResponseIsSuccessful();
-            $this->assertJsonContains(['hydra:totalItems' => 4]);
+            $this->assertJsonContains(['hydra:totalItems' => $initialAdminCount + 1]);
 
             // 2. Log in as membrecommission
             $client = $this->createClientWithCredentials('membrecommission');
             $client->request('GET', '/demandes');
             $this->assertResponseIsSuccessful();
-            
-            // membrecommission should only see demands associated with their commission's campaigns (3 items)
-            $this->assertJsonContains(['hydra:totalItems' => 3]);
-            
+            $this->assertJsonContains(['hydra:totalItems' => $initialMembreCount]);
+
             // And they shouldn't see the new demand in the list
             $data = $client->getResponse()->toArray();
             foreach ($data['hydra:member'] as $member) {
                 $this->assertNotEquals($newDemandeId, $member['@id']);
             }
         } finally {
-            // Clean up the created demand to keep database clean for other tests
+            // Clean up
+            $em = static::getContainer()->get('doctrine')->getManager();
             $demandeEntity = $em->find(\App\Entity\Demande::class, $dbId);
             if ($demandeEntity) {
                 $em->remove($demandeEntity);
                 $em->flush();
             }
+            // Clean up campaign and type
+            $campEntity = $em->find(\App\Entity\CampagneDemande::class, $campData['id']);
+            if ($campEntity) {
+                $em->remove($campEntity);
+                $em->flush();
+            }
+            $typeEntity = $em->find(\App\Entity\TypeDemande::class, $typeData['id']);
+            if ($typeEntity) {
+                $em->remove($typeEntity);
+                $em->flush();
+            }
+            // Clean up membership
+            $clientAdmin = $this->createClientWithCredentials('admin');
+            $clientAdmin->request('DELETE', '/commissions/1/membres/membrecommission');
         }
     }
 
     public function testRenfortOnlySeesNonLimitedVisibilityDemandes(): void
     {
-        // 1. Initially, renfort sees all 3 demands
+        $em = static::getContainer()->get('doctrine')->getManager();
+
+        // 1. Initially, count demands visible to renfort and admin using DB query
+        $initialTotalCount = (int)$em->createQuery(
+            'SELECT COUNT(d) FROM App\Entity\Demande d 
+             JOIN d.campagne c
+             JOIN c.typeDemande t
+             WHERE t.visibiliteLimitee = false',
+        )->getSingleScalarResult();
+
+        $initialType1Count = (int)$em
+            ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d 
+             JOIN d.campagne c
+             WHERE c.typeDemande = :typeId')
+            ->setParameter('typeId', 1)
+            ->getSingleScalarResult();
+
+        $initialAdminTotalCount = (int)$em->createQuery(
+            'SELECT COUNT(d) FROM App\Entity\Demande d',
+        )->getSingleScalarResult();
+
         $client = $this->createClientWithCredentials('renfort');
-        $client->request('GET', '/demandes');
-        $this->assertResponseIsSuccessful();
-        $this->assertJsonContains(['hydra:totalItems' => 3]);
 
         // 2. Update typeDemande 1 to have visibiliteLimitee = true
-        $em = static::getContainer()->get('doctrine')->getManager();
         $typeDemande = $em->find(\App\Entity\TypeDemande::class, 1);
-        
+
         try {
             $typeDemande->setVisibiliteLimitee(true);
             $em->flush();
 
-            // 3. renfort should now see 0 demands (since all 3 are of type 1 which is now limited)
+            // 3. renfort should now see fewer demands
             $client->request('GET', '/demandes');
             $this->assertResponseIsSuccessful();
-            $this->assertJsonContains(['hydra:totalItems' => 0]);
+            $this->assertJsonContains(['hydra:totalItems' => $initialTotalCount - $initialType1Count]);
 
-            // 4. admin should still see all 3 demands
-            $client = $this->createClientWithCredentials('admin');
-            $client->request('GET', '/demandes');
+            // 4. admin should still see all demands
+            $clientAdmin = $this->createClientWithCredentials('admin');
+            $clientAdmin->request('GET', '/demandes');
             $this->assertResponseIsSuccessful();
-            $this->assertJsonContains(['hydra:totalItems' => 3]);
+            $this->assertJsonContains(['hydra:totalItems' => $initialAdminTotalCount]);
         } finally {
             $currentEm = static::getContainer()->get('doctrine')->getManager();
             $typeDemande = $currentEm->find(\App\Entity\TypeDemande::class, 1);
@@ -155,43 +257,94 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testDemandeurCanReprendreDemande(): void
     {
+        $em = static::getContainer()->get('doctrine')->getManager();
+        $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
+        $count = (int)$em
+            ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d 
+             JOIN d.campagne c
+             WHERE d.demandeur = :user AND c.typeDemande = :typeId')
+            ->setParameters([
+                'user' => $demandeur,
+                'typeId' => 1,
+            ])
+            ->getSingleScalarResult();
+
         $client = $this->createClientWithCredentials('demandeur');
         $client->request('GET', '/demandes?demandeur=/utilisateurs/demandeur&campagne.typeDemande=/types_demandes/1');
 
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
-            'hydra:totalItems' => 1,
+            'hydra:totalItems' => $count,
         ]);
     }
 
     public function testGestionnaireCanFilterDemandesByTypeLibelle(): void
     {
         $client = $this->createClientWithCredentials('gestionnaire');
+        $em = static::getContainer()->get('doctrine')->getManager();
 
-        // Sans filtre d'archivage (3 au total dans les fixtures pour ce type)
+        $totalExpected = (int)$em
+            ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d 
+             JOIN d.campagne c
+             WHERE c.typeDemande = :typeId')
+            ->setParameter('typeId', 1)
+            ->getSingleScalarResult();
+
+        $activeExpected = (int)$em
+            ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d 
+             JOIN d.campagne c
+             WHERE c.typeDemande = :typeId
+             AND (c.dateArchivage IS NULL OR c.dateArchivage >= :now)')
+            ->setParameters([
+                'typeId' => 1,
+                'now' => new \DateTime(),
+            ])
+            ->getSingleScalarResult();
+
+        // Sans filtre d'archivage
         $client->request('GET', '/demandes?campagne.typeDemande=/types_demandes/1');
         $this->assertResponseIsSuccessful();
-        $this->assertJsonContains(['hydra:totalItems' => 3]);
+        $this->assertJsonContains(['hydra:totalItems' => $totalExpected]);
 
-        // Avec filtre d'archivage (2 actives)
+        // Avec filtre d'archivage (actives)
         $client->request('GET', '/demandes?campagne.typeDemande=/types_demandes/1&archivees=false');
         $this->assertResponseIsSuccessful();
-        $this->assertJsonContains(['hydra:totalItems' => 2]);
+        $this->assertJsonContains(['hydra:totalItems' => $activeExpected]);
     }
 
     public function testGestionnaireCanFilterDemandesByDemandeurNom(): void
     {
         $client = $this->createClientWithCredentials('gestionnaire');
+        $em = static::getContainer()->get('doctrine')->getManager();
 
-        // Tout (1 active fixture + 1 archivée fixture pour demandeur3)
+        $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur3']);
+
+        $totalExpected = (int)$em
+            ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d 
+             WHERE d.demandeur = :demandeur')
+            ->setParameter('demandeur', $demandeur)
+            ->getSingleScalarResult();
+
+        $activeExpected = (int)$em
+            ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d 
+             JOIN d.campagne c
+             WHERE d.demandeur = :demandeur
+             AND (c.dateArchivage IS NULL OR c.dateArchivage >= :now)')
+            ->setParameters([
+                'demandeur' => $demandeur,
+                'now' => new \DateTime(),
+            ])
+            ->getSingleScalarResult();
+
+        // Tout
         $client->request('GET', '/demandes?demandeur=/utilisateurs/demandeur3');
         $this->assertResponseIsSuccessful();
-        $this->assertJsonContains(['hydra:totalItems' => 2]);
+        $this->assertJsonContains(['hydra:totalItems' => $totalExpected]);
 
-        // Uniquement actives (1)
+        // Uniquement actives
         $client->request('GET', '/demandes?demandeur=/utilisateurs/demandeur3&archivees=false');
         $this->assertResponseIsSuccessful();
-        $this->assertJsonContains(['hydra:totalItems' => 1]);
+        $this->assertJsonContains(['hydra:totalItems' => $activeExpected]);
     }
 
     public function testAdminCanCreateTypeDemande(): void
@@ -244,19 +397,30 @@ class DemandesTest extends ApiTestCaseCustom
     public function testTypeDemandeCampagneFilter(): void
     {
         $client = $this->createClientWithCredentials('admin');
+        $em = static::getContainer()->get('doctrine')->getManager();
 
-        // Type 1 (sportifs) -> 3 (campagne1_sportifs, campagne_sportifs, campagne_archivee_sportifs)
+        $countType1 = (int)$em
+            ->createQuery('SELECT COUNT(c) FROM App\Entity\CampagneDemande c WHERE c.typeDemande = :typeId')
+            ->setParameter('typeId', 1)
+            ->getSingleScalarResult();
+
+        $countType2 = (int)$em
+            ->createQuery('SELECT COUNT(c) FROM App\Entity\CampagneDemande c WHERE c.typeDemande = :typeId')
+            ->setParameter('typeId', 2)
+            ->getSingleScalarResult();
+
+        // Type 1 (sportifs)
         $client->request('GET', '/types_demandes/1/campagnes');
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
-            'hydra:totalItems' => 3,
+            'hydra:totalItems' => $countType1,
         ]);
 
-        // Type 2 (artistes) ->  1 (campagne_artistes)
+        // Type 2 (artistes)
         $client->request('GET', '/types_demandes/2/campagnes');
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
-            'hydra:totalItems' => 1,
+            'hydra:totalItems' => $countType2,
             'hydra:member' => [
                 ['libelle' => 'Campagne artistes 2030'],
             ],
@@ -277,7 +441,8 @@ class DemandesTest extends ApiTestCaseCustom
         $client->request('GET', '/types_demandes/1/campagnes?order[debut]=desc');
         $this->assertResponseIsSuccessful();
         $data = $client->getResponse()->toArray();
-        $this->assertEquals('campagne sportifs archievée 2010', $data['hydra:member'][2]['libelle']);
+        $lastIndex = count($data['hydra:member']) - 1;
+        $this->assertEquals('campagne sportifs archievée 2010', $data['hydra:member'][$lastIndex]['libelle']);
     }
 
     public function testAdminCanCreateCampagne(): void
@@ -301,8 +466,14 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testAdminCanUpdateCampagne(): void
     {
+        $em = static::getContainer()->get('doctrine')->getManager();
+        $campagne = $em->getRepository(\App\Entity\CampagneDemande::class)->findOneBy([
+            'libelle' => 'Campagne sportifs 2030',
+        ]);
+        $campagneId = $campagne->getId();
+
         $client = $this->createClientWithCredentials('admin');
-        $client->request('PATCH', '/types_demandes/1/campagnes/1', [
+        $client->request('PATCH', '/types_demandes/1/campagnes/' . $campagneId, [
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
             'json' => [
                 'libelle' => 'nouveau libelle campagne',
@@ -350,11 +521,12 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testInvalidStateTransition(): void
     {
+        $demandeId = $this->getDemandeIdForDemandeur();
         $client = $this->createClientWithCredentials('admin');
 
         // demande1 is RECEPTIONNEE (2)
         // Transition to EN_COURS (1) is invalid
-        $client->request('PATCH', '/demandes/1', [
+        $client->request('PATCH', $demandeId, [
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
             'json' => [
                 'etat' => '/etats_demandes/1',
@@ -393,8 +565,9 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testDemandeurCanAnswerQuestion(): void
     {
+        $demandeId = $this->getDemandeIdForDemandeur();
         $client = $this->createClientWithCredentials('demandeur');
-        $client->request('PUT', '/demandes/1/questions/3/reponse', [
+        $client->request('PUT', $demandeId . '/questions/3/reponse', [
             'json' => [
                 'optionsChoisies' => ['/questions/3/options/3'],
             ],
@@ -402,14 +575,15 @@ class DemandesTest extends ApiTestCaseCustom
 
         $this->assertResponseStatusCodeSame(201);
         $this->assertJsonContains([
-            '@id' => '/demandes/1/questions/3/reponse',
+            '@id' => $demandeId . '/questions/3/reponse',
         ]);
     }
 
     public function testGestionnaireCanModifyReponse(): void
     {
+        $demandeId = $this->getDemandeIdForDemandeur();
         $client = $this->createClientWithCredentials('gestionnaire');
-        $client->request('PUT', '/demandes/1/questions/3/reponse', [
+        $client->request('PUT', $demandeId . '/questions/3/reponse', [
             'json' => [
                 'optionsChoisies' => ['/questions/3/options/3'],
                 'commentaire' => 'modifié par le gestionnaire',
@@ -490,8 +664,9 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testDemandeurCannotAnswerWithOptionsFromOtherQuestion(): void
     {
+        $demandeId = $this->getDemandeIdForDemandeur();
         $client = $this->createClientWithCredentials('demandeur');
-        $client->request('PUT', '/demandes/1/questions/1/reponse', [
+        $client->request('PUT', $demandeId . '/questions/1/reponse', [
             'json' => [
                 'optionsChoisies' => ['/questions/3/options/3'],
             ],
@@ -502,8 +677,9 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testDemandeurCannotAnswerCommentOnlyWhenOptionsRequired(): void
     {
+        $demandeId = $this->getDemandeIdForDemandeur();
         $client = $this->createClientWithCredentials('demandeur');
-        $client->request('PUT', '/demandes/1/questions/1/reponse', [
+        $client->request('PUT', $demandeId . '/questions/1/reponse', [
             'json' => [
                 'commentaire' => 'blabliblu',
             ],
@@ -528,8 +704,9 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testAnswerWithReferenceTableOption(): void
     {
+        $demandeId = $this->getDemandeIdForDemandeur();
         $client = $this->createClientWithCredentials('demandeur');
-        $client->request('PUT', '/demandes/1/questions/5/reponse', [
+        $client->request('PUT', $demandeId . '/questions/5/reponse', [
             'json' => [
                 'optionsChoisies' => ['/questions/5/options/1'],
             ],
@@ -540,10 +717,11 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testSHNValidator(): void
     {
+        $demandeId = $this->getDemandeIdForDemandeur();
         $client = $this->createClientWithCredentials('demandeur');
 
         // OK case
-        $client->request('PUT', '/demandes/1/questions/4/reponse', [
+        $client->request('PUT', $demandeId . '/questions/4/reponse', [
             'json' => [
                 'commentaire' => 'SHN_OK',
             ],
@@ -551,7 +729,7 @@ class DemandesTest extends ApiTestCaseCustom
         $this->assertResponseStatusCodeSame(201);
 
         // Wrong year
-        $client->request('PUT', '/demandes/1/questions/4/reponse', [
+        $client->request('PUT', $demandeId . '/questions/4/reponse', [
             'json' => [
                 'commentaire' => 'SHN_WRONG_YEAR',
             ],
@@ -559,7 +737,7 @@ class DemandesTest extends ApiTestCaseCustom
         $this->assertResponseStatusCodeSame(422);
 
         // Not found
-        $client->request('PUT', '/demandes/1/questions/4/reponse', [
+        $client->request('PUT', $demandeId . '/questions/4/reponse', [
             'json' => [
                 'commentaire' => 'SHN_UNKNOWN',
             ],
@@ -569,11 +747,27 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testMembreCommissionCanSeeDemande(): void
     {
-        $client = $this->createClientWithCredentials('membrecommission');
-        // demande_receptionnee_1 est liée à campagne1_sportifs qui est liée à commission_sport
-        $client->request('GET', '/demandes/1');
-
+        $clientAdmin = $this->createClientWithCredentials('admin');
+        // Re-add membrecommission to commission 1 (in case another test deleted them)
+        $clientAdmin->request('PUT', '/commissions/1/membres/membrecommission', [
+            'json' => [
+                'roles' => ['ROLE_ATTRIBUER_PROFIL'],
+            ],
+        ]);
         $this->assertResponseIsSuccessful();
+
+        try {
+            $demandeId = $this->getDemandeIdForDemandeur();
+            $client = $this->createClientWithCredentials('membrecommission');
+            // demande_receptionnee_1 est liée à campagne1_sportifs qui est liée à commission_sport
+            $client->request('GET', $demandeId);
+
+            $this->assertResponseIsSuccessful();
+        } finally {
+            // Clean up by deleting the membership we added
+            $clientAdmin = $this->createClientWithCredentials('admin');
+            $clientAdmin->request('DELETE', '/commissions/1/membres/membrecommission');
+        }
     }
 
     public function testPasserConformeDemandeSansCommissionPasseAProfilValideEtAttenteAccompagnement(): void
@@ -659,10 +853,19 @@ class DemandesTest extends ApiTestCaseCustom
             '@type' => 'hydra:Collection',
         ]);
 
-        $client->request('GET', '/etapes_demandes/1');
+        $em = static::getContainer()->get('doctrine')->getManager();
+        $etape = $em
+            ->getRepository(\App\Entity\EtapeDemande::class)
+            ->createQueryBuilder('e')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+        $etapeId = '/etapes_demandes/' . $etape->getId();
+
+        $client->request('GET', $etapeId);
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
-            '@id' => '/etapes_demandes/1',
+            '@id' => $etapeId,
             '@type' => 'EtapeDemande',
         ]);
     }

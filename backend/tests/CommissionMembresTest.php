@@ -106,4 +106,44 @@ class CommissionMembresTest extends ApiTestCaseCustom
 
         $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
+
+    public function testAdminCanCreateAndModifyMembreWithoutDuplicates(): void
+    {
+        $client = $this->createClientWithCredentials('admin');
+
+        $em = static::getContainer()->get(\Doctrine\ORM\EntityManagerInterface::class);
+        $repo = $em->getRepository(\App\Entity\MembreCommission::class);
+
+        $initialCount = $repo->count([]);
+
+        // 1. On crée le membre
+        $client->request('PUT', '/commissions/1/membres/intervenant2', [
+            'json' => [
+                'roles' => [Utilisateur::ROLE_ATTRIBUER_PROFIL],
+            ],
+        ]);
+        $this->assertResponseIsSuccessful();
+
+        // Vérifie que le count a augmenté de 1
+        $this->assertSame($initialCount + 1, $repo->count([]));
+
+        // 2. On modifie le membre
+        $client->request('PUT', '/commissions/1/membres/intervenant2', [
+            'json' => [
+                'roles' => [Utilisateur::ROLE_VALIDER_CONFORMITE_DEMANDE],
+            ],
+        ]);
+        $this->assertResponseIsSuccessful();
+
+        // Vérifie que le count n'a pas augmenté (pas de doublon)
+        $this->assertSame($initialCount + 1, $repo->count([]));
+
+        // Vérifie qu'il y a bien une seule entrée pour cet utilisateur et cette commission
+        $membres = $repo->findBy([
+            'utilisateur' => $em->getRepository(Utilisateur::class)->findOneBy(['uid' => 'intervenant2']),
+            'commission' => $em->getRepository(\App\Entity\Commission::class)->find(1),
+        ]);
+        $this->assertCount(1, $membres);
+        $this->assertSame([Utilisateur::ROLE_VALIDER_CONFORMITE_DEMANDE], $membres[0]->getRoles());
+    }
 }

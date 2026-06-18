@@ -1,5 +1,15 @@
 <?php
 
+/*
+ * Copyright (c) 2026. Esup - Université de Bordeaux.
+ *
+ * This file is part of the Esup-Oasis project (https://github.com/EsupPortail/esup-oasis).
+ *  For full copyright and license information please view the LICENSE file distributed with the source code.
+ *
+ *  @author Manuel Rossard <manuel.rossard@u-bordeaux.fr>
+ *
+ */
+
 // This file is auto-generated and is for apps only. Bundles SHOULD NOT rely on its content.
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
@@ -280,7 +290,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         }>,
  *     },
  *     asset_mapper?: bool|array{ // Asset Mapper configuration
- *         enabled?: bool|Param, // Default: false
+ *         enabled?: bool|Param, // Default: true
  *         paths?: string|array<string, scalar|Param|null>,
  *         excluded_patterns?: list<scalar|Param|null>,
  *         exclude_dotfiles?: bool|Param, // If true, any files starting with "." will be excluded from the asset mapper. // Default: true
