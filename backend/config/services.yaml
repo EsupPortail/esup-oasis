@@ -112,7 +112,7 @@ services:
     arguments:
       $server: '%env(resolve:CLAMAV_SERVER)%'
       $port: '%env(resolve:CLAMAV_PORT)%'
-      $strictMode: '%env(resolve:CLAMAV_STRICT_MODE)%'
+      $strictMode: '%env(bool:CLAMAV_STRICT_MODE)%'
   App\Service\Photo\PhotoProviderInterface:
     alias: App\Service\Photo\UnicampusProvider
 
