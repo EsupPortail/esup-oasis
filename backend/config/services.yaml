@@ -108,11 +108,6 @@ services:
       $user: '%env(resolve:NUXEO_API_USER)%'
       $password: '%env(resolve:NUXEO_API_PASS)%'
       $espace: '%env(resolve:NUXEO_ESPACE)%'
-  App\Service\AntivirusService:
-    arguments:
-      $server: '%env(resolve:CLAMAV_SERVER)%'
-      $port: '%env(resolve:CLAMAV_PORT)%'
-      $strictMode: '%env(bool:CLAMAV_STRICT_MODE)%'
   App\Service\Photo\PhotoProviderInterface:
     alias: App\Service\Photo\UnicampusProvider
 

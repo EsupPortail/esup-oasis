@@ -26,10 +26,13 @@ class AntivirusService implements ResetInterface
     private bool $online = true;
 
     public function __construct(
+        #[Autowire('%env(CLAMAV_SERVER)%')]
         readonly string $server,
+        #[Autowire('%env(CLAMAV_PORT)%')]
         readonly int $port,
         private readonly MessageBusInterface $messageBus,
-        public readonly bool $strictMode = false,
+        #[Autowire('%env(bool:CLAMAV_STRICT_MODE)%')]
+        public readonly bool $strictMode,
     ) {
         try {
             $this->clamav = ScannerFactory::create([
