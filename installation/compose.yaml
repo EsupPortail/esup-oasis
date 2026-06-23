@@ -48,6 +48,7 @@ services:
       DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-!ChangeMe!}@postgres:5432/${POSTGRES_DB:-app}?serverVersion=15&charset=utf8}
       CLAMAV_SERVER: ${CLAMAV_SERVER:-clamav}
       CLAMAV_PORT: ${CLAMAV_PORT:-3310}
+      CLAMAV_STRICT_MODE: ${CLAMAV_STRICT_MODE:-true}
       GOTENBERG_DSN: ${GOTENBERG_DSN:-http://gotenberg:3000}
       SERVER_NAME: ":80" # Attention : Nécessaire pour éviter que le backend tente de générer un certificat !
     ports:
@@ -74,14 +75,15 @@ services:
         condition: service_started
       clamav:
         condition: service_started
+    env_file:
+      - .env
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-!ChangeMe!}@postgres:5432/${POSTGRES_DB:-app}?serverVersion=15&charset=utf8}
       CLAMAV_SERVER: ${CLAMAV_SERVER:-clamav}
       CLAMAV_PORT: ${CLAMAV_PORT:-3310}
       CLAMAV_STRICT_MODE: ${CLAMAV_STRICT_MODE:-true}
       GOTENBERG_DSN: ${GOTENBERG_DSN:-http://gotenberg:3000}
-    env_file:
-      - .env
+
 
   frontend:
     container_name: oasis-frontend
