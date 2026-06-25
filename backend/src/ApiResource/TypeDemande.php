@@ -146,7 +146,7 @@ final class TypeDemande
             if (!$prop->isInitialized($this) && $this->entity !== null) {
                 $this->accompagnementOptionnel = $this->entity->isAccompagnementOptionnel();
             }
-            return $this->visibiliteLimitee ?? false;
+            return $this->accompagnementOptionnel ?? false;
         }
     }
 
