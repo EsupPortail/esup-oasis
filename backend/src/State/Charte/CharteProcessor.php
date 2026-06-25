@@ -28,7 +28,6 @@ readonly class CharteProcessor implements ProcessorInterface
     public function __construct(
         private CharteRepository $charteRepository,
         private ProfilBeneficiaireRepository $profilBeneficiaireRepository,
-        private MessageBusInterface $messageBus,
     ) {}
 
     /**

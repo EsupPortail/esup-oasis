@@ -24,8 +24,6 @@ use ApiPlatform\OpenApi\Model\Operation;
 use App\State\Charte\CharteProcessor;
 use App\State\Charte\CharteProvider;
 use ReflectionProperty;
-use Symfony\Component\ObjectMapper\Attribute\Map;
-use Symfony\Component\ObjectMapper\Transform\MapCollection;
 use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[ApiResource(
