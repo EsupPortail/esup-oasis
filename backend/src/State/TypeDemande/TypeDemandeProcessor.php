@@ -16,20 +16,16 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\ApiResource\ProfilBeneficiaire;
 use App\ApiResource\TypeDemande;
-use App\Message\RessourceCollectionModifieeMessage;
-use App\Message\RessourceModifieeMessage;
 use App\Repository\ProfilBeneficiaireRepository;
 use App\Repository\TypeDemandeRepository;
 use Exception;
 use Override;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 readonly class TypeDemandeProcessor implements ProcessorInterface
 {
     function __construct(
         private TypeDemandeRepository $typeDemandeRepository,
         private ProfilBeneficiaireRepository $profilBeneficiaireRepository,
-        private MessageBusInterface $messageBus,
     ) {}
 
     /**

@@ -30,9 +30,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     operations: [
         new GetCollection(uriTemplate: self::COLLECTION_URI),
-        new Get(uriTemplate: self::ITEM_URI, uriVariables: ['id' => 'id']),
+        new Get(uriTemplate: self::ITEM_URI, uriVariables: ['id']),
         new Post(uriTemplate: self::COLLECTION_URI, security: "is_granted('ROLE_ADMIN')"),
-        new Patch(uriTemplate: self::ITEM_URI, security: "is_granted('ROLE_ADMIN')"),
+        new Patch(uriTemplate: self::ITEM_URI, uriVariables: ['id'], security: "is_granted('ROLE_ADMIN')"),
     ],
     normalizationContext: ['groups' => [self::GROUP_OUT]],
     denormalizationContext: ['groups' => [self::GROUP_IN]],

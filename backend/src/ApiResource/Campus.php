@@ -24,7 +24,6 @@ use ApiPlatform\OpenApi\Model\Operation;
 use App\Filter\CaseInsensitiveOrderFilter;
 use App\State\Campus\CampusProcessor;
 use ReflectionProperty;
-use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -33,7 +32,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new GetCollection(uriTemplate: self::COLLECTION_URI),
         new Get(uriTemplate: self::ITEM_URI, uriVariables: ['id']),
         new Post(uriTemplate: self::COLLECTION_URI, security: "is_granted('ROLE_ADMIN')", map: false),
-        new Patch(uriTemplate: self::ITEM_URI, security: "is_granted('ROLE_ADMIN')", map: false),
+        new Patch(uriTemplate: self::ITEM_URI, uriVariables: ['id'], security: "is_granted('ROLE_ADMIN')", map: false),
     ],
     normalizationContext: ['groups' => [self::GROUP_OUT]],
     denormalizationContext: ['groups' => [self::GROUP_IN]],
