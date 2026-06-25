@@ -13,6 +13,7 @@
 namespace App\State\TypeAmenagement;
 
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\TypeAmenagement;
 use App\Repository\CategorieAmenagementRepository;
@@ -37,10 +38,11 @@ readonly class TypeAmenagementProcessor implements ProcessorInterface
          * Uniquement POST et PATCH
          */
 
-        $entity = match ($data->id) {
-            null => new TypeAmenagement(),
-            default => $this->typeAmenagementRepository->find($data->id),
-        };
+        if ($operation instanceof Patch) {
+            $entity = $this->typeAmenagementRepository->find($uriVariables['id']);
+        } else {
+            $entity = new TypeAmenagement();
+        }
 
         $entity->setLibelle($data->libelle);
         $entity->setLibelleLong($data->libelleLong);

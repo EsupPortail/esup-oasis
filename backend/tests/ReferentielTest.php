@@ -119,6 +119,42 @@ class ReferentielTest extends ApiTestCaseCustom
         ]);
     }
 
+    public function testAdminCanPatchTypeAmenagement(): void
+    {
+        $client = $this->createClientWithCredentials('admin');
+
+        // Verify initial state
+        $client->request('GET', '/types_amenagements');
+        $this->assertResponseIsSuccessful();
+        $initialData = json_decode($client->getResponse()->getContent(), true);
+        $initialCount = $initialData['hydra:totalItems'];
+
+        // Modify the label of the existing type amenagement with ID 1
+        $client->request('PATCH', '/types_amenagements/1', [
+            'headers' => [
+                'Content-Type' => 'application/merge-patch+json',
+            ],
+            'json' => [
+                'libelle' => 'Temps majoré modifié',
+                'categorie' => '/categories_amenagements/1',
+            ],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonContains([
+            '@id' => '/types_amenagements/1',
+            'libelle' => 'Temps majoré modifié',
+        ]);
+
+        // Verify that the total count hasn't changed (no new resource created)
+        $client->request('GET', '/types_amenagements');
+        $this->assertResponseIsSuccessful();
+        $finalData = json_decode($client->getResponse()->getContent(), true);
+        $finalCount = $finalData['hydra:totalItems'];
+
+        $this->assertEquals($initialCount, $finalCount);
+    }
+
     public function testGetCategoriesTags(): void
     {
         $client = $this->createClientWithCredentials('admin');
@@ -280,32 +316,32 @@ class ReferentielTest extends ApiTestCaseCustom
     }
 
     /*
-    public function testGetTypesSuiviAmenagements(): void
-    {
-        $client = $this->createClientWithCredentials('admin');
-        $client->request('GET', '/types_suivi_amenagements');
-
-        $this->assertResponseIsSuccessful();
-        $this->assertJsonContains([
-            '@context' => '/contexts/TypeSuiviAmenagement',
-            '@id' => '/types_suivi_amenagements',
-        ]);
-    }
-
-    public function testAdminCanCreateTypeSuiviAmenagement(): void
-    {
-        $client = $this->createClientWithCredentials('admin');
-        $client->request('POST', '/types_suivi_amenagements', [
-            'json' => [
-                'libelle' => 'Suivi test',
-                'actif' => true,
-            ],
-        ]);
-
-        $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
-        $this->assertJsonContains([
-            'libelle' => 'Suivi test',
-        ]);
-    }
-    */
+     * public function testGetTypesSuiviAmenagements(): void
+     * {
+     * $client = $this->createClientWithCredentials('admin');
+     * $client->request('GET', '/types_suivi_amenagements');
+     *
+     * $this->assertResponseIsSuccessful();
+     * $this->assertJsonContains([
+     * '@context' => '/contexts/TypeSuiviAmenagement',
+     * '@id' => '/types_suivi_amenagements',
+     * ]);
+     * }
+     *
+     * public function testAdminCanCreateTypeSuiviAmenagement(): void
+     * {
+     * $client = $this->createClientWithCredentials('admin');
+     * $client->request('POST', '/types_suivi_amenagements', [
+     * 'json' => [
+     * 'libelle' => 'Suivi test',
+     * 'actif' => true,
+     * ],
+     * ]);
+     *
+     * $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
+     * $this->assertJsonContains([
+     * 'libelle' => 'Suivi test',
+     * ]);
+     * }
+     */
 }
