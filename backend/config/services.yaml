@@ -49,8 +49,9 @@ services:
       $ldapDn: '%env(resolve:LDAP_DN)%'
 
   App\Service\SiScol\AbstractSiScolDataProvider:
-    alias: App\Service\SiScol\ApogeeProvider
+    factory: ['App\Service\SiScol\SiScolDataProviderFactory', 'create']
 
+  #APOGEE
   App\Service\SiScol\ApogeeProvider:
     arguments:
       $username: '%env(resolve:APOGEE_USER)%'
