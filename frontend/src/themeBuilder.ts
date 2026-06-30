@@ -172,6 +172,8 @@ export function buildTheme(mode: "light" | "dark", accessibilite: IAccessibilite
           colorBgContainer: "#242830",
           colorBgElevated: "#2e3038",
           colorBgSpotlight: "#424650",
+          colorBorder: "#787878",
+          colorBorderSecondary: "#555555",
           colorTextDescription: "rgba(255, 255, 255, 0.6)",
         }),
       borderRadius: 7,
