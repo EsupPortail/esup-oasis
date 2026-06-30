@@ -62,10 +62,7 @@ export default function TelechargementImagePreview(props: {
 
     let objectUrl: string | undefined;
 
-    fetch(
-      `${env.REACT_APP_API}${env.REACT_APP_API_PREFIX}${telechargement?.urlContenu}`,
-      fetchOptions,
-    )
+    fetch(`${env.REACT_APP_API}${telechargement?.urlContenu}`, fetchOptions)
       .then((response) => response.blob())
       .then((blob) => {
         objectUrl = window.URL.createObjectURL(blob);
