@@ -34,7 +34,7 @@ function DocumentList(props: {
 
   return (
     <List className="ant-list-radius">
-      {props.documents
+      {[...props.documents]
         .sort((d1, d2) => {
           return dayjs(d2.dateDepot).diff(dayjs(d1.dateDepot));
         })

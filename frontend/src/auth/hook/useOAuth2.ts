@@ -135,6 +135,9 @@ const useOAuth2 = <TData = AuthTokenPayload>(props: Oauth2Props<TData>) => {
                 method: exchangeCodeForTokenMethod || DEFAULT_EXCHANGE_CODE_FOR_TOKEN_METHOD,
               },
             );
+            if (!response.ok) {
+              throw new Error(`OAuth error: Token exchange failed (${response.status}).`);
+            }
             payload = await response.json();
           }
 

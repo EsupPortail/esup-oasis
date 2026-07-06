@@ -35,7 +35,7 @@ export default function DemandesAccompagnementStats({
   const navigate = useNavigate();
   const [showDemandeDetails, setShowDemandeDetails] = useState<boolean>(false);
 
-  const etatsSorted = Object.keys(stats?.nbDemandesParEtat || []).sort((e1, e2) => {
+  const etatsSorted = Object.keys(stats?.nbDemandesParEtat ?? {}).sort((e1, e2) => {
     const etat1 = getEtatDemandeInfo(e1);
     const etat2 = getEtatDemandeInfo(e2);
     return (etat1?.ordre || 0) - (etat2?.ordre || 0);

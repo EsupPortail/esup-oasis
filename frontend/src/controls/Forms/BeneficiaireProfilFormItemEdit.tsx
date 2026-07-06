@@ -186,7 +186,7 @@ export function BeneficiaireProfilFormItemEdit({
                 </span>
                 <Select
                   placeholder="Sélectionnez un gestionnaire"
-                  options={gestionnaires?.items
+                  options={[...(gestionnaires?.items || [])]
                     .sort(
                       (g1, g2) =>
                         g1.nom

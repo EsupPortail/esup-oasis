@@ -26,7 +26,7 @@ export function TypesDemandesListItems(props: {
       <h3 className={props.titleClassName}>{props.titre}</h3>
       <List bordered split>
         <ul className="pl-0">
-          {props.items
+          {[...props.items]
             .sort((t1, t2) => (t1.libelle || "").localeCompare(t2.libelle || ""))
             .map((item) => (
               <List.Item

@@ -37,8 +37,8 @@ export const ScolariteSection: React.FC<ScolariteSectionProps> = ({ utilisateur,
           <Descriptions.Item label="Inscriptions" styles={{ label: { width: 200 } }}>
             <h3 className="sr-only">Inscriptions</h3>
             <Flex vertical style={{ width: "100%", overflowY: "auto" }} wrap="wrap">
-              {utilisateur.inscriptions
-                ?.sort((i1, i2) => (i2.debut || "").localeCompare(i1.debut || ""))
+              {[...(utilisateur.inscriptions || [])]
+                .sort((i1, i2) => (i2.debut || "").localeCompare(i1.debut || ""))
                 .map((i) => (
                   <ScolariteListItem key={i["@id"]} inscription={i} titleClassName="" />
                 ))}
