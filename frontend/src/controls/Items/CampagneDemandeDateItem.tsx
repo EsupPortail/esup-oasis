@@ -28,6 +28,6 @@ export function CampagneDemandeDateItem(props: {
   return props.templateString.replace(
     /{{(.*?)}}/g,
     (match, p1: "debut" | "fin" | "dateCommission") =>
-      dayjs(item?.[p1]).format("DD/MM/YYYY") ?? match,
+      item?.[p1] ? dayjs(item[p1]).format("DD/MM/YYYY") : match,
   );
 }

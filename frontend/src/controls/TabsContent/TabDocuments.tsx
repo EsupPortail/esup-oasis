@@ -36,6 +36,8 @@ function DocumentList(props: {
     <List className="ant-list-radius">
       {props.documents
         .sort((d1, d2) => {
+          if (!d1.dateDepot) return 1;
+          if (!d2.dateDepot) return -1;
           return dayjs(d2.dateDepot).diff(dayjs(d1.dateDepot));
         })
         .map((document) => (
@@ -45,7 +47,9 @@ function DocumentList(props: {
               description={
                 <Space orientation="vertical" className="w-100">
                   <Space orientation="horizontal" size={4}>
-                    Déposé le {dayjs(document.dateDepot).format("DD/MM/YYYY")} par{" "}
+                    {document.dateDepot && (
+                      <>Déposé le {dayjs(document.dateDepot).format("DD/MM/YYYY")} par </>
+                    )}
                     <EtudiantItem utilisateurId={document.utilisateurCreation} showAvatar={false} />
                   </Space>
                   <Fichier
