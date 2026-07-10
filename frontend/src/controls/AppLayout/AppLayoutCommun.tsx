@@ -19,16 +19,17 @@ import { ItemType } from "antd/es/menu/interface";
 /**
  * A function that returns a menu profile object based on the user authentication context.
  * @param {AuthContextType} auth - The authentication context.
+ * @param labels
  * @returns {ItemType[]} The menu profile object, or null if impersonation is not enabled.
  */
-export const menuProfils = (auth: AuthContextType): ItemType[] => {
+export const menuProfils = (auth: AuthContextType, labels?: Record<string, string>): ItemType[] => {
   return auth.impersonate
     ? [
         {
           key: "impersonate",
           icon: <UserSwitchOutlined />,
           className: "text-warning",
-          label: "Récupérer mon identité",
+          label: labels?.MENU_UTILISATEUR_RECUP_IDENTITE ?? "Récupérer mon identité",
           onClick: () => {
             auth.removeImpersonate();
           },

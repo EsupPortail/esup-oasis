@@ -27,7 +27,6 @@ export function Amenagements(): ReactElement {
 
   return (
     <Layout.Content className="administration" style={{ padding: "0 50px" }}>
-      <Typography.Title level={1}>Administration</Typography.Title>
       <Breadcrumb
         className="mt-2"
         items={[
@@ -56,7 +55,10 @@ export function Amenagements(): ReactElement {
           },
         ]}
       />
-      <Typography.Title level={2}>Aménagements</Typography.Title>
+      <Typography.Title level={1}>Administration</Typography.Title>
+      <Typography.Title level={2} className="mt-0 mb-4">
+        Aménagements
+      </Typography.Title>
       <Row gutter={[16, 16]}>
         <Col span={24}>
           <CategoriesAmenagementsTable

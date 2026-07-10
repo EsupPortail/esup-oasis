@@ -23,6 +23,7 @@ import { Button } from "antd";
  * @param {AuthContextType} auth - The authentication context.
  * @param {number} apiFetching - The API fetching status.
  * @param {NavigateFunction} navigate - The navigation function.
+ * @param labels
  * @returns {Object["items"]} - The menu items.
  */
 export const menuItemUtilisateur = (
@@ -30,6 +31,7 @@ export const menuItemUtilisateur = (
   auth: AuthContextType,
   apiFetching: number,
   navigate: NavigateFunction,
+  labels?: Record<string, string>,
 ): ItemType<MenuItemType>[] => {
   if (!auth) return [];
 
@@ -61,7 +63,7 @@ export const menuItemUtilisateur = (
           ? {
               key: "mon-profil",
               icon: <UserOutlined />,
-              label: "Mon profil",
+              label: labels?.MENU_UTILISATEUR_MON_PROFIL ?? "Mon profil",
               onClick: () => {
                 setSelectedKey("user");
                 navigate("/profil");
@@ -77,7 +79,7 @@ export const menuItemUtilisateur = (
           ? {
               key: "admin",
               icon: <SettingOutlined />,
-              label: "Administration",
+              label: labels?.MENU_UTILISATEUR_ADMINISTRATION ?? "Administration",
               onClick: () => {
                 setSelectedKey("user");
                 navigate("/administration");
@@ -88,7 +90,7 @@ export const menuItemUtilisateur = (
           ? {
               key: "bilans",
               icon: <PieChartOutlined />,
-              label: "Bilans",
+              label: labels?.MENU_UTILISATEUR_BILANS ?? "Bilans",
               onClick: () => {
                 setSelectedKey("user");
                 navigate("/bilans");
@@ -100,11 +102,11 @@ export const menuItemUtilisateur = (
           key: "user-divider",
           type: "divider",
         },
-        ...menuProfils(auth),
+        ...menuProfils(auth, labels),
         {
           key: "exit",
           icon: <LogoutOutlined />,
-          label: "Déconnexion",
+          label: labels?.MENU_UTILISATEUR_DECONNEXION ?? "Déconnexion",
           onClick: () => {
             queryClient.clear();
             auth.signOut(() => window.location.assign(window.location.origin.toString()));

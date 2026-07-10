@@ -33,7 +33,6 @@ export default function TypesDemandes(): React.ReactElement {
 
   return (
     <Layout.Content className="administration" style={{ padding: "0 50px" }}>
-      <Typography.Title level={1}>Administration</Typography.Title>
       <Breadcrumb
         className="mt-2"
         items={[
@@ -62,8 +61,10 @@ export default function TypesDemandes(): React.ReactElement {
           },
         ]}
       />
-
-      <Typography.Title level={2}>Campagnes de demande</Typography.Title>
+      <Typography.Title level={1}>Administration</Typography.Title>
+      <Typography.Title level={2} className="mt-0 mb-4">
+        Campagnes de demande
+      </Typography.Title>
       {isFetching && <Spinner />}
       {!isFetching && typesDemandes && (
         <Table<ITypeDemande>

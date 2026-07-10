@@ -63,7 +63,6 @@ export default function BilanActivites(): React.ReactElement {
 
   return (
     <Layout.Content className="administration" style={{ padding: "0 50px" }}>
-      <Typography.Title level={1}>Bilans</Typography.Title>
       <Breadcrumb
         className="mt-2"
         items={[
@@ -84,7 +83,11 @@ export default function BilanActivites(): React.ReactElement {
           },
         ]}
       />
-      <Typography.Title level={2}>Bilan activités {env.REACT_APP_SERVICE}</Typography.Title>
+      <Typography.Title level={1}>Bilans</Typography.Title>
+
+      <Typography.Title level={2} className="mt-0 mb-4">
+        Bilan activités {env.REACT_APP_SERVICE}
+      </Typography.Title>
 
       <TableBilanActivite setAjouterBilan={setAjouterBilan} form={form} />
 

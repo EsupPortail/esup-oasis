@@ -16,11 +16,13 @@ import React from "react";
  *
  * @param setSelectedKey
  * @param {NavigateFunction} navigate - The function used for navigating to a specific route.
+ * @param labels
  * @return {MenuProps["items"]} - The menu items for the "Intervenants" menu item.
  */
 export const menuItemIntervenants = (
   setSelectedKey: (key: string) => void,
   navigate: NavigateFunction,
+  labels?: Record<string, string>,
 ): MenuProps["items"] => [
   {
     key: "intervenants",
@@ -33,7 +35,7 @@ export const menuItemIntervenants = (
           navigate("/intervenants");
         }}
       >
-        Intervenants
+        {labels?.MENU_INTERVENANTS ?? "Intervenants"}
       </Button>
     ),
     children: [],

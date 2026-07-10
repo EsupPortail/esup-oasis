@@ -25,7 +25,6 @@ export default function CategoriesTags(): ReactElement {
 
   return (
     <Layout.Content className="administration" style={{ padding: "0 50px" }}>
-      <Typography.Title level={1}>Administration</Typography.Title>
       <Breadcrumb
         className="mt-2"
         items={[
@@ -53,8 +52,11 @@ export default function CategoriesTags(): ReactElement {
             title: "Tags",
           },
         ]}
-      />
-      <Typography.Title level={2}>Catégories de tags</Typography.Title>
+      />{" "}
+      <Typography.Title level={1}>Administration</Typography.Title>
+      <Typography.Title level={2} className="mt-0 mb-4">
+        Catégories de tags
+      </Typography.Title>
       <Row gutter={[16, 16]}>
         <Col span={24}>
           <CategoriesTagTable editedItem={editedItem} setEditedItem={setEditedItem} />

@@ -22,6 +22,7 @@ export function menuItemTheme(
   themeMode: ThemeMode,
   setThemeMode: (value: ThemeMode) => void,
   setPreference: (key: string, value: string) => void,
+  labels?: Record<string, string>,
 ): MenuProps["items"] {
   const onChange = (value: ThemeMode) => {
     setThemeMode(value);
@@ -39,14 +40,14 @@ export function menuItemTheme(
           className="bg-transparent p-0"
           aria-label="Choisir le thème de l'interface"
         >
-          <span className="show-on-overflow">Thème</span>
+          <span className="show-on-overflow">{labels?.MENU_THEME ?? "Thème"}</span>
           <ThemeIcon themeMode={themeMode} />
         </Button>
       ),
       children: [
         {
           key: "theme-light",
-          label: "Mode clair",
+          label: labels?.MENU_THEME_CLAIR ?? "Mode clair",
           icon: (
             <>
               <CheckOutlined
@@ -60,7 +61,7 @@ export function menuItemTheme(
         },
         {
           key: "theme-dark",
-          label: "Mode sombre",
+          label: labels?.MENU_THEME_SOMBRE ?? "Mode sombre",
           icon: (
             <>
               <CheckOutlined
@@ -74,7 +75,7 @@ export function menuItemTheme(
         },
         {
           key: "theme-system",
-          label: "Identique au système",
+          label: labels?.MENU_THEME_SYSTEME ?? "Identique au système",
           icon: (
             <>
               <CheckOutlined

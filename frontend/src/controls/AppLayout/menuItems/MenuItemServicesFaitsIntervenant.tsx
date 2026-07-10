@@ -17,12 +17,14 @@ import React from "react";
  * @param setSelectedKey
  * @param {Function} navigate - The navigate function to handle navigation.
  * @param className
+ * @param labels
  * @return {Array} The menu items.
  */
 export const menuItemServicesFaitsIntervenant = (
   setSelectedKey: (key: string) => void,
   navigate: NavigateFunction,
   className?: string,
+  labels?: Record<string, string>,
 ): MenuProps["items"] => [
   {
     key: "services-faits",
@@ -35,7 +37,7 @@ export const menuItemServicesFaitsIntervenant = (
           navigate("/services-faits");
         }}
       >
-        Services faits
+        {labels?.MENU_SERVICES_FAITS ?? "Services faits"}
       </Button>
     ),
     className,

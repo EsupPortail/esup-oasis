@@ -27,7 +27,6 @@ export default function ServicesFaits(): ReactElement {
 
   return (
     <Layout.Content className="administration" style={{ padding: "0 50px" }}>
-      <Typography.Title level={1}>Bilans</Typography.Title>
       <Breadcrumb
         className="mt-2"
         items={[
@@ -48,7 +47,10 @@ export default function ServicesFaits(): ReactElement {
           },
         ]}
       />
-      <Typography.Title level={2}>Services faits</Typography.Title>
+      <Typography.Title level={1}>Bilans</Typography.Title>
+      <Typography.Title level={2} className="mt-0 mb-4">
+        Services faits
+      </Typography.Title>
       <Card title="Période concernée">
         <PeriodeField
           seulementPeriodesEnvoyees

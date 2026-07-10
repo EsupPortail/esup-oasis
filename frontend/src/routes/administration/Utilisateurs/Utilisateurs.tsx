@@ -31,7 +31,6 @@ export default function Utilisateurs(): ReactElement {
 
   return (
     <Layout.Content className="administration" style={{ padding: "0 50px" }}>
-      <Typography.Title level={1}>Administration</Typography.Title>
       <Breadcrumb
         className="mt-2"
         items={[
@@ -59,8 +58,11 @@ export default function Utilisateurs(): ReactElement {
             title: "Utilisateurs de l'application",
           },
         ]}
-      />
-      <Typography.Title level={2}>Utilisateurs</Typography.Title>
+      />{" "}
+      <Typography.Title level={1}>Administration</Typography.Title>
+      <Typography.Title level={2} className="mt-0 mb-4">
+        Utilisateurs
+      </Typography.Title>
       <FloatButton
         onClick={() => {
           setSearchUser(true);

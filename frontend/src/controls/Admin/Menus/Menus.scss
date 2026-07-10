@@ -1,0 +1,94 @@
+// --- Onglets : un point de couleur par rôle, pour repérer un onglet au coup d'œil ---
+
+.menus-admin-tab-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menus-admin-tab-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+// --- Plan de travail : deux panneaux (édition / aperçu) nettement séparés ---
+
+.menus-admin-workbench {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+  margin-top: 8px;
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// --- Arborescence des libellés ---
+
+.menu-label-tree {
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-label-node {
+  position: relative;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--ant-color-border-secondary, var(--ant-color-border));
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: var(--ant-color-bg-layout);
+  }
+}
+
+.menu-label-node--racine {
+  padding-left: 12px;
+  border-left: 3px solid var(--onglet-accent, var(--color-primary));
+}
+
+.menu-label-node--enfant {
+  margin-left: 24px;
+  padding-left: 16px;
+  border-left: 2px solid var(--ant-color-border);
+}
+
+.menu-label-node__valeur {
+  font-size: 1rem;
+}
+
+.menu-label-node__cle {
+  display: block;
+  margin-top: 2px;
+  font-family: monospace;
+  font-size: 0.72rem;
+  color: var(--ant-color-text-tertiary, var(--legende));
+  letter-spacing: 0.02em;
+}
+
+// --- Aperçu : rendu dans une Card antd (cf. MenuPreview.tsx) ---
+
+.menu-preview__menu {
+  border-inline-end: none !important;
+}
+
+// Pastille de couleur devant chaque libellé, reprenant l'accent de l'onglet où il est
+// réellement modifiable — utile notamment pour les onglets Commun/Administrateur, qui mélangent
+// des items édités ailleurs.
+.menu-preview-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+// Le sous-menu utilisateur (avatar + nom) n'a pas besoin du retrait initial appliqué aux items
+// texte : son bouton commence directement par l'avatar.
+.menu-preview__frame [data-menu-id="rc-menu-uuid-user"] button {
+  padding-inline-start: 0;
+}

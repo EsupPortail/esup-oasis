@@ -60,7 +60,6 @@ export default function BilanFinancier(): React.ReactElement {
 
   return (
     <Layout.Content className="administration" style={{ padding: "0 50px" }}>
-      <Typography.Title level={1}>Bilans</Typography.Title>
       <Breadcrumb
         className="mt-2"
         items={[
@@ -81,7 +80,10 @@ export default function BilanFinancier(): React.ReactElement {
           },
         ]}
       />
-      <Typography.Title level={2}>Bilan financier d'aide humaine</Typography.Title>
+      <Typography.Title level={1}>Bilans</Typography.Title>
+      <Typography.Title level={2} className="mt-0 mb-4">
+        Bilan financier d'aide humaine
+      </Typography.Title>
       <Form
         form={form}
         layout="vertical"

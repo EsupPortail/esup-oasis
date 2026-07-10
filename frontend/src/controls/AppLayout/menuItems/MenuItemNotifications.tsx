@@ -218,7 +218,9 @@ export function menuItemNotifications(
   ) => void,
   stats: IStatistiquesEvenements | undefined,
   isFetchingStats: boolean,
+  labels?: Record<string, string>,
 ): MenuProps["items"] | null {
+  const libelleNotifications = labels?.MENU_NOTIFICATIONS ?? "Notifications";
   const notificationCount =
     (stats?.evenementsNonAffectesJour || 0) +
     (stats?.evenementsNonAffectesSemaine || 0) +
@@ -235,7 +237,7 @@ export function menuItemNotifications(
         label: (
           <>
             <BellOutlined className="hide-on-overflow" />
-            <span className="show-on-overflow ml-0">Notifications</span>
+            <span className="show-on-overflow ml-0">{libelleNotifications}</span>
           </>
         ),
         className: "menu-small-item no-indicator notifications",
@@ -267,7 +269,7 @@ export function menuItemNotifications(
           >
             <BellOutlined className="hide-on-overflow" />
           </Badge>
-          <span className="show-on-overflow">Notifications</span>
+          <span className="show-on-overflow">{libelleNotifications}</span>
         </Button>
       ),
       className: "menu-small-item no-indicator notifications",

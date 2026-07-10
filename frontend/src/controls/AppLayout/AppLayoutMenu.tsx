@@ -22,20 +22,13 @@ import { menuItemNotifications } from "@controls/AppLayout/menuItems/MenuItemNot
 import { menuItemAccessibilite } from "@controls/AppLayout/menuItems/MenuItemAccessibilite";
 import { menuItemTheme } from "@controls/AppLayout/menuItems/MenuItemTheme";
 import { menuItemLogo } from "@controls/AppLayout/menuItems/MenuItemLogo";
-import { menuItemPlanningBeneficiaireIntervenant } from "@controls/AppLayout/menuItems/MenuItemPlanningBeneficiaireIntervenant";
-import { menuItemDemandeur } from "@controls/AppLayout/menuItems/MenuItemDemandeur";
-import { menuItemServicesFaitsIntervenant } from "@controls/AppLayout/menuItems/MenuItemServicesFaitsIntervenant";
-import { menuItemPlanningPlanificateur } from "@controls/AppLayout/menuItems/MenuItemPlanningPlanificateur";
-import { menuItemBeneficiaires } from "@controls/AppLayout/menuItems/MenuItemBeneficiaires";
-import { menuItemAmenagementsForReferents } from "@controls/AppLayout/menuItems/MenuItemAmenagementsForReferents";
-import { menuItemDemandesForMembresCommission } from "@controls/AppLayout/menuItems/MenuItemDemandesForMembresCommission";
-import { menuItemIntervenants } from "@controls/AppLayout/menuItems/MenuItemIntervenants";
-import { menuItemDemandeurs } from "@controls/AppLayout/menuItems/MenuItemDemandeurs";
 import { menuItemRecherche } from "@controls/AppLayout/menuItems/MenuItemRecherche";
 import { menuItemUtilisateur } from "@controls/AppLayout/menuItems/MenuItemUtilisateur";
 
 import { useNotificationStats } from "@controls/AppLayout/menuItems/useNotificationStats";
 import { DARKMODE_ENABLED } from "@utils/theme/useEffectiveTheme";
+import { useLabelsMenu } from "@controls/AppLayout/useLabelsMenu";
+import { buildRoleMenuItems } from "@controls/AppLayout/buildRoleMenuItems";
 
 /**
  * Render the application's horizontal menu layout.
@@ -61,43 +54,14 @@ export default function AppLayoutMenu(): ReactElement {
   const [modeRecherche, setModeRecherche] = useState(false);
   const { setPreference } = usePreferences();
   const { stats, isFetchingStats } = useNotificationStats();
+  const { labels } = useLabelsMenu();
   const menuItems: MenuProps["items"] = useMemo(() => {
     const items = [];
 
     items.push(...(menuItemLogo(setSelectedKey, navigate) || []));
-    // Spécifique pour Planificateurs
-    if (auth.user?.isPlanificateur) {
-      items.push(...(menuItemDemandeurs(setSelectedKey, navigate) || []));
-      items.push(...(menuItemBeneficiaires(setSelectedKey, navigate, auth.user) || []));
-      items.push(...(menuItemIntervenants(setSelectedKey, navigate) || []));
-      items.push(...(menuItemPlanningPlanificateur(setSelectedKey, auth.user, navigate) || []));
-    }
 
-    if (auth.user?.isDemandeur) {
-      items.push(
-        ...(menuItemDemandeur(
-          setSelectedKey,
-          navigate,
-          auth.user?.isBeneficiaire || auth.user?.isIntervenant ? "" : "mr-auto",
-        ) || []),
-      );
-    }
-
-    if (auth.user?.isBeneficiaire && !auth.user?.isPlanificateur) {
-      items.push(
-        ...(menuItemPlanningBeneficiaireIntervenant(setSelectedKey, navigate, "mr-auto") || []),
-      );
-    } else if (auth.user?.isIntervenant && !auth.user?.isPlanificateur) {
-      items.push(...(menuItemPlanningBeneficiaireIntervenant(setSelectedKey, navigate) || []));
-      items.push(...(menuItemServicesFaitsIntervenant(setSelectedKey, navigate, "mr-auto") || []));
-    }
-
-    if (auth.user?.isCommissionMembre && !auth.user?.isPlanificateur) {
-      items.push(...(menuItemDemandesForMembresCommission(setSelectedKey, navigate) || []));
-    }
-
-    if (auth.user?.isReferentComposante && !auth.user?.isPlanificateur) {
-      items.push(...(menuItemAmenagementsForReferents(setSelectedKey, navigate) || []));
+    if (auth.user) {
+      items.push(...(buildRoleMenuItems(auth.user, navigate, setSelectedKey, labels) || []));
     }
 
     // Recherche
@@ -115,7 +79,7 @@ export default function AppLayoutMenu(): ReactElement {
 
     // Thème (masqué si dark mode désactivé par la configuration)
     if (DARKMODE_ENABLED) {
-      items.push(...(menuItemTheme(themeMode, setThemeMode, setPreference) || []));
+      items.push(...(menuItemTheme(themeMode, setThemeMode, setPreference, labels) || []));
     }
 
     // Accessibilité
@@ -128,6 +92,7 @@ export default function AppLayoutMenu(): ReactElement {
         setDyslexieLexend,
         setPoliceLarge,
         setPreference,
+        labels,
       ) || []),
     );
 
@@ -146,14 +111,22 @@ export default function AppLayoutMenu(): ReactElement {
     setDyslexieLexend,
     setPoliceLarge,
     setThemeMode,
+    labels,
   ]);
 
   const menuNotifications: MenuProps["items"] = useMemo(() => {
     if (!auth.user || !auth.user.isPlanificateur) return [];
     return (
-      menuItemNotifications(auth.user, navigate, setAffichageFiltres, stats, isFetchingStats) || []
+      menuItemNotifications(
+        auth.user,
+        navigate,
+        setAffichageFiltres,
+        stats,
+        isFetchingStats,
+        labels,
+      ) || []
     );
-  }, [auth.user, setAffichageFiltres, isFetchingStats, navigate, stats]);
+  }, [auth.user, setAffichageFiltres, isFetchingStats, navigate, stats, labels]);
 
   // --- Rendre le menu accessible (fix ant design) ---
   useEffect(() => {
@@ -180,7 +153,7 @@ export default function AppLayoutMenu(): ReactElement {
         items={[
           ...menuItems,
           ...menuNotifications,
-          ...menuItemUtilisateur(setSelectedKey, auth, apiFetching, navigate),
+          ...menuItemUtilisateur(setSelectedKey, auth, apiFetching, navigate, labels),
         ]}
       />
     </>

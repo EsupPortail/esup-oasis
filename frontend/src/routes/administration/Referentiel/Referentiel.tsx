@@ -33,7 +33,6 @@ export default function Referentiel(): ReactElement {
 
   return (
     <Layout.Content className="administration" style={{ padding: "0 50px" }}>
-      <Typography.Title level={1}>Référentiels</Typography.Title>
       <Breadcrumb
         className="mt-2"
         items={[
@@ -65,7 +64,10 @@ export default function Referentiel(): ReactElement {
           },
         ]}
       />
-      <Typography.Title level={2}>{referentielConfig.title}</Typography.Title>
+      <Typography.Title level={1}>Référentiels</Typography.Title>
+      <Typography.Title level={2} className="mt-0 mb-4">
+        {referentielConfig.title}
+      </Typography.Title>
       {editedItem && (
         <ReferentielItemEdition
           referentielConfig={referentielConfig}

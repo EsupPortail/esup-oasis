@@ -21,6 +21,7 @@ export function menuItemAccessibilite(
   setDyslexieLexend: (value: boolean) => void,
   setPoliceLarge: (value: boolean) => void,
   setPreference: (key: string, value: string) => void,
+  labels?: Record<string, string>,
 ): MenuProps["items"] {
   return [
     {
@@ -33,14 +34,14 @@ export function menuItemAccessibilite(
           className="bg-transparent p-0"
           aria-label="Ajuster les préférences d'accessibilité"
         >
-          <span className="show-on-overflow">Accessibilité</span>
+          <span className="show-on-overflow">{labels?.MENU_A11Y ?? "Accessibilité"}</span>
           <Icon component={IconeAccessibilite} aria-hidden className="hide-on-overflow" />
         </Button>
       ),
       children: [
         {
           key: "accessibilite-contraste",
-          label: "Contraste",
+          label: labels?.MENU_A11Y_CONTRASTE ?? "Contraste",
           icon: (
             <CheckOutlined
               aria-label={
@@ -61,7 +62,7 @@ export function menuItemAccessibilite(
         },
         {
           key: "accessibilite-dyslexie-lexend",
-          label: "Police : Lexend",
+          label: labels?.MENU_A11Y_POLICE_LEXEND ?? "Police : Lexend",
           icon: (
             <CheckOutlined
               aria-label={
@@ -84,7 +85,7 @@ export function menuItemAccessibilite(
         },
         {
           key: "accessibilite-dyslexie",
-          label: "Police : Arial",
+          label: labels?.MENU_A11Y_POLICE_ARIAL ?? "Police : Arial",
           icon: (
             <CheckOutlined
               aria-label={
@@ -107,7 +108,7 @@ export function menuItemAccessibilite(
         },
         {
           key: "accessibilite-dyslexie-opendys",
-          label: "Police : OpenDys",
+          label: labels?.MENU_A11Y_POLICE_OPENDYS ?? "Police : OpenDys",
           icon: (
             <CheckOutlined
               aria-label={
@@ -134,7 +135,7 @@ export function menuItemAccessibilite(
         },
         {
           key: "accessibilite-police-large",
-          label: "Police large",
+          label: labels?.MENU_A11Y_POLICE_LARGE ?? "Police large",
           icon: (
             <CheckOutlined
               aria-label={

@@ -16,11 +16,13 @@ import React from "react";
  *
  * @param setSelectedKey
  * @param {Function} navigate - The navigate function to be called when a menu item is clicked.
+ * @param labels
  * @return {Array} - An array of menu item objects.
  */
 export const menuItemAmenagementsForReferents = (
   setSelectedKey: (key: string) => void,
   navigate: NavigateFunction,
+  labels?: Record<string, string>,
 ): MenuProps["items"] => [
   {
     key: "beneficiaires-referent",
@@ -36,7 +38,7 @@ export const menuItemAmenagementsForReferents = (
           navigate("/amenagements?mode=beneficiaire");
         }}
       >
-        Aménagements
+        {labels?.MENU_REFERENT_AMENAGEMENTS ?? "Aménagements"}
       </Button>
     ),
   },

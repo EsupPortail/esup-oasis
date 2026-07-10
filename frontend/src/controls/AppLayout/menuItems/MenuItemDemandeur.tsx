@@ -18,12 +18,14 @@ import { env } from "@/env";
  * @param setSelectedKey
  * @param navigate - The function to navigate to a specific page.
  * @param className - Optional class name for the menu item.
+ * @param labels
  * @returns An array of menu items for the beneficiary/intervenant planning menu.
  */
 export function menuItemDemandeur(
   setSelectedKey: (key: string) => void,
   navigate: NavigateFunction,
   className?: string,
+  labels?: Record<string, string>,
 ): MenuProps["items"] {
   if (env.REACT_APP_GERER_DEMANDES)
     return [
@@ -38,7 +40,7 @@ export function menuItemDemandeur(
               navigate("/demandes");
             }}
           >
-            Demandes
+            {labels?.MENU_DEMANDES_DEMANDEUR ?? "Demandes"}
           </Button>
         ),
         className: className,

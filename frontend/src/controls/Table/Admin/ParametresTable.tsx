@@ -14,7 +14,7 @@ import { EditOutlined, FileOutlined } from "@ant-design/icons";
 import ParametresEdition from "@controls/Admin/Parametres/ParametresEdition";
 import { IParametre, IParametreValeur } from "@api";
 
-export default function ParametresTable() {
+export default function ParametresTable(props: { masquerParametresMenu: boolean }) {
   const [editedItem, setEditedItem] = useState<IParametre>();
   const { data: parametres, isFetching: isFetchingParametres } = useApi().useGetFullCollection({
     path: "/parametres",
@@ -24,8 +24,13 @@ export default function ParametresTable() {
     <>
       <Table<IParametre>
         loading={isFetchingParametres}
-        dataSource={parametres?.items as IParametre[]}
+        dataSource={
+          parametres?.items.filter(
+            (m) => !props.masquerParametresMenu || !(m.cle as string).startsWith("MENU_"),
+          ) as IParametre[]
+        }
         rowKey={(record) => record["@id"] as string}
+        pagination={false}
         columns={[
           {
             title: "Nom du paramètre",

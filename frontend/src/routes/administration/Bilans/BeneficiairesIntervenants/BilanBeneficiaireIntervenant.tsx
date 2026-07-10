@@ -125,7 +125,6 @@ export default function BilanBeneficiaireIntervenant(props: {
 
   return (
     <Layout.Content className="administration" style={{ padding: "0 50px" }}>
-      <Typography.Title level={1}>Bilans</Typography.Title>
       <Breadcrumb
         className="mt-2"
         items={[
@@ -146,7 +145,8 @@ export default function BilanBeneficiaireIntervenant(props: {
           },
         ]}
       />
-      <Typography.Title level={2}>
+      <Typography.Title level={1}>Bilans</Typography.Title>
+      <Typography.Title level={2} className="mt-0 mb-4">
         Suivi de l'activité des {`${capitalize(props.type)}s`}
       </Typography.Title>
 
