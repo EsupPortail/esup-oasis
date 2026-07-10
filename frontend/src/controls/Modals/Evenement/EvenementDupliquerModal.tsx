@@ -8,7 +8,7 @@
  */
 
 import React, { ReactElement, useState } from "react";
-import { Button, Form, Modal, notification } from "antd";
+import { App, Button, Form, Modal } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { Evenement } from "@lib";
 import { useApi } from "@context/api/ApiProvider";
@@ -39,6 +39,7 @@ export default function EvenementDupliquerModal({
   setOpen,
 }: IEvenementDupliquerDrawer): ReactElement {
   const [form] = Form.useForm();
+  const { notification } = App.useApp();
   const [afficherAide, setAfficherAide] = useState(false);
   const [datesSelectionnees, setDatesSelectionnees] = useState<Dayjs[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);

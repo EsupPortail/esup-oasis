@@ -26,7 +26,9 @@ export function InscriptionItem(props: {
     enabled: !!props.utilisateurId,
   });
   const item = data
-    ? (data.inscriptions || []).sort((i1, i2) => i2.debut?.localeCompare(i1.debut || "") || 0)[0]
+    ? [...(data.inscriptions || [])].sort((i1, i2) =>
+        (i2.debut || "").localeCompare(i1.debut || ""),
+      )[0]
     : props.inscription;
 
   if (!props.utilisateurId) return null;

@@ -103,7 +103,7 @@ export function AuthProvider({
     if (!env.REACT_APP_API || !(impersonate || login)) return;
 
     const controller = new AbortController();
-    setTimeout(() => setLoadingUser(true), 0);
+    const loadingTimer = window.setTimeout(() => setLoadingUser(true), 0);
 
     fetch(
       new URL(
@@ -144,11 +144,14 @@ export function AuthProvider({
 
         if (!mounted) return;
 
-        if (userData.roles && userData.roles.length === 1) {
+        const rolesMetier = (userData.roles ?? []).filter((r) => r !== "ROLE_USER");
+        if (rolesMetier.length === 0) {
           notification.error({
             title: "Erreur",
             description: "Vous ne possédez pas de rôle valide pour vous connecter à l'application.",
           });
+          // Purge du login : sinon la notification serait re-déclenchée à chaque rechargement
+          removeLocalStorageLogin();
           setLoadingUser(false);
           return;
         }
@@ -174,7 +177,11 @@ export function AuthProvider({
 
     return () => {
       mounted = false;
+      window.clearTimeout(loadingTimer);
       controller.abort();
+      // Un abort ne passe pas par les branches qui redescendent loadingUser :
+      // sans ce reset, le spinner resterait affiché si l'effet suivant sort en early return
+      setLoadingUser(false);
     };
     // signOut/removeLocalStorageLogin sont des fonctions stables définies dans le même scope — les inclure créerait une boucle infinie
     // eslint-disable-next-line react-hooks/exhaustive-deps

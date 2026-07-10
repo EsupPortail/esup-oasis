@@ -134,9 +134,9 @@ export function demandeTableColumns({
       responsive: ["lg"],
       width: 125,
       render: (_value, record) => {
-        const composante = record.demandeur?.inscriptions?.sort((i1, i2) =>
-          (i2.debut || "")?.localeCompare(i1.debut || ""),
-        )?.[0]?.formation?.composante;
+        const composante = [...(record.demandeur?.inscriptions || [])].sort((i1, i2) =>
+          (i2.debut || "").localeCompare(i1.debut || ""),
+        )[0]?.formation?.composante;
         if (composante) {
           return <ComposanteItem composanteId={composante} ellipsis />;
         }
@@ -150,9 +150,9 @@ export function demandeTableColumns({
       responsive: ["xl"],
       width: 200,
       render: (_value, record) => {
-        const libelleFormation = record.demandeur?.inscriptions?.sort((i1, i2) =>
-          (i2.debut || "")?.localeCompare(i1.debut || ""),
-        )?.[0]?.formation?.libelle;
+        const libelleFormation = [...(record.demandeur?.inscriptions || [])].sort((i1, i2) =>
+          (i2.debut || "").localeCompare(i1.debut || ""),
+        )[0]?.formation?.libelle;
         return (
           <EllipsisMiddle
             className="light"

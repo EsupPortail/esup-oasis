@@ -108,7 +108,6 @@ export default function MonoStackedBar({
             return (
               <Tooltip title={(section as BarData).tooltip} key={index}>
                 <div
-                  key={index}
                   style={{
                     width: `${proportion}%`,
                     height: height,
