@@ -51,7 +51,7 @@ export const menuItemBeneficiaires = (
           },
           {
             key: "amenagements-beneficiaires",
-            label: "Aménagements par bénéf.",
+            label: "Tableau des aménagements",
             onClick: () => {
               setSelectedKey("beneficiaires");
               navigate("/amenagements?mode=beneficiaire");
@@ -59,7 +59,7 @@ export const menuItemBeneficiaires = (
           },
           {
             key: "amenagements",
-            label: "Aménagements",
+            label: "Liste des aménagements",
             onClick: () => {
               setSelectedKey("beneficiaires");
               navigate("/amenagements?mode=amenagement");
