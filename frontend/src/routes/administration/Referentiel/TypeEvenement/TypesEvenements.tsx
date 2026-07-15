@@ -24,7 +24,6 @@ export default function TypesEvenements(): ReactElement {
 
   return (
     <Layout.Content className="administration" style={{ padding: "0 50px" }}>
-      <Typography.Title level={1}>Administration</Typography.Title>
       <Breadcrumb
         className="mt-2"
         items={[
@@ -52,8 +51,11 @@ export default function TypesEvenements(): ReactElement {
             title: "Catégories d'évènements",
           },
         ]}
-      />
-      <Typography.Title level={2}>Catégories d'évènements</Typography.Title>
+      />{" "}
+      <Typography.Title level={1}>Administration</Typography.Title>
+      <Typography.Title level={2} className="mt-0 mb-4">
+        Catégories d'évènements
+      </Typography.Title>
       <Row gutter={[16, 16]}>
         <Col span={24}>
           <TypesEvenementsTable onEdit={setEditedItem} editedItem={editedItem} />

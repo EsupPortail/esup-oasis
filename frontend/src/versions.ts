@@ -40,6 +40,17 @@ export interface IVersion {
  */
 export const VERSIONS: IVersion[] = [
   {
+    version: "2.4.1",
+    description: "Personnalisation du menu",
+    changes: [
+      {
+        description:
+          "L'administrateur peut personnaliser les libellés du menu principal de l'application",
+        type: "add",
+      },
+    ],
+  },
+  {
     version: "2.4.0",
     description: "Amélioration des performances (frontend)",
     changes: [

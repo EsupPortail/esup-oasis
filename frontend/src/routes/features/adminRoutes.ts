@@ -23,6 +23,11 @@ export const ADMIN_ROUTES: IRoute[] = [
     roles: [RoleValues.ROLE_ADMIN],
   },
   {
+    path: "/administration/referentiels/menus",
+    element: lazy(() => import("@routes/administration/Menus/Menus")),
+    roles: [RoleValues.ROLE_ADMIN],
+  },
+  {
     path: "/administration/bilans/services-faits",
     element: lazy(() => import("@routes/administration/Bilans/ServicesFaits/ServicesFaits")),
     roles: [RoleValues.ROLE_ADMIN],

@@ -23,6 +23,7 @@ import {
   TagOutlined,
   TeamOutlined,
   ToolOutlined,
+  UnorderedListOutlined,
 } from "@ant-design/icons";
 import { APIPathsReferentiel } from "@api";
 import { AdminPanel } from "@controls/Admin/AdminPanel";
@@ -98,6 +99,13 @@ const ADMIN_CONFIG: AdminConfig[] = [
     title: "Paramètres",
     description: "Constantes utilisées par l'application",
     icon: PercentageOutlined,
+    categorie: "parametres",
+  },
+  {
+    id: "menus",
+    title: "Menus",
+    description: "Menus de l'application",
+    icon: UnorderedListOutlined,
     categorie: "parametres",
   },
   {

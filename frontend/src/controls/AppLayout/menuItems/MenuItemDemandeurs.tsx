@@ -17,11 +17,13 @@ import { env } from "@/env";
  *
  * @param setSelectedKey
  * @param {NavigateFunction} navigate - The function used for navigating to a specific route.
+ * @param labels
  * @return {MenuProps["items"]} - The menu items for the "Intervenants" menu item.
  */
 export const menuItemDemandeurs = (
   setSelectedKey: (key: string) => void,
   navigate: NavigateFunction,
+  labels?: Record<string, string>,
 ): MenuProps["items"] => {
   if (env.REACT_APP_GERER_DEMANDES)
     return [
@@ -36,7 +38,7 @@ export const menuItemDemandeurs = (
               setSelectedKey("demandeurs");
             }}
           >
-            Demandeurs
+            {labels?.MENU_DEMANDEURS ?? "Demandeurs"}
           </Button>
         ),
         children: [],

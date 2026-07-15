@@ -73,7 +73,6 @@ export default function SportifsHautNiveau(): ReactElement {
 
   return (
     <Layout.Content className="administration" style={{ padding: "0 50px" }}>
-      <Typography.Title level={1}>Administration</Typography.Title>
       <Breadcrumb
         className="mt-2"
         items={[
@@ -101,8 +100,11 @@ export default function SportifsHautNiveau(): ReactElement {
             title: "Sportifs Haut Niveau",
           },
         ]}
-      />
-      <Typography.Title level={2}>Sportifs Haut Niveau</Typography.Title>
+      />{" "}
+      <Typography.Title level={1}>Administration</Typography.Title>
+      <Typography.Title level={2} className="mt-0 mb-4">
+        Sportifs Haut Niveau
+      </Typography.Title>
       <Row gutter={[16, 16]}>
         <Col span={24}>
           <SportifsHautNiveauTable editedItem={editedItem} onEdit={(s) => setEditedItem(s)} />

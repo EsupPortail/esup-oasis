@@ -18,12 +18,14 @@ import React from "react";
  * @param setSelectedKey
  * @param {Function} navigate - The navigate function to be called when a menu item is clicked.
  * @param user
+ * @param labels
  * @return {Array} - An array of menu item objects.
  */
 export const menuItemBeneficiaires = (
   setSelectedKey: (key: string) => void,
   navigate: NavigateFunction,
   user: Utilisateur,
+  labels?: Record<string, string>,
 ): MenuProps["items"] => [
   {
     key: "beneficiaires",
@@ -36,14 +38,14 @@ export const menuItemBeneficiaires = (
           navigate(user.isGestionnaire ? "/beneficiaires" : "/amenagements?mode=amenagement");
         }}
       >
-        Bénéficiaires
+        {labels?.MENU_BENEFICIAIRES ?? "Bénéficiaires"}
       </Button>
     ),
     children: user.isGestionnaire
       ? [
           {
             key: "beneficiaires-item",
-            label: "Bénéficiaires",
+            label: labels?.MENU_BENEFICIAIRES_LISTE ?? "Bénéficiaires",
             onClick: () => {
               setSelectedKey("beneficiaires");
               navigate("/beneficiaires");
@@ -51,7 +53,7 @@ export const menuItemBeneficiaires = (
           },
           {
             key: "amenagements-beneficiaires",
-            label: "Aménagements par bénéf.",
+            label: labels?.MENU_BENEFICIAIRES_AMENAGEMENT_PAR_BENEF ?? "Aménagements par bénéf.",
             onClick: () => {
               setSelectedKey("beneficiaires");
               navigate("/amenagements?mode=beneficiaire");
@@ -59,7 +61,7 @@ export const menuItemBeneficiaires = (
           },
           {
             key: "amenagements",
-            label: "Aménagements",
+            label: labels?.MENU_BENEFICIAIRES_AMENAGEMENT ?? "Aménagements",
             onClick: () => {
               setSelectedKey("beneficiaires");
               navigate("/amenagements?mode=amenagement");

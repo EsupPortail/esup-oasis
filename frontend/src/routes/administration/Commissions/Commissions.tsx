@@ -39,7 +39,6 @@ export default function Commissions(): React.ReactElement {
 
   return (
     <Layout.Content className="administration" style={{ padding: "0 50px" }}>
-      <Typography.Title level={1}>Administration</Typography.Title>
       <Breadcrumb
         className="mt-2"
         items={[
@@ -68,8 +67,10 @@ export default function Commissions(): React.ReactElement {
           },
         ]}
       />
-
-      <Typography.Title level={2}>Commissions</Typography.Title>
+      <Typography.Title level={1}>Administration</Typography.Title>
+      <Typography.Title level={2} className="mt-0 mb-4">
+        Commissions
+      </Typography.Title>
       {isFetching && <Spinner />}
       {!isFetching && commissions && (
         <CommissionsTable

@@ -18,12 +18,14 @@ import React from "react";
  * @param setSelectedKey
  * @param {Object} user - The user object.
  * @param {Function} navigate - The navigation function.
+ * @param labels
  * @return {Array} The generated menu items.
  */
 export const menuItemPlanningPlanificateur = (
   setSelectedKey: (key: string) => void,
   user: Utilisateur,
   navigate: NavigateFunction,
+  labels?: Record<string, string>,
 ): MenuProps["items"] => [
   {
     key: "planning",
@@ -36,13 +38,13 @@ export const menuItemPlanningPlanificateur = (
           navigate("/planning");
         }}
       >
-        Planning
+        {labels?.MENU_PLANNING_PLANIF ?? "Planning"}
       </Button>
     ),
     children: [
       {
         key: "planning-item",
-        label: "Planning des interventions",
+        label: labels?.MENU_PLANNING_INTERVENTIONS ?? "Planning des interventions",
         onClick: () => {
           setSelectedKey("planning");
           navigate("/planning");
@@ -50,7 +52,9 @@ export const menuItemPlanningPlanificateur = (
       },
       {
         key: "interventions-forfait",
-        label: "Interventions au forfait (prise de notes)",
+        label:
+          labels?.MENU_PLANNING_INTERVENTIONS_FORFAIT ??
+          "Interventions au forfait (prise de notes)",
         onClick: () => {
           setSelectedKey("planning");
           navigate("/interventions/forfait");
@@ -59,7 +63,9 @@ export const menuItemPlanningPlanificateur = (
       user?.isGestionnaire
         ? {
             key: "interventions-renforts",
-            label: "Validation des interventions des renforts",
+            label:
+              labels?.MENU_PLANNING_VALIDATION_RENFORTS ??
+              "Validation des interventions des renforts",
             onClick: () => {
               setSelectedKey("planning");
               navigate("/interventions/renforts");
@@ -69,7 +75,7 @@ export const menuItemPlanningPlanificateur = (
       user?.isRenfort
         ? {
             key: "mes-interventions",
-            label: "Vos interventions (renfort)",
+            label: labels?.MENU_PLANNING_MES_INTERVENTIONS ?? "Vos interventions (renfort)",
             onClick: () => {
               setSelectedKey("planning");
               navigate("/mes-interventions");

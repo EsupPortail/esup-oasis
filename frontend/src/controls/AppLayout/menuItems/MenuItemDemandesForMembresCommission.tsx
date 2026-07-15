@@ -15,6 +15,7 @@ import { env } from "@/env";
 export const menuItemDemandesForMembresCommission = (
   setSelectedKey: (key: string) => void,
   navigate: NavigateFunction,
+  labels?: Record<string, string>,
 ): MenuProps["items"] => {
   if (env.REACT_APP_GERER_DEMANDES) {
     return [
@@ -32,7 +33,7 @@ export const menuItemDemandesForMembresCommission = (
               navigate("/demandes");
             }}
           >
-            Demandes
+            {labels?.MENU_DEMANDES_COMMISSION ?? "Demandes"}
           </Button>
         ),
       },

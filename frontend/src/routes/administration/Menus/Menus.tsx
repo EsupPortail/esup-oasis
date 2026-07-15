@@ -11,15 +11,14 @@ import React, { ReactElement } from "react";
 import { Breadcrumb, Layout, Space, Typography } from "antd";
 import { NavLink } from "react-router-dom";
 import { HomeFilled } from "@ant-design/icons";
-import ParametresTable from "@controls/Table/Admin/ParametresTable";
-import "@routes/administration/Parametres/Parametres.scss";
+import MenusAdminTabs from "@controls/Admin/Menus/MenusAdminTabs";
 
 /**
  * Renders the administration page for managing application parameters.
  *
  * @returns {ReactElement} The content to be rendered.
  */
-export default function Parametres(): ReactElement {
+export default function Menus(): ReactElement {
   return (
     <Layout.Content className="administration" style={{ padding: "0 50px" }}>
       <Breadcrumb
@@ -37,19 +36,19 @@ export default function Parametres(): ReactElement {
             ),
           },
           {
-            key: "parametres",
-            title: "Paramètres de l'application",
+            key: "menus",
+            title: "Menus de l'application",
           },
         ]}
       />
       <Typography.Title level={1}>Administration</Typography.Title>
       <Typography.Title level={2} className="mt-0 mb-4">
-        Paramètres
+        Menus
       </Typography.Title>
       <Typography.Paragraph>
-        Vous pouvez modifier ici les constantes utilisées par l'application.
+        Vous pouvez modifier ici les libellés affichés dans le menu principal de l'application.
       </Typography.Paragraph>
-      <ParametresTable masquerParametresMenu />
+      <MenusAdminTabs />
     </Layout.Content>
   );
 }
