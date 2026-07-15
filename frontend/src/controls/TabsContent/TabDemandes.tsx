@@ -64,12 +64,14 @@ function TabDemandesItem({ demande }: ITabDemandesItemProps): ReactElement {
       <List.Item.Meta
         title={<TypeDemandeItem typeDemandeId={demande.typeDemande} showAvatar={false} showInfos />}
         description={
-          <Space orientation="vertical">
-            <Space>
-              <span>Date de dépôt</span>
-              <span className="semi-bold">{dayjs(demande.dateDepot).format("DD/MM/YYYY")}</span>
+          demande.dateDepot && (
+            <Space orientation="vertical">
+              <Space>
+                <span>Date de dépôt</span>
+                <span className="semi-bold">{dayjs(demande.dateDepot).format("DD/MM/YYYY")}</span>
+              </Space>
             </Space>
-          </Space>
+          )
         }
         avatar={<EtatDemandeAvatar etatDemandeId={demande.etat} />}
       />

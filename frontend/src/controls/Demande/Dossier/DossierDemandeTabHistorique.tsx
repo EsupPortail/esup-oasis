@@ -40,7 +40,9 @@ export function DossierDemandeTabHistorique(): React.ReactElement {
       <Timeline
         mode="start"
         items={histos?.items.map((histo: IModificationEtatDemande) => ({
-          title: dayjs(histo.dateModification).format("DD/MM/YYYY à HH:mm"),
+          title: histo.dateModification
+            ? dayjs(histo.dateModification).format("DD/MM/YYYY à HH:mm")
+            : "",
           content: (
             <List bordered size="small" className="mb-2">
               <ul>
