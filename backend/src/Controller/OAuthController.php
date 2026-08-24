@@ -46,14 +46,7 @@ class OAuthController extends AbstractController
         Request $request,
         #[Autowire('%env(JWT_COOKIE_DOMAIN)%')] string $cookieDomain,
     ): Response {
-        $cookieDomainNorm = empty($cookieDomain) ? null : $cookieDomain;
-        if ($cookieDomainNorm !== null) {
-            $host = $request->getHost();
-            $cleanDomain = ltrim($cookieDomainNorm, '.');
-            if ($host !== $cleanDomain && !str_ends_with($host, '.' . $cleanDomain)) {
-                $cookieDomainNorm = null;
-            }
-        }
+        $cookieDomainNorm = $this->domaineCookieApplicable($request, $cookieDomain);
         try {
             $token = $this->oauthService->getAccessToken($request, $this->generateUrl(
                 'connect_oauth_accesstoken',
@@ -89,14 +82,7 @@ class OAuthController extends AbstractController
          * https://oauth2-client.thephpleague.com/usage/
          * https://apereo.github.io/cas/6.0.x/installation/OAuth-OpenId-Authentication.html#authorization-code
          */
-        $cookieDomainNorm = empty($cookieDomain) ? null : $cookieDomain;
-        if ($cookieDomainNorm !== null) {
-            $host = $request->getHost();
-            $cleanDomain = ltrim($cookieDomainNorm, '.');
-            if ($host !== $cleanDomain && !str_ends_with($host, '.' . $cleanDomain)) {
-                $cookieDomainNorm = null;
-            }
-        }
+        $cookieDomainNorm = $this->domaineCookieApplicable($request, $cookieDomain);
         try {
             $token = $this->oauthService->getAccessToken($request, $this->generateUrl(
                 'connect_oauth_login',
@@ -177,18 +163,40 @@ class OAuthController extends AbstractController
 
         $token = $this->jwtTokenManager->create($user);
         $jsonResponse = new JsonResponse(['token' => $token]);
+        $cookieDomainNorm = $this->domaineCookieApplicable($request, $cookieDomain);
 
         $jsonResponse->headers->setCookie(Cookie::create(
             $cookieName,
             $token,
             new DateTime()->modify(sprintf('+ %s seconds', $ttl)),
             '/',
-            $cookieDomain,
+            $cookieDomainNorm,
             true,
             true,
             false,
             Cookie::SAMESITE_STRICT,
         ));
         return $jsonResponse;
+    }
+
+    /**
+     * Un navigateur rejette silencieusement un cookie dont le domaine ne couvre pas l'hôte appelé.
+     * Quand la configuration ne correspond pas à l'hôte, on retourne null pour poser un cookie
+     * limité à cet hôte plutôt que de perdre l'authentification sans trace.
+     */
+    private function domaineCookieApplicable(Request $request, string $cookieDomain): ?string
+    {
+        if (empty($cookieDomain)) {
+            return null;
+        }
+
+        $host = $request->getHost();
+        $domaineSansPoint = ltrim($cookieDomain, '.');
+
+        if ($host !== $domaineSansPoint && !str_ends_with($host, '.' . $domaineSansPoint)) {
+            return null;
+        }
+
+        return $cookieDomain;
     }
 }
