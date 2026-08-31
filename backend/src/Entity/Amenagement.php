@@ -215,7 +215,10 @@ class Amenagement implements BeneficiairesManagerInterface
 
     public function isActif(): bool
     {
-        $now = $this->now();
-        return $this->getDebut() <= $now && (null === $this->getFin() || $this->getFin() >= $now);
+        // debut et fin sont des dates (granularité jour) : elles hydratent à
+        // minuit. On compare au début de la journée courante pour que la fin,
+        // inclusive, couvre tout son dernier jour au lieu d'expirer à 00:00.
+        $today = $this->now()->setTime(0, 0);
+        return $this->getDebut() <= $today && (null === $this->getFin() || $this->getFin() >= $today);
     }
 }
