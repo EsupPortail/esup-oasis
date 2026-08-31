@@ -56,4 +56,12 @@ final class AmenagementActifTest extends TestCase
     {
         self::assertTrue($this->amenagement('2026-08-25', null, '2026-08-31 11:00:00')->isActif());
     }
+
+    public function testOpenStartedStaysActive(): void
+    {
+        // debut nullable : en PHP null <= $objet vaut vrai, l'aménagement est
+        // donc actif depuis toujours. Comportement inchangé par le fix, figé
+        // ici explicitement (symétrique de la fin ouverte).
+        self::assertTrue($this->amenagement(null, '2027-08-31', '2026-08-31 11:00:00')->isActif());
+    }
 }
