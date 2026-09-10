@@ -46,10 +46,15 @@ Oasis récupère actuellement dans Apogée :
       période sont figées au 01/09 et 31/08 de l'année universitaire)
     * statut boursier (déprécié, plus montré dans l'interface)
     * régime d'inscription
+    * situation sociale (code et libellé), si la requête la renvoie
 * des données personnelles complémentaires non présentes dans l'annuaire :
     * numéro de téléphone perso
     * date de naissance
     * civilité d'usage
+    * adresse postale, si la requête la renvoie
+
+Le statut de l'inscription administrative (en cours / terminée) n'est pas récupéré : il est dérivé des dates des
+inscriptions connues, et n'est affiché que si l'étudiant en a au moins une.
 
 Ces données sont récupérées à la création initiale de l'utilisateur dans l'application, puis rafraichies par un
 traitement hebdomadaire.  
@@ -82,9 +87,25 @@ le dossier `config/apogee` (attention à bien respecter les noms des champs reto
     * numéro de téléphone perso
     * témoin "boursier"
     * régime d'inscription
+    * situation sociale (optionnel)
+    * adresse postale (optionnel)
 
 Les versions livrées de ces requêtes s'appuient sur une table locale `extern_niveau_etape` pour remonter le niveau LMD,
 vous devrez donc les adapter. Le niveau LMD peut être simplement laissé vide.
+
+##### Colonnes optionnelles
+
+Le code lit les colonnes par leur **alias** (oci8 les remonte en majuscules). Certaines sont optionnelles : si la
+requête ne les renvoie pas, les champs correspondants restent vides et l'interface ne les affiche pas. Il n'y a donc
+rien à faire pour les ignorer, et rien d'autre à faire que d'enrichir la requête pour les activer.
+
+| Alias | Alimente | Si absent |
+| --- | --- | --- |
+| `COD_SOC`, `LIB_SOC` | situation sociale : code et libellé, tels que définis par l'établissement (par exemple `BO` / `Boursier`). Un code `BO` alimente aussi le témoin boursier, en plus de `TEM_BRS_IAA`. | pas de ligne « Situation sociale » sur la fiche |
+| `ADR_LIB_AD1`, `ADR_LIB_AD2`, `ADR_LIB_AD3`, `ADR_COD_BDI`, `ADR_LIB_VIL`, `ADR_COD_PAY` | adresse postale : deux lignes, complément, code postal, ville, pays. Le choix de l'adresse renvoyée (annuelle, fixe, avec ou sans repli) appartient à la requête. | pas de ligne « Adresse postale » sur la fiche |
+
+Ces valeurs sont projetées depuis l'inscription la plus récente de l'étudiant, comme le régime d'inscription et le
+témoin boursier.
 
 #### Implémentation de sa propre classe
 
