@@ -85,10 +85,22 @@ class ApogeeProvider extends AbstractSiScolDataProvider
                 'debut' => new DateTime($row->COD_ANU . '-09-01'),
                 'fin' => new DateTime(($row->COD_ANU + 1) . '-08-31'),
                 'boursier' => $row->TEM_BRS_IAA == 'O',
+                // Situation sociale Apogée (oci renvoie les colonnes en MAJUSCULES).
+                // Le code et son libellé sont repris tels quels : leur signification est
+                // propre à chaque établissement et se paramètre dans la requête.
+                'codeSituationSociale' => isset($row->COD_SOC) ? trim($row->COD_SOC) : null,
+                'libelleSituationSociale' => isset($row->LIB_SOC) ? trim($row->LIB_SOC) : null,
                 'statut' => $row->LIB_RGI, //changement de dernière minute... on colle le régime dans le champ "statut"
                 'niveau' => $row->NIVEAU,
                 'discipline' => $row->LIB_DSI,
                 'diplome' => $row->LIB_DIP,
+                // adresse postale (annuelle puis fixe en fallback)
+                'adresseLigne1' => isset($row->ADR_LIB_AD1) ? trim($row->ADR_LIB_AD1) : null,
+                'adresseLigne2' => isset($row->ADR_LIB_AD2) ? trim($row->ADR_LIB_AD2) : null,
+                'adresseComplement' => isset($row->ADR_LIB_AD3) ? trim($row->ADR_LIB_AD3) : null,
+                'adresseCodePostal' => isset($row->ADR_COD_BDI) ? trim($row->ADR_COD_BDI) : null,
+                'adresseVille' => isset($row->ADR_LIB_VIL) ? trim($row->ADR_LIB_VIL) : null,
+                'adressePays' => isset($row->ADR_COD_PAY) ? trim($row->ADR_COD_PAY) : null,
             ];
         }
 
@@ -147,7 +159,20 @@ class ApogeeProvider extends AbstractSiScolDataProvider
         oci_bind_by_name($stmt, 'codVrsVet', $codVrsVet);
 
         if (!oci_execute($stmt)) {
-            $this->logger->warning('Récupération des infos formation impossible, apogée indisponible');
+            // Apogée répond mais refuse la requête, typiquement parce qu'elle ne
+            // correspond pas au schéma de l'établissement (table ou colonne absente).
+            // On remonte l'erreur réelle : sans cela, diplôme, discipline et niveau
+            // resteraient vides sur toutes les formations, sans aucun signal.
+            $erreur = oci_error($stmt);
+            $this->logger->error(
+                'Requête formation refusée par Apogée. Diplôme, discipline et niveau resteront '
+                . "vides. Vérifier que la requête correspond au schéma de l'établissement.",
+                [
+                    'code' => $erreur['code'] ?? null,
+                    'message' => $erreur['message'] ?? 'inconnue',
+                ],
+            );
+
             return [];
         }
 
