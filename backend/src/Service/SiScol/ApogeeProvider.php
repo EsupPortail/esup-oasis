@@ -91,7 +91,7 @@ class ApogeeProvider extends AbstractSiScolDataProvider
                 'codeSituationSociale' => isset($row->COD_SOC) ? trim($row->COD_SOC) : null,
                 'libelleSituationSociale' => isset($row->LIB_SOC) ? trim($row->LIB_SOC) : null,
                 'statut' => $row->LIB_RGI, //changement de dernière minute... on colle le régime dans le champ "statut"
-                'niveau' => $row->NIVEAU,
+                'niveau' => $row->NIVEAU ?? null,
                 'discipline' => $row->LIB_DSI,
                 'diplome' => $row->LIB_DIP,
                 // adresse postale (annuelle puis fixe en fallback)
@@ -101,6 +101,24 @@ class ApogeeProvider extends AbstractSiScolDataProvider
                 'adresseCodePostal' => isset($row->ADR_COD_BDI) ? trim($row->ADR_COD_BDI) : null,
                 'adresseVille' => isset($row->ADR_LIB_VIL) ? trim($row->ADR_LIB_VIL) : null,
                 'adressePays' => isset($row->ADR_COD_PAY) ? trim($row->ADR_COD_PAY) : null,
+                // code étape (cod_etp) pour exposer le cursus
+                // d'inscription et en dériver le niveau d'études côté API.
+                'codeEtape' => isset($row->COD_ETP) ? trim($row->COD_ETP) : null,
+                // compteur natif (nbr_ins_etp) du nombre
+                // d'inscriptions à l'étape, base du calcul redoublement.
+                'nombreInscriptionsEtape' => isset($row->NBR_INS_ETP) ? (int) $row->NBR_INS_ETP : null,
+                // cursus aménagé SISE (cod_sis_cur_amg / lib_cur_amg).
+                'codeCursusAmenage' => isset($row->COD_SIS_CUR_AMG) ? trim($row->COD_SIS_CUR_AMG) : null,
+                'libelleCursusAmenage' => isset($row->LIB_CUR_AMG) ? trim($row->LIB_CUR_AMG) : null,
+                // Cycle du diplôme (cod_cyc) + année dans le diplôme (cod_sis_daa,
+                // SISE national) : base du niveau dérivé côté API par NiveauResolver.
+                'cycle' => isset($row->CYCLE) && trim((string) $row->CYCLE) !== '' ? (int) $row->CYCLE : null,
+                'anneeDansDiplome' => isset($row->ANNEE_DIPLOME) && trim((string) $row->ANNEE_DIPLOME) !== '' ? (int) $row->ANNEE_DIPLOME : null,
+                // Type de diplôme (cod_tpd_etb) + indicateur santé (tem_sante) :
+                // séparent les familles (LMD vs santé vs BUT/DUT/ingénieur/DU),
+                // base du filtrage du niveau côté API par NiveauResolver.
+                'codeTypeDiplome' => isset($row->COD_TPD_ETB) && trim((string) $row->COD_TPD_ETB) !== '' ? trim($row->COD_TPD_ETB) : null,
+                'sante' => isset($row->TEM_SANTE) && trim((string) $row->TEM_SANTE) === 'O',
             ];
         }
 
@@ -180,7 +198,7 @@ class ApogeeProvider extends AbstractSiScolDataProvider
         if ($row = oci_fetch_object($stmt)) {
             $data = [
                 'diplome' => $row->LIB_DIP,
-                'niveau' => $row->NIVEAU,
+                'niveau' => $row->NIVEAU ?? null,
                 'discipline' => $row->LIB_DSI,
             ];
         }
