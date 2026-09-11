@@ -33,13 +33,15 @@ readonly class AmenagementModifieMessageHandler
                 . json_encode($bornesAnneeConcernee),
         );
         $beneficiaire = $message->getBeneficiaire();
-
-        if ($message->isExamens()) {
+        
+        // Appliquer à tous les aménagements pouvant apparaître dans le document décision
+        if ($message->isDecision()) {
             $this->decisionAmenagementManager->majEtatDecision(
                 $beneficiaire,
                 $bornesAnneeConcernee['debut'],
                 $bornesAnneeConcernee['fin'],
             );
+
         }
     }
 }

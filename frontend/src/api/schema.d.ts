@@ -2575,20 +2575,5656 @@ export interface paths {
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        "ActiviteBeneficiaire.html-ActiviteBeneficiaire.out": {
-            nbEvenements?: number;
-            nbHeures?: string;
-            utilisateur?: components["schemas"]["Utilisateur.html-ActiviteBeneficiaire.out"];
-            /**
-             * Format: iri-reference
-             * @example https://example.com/
-             */
-            campus?: string | null;
-            /**
-             * Format: iri-reference
-             * @example https://example.com/
-             */
+   schemas: {
+      "ActiviteBeneficiaire-ActiviteBeneficiaire.out": {
+         nbEvenements?: number;
+         nbHeures?: string;
+         utilisateur?: components["schemas"]["Utilisateur-ActiviteBeneficiaire.out"];
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         campus?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         type?: string;
+         tauxHoraire?: components["schemas"]["TauxHoraire-ActiviteBeneficiaire.out"] | null;
+      };
+      "ActiviteBeneficiaire.jsonld-ActiviteBeneficiaire.out": {
+         "@id"?: string;
+         "@type"?: string;
+         nbEvenements?: number;
+         nbHeures?: string;
+         utilisateur?: components["schemas"]["Utilisateur.jsonld-ActiviteBeneficiaire.out"];
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         campus?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         type?: string;
+         tauxHoraire?: components["schemas"]["TauxHoraire.jsonld-ActiviteBeneficiaire.out"] | null;
+      };
+      ActiviteBilanFinancier: {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         periode?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         typeEvenement?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         tauxHoraire?: string | null;
+         nbHeures?: string;
+         coeffCharges?: string;
+         montantBrut?: string;
+         montantBrutCharge?: string;
+      };
+      "ActiviteBilanFinancier.jsonld": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         periode?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         typeEvenement?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         tauxHoraire?: string | null;
+         nbHeures?: string;
+         coeffCharges?: string;
+         montantBrut?: string;
+         montantBrutCharge?: string;
+      };
+      "ActiviteIntervenant-ActiviteIntervenant.out": {
+         nbEvenements?: number;
+         nbHeures?: string;
+         utilisateur?: components["schemas"]["Utilisateur-ActiviteIntervenant.out"];
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         campus?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         type?: string;
+         tauxHoraire?: components["schemas"]["TauxHoraire-ActiviteIntervenant.out"] | null;
+      };
+      "ActiviteIntervenant.jsonld-ActiviteIntervenant.out": {
+         "@id"?: string;
+         "@type"?: string;
+         nbEvenements?: number;
+         nbHeures?: string;
+         utilisateur?: components["schemas"]["Utilisateur.jsonld-ActiviteIntervenant.out"];
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         campus?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         type?: string;
+         tauxHoraire?: components["schemas"]["TauxHoraire.jsonld-ActiviteIntervenant.out"] | null;
+      };
+      "Amenagement-amenagement.in": {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         typeAmenagement: string;
+         semestre1?: boolean;
+         semestre2?: boolean;
+         /** Format: date-time */
+         debut?: string | null;
+         /** Format: date-time */
+         fin?: string | null;
+         commentaire?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         suivi?: string | null;
+      };
+      "Amenagement-amenagement.out": {
+         beneficiaire?: components["schemas"]["Utilisateur-amenagement.out"];
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         typeAmenagement: string;
+         semestre1?: boolean;
+         semestre2?: boolean;
+         /** Format: date-time */
+         debut?: string | null;
+         /** Format: date-time */
+         fin?: string | null;
+         commentaire?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         suivi?: string | null;
+      };
+      "Amenagement-amenagements_utilisateurs.out": {
+         id?: number | null;
+         typeAmenagement: components["schemas"]["TypeAmenagement-amenagements_utilisateurs.out"];
+         commentaire?: string | null;
+      };
+      "Amenagement.jsonld-amenagement.in": {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         typeAmenagement: string;
+         semestre1?: boolean;
+         semestre2?: boolean;
+         /** Format: date-time */
+         debut?: string | null;
+         /** Format: date-time */
+         fin?: string | null;
+         commentaire?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         suivi?: string | null;
+      };
+      "Amenagement.jsonld-amenagement.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         beneficiaire?: components["schemas"]["Utilisateur.jsonld-amenagement.out"];
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         typeAmenagement: string;
+         semestre1?: boolean;
+         semestre2?: boolean;
+         /** Format: date-time */
+         debut?: string | null;
+         /** Format: date-time */
+         fin?: string | null;
+         commentaire?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         suivi?: string | null;
+      };
+      "Amenagement.jsonld-amenagements_utilisateurs.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         typeAmenagement: components["schemas"]["TypeAmenagement.jsonld-amenagements_utilisateurs.out"];
+         commentaire?: string | null;
+      };
+      "AvisEse-avis_ese.in": {
+         libelle?: string | null;
+         commentaire?: string | null;
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         fichier?: string | null;
+      };
+      "AvisEse-avis_ese.out": {
+         id?: number | null;
+         libelle?: string | null;
+         commentaire?: string | null;
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         fichier?: string | null;
+      };
+      "AvisEse.jsonld-avis_ese.in": {
+         libelle?: string | null;
+         commentaire?: string | null;
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         fichier?: string | null;
+      };
+      "AvisEse.jsonld-avis_ese.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle?: string | null;
+         commentaire?: string | null;
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         fichier?: string | null;
+      };
+      "BeneficiaireProfil-beneficiaires_profils.in": {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         profil?: string | null;
+         /** Format: date-time */
+         debut: string;
+         /** Format: date-time */
+         fin?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         gestionnaire: string;
+         typologies?: string[];
+         /**
+          * @default true
+          * @example true
+          */
+         avecAccompagnement?: boolean;
+      };
+      "BeneficiaireProfil-beneficiaires_profils.out": {
+         id?: number | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         profil?: string | null;
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         gestionnaire?: string;
+         typologies?: string[];
+         /**
+          * @default true
+          * @example true
+          */
+         avecAccompagnement?: boolean;
+      };
+      "BeneficiaireProfil.jsonld-beneficiaires_profils.in": {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         profil?: string | null;
+         /** Format: date-time */
+         debut: string;
+         /** Format: date-time */
+         fin?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         gestionnaire: string;
+         typologies?: string[];
+         /**
+          * @default true
+          * @example true
+          */
+         avecAccompagnement?: boolean;
+      };
+      "BeneficiaireProfil.jsonld-beneficiaires_profils.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         profil?: string | null;
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         gestionnaire?: string;
+         typologies?: string[];
+         /**
+          * @default true
+          * @example true
+          */
+         avecAccompagnement?: boolean;
+      };
+      "BilanActivite-bilan-activite.in": {
+         /** Format: date-time */
+         debut: string;
+         /** Format: date-time */
+         fin: string;
+         gestionnaires?: string[];
+         profils?: string[];
+         composantes?: string[];
+         formations?: string[];
+      };
+      "BilanActivite-bilan-activite.out": {
+         id?: number | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         demandeur?: string;
+         /** Format: date-time */
+         debut: string;
+         /** Format: date-time */
+         fin: string;
+         /** Format: date-time */
+         dateDemande?: string;
+         /** Format: date-time */
+         dateGeneration?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         fichier?: string | null;
+         gestionnaires?: string[];
+         profils?: string[];
+         composantes?: string[];
+         formations?: string[];
+      };
+      "BilanActivite.jsonld-bilan-activite.in": {
+         /** Format: date-time */
+         debut: string;
+         /** Format: date-time */
+         fin: string;
+         gestionnaires?: string[];
+         profils?: string[];
+         composantes?: string[];
+         formations?: string[];
+      };
+      "BilanActivite.jsonld-bilan-activite.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         demandeur?: string;
+         /** Format: date-time */
+         debut: string;
+         /** Format: date-time */
+         fin: string;
+         /** Format: date-time */
+         dateDemande?: string;
+         /** Format: date-time */
+         dateGeneration?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         fichier?: string | null;
+         gestionnaires?: string[];
+         profils?: string[];
+         composantes?: string[];
+         formations?: string[];
+      };
+      BilanFinancier: {
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string;
+         intervenants?: components["schemas"]["IntervenantBilanFinancier"][];
+         periodes?: string[];
+      };
+      "BilanFinancier.jsonld": {
+         "@id"?: string;
+         "@type"?: string;
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string;
+         intervenants?: components["schemas"]["IntervenantBilanFinancier.jsonld"][];
+         periodes?: string[];
+      };
+      "CampagneDemande-campagne.in": {
+         libelle?: string | null;
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string;
+         /** Format: date-time */
+         dateCommission?: string | null;
+         /** Format: date-time */
+         dateArchivage?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         commission?: string | null;
+         anneeCible?: number | null;
+      };
+      "CampagneDemande-campagne.out": {
+         id?: number | null;
+         libelle?: string | null;
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string;
+         /** Format: date-time */
+         dateCommission?: string | null;
+         /** Format: date-time */
+         dateArchivage?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         commission?: string | null;
+         anneeCible?: number | null;
+      };
+      "CampagneDemande.jsonld-campagne.in": {
+         libelle?: string | null;
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string;
+         /** Format: date-time */
+         dateCommission?: string | null;
+         /** Format: date-time */
+         dateArchivage?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         commission?: string | null;
+         anneeCible?: number | null;
+      };
+      "CampagneDemande.jsonld-campagne.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle?: string | null;
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string;
+         /** Format: date-time */
+         dateCommission?: string | null;
+         /** Format: date-time */
+         dateArchivage?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         commission?: string | null;
+         anneeCible?: number | null;
+      };
+      "Campus-campus.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "Campus-campus.out": {
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "Campus.jsonld-campus.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "Campus.jsonld-campus.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      CategorieAmenagement: {
+         id?: number | null;
+         libelle?: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "CategorieAmenagement-categorie_amenagement.in": {
+         libelle?: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "CategorieAmenagement.jsonld": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle?: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "CategorieAmenagement.jsonld-categorie_amenagement.in": {
+         libelle?: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "CategorieTag-categorie_tag.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "CategorieTag-categorie_tag.out": {
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "CategorieTag.jsonld-categorie_tag.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "CategorieTag.jsonld-categorie_tag.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      Charte: {
+         libelle?: string;
+         contenu?: string;
+         profilsAssocies?: string[];
+      };
+      "Charte.jsonld": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         libelle?: string;
+         contenu?: string;
+         profilsAssocies?: string[];
+      };
+      CharteUtilisateur: {
+         libelle?: string;
+         contenu?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         demande?: string;
+         /** Format: date-time */
+         dateValidation?: string | null;
+      };
+      "CharteUtilisateur-charte_utilisateur.in": {
+         /** Format: date-time */
+         dateValidation?: string | null;
+      };
+      "CharteUtilisateur.jsonld": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         libelle?: string;
+         contenu?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         demande?: string;
+         /** Format: date-time */
+         dateValidation?: string | null;
+      };
+      "ClubSportif-club_sportif.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         centreFormation?: boolean;
+         professionnel?: boolean;
+      };
+      "ClubSportif-club_sportif.out": {
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         centreFormation?: boolean;
+         professionnel?: boolean;
+      };
+      "ClubSportif.jsonld-club_sportif.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         centreFormation?: boolean;
+         professionnel?: boolean;
+      };
+      "ClubSportif.jsonld-club_sportif.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         centreFormation?: boolean;
+         professionnel?: boolean;
+      };
+      "Commission-commission.in": {
+         libelle?: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "Commission-commission.out": {
+         id?: number | null;
+         libelle?: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "Commission.jsonld-commission.in": {
+         libelle?: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "Commission.jsonld-commission.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle?: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "Competence-competence.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "Competence-competence.out": {
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "Competence.jsonld-competence.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "Competence.jsonld-competence.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "Composante-amenagement.out": {
+         libelle?: string;
+      };
+      "Composante-amenagements_utilisateurs.out": {
+         libelle?: string;
+      };
+      "Composante-composante.in": {
+         referents?: string[];
+      };
+      "Composante-composante.out": {
+         id?: number;
+         libelle?: string;
+         referents?: string[];
+      };
+      "Composante.jsonld-amenagement.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         libelle?: string;
+      };
+      "Composante.jsonld-amenagements_utilisateurs.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         libelle?: string;
+      };
+      "Composante.jsonld-composante.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number;
+         libelle?: string;
+         referents?: string[];
+      };
+      "DecisionAmenagementExamens-decision.in": {
+         etat?: string;
+      };
+      "DecisionAmenagementExamens-decision.out": {
+         etat?: string;
+         urlContenu?: string | null;
+      };
+      "DecisionAmenagementExamens-utilisateur.out": {
+         etat?: string;
+      };
+      "DecisionAmenagementExamens.jsonld-decision.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         etat?: string;
+         urlContenu?: string | null;
+      };
+      "DecisionAmenagementExamens.jsonld-utilisateur.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         etat?: string;
+      };
+      "Demande-demande.in": {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         demandeur: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         typeDemande: string;
+      };
+      "Demande-demande.modif": {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         etat?: string;
+         commentaireChangementEtat?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         profilAttribue?: string | null;
+         commentaire?: string | null;
+      };
+      "Demande-demande.out": {
+         id?: number | null;
+         demandeur: components["schemas"]["Utilisateur-demande.out"] | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         campagne?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         typeDemande: string;
+         idCommission?: number | null;
+         /** Format: date-time */
+         dateDepot?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         etat?: string;
+         etapes?: components["schemas"]["EtapeDemandeEtudiant-demande.out"][];
+         complete?: boolean;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         profilAttribue?: string | null;
+         commentaire?: string | null;
+      };
+      "Demande.jsonld-demande.in": {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         demandeur: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         typeDemande: string;
+      };
+      "Demande.jsonld-demande.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         demandeur: components["schemas"]["Utilisateur.jsonld-demande.out"] | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         campagne?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         typeDemande: string;
+         idCommission?: number | null;
+         /** Format: date-time */
+         dateDepot?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         etat?: string;
+         etapes?: components["schemas"]["EtapeDemandeEtudiant.jsonld-demande.out"][];
+         complete?: boolean;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         profilAttribue?: string | null;
+         commentaire?: string | null;
+      };
+      "DisciplineArtistique-disciplines_artistiques.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "DisciplineArtistique-disciplines_artistiques.out": {
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "DisciplineArtistique.jsonld-disciplines_artistiques.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "DisciplineArtistique.jsonld-disciplines_artistiques.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "DisciplineSportive-discipline_sportive.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "DisciplineSportive-discipline_sportive.out": {
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "DisciplineSportive.jsonld-discipline_sportive.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "DisciplineSportive.jsonld-discipline_sportive.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "Entretien-entretien.in": {
+         commentaire?: string | null;
+         /** Format: date-time */
+         date?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         fichier?: string | null;
+      };
+      "Entretien-entretien.out": {
+         id?: number | null;
+         commentaire?: string | null;
+         /** Format: date-time */
+         date?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         fichier?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         gestionnaire?: string;
+      };
+      "Entretien.jsonld-entretien.in": {
+         commentaire?: string | null;
+         /** Format: date-time */
+         date?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         fichier?: string | null;
+      };
+      "Entretien.jsonld-entretien.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         commentaire?: string | null;
+         /** Format: date-time */
+         date?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         fichier?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         gestionnaire?: string;
+      };
+      "EtablissementEnseignementArtistique-etablissements_enseignement_artistique.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "EtablissementEnseignementArtistique-etablissements_enseignement_artistique.out": {
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "EtablissementEnseignementArtistique.jsonld-etablissements_enseignement_artistique.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "EtablissementEnseignementArtistique.jsonld-etablissements_enseignement_artistique.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "EtapeDemande-etape_demande.out": {
+         id?: number | null;
+         libelle?: string;
+         ordre?: number;
+         questions?: string[];
+      };
+      "EtapeDemande-type_demande.out": {
+         id?: number | null;
+         libelle?: string;
+         ordre?: number;
+         questions?: string[];
+      };
+      "EtapeDemande.jsonld-etape_demande.out": {
+         "@id"?: string;
+         "@type"?: string;
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         id?: number | null;
+         libelle?: string;
+         ordre?: number;
+         questions?: string[];
+      };
+      "EtapeDemande.jsonld-type_demande.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle?: string;
+         ordre?: number;
+         questions?: string[];
+      };
+      "EtapeDemandeEtudiant-demande.out": {
+         id?: number;
+         libelle?: string;
+         ordre?: number;
+         questions?: components["schemas"]["QuestionDemande-demande.out"][];
+         etape?: string;
+      };
+      "EtapeDemandeEtudiant.jsonld-demande.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number;
+         libelle?: string;
+         ordre?: number;
+         questions?: components["schemas"]["QuestionDemande.jsonld-demande.out"][];
+         etape?: string;
+      };
+      EtatDemande: {
+         id?: number;
+         libelle?: string;
+      };
+      "EtatDemande.jsonld": {
+         "@id"?: string;
+         "@type"?: string;
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         id?: number;
+         libelle?: string;
+      };
+      "Evenement-evenement.in": {
+         libelle?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         type: string;
+         beneficiaires?: string[];
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         intervenant?: string | null;
+         suppleants?: string[];
+         enseignants?: string[];
+         /** Format: date-time */
+         debut: string;
+         /** Format: date-time */
+         fin: string;
+         tempsPreparation?: number;
+         tempsSupplementaire?: number;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         campus: string;
+         salle?: string | null;
+         equipements?: string[];
+         /** Format: date-time */
+         dateAnnulation?: string | null;
+         valide?: boolean | null;
+      };
+      "Evenement-evenement.out": {
+         id?: number | null;
+         libelle?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         type: string;
+         beneficiaires?: string[];
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         intervenant?: string | null;
+         suppleants?: string[];
+         enseignants?: string[];
+         /** Format: date-time */
+         debut: string;
+         /** Format: date-time */
+         fin: string;
+         tempsPreparation?: number;
+         tempsSupplementaire?: number;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         campus: string;
+         salle?: string | null;
+         equipements?: string[];
+         /** Format: date-time */
+         dateAnnulation?: string | null;
+         /** Format: date-time */
+         dateEnvoiRH?: string | null;
+         /** Format: date-time */
+         dateCreation?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         utilisateurCreation?: string;
+         /** Format: date-time */
+         dateModification?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         utilisateurModification?: string | null;
+         valide?: boolean | null;
+         /** Format: date-time */
+         dateValidation?: string | null;
+      };
+      "Evenement.jsonld-evenement.in": {
+         libelle?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         type: string;
+         beneficiaires?: string[];
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         intervenant?: string | null;
+         suppleants?: string[];
+         enseignants?: string[];
+         /** Format: date-time */
+         debut: string;
+         /** Format: date-time */
+         fin: string;
+         tempsPreparation?: number;
+         tempsSupplementaire?: number;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         campus: string;
+         salle?: string | null;
+         equipements?: string[];
+         /** Format: date-time */
+         dateAnnulation?: string | null;
+         valide?: boolean | null;
+      };
+      "Evenement.jsonld-evenement.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         type: string;
+         beneficiaires?: string[];
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         intervenant?: string | null;
+         suppleants?: string[];
+         enseignants?: string[];
+         /** Format: date-time */
+         debut: string;
+         /** Format: date-time */
+         fin: string;
+         tempsPreparation?: number;
+         tempsSupplementaire?: number;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         campus: string;
+         salle?: string | null;
+         equipements?: string[];
+         /** Format: date-time */
+         dateAnnulation?: string | null;
+         /** Format: date-time */
+         dateEnvoiRH?: string | null;
+         /** Format: date-time */
+         dateCreation?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         utilisateurCreation?: string;
+         /** Format: date-time */
+         dateModification?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         utilisateurModification?: string | null;
+         valide?: boolean | null;
+         /** Format: date-time */
+         dateValidation?: string | null;
+      };
+      Formation: {
+         id?: number;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         composante?: string;
+         libelle?: string;
+         codeExterne?: string;
+         niveau?: string | null;
+         discipline?: string | null;
+         diplome?: string | null;
+      };
+      "Formation-amenagement.out": {
+         composante?: components["schemas"]["Composante-amenagement.out"];
+         libelle?: string;
+      };
+      "Formation-amenagements_utilisateurs.out": {
+         composante?: components["schemas"]["Composante-amenagements_utilisateurs.out"];
+         libelle?: string;
+      };
+      "Formation-demande.out": {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         composante?: string;
+         libelle?: string;
+      };
+      "Formation-utilisateur.out": {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         composante?: string;
+         libelle?: string;
+         codeExterne?: string;
+         niveau?: string | null;
+         discipline?: string | null;
+         diplome?: string | null;
+      };
+      "Formation.jsonld": {
+         "@id"?: string;
+         "@type"?: string;
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         id?: number;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         composante?: string;
+         libelle?: string;
+         codeExterne?: string;
+         niveau?: string | null;
+         discipline?: string | null;
+         diplome?: string | null;
+      };
+      "Formation.jsonld-amenagement.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         composante?: components["schemas"]["Composante.jsonld-amenagement.out"];
+         libelle?: string;
+      };
+      "Formation.jsonld-amenagements_utilisateurs.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         composante?: components["schemas"]["Composante.jsonld-amenagements_utilisateurs.out"];
+         libelle?: string;
+      };
+      "Formation.jsonld-demande.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         composante?: string;
+         libelle?: string;
+      };
+      "Formation.jsonld-utilisateur.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         composante?: string;
+         libelle?: string;
+         codeExterne?: string;
+         niveau?: string | null;
+         discipline?: string | null;
+         diplome?: string | null;
+      };
+      "Inscription-amenagement.out": {
+         formation?: components["schemas"]["Formation-amenagement.out"];
+      };
+      "Inscription-amenagements_utilisateurs.out": {
+         formation?: components["schemas"]["Formation-amenagements_utilisateurs.out"];
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string;
+      };
+      "Inscription-demande.out": {
+         formation?: components["schemas"]["Formation-demande.out"];
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string;
+      };
+      "Inscription-utilisateur.out": {
+         formation?: components["schemas"]["Formation-utilisateur.out"];
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string;
+      };
+      "Inscription.jsonld-amenagement.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         formation?: components["schemas"]["Formation.jsonld-amenagement.out"];
+      };
+      "Inscription.jsonld-amenagements_utilisateurs.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         formation?: components["schemas"]["Formation.jsonld-amenagements_utilisateurs.out"];
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string;
+      };
+      "Inscription.jsonld-demande.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         formation?: components["schemas"]["Formation.jsonld-demande.out"];
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string;
+      };
+      "Inscription.jsonld-utilisateur.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         formation?: components["schemas"]["Formation.jsonld-utilisateur.out"];
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string;
+      };
+      IntervenantBilanFinancier: {
+         uid?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         intervenant?: string;
+         activitesParPeriode?: components["schemas"]["ActiviteBilanFinancier"][];
+      };
+      "IntervenantBilanFinancier.jsonld": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         uid?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         intervenant?: string;
+         activitesParPeriode?: components["schemas"]["ActiviteBilanFinancier.jsonld"][];
+      };
+      "InterventionForfait-forfait.in": {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         intervenant: string;
+         beneficiaires?: string[];
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         periode: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         type: string;
+         heures: string;
+      };
+      "InterventionForfait-forfait.out": {
+         id?: number | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         intervenant: string;
+         beneficiaires?: string[];
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         periode: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         type: string;
+         heures: string;
+         /** Format: date-time */
+         dateCreation?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         utilisateurCreation?: string;
+         /** Format: date-time */
+         dateModification?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         utilisateurModification?: string | null;
+      };
+      "InterventionForfait.jsonld-forfait.in": {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         intervenant: string;
+         beneficiaires?: string[];
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         periode: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         type: string;
+         heures: string;
+      };
+      "InterventionForfait.jsonld-forfait.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         intervenant: string;
+         beneficiaires?: string[];
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         periode: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         type: string;
+         heures: string;
+         /** Format: date-time */
+         dateCreation?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         utilisateurCreation?: string;
+         /** Format: date-time */
+         dateModification?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         utilisateurModification?: string | null;
+      };
+      "LigneServiceFait-services_faits.out": {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         intervenant?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         type?: string;
+         nbHeures?: string;
+         tauxHoraire?: components["schemas"]["TauxHoraire-services_faits.out"] | null;
+      };
+      "LigneServiceFait.jsonld-services_faits.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         intervenant?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         type?: string;
+         nbHeures?: string;
+         tauxHoraire?: components["schemas"]["TauxHoraire.jsonld-services_faits.out"] | null;
+      };
+      "ListeSportifsHautNiveau-sportif_haut_niveau.out": {
+         sportifs?: components["schemas"]["SportifHautNiveau-sportif_haut_niveau.out"][];
+      };
+      "ListeSportifsHautNiveau-sportif_haut_niveau.post": {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         telechargement: string | null;
+      };
+      "ListeSportifsHautNiveau.jsonld-sportif_haut_niveau.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         sportifs?: components["schemas"]["SportifHautNiveau.jsonld-sportif_haut_niveau.out"][];
+      };
+      "ListeSportifsHautNiveau.jsonld-sportif_haut_niveau.post": {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         telechargement: string | null;
+      };
+      "MembreCommission-membre_commission.in": {
+         roles?: string[];
+      };
+      "MembreCommission-membre_commission.out": {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         utilisateur?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         commission?: string;
+         roles?: string[];
+      };
+      "MembreCommission.jsonld-membre_commission.in": {
+         roles?: string[];
+      };
+      "MembreCommission.jsonld-membre_commission.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         utilisateur?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         commission?: string;
+         roles?: string[];
+      };
+      ModificationEtatDemande: {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         demande?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         etat?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         etatPrecedent?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         utilisateurModification?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         profil?: string | null;
+         commentaire?: string | null;
+         /** Format: date-time */
+         dateModification?: string | null;
+      };
+      "ModificationEtatDemande.jsonld": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         demande?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         etat?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         etatPrecedent?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         utilisateurModification?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         profil?: string | null;
+         commentaire?: string | null;
+         /** Format: date-time */
+         dateModification?: string | null;
+      };
+      "OptionReponse-demande.out": {
+         id?: number | null;
+         libelle?: string;
+      };
+      "OptionReponse-question.out": {
+         id?: number | null;
+         libelle?: string;
+         questionsLiees?: string[];
+      };
+      "OptionReponse-reponse.out": {
+         id?: number | null;
+         libelle?: string;
+         questionsLiees?: string[];
+      };
+      "OptionReponse.jsonld-demande.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle?: string;
+      };
+      "OptionReponse.jsonld-question.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle?: string;
+         questionsLiees?: string[];
+      };
+      "OptionReponse.jsonld-reponse.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle?: string;
+         questionsLiees?: string[];
+      };
+      "Parametre-param.out": {
+         cle?: string;
+         fichier?: boolean;
+         valeurs?: string[];
+         valeursCourantes?: components["schemas"]["ValeurParametre-param.out"][];
+      };
+      "Parametre.jsonld-param.out": {
+         "@id"?: string;
+         "@type"?: string;
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         cle?: string;
+         fichier?: boolean;
+         valeurs?: string[];
+         valeursCourantes?: components["schemas"]["ValeurParametre.jsonld-param.out"][];
+      };
+      ParametreUI: {
+         valeur?: string;
+      };
+      "ParametreUI.jsonld": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         valeur?: string;
+      };
+      "PeriodeRH-periode.in": {
+         /** Format: date-time */
+         debut: string | null;
+         /** Format: date-time */
+         fin: string | null;
+         /** Format: date-time */
+         butoir: string | null;
+         envoyee?: boolean;
+      };
+      "PeriodeRH-periode.out": {
+         id?: number | null;
+         /** Format: date-time */
+         debut: string | null;
+         /** Format: date-time */
+         fin: string | null;
+         /** Format: date-time */
+         butoir: string | null;
+         envoyee?: boolean;
+         /** Format: date-time */
+         dateEnvoi?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         utilisateurEnvoi?: string | null;
+      };
+      "PeriodeRH-services_faits.out": {
+         id?: number | null;
+         /** Format: date-time */
+         debut: string | null;
+         /** Format: date-time */
+         fin: string | null;
+         /** Format: date-time */
+         dateEnvoi?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         utilisateurEnvoi?: string | null;
+      };
+      "PeriodeRH.jsonld-periode.in": {
+         /** Format: date-time */
+         debut: string | null;
+         /** Format: date-time */
+         fin: string | null;
+         /** Format: date-time */
+         butoir: string | null;
+         envoyee?: boolean;
+      };
+      "PeriodeRH.jsonld-periode.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         /** Format: date-time */
+         debut: string | null;
+         /** Format: date-time */
+         fin: string | null;
+         /** Format: date-time */
+         butoir: string | null;
+         envoyee?: boolean;
+         /** Format: date-time */
+         dateEnvoi?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         utilisateurEnvoi?: string | null;
+      };
+      "PeriodeRH.jsonld-services_faits.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         /** Format: date-time */
+         debut: string | null;
+         /** Format: date-time */
+         fin: string | null;
+         /** Format: date-time */
+         dateEnvoi?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         utilisateurEnvoi?: string | null;
+      };
+      Photo: {
+         uid?: string;
+         data?: string;
+      };
+      "PieceJointeBeneficiaire-piece_beneficiaire.in": {
+         libelle?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         fichier?: string;
+      };
+      "PieceJointeBeneficiaire-piece_beneficiaire.out": {
+         libelle?: string;
+         /** Format: date-time */
+         dateDepot?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         utilisateurCreation?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         fichier?: string;
+      };
+      "PieceJointeBeneficiaire.jsonld-piece_beneficiaire.in": {
+         libelle?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         fichier?: string;
+      };
+      "PieceJointeBeneficiaire.jsonld-piece_beneficiaire.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         libelle?: string;
+         /** Format: date-time */
+         dateDepot?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         utilisateurCreation?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         fichier?: string;
+      };
+      "ProfilBeneficiaire-profil.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         avecTypologie?: boolean;
+      };
+      "ProfilBeneficiaire-profil.out": {
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         avecTypologie?: boolean;
+      };
+      "ProfilBeneficiaire.jsonld-profil.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         avecTypologie?: boolean;
+      };
+      "ProfilBeneficiaire.jsonld-profil.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         avecTypologie?: boolean;
+      };
+      "Question-question.out": {
+         id?: number | null;
+         libelle?: string;
+         aide?: string | null;
+         typeReponse?: string;
+         obligatoire?: boolean;
+         choixMultiple?: boolean;
+         optionsReponses?: components["schemas"]["OptionReponse-question.out"][];
+         tableOptions?: string | null;
+      };
+      "Question.jsonld-question.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle?: string;
+         aide?: string | null;
+         typeReponse?: string;
+         obligatoire?: boolean;
+         choixMultiple?: boolean;
+         optionsReponses?: components["schemas"]["OptionReponse.jsonld-question.out"][];
+         tableOptions?: string | null;
+      };
+      "QuestionDemande-demande.out": {
+         id?: number | null;
+         libelle?: string;
+         aide?: string | null;
+         typeReponse?: string;
+         obligatoire?: boolean;
+         choixMultiple?: boolean;
+         reponse?: components["schemas"]["ReponseDemande-demande.out"] | null;
+         question?: string;
+      };
+      "QuestionDemande.jsonld-demande.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle?: string;
+         aide?: string | null;
+         typeReponse?: string;
+         obligatoire?: boolean;
+         choixMultiple?: boolean;
+         reponse?: components["schemas"]["ReponseDemande.jsonld-demande.out"] | null;
+         question?: string;
+      };
+      "Reponse-reponse.in": {
+         optionsChoisies?: string[];
+         commentaire?: string | null;
+         piecesJustificatives?: string[];
+      };
+      "Reponse-reponse.out": {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         repondant?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         demande?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         question?: string;
+         optionsChoisies?: components["schemas"]["OptionReponse-reponse.out"][];
+         commentaire?: string | null;
+         piecesJustificatives?: string[];
+         /** Format: date-time */
+         dateModification?: string | null;
+      };
+      "Reponse.jsonld-reponse.in": {
+         optionsChoisies?: string[];
+         commentaire?: string | null;
+         piecesJustificatives?: string[];
+      };
+      "Reponse.jsonld-reponse.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         repondant?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         demande?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         question?: string;
+         optionsChoisies?: components["schemas"]["OptionReponse.jsonld-reponse.out"][];
+         commentaire?: string | null;
+         piecesJustificatives?: string[];
+         /** Format: date-time */
+         dateModification?: string | null;
+      };
+      "ReponseDemande-demande.out": {
+         commentaire?: string | null;
+         optionsReponses?: components["schemas"]["OptionReponse-demande.out"][];
+         piecesJustificatives?: string[];
+      };
+      "ReponseDemande.jsonld-demande.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         commentaire?: string | null;
+         optionsReponses?: components["schemas"]["OptionReponse.jsonld-demande.out"][];
+         piecesJustificatives?: string[];
+      };
+      "Service-service.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "Service-service.out": {
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "Service.jsonld-service.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "Service.jsonld-service.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "ServicesFaits-services_faits.out": {
+         id?: number;
+         periode?: components["schemas"]["PeriodeRH-services_faits.out"];
+         structure?: string;
+         lignes?: components["schemas"]["LigneServiceFait-services_faits.out"][];
+      };
+      "ServicesFaits.jsonld-services_faits.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number;
+         periode?: components["schemas"]["PeriodeRH.jsonld-services_faits.out"];
+         structure?: string;
+         lignes?: components["schemas"]["LigneServiceFait.jsonld-services_faits.out"][];
+      };
+      "SportifHautNiveau-sportif_haut_niveau.out": {
+         identifiantExterne?: string;
+         nom?: string | null;
+         prenom?: string | null;
+         anneeNaissance?: number | null;
+      };
+      "SportifHautNiveau-sportif_haut_niveau.patch": {
+         nom?: string | null;
+         prenom?: string | null;
+         anneeNaissance?: number | null;
+      };
+      "SportifHautNiveau-sportif_haut_niveau.post": {
+         identifiantExterne?: string;
+         nom?: string | null;
+         prenom?: string | null;
+         anneeNaissance?: number | null;
+      };
+      "SportifHautNiveau.jsonld-sportif_haut_niveau.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         identifiantExterne?: string;
+         nom?: string | null;
+         prenom?: string | null;
+         anneeNaissance?: number | null;
+      };
+      "SportifHautNiveau.jsonld-sportif_haut_niveau.post": {
+         identifiantExterne?: string;
+         nom?: string | null;
+         prenom?: string | null;
+         anneeNaissance?: number | null;
+      };
+      TableauDeBord: {
+         /** @description nb total d'événements pour le jour courant */
+         evenementsJour?: number;
+         /** @description différence par rapport à la veille */
+         evolutionJour?: number;
+         /** @description nb total d'événements sur la semaine en cours (lundi=>dimanche) */
+         evenementsSemaine?: number;
+         /** @description différence par rapport à la semaine précédente */
+         evolutionSemaine?: number;
+         /** @description nb total d'événements sur le mois */
+         evenementsMois?: number;
+         /** @description différence par rapport au mois précédent */
+         evolutionMois?: number;
+         /** @description nb d'évenements non affectés pour le jour courant */
+         evenementsNonAffectesJour?: number;
+         /** @description nb d'événements non affectés dans les 7 jours qui viennent */
+         evenementsNonAffectesSemaine?: number;
+         /** @description nb d'événements non affectés dans les 30 jours qui viennent */
+         evenementsNonAffectesMois?: number;
+         /** @description total nb d'événements non affectés */
+         totalEvenementsNonAffectes?: number;
+         /** @description nb d'événements sans bénéficiaires alors qu'ils devraient en avoir un */
+         evenementsSansBeneficiaire?: number;
+         /** @description nb d'événements en attente de validation */
+         evenementsEnAttenteDeValidation?: number;
+         /** @description nb de bénéficiaires avec un profil "à déterminer" */
+         nbBeneficiairesIncomplets?: number;
+         /** @description nb de demandes sur les campagnes ouvertes */
+         nbDemandesEnCours?: number;
+         nbDemandesParEtat?: string[];
+         /** @description nb de bénéficiaires en cours */
+         nbBeneficiaires?: number;
+         /** @description nb d'intervenants actifs */
+         nbIntervenants?: number;
+         nbAvisEseEnAttente?: number;
+         nbDecisionsAttenteValidation?: number;
+         nbDecisionsAEditer?: number;
+         nbAmenagementsEnCours?: number;
+      };
+      "TableauDeBord.jsonld": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         /** @description nb total d'événements pour le jour courant */
+         evenementsJour?: number;
+         /** @description différence par rapport à la veille */
+         evolutionJour?: number;
+         /** @description nb total d'événements sur la semaine en cours (lundi=>dimanche) */
+         evenementsSemaine?: number;
+         /** @description différence par rapport à la semaine précédente */
+         evolutionSemaine?: number;
+         /** @description nb total d'événements sur le mois */
+         evenementsMois?: number;
+         /** @description différence par rapport au mois précédent */
+         evolutionMois?: number;
+         /** @description nb d'évenements non affectés pour le jour courant */
+         evenementsNonAffectesJour?: number;
+         /** @description nb d'événements non affectés dans les 7 jours qui viennent */
+         evenementsNonAffectesSemaine?: number;
+         /** @description nb d'événements non affectés dans les 30 jours qui viennent */
+         evenementsNonAffectesMois?: number;
+         /** @description total nb d'événements non affectés */
+         totalEvenementsNonAffectes?: number;
+         /** @description nb d'événements sans bénéficiaires alors qu'ils devraient en avoir un */
+         evenementsSansBeneficiaire?: number;
+         /** @description nb d'événements en attente de validation */
+         evenementsEnAttenteDeValidation?: number;
+         /** @description nb de bénéficiaires avec un profil "à déterminer" */
+         nbBeneficiairesIncomplets?: number;
+         /** @description nb de demandes sur les campagnes ouvertes */
+         nbDemandesEnCours?: number;
+         nbDemandesParEtat?: string[];
+         /** @description nb de bénéficiaires en cours */
+         nbBeneficiaires?: number;
+         /** @description nb d'intervenants actifs */
+         nbIntervenants?: number;
+         nbAvisEseEnAttente?: number;
+         nbDecisionsAttenteValidation?: number;
+         nbDecisionsAEditer?: number;
+         nbAmenagementsEnCours?: number;
+      };
+      "Tag-tag.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         categorie?: string;
+      };
+      "Tag-tag.out": {
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         categorie?: string;
+      };
+      "Tag.jsonld-tag.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         categorie?: string;
+      };
+      "Tag.jsonld-tag.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         categorie?: string;
+      };
+      "TagUtilisateur-tag_utilisateur.in": {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         tag: string | null;
+      };
+      "TagUtilisateur-tag_utilisateur.out": {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         tag: string | null;
+      };
+      "TagUtilisateur.jsonld-tag_utilisateur.in": {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         tag: string | null;
+      };
+      "TagUtilisateur.jsonld-tag_utilisateur.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         tag: string | null;
+      };
+      "TauxHoraire-ActiviteBeneficiaire.out": {
+         id?: number | null;
+         montant: string;
+      };
+      "TauxHoraire-ActiviteIntervenant.out": {
+         id?: number | null;
+         montant: string;
+      };
+      "TauxHoraire-services_faits.out": {
+         id?: number | null;
+         montant: string;
+      };
+      "TauxHoraire-taux.in": {
+         montant: string;
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string | null;
+      };
+      "TauxHoraire-taux.out": {
+         id?: number | null;
+         montant: string;
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string | null;
+      };
+      "TauxHoraire.jsonld-ActiviteBeneficiaire.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         montant: string;
+      };
+      "TauxHoraire.jsonld-ActiviteIntervenant.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         montant: string;
+      };
+      "TauxHoraire.jsonld-services_faits.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         montant: string;
+      };
+      "TauxHoraire.jsonld-taux.in": {
+         montant: string;
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string | null;
+      };
+      "TauxHoraire.jsonld-taux.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         montant: string;
+         /** Format: date-time */
+         debut?: string;
+         /** Format: date-time */
+         fin?: string | null;
+      };
+      "Telechargement-telechargement.out": {
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         proprietaire?: string;
+         nom?: string;
+         typeMime?: string;
+         urlContenu?: string;
+      };
+      "Telechargement.jsonld-telechargement.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         proprietaire?: string;
+         nom?: string;
+         typeMime?: string;
+         urlContenu?: string;
+      };
+      "TypeAmenagement-amenagements_utilisateurs.out": {
+         id?: number | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         categorie: string;
+      };
+      "TypeAmenagement-type_amenagement.in": {
+         libelle: string;
+         libelleLong?: string | null;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         categorie: string;
+         pedagogique?: boolean | null;
+         examens?: boolean | null;
+         aideHumaine?: boolean | null;
+         decision?: boolean;
+      };
+      "TypeAmenagement-type_amenagement.out": {
+         id?: number | null;
+         libelle: string;
+         libelleLong?: string | null;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         categorie: string;
+         pedagogique?: boolean | null;
+         examens?: boolean | null;
+         aideHumaine?: boolean | null;
+         decision?: boolean;
+      };
+      "TypeAmenagement.jsonld-amenagements_utilisateurs.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         categorie: string;
+      };
+      "TypeAmenagement.jsonld-type_amenagement.in": {
+         libelle: string;
+         libelleLong?: string | null;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         categorie: string;
+         pedagogique?: boolean | null;
+         examens?: boolean | null;
+         aideHumaine?: boolean | null;
+         decision?: boolean;
+      };
+      "TypeAmenagement.jsonld-type_amenagement.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle: string;
+         libelleLong?: string | null;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         categorie: string;
+         pedagogique?: boolean | null;
+         examens?: boolean | null;
+         aideHumaine?: boolean | null;
+         decision?: boolean;
+      };
+      "TypeDemande-type_demande.in": {
+         libelle?: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         profilsCibles?: string[];
+         visibiliteLimitee?: boolean;
+         accompagnementOptionnel?: boolean;
+      };
+      "TypeDemande-type_demande.out": {
+         id?: number | null;
+         libelle?: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         profilsCibles?: string[];
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         campagneEnCours?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         campagnePrecedente?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         campagneSuivante?: string | null;
+         etapes?: components["schemas"]["EtapeDemande-type_demande.out"][];
+         visibiliteLimitee?: boolean;
+         accompagnementOptionnel?: boolean;
+      };
+      "TypeDemande.jsonld-type_demande.in": {
+         libelle?: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         profilsCibles?: string[];
+         visibiliteLimitee?: boolean;
+         accompagnementOptionnel?: boolean;
+      };
+      "TypeDemande.jsonld-type_demande.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle?: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         profilsCibles?: string[];
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         campagneEnCours?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         campagnePrecedente?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         campagneSuivante?: string | null;
+         etapes?: components["schemas"]["EtapeDemande.jsonld-type_demande.out"][];
+         visibiliteLimitee?: boolean;
+         accompagnementOptionnel?: boolean;
+      };
+      "TypeEngagement-types_engagements.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "TypeEngagement-types_engagements.out": {
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "TypeEngagement.jsonld-types_engagements.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "TypeEngagement.jsonld-types_engagements.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "TypeEquipement-type_equipement.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "TypeEquipement-type_equipement.out": {
+         id?: number;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "TypeEquipement.jsonld-type_equipement.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "TypeEquipement.jsonld-type_equipement.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "TypeEvenement-typesEvenements.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         couleur?: string | null;
+         /**
+          * @default true
+          * @example true
+          */
+         visibleParDefaut?: boolean;
+         avecValidation?: boolean;
+         tauxHoraires?: string[];
+         forfait?: boolean;
+      };
+      "TypeEvenement-typesEvenements.out": {
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         couleur?: string | null;
+         /**
+          * @default true
+          * @example true
+          */
+         visibleParDefaut?: boolean;
+         avecValidation?: boolean;
+         tauxHoraires?: string[];
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         tauxActif?: string | null;
+         forfait?: boolean;
+      };
+      "TypeEvenement.jsonld-typesEvenements.in": {
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         couleur?: string | null;
+         /**
+          * @default true
+          * @example true
+          */
+         visibleParDefaut?: boolean;
+         avecValidation?: boolean;
+         tauxHoraires?: string[];
+         forfait?: boolean;
+      };
+      "TypeEvenement.jsonld-typesEvenements.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+         couleur?: string | null;
+         /**
+          * @default true
+          * @example true
+          */
+         visibleParDefaut?: boolean;
+         avecValidation?: boolean;
+         tauxHoraires?: string[];
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         tauxActif?: string | null;
+         forfait?: boolean;
+      };
+      "TypeSuiviAmenagement-type_suivi_amenagement.in": {
+         libelle?: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "TypeSuiviAmenagement-type_suivi_amenagement.out": {
+         id?: number | null;
+         libelle?: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "TypeSuiviAmenagement.jsonld-type_suivi_amenagement.in": {
+         libelle?: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "TypeSuiviAmenagement.jsonld-type_suivi_amenagement.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle?: string;
+         /**
+          * @default true
+          * @example true
+          */
+         actif?: boolean;
+      };
+      "TypologieHandicap-typologies.in": {
+         libelle?: string;
+         actif?: boolean;
+      };
+      "TypologieHandicap-typologies.out": {
+         id?: number | null;
+         libelle?: string;
+         actif?: boolean;
+      };
+      "TypologieHandicap.jsonld-typologies.in": {
+         libelle?: string;
+         actif?: boolean;
+      };
+      "TypologieHandicap.jsonld-typologies.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         libelle?: string;
+         actif?: boolean;
+      };
+      "Utilisateur-ActiviteBeneficiaire.out": {
+         email?: string;
+         nom?: string;
+         prenom?: string;
+      };
+      "Utilisateur-ActiviteIntervenant.out": {
+         email?: string;
+         nom?: string;
+         prenom?: string;
+      };
+      "Utilisateur-amenagement.out": {
+         uid?: string;
+         email?: string;
+         nom?: string;
+         prenom?: string;
+         numeroEtudiant?: number | null;
+         etatAvisEse?: string;
+         tags?: string[];
+         gestionnairesActifs?: string[];
+         inscriptions?: components["schemas"]["Inscription-amenagement.out"][];
+      };
+      "Utilisateur-amenagements_utilisateurs.out": {
+         uid?: string;
+         email?: string;
+         nom?: string;
+         prenom?: string;
+         numeroEtudiant?: number | null;
+         etatAvisEse?: string;
+         amenagements?: components["schemas"]["Amenagement-amenagements_utilisateurs.out"][];
+         tags?: string[];
+         inscriptions?: components["schemas"]["Inscription-amenagements_utilisateurs.out"][];
+      };
+      "Utilisateur-demande.out": {
+         uid?: string;
+         nom?: string;
+         prenom?: string;
+         inscriptions?: components["schemas"]["Inscription-demande.out"][];
+      };
+      "Utilisateur-utilisateur.in": {
+         /** Format: email */
+         emailPerso?: string | null;
+         telPerso?: string | null;
+         contactUrgence?: string | null;
+         roles?: string[];
+         services?: string[];
+         campus?: string[];
+         competences?: string[];
+         typesEvenements?: string[];
+         profils?: string[];
+         /** Format: date-time */
+         intervenantDebut?: string | null;
+         /** Format: date-time */
+         intervenantFin?: string | null;
+         abonneImmediat?: boolean;
+         abonneVeille?: boolean;
+         abonneAvantVeille?: boolean;
+         abonneRecapHebdo?: boolean;
+         numeroAnonyme?: number | null;
+      };
+      "Utilisateur-utilisateur.out": {
+         uid?: string;
+         email?: string;
+         nom?: string;
+         prenom?: string;
+         /** Format: date-time */
+         dateNaissance?: string | null;
+         genre?: string | null;
+         numeroEtudiant?: number | null;
+         /** Format: email */
+         emailPerso?: string | null;
+         telPerso?: string | null;
+         contactUrgence?: string | null;
+         roles?: string[];
+         services?: string[];
+         campus?: string[];
+         competences?: string[];
+         typesEvenements?: string[];
+         profils?: string[];
+         etatAvisEse?: string;
+         tags?: string[];
+         gestionnairesActifs?: string[];
+         /** Format: date-time */
+         intervenantDebut?: string | null;
+         /** Format: date-time */
+         intervenantFin?: string | null;
+         inscriptions?: components["schemas"]["Inscription-utilisateur.out"][];
+         boursier?: boolean | null;
+         statutEtudiant?: string | null;
+         abonneImmediat?: boolean;
+         abonneVeille?: boolean;
+         abonneAvantVeille?: boolean;
+         abonneRecapHebdo?: boolean;
+         decisionAmenagementAnneeEnCours?:
+            | components["schemas"]["DecisionAmenagementExamens-utilisateur.out"]
+            | null;
+         numeroAnonyme?: number | null;
+      };
+      "Utilisateur.jsonld-ActiviteBeneficiaire.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         email?: string;
+         nom?: string;
+         prenom?: string;
+      };
+      "Utilisateur.jsonld-ActiviteIntervenant.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         email?: string;
+         nom?: string;
+         prenom?: string;
+      };
+      "Utilisateur.jsonld-amenagement.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         uid?: string;
+         email?: string;
+         nom?: string;
+         prenom?: string;
+         numeroEtudiant?: number | null;
+         etatAvisEse?: string;
+         tags?: string[];
+         gestionnairesActifs?: string[];
+         inscriptions?: components["schemas"]["Inscription.jsonld-amenagement.out"][];
+      };
+      "Utilisateur.jsonld-amenagements_utilisateurs.out": {
+         "@id"?: string;
+         "@type"?: string;
+         uid?: string;
+         email?: string;
+         nom?: string;
+         prenom?: string;
+         numeroEtudiant?: number | null;
+         etatAvisEse?: string;
+         amenagements?: components["schemas"]["Amenagement.jsonld-amenagements_utilisateurs.out"][];
+         tags?: string[];
+         inscriptions?: components["schemas"]["Inscription.jsonld-amenagements_utilisateurs.out"][];
+      };
+      "Utilisateur.jsonld-demande.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         uid?: string;
+         nom?: string;
+         prenom?: string;
+         inscriptions?: components["schemas"]["Inscription.jsonld-demande.out"][];
+      };
+      "Utilisateur.jsonld-utilisateur.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         uid?: string;
+         email?: string;
+         nom?: string;
+         prenom?: string;
+         /** Format: date-time */
+         dateNaissance?: string | null;
+         genre?: string | null;
+         numeroEtudiant?: number | null;
+         /** Format: email */
+         emailPerso?: string | null;
+         telPerso?: string | null;
+         contactUrgence?: string | null;
+         roles?: string[];
+         services?: string[];
+         campus?: string[];
+         competences?: string[];
+         typesEvenements?: string[];
+         profils?: string[];
+         etatAvisEse?: string;
+         tags?: string[];
+         gestionnairesActifs?: string[];
+         /** Format: date-time */
+         intervenantDebut?: string | null;
+         /** Format: date-time */
+         intervenantFin?: string | null;
+         inscriptions?: components["schemas"]["Inscription.jsonld-utilisateur.out"][];
+         boursier?: boolean | null;
+         statutEtudiant?: string | null;
+         abonneImmediat?: boolean;
+         abonneVeille?: boolean;
+         abonneAvantVeille?: boolean;
+         abonneRecapHebdo?: boolean;
+         decisionAmenagementAnneeEnCours?:
+            | components["schemas"]["DecisionAmenagementExamens.jsonld-utilisateur.out"]
+            | null;
+         numeroAnonyme?: number | null;
+      };
+      "ValeurParametre-param.out": {
+         id?: number | null;
+         valeur?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         fichier?: string | null;
+         /** Format: date-time */
+         debut: string;
+         /** Format: date-time */
+         fin?: string | null;
+      };
+      "ValeurParametre-valeur_param.in": {
+         valeur?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         fichier?: string | null;
+         /** Format: date-time */
+         debut: string;
+         /** Format: date-time */
+         fin?: string | null;
+      };
+      "ValeurParametre-valeur_param.out": {
+         id?: number | null;
+         valeur?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         fichier?: string | null;
+         /** Format: date-time */
+         debut: string;
+         /** Format: date-time */
+         fin?: string | null;
+      };
+      "ValeurParametre.jsonld-param.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         valeur?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         fichier?: string | null;
+         /** Format: date-time */
+         debut: string;
+         /** Format: date-time */
+         fin?: string | null;
+      };
+      "ValeurParametre.jsonld-valeur_param.in": {
+         valeur?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         fichier?: string | null;
+         /** Format: date-time */
+         debut: string;
+         /** Format: date-time */
+         fin?: string | null;
+      };
+      "ValeurParametre.jsonld-valeur_param.out": {
+         "@context"?: OneOf<
+            [
+               string,
+               {
+                  "@vocab": string;
+                  /** @enum {string} */
+                  hydra: "http://www.w3.org/ns/hydra/core#";
+                  [key: string]: unknown;
+               },
+            ]
+         >;
+         "@id"?: string;
+         "@type"?: string;
+         id?: number | null;
+         valeur?: string | null;
+         /**
+          * Format: iri-reference
+          * @example https://example.com/
+          */
+         fichier?: string | null;
+         /** Format: date-time */
+         debut: string;
+         /** Format: date-time */
+         fin?: string | null;
+      };
+   };
+   responses: {};
+   parameters: {};
+   requestBodies: {};
+   headers: {};
+   pathItems: never;
+}
+
+export type $defs = Record<string, never>;
+
+export type external = Record<string, never>;
+
+export interface operations {
+   /**
+    * Retrieves the collection of AvisEse resources.
+    * @description Retrieves the collection of AvisEse resources.
+    */
+   api_utilisateurs_uidavis_ese_get_collection: {
+      parameters: {
+         query?: {
+            /** @description The collection page number */
+            page?: number;
+            /** @description The number of items per page */
+            itemsPerPage?: number;
+            "order[debut]"?: "asc" | "desc";
+         };
+         path: {
+            /** @description AvisEse identifier */
+            uid: string;
+         };
+      };
+      responses: {
+         /** @description AvisEse collection */
+         200: {
+            content: {
+               "application/ld+json": {
+                  "hydra:member": components["schemas"]["AvisEse.jsonld-avis_ese.out"][];
+                  "hydra:totalItems"?: number;
+                  /**
+                   * @example {
+                   *   "@id": "string",
+                   *   "type": "string",
+                   *   "hydra:first": "string",
+                   *   "hydra:last": "string",
+                   *   "hydra:previous": "string",
+                   *   "hydra:next": "string"
+                   * }
+                   */
+                  "hydra:view"?: {
+                     /** Format: iri-reference */
+                     "@id"?: string;
+                     "@type"?: string;
+                     /** Format: iri-reference */
+                     "hydra:first"?: string;
+                     /** Format: iri-reference */
+                     "hydra:last"?: string;
+                     /** Format: iri-reference */
+                     "hydra:previous"?: string;
+                     /** Format: iri-reference */
+                     "hydra:next"?: string;
+                  };
+                  "hydra:search"?: {
+                     "@type"?: string;
+                     "hydra:template"?: string;
+                     "hydra:variableRepresentation"?: string;
+                     "hydra:mapping"?: {
+                        "@type"?: string;
+                        variable?: string;
+                        property?: string | null;
+                        required?: boolean;
+                     }[];
+                  };
+               };
+               "text/html": components["schemas"]["AvisEse-avis_ese.out"][];
+            };
+         };
+      };
+   };
+   /**
+    * Creates a AvisEse resource.
+    * @description Creates a AvisEse resource.
+    */
+   api_utilisateurs_uidavis_ese_post: {
+      parameters: {
+         path: {
+            /** @description AvisEse identifier */
+            uid: string;
+         };
+      };
+      /** @description The new AvisEse resource */
+      requestBody: {
+         content: {
+            "application/ld+json": components["schemas"]["AvisEse.jsonld-avis_ese.in"];
+            "text/html": components["schemas"]["AvisEse-avis_ese.in"];
+         };
+      };
+      responses: {
+         /** @description AvisEse resource created */
+         201: {
+            content: {
+               "application/ld+json": components["schemas"]["AvisEse.jsonld-avis_ese.out"];
+               "text/html": components["schemas"]["AvisEse-avis_ese.out"];
+            };
+         };
+         /** @description Invalid input */
+         400: {
+            content: never;
+         };
+         /** @description Unprocessable entity */
+         422: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Retrieves a AvisEse resource.
+    * @description Retrieves a AvisEse resource.
+    */
+   api_utilisateurs_uidavis_ese_id_get: {
+      parameters: {
+         path: {
+            /** @description AvisEse identifier */
+            uid: string;
+            /** @description AvisEse identifier */
+            id: string;
+         };
+      };
+      responses: {
+         /** @description AvisEse resource */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["AvisEse.jsonld-avis_ese.out"];
+               "text/html": components["schemas"]["AvisEse-avis_ese.out"];
+            };
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Removes the AvisEse resource.
+    * @description Removes the AvisEse resource.
+    */
+   api_utilisateurs_uidavis_ese_id_delete: {
+      parameters: {
+         path: {
+            /** @description AvisEse identifier */
+            uid: string;
+            /** @description AvisEse identifier */
+            id: string;
+         };
+      };
+      responses: {
+         /** @description AvisEse resource deleted */
+         204: {
+            content: never;
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Updates the AvisEse resource.
+    * @description Updates the AvisEse resource.
+    */
+   api_utilisateurs_uidavis_ese_id_patch: {
+      parameters: {
+         path: {
+            /** @description AvisEse identifier */
+            uid: string;
+            /** @description AvisEse identifier */
+            id: string;
+         };
+      };
+      /** @description The updated AvisEse resource */
+      requestBody: {
+         content: {
+            "application/merge-patch+json": components["schemas"]["AvisEse-avis_ese.in"];
+         };
+      };
+      responses: {
+         /** @description AvisEse resource updated */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["AvisEse.jsonld-avis_ese.out"];
+               "text/html": components["schemas"]["AvisEse-avis_ese.out"];
+            };
+         };
+         /** @description Invalid input */
+         400: {
+            content: never;
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+         /** @description Unprocessable entity */
+         422: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Retrieves a DecisionAmenagementExamens resource.
+    * @description Retrieves a DecisionAmenagementExamens resource.
+    */
+   api_utilisateurs_uiddecisions_annee_get: {
+      parameters: {
+         path: {
+            /** @description DecisionAmenagementExamens identifier */
+            uid: string;
+            /** @description DecisionAmenagementExamens identifier */
+            annee: string;
+         };
+      };
+      responses: {
+         /** @description DecisionAmenagementExamens resource */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["DecisionAmenagementExamens.jsonld-decision.out"];
+               "application/pdf": components["schemas"]["DecisionAmenagementExamens-decision.out"];
+            };
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Updates the DecisionAmenagementExamens resource.
+    * @description Updates the DecisionAmenagementExamens resource.
+    */
+   api_utilisateurs_uiddecisions_annee_patch: {
+      parameters: {
+         path: {
+            /** @description DecisionAmenagementExamens identifier */
+            uid: string;
+            /** @description DecisionAmenagementExamens identifier */
+            annee: string;
+         };
+      };
+      /** @description The updated DecisionAmenagementExamens resource */
+      requestBody: {
+         content: {
+            "application/merge-patch+json": components["schemas"]["DecisionAmenagementExamens-decision.in"];
+         };
+      };
+      responses: {
+         /** @description DecisionAmenagementExamens resource updated */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["DecisionAmenagementExamens.jsonld-decision.out"];
+               "text/html": components["schemas"]["DecisionAmenagementExamens-decision.out"];
+            };
+         };
+         /** @description Invalid input */
+         400: {
+            content: never;
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+         /** @description Unprocessable entity */
+         422: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Retrieves the collection of Commission resources.
+    * @description Retrieves the collection of Commission resources.
+    */
+   api_commissions_get_collection: {
+      parameters: {
+         query?: {
+            /** @description The collection page number */
+            page?: number;
+            /** @description The number of items per page */
+            itemsPerPage?: number;
+            "order[libelle]"?: "asc" | "desc";
+         };
+      };
+      responses: {
+         /** @description Commission collection */
+         200: {
+            content: {
+               "application/ld+json": {
+                  "hydra:member": components["schemas"]["Commission.jsonld-commission.out"][];
+                  "hydra:totalItems"?: number;
+                  /**
+                   * @example {
+                   *   "@id": "string",
+                   *   "type": "string",
+                   *   "hydra:first": "string",
+                   *   "hydra:last": "string",
+                   *   "hydra:previous": "string",
+                   *   "hydra:next": "string"
+                   * }
+                   */
+                  "hydra:view"?: {
+                     /** Format: iri-reference */
+                     "@id"?: string;
+                     "@type"?: string;
+                     /** Format: iri-reference */
+                     "hydra:first"?: string;
+                     /** Format: iri-reference */
+                     "hydra:last"?: string;
+                     /** Format: iri-reference */
+                     "hydra:previous"?: string;
+                     /** Format: iri-reference */
+                     "hydra:next"?: string;
+                  };
+                  "hydra:search"?: {
+                     "@type"?: string;
+                     "hydra:template"?: string;
+                     "hydra:variableRepresentation"?: string;
+                     "hydra:mapping"?: {
+                        "@type"?: string;
+                        variable?: string;
+                        property?: string | null;
+                        required?: boolean;
+                     }[];
+                  };
+               };
+               "text/html": components["schemas"]["Commission-commission.out"][];
+            };
+         };
+      };
+   };
+   /**
+    * Creates a Commission resource.
+    * @description Creates a Commission resource.
+    */
+   api_commissions_post: {
+      /** @description The new Commission resource */
+      requestBody: {
+         content: {
+            "application/ld+json": components["schemas"]["Commission.jsonld-commission.in"];
+            "text/html": components["schemas"]["Commission-commission.in"];
+         };
+      };
+      responses: {
+         /** @description Commission resource created */
+         201: {
+            content: {
+               "application/ld+json": components["schemas"]["Commission.jsonld-commission.out"];
+               "text/html": components["schemas"]["Commission-commission.out"];
+            };
+         };
+         /** @description Invalid input */
+         400: {
+            content: never;
+         };
+         /** @description Unprocessable entity */
+         422: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Retrieves the collection of MembreCommission resources.
+    * @description Retrieves the collection of MembreCommission resources.
+    */
+   api_commissions_commissionIdmembres_get_collection: {
+      parameters: {
+         query?: {
+            /** @description The collection page number */
+            page?: number;
+            /** @description The number of items per page */
+            itemsPerPage?: number;
+         };
+         path: {
+            /** @description MembreCommission identifier */
+            commissionId: string;
+         };
+      };
+      responses: {
+         /** @description MembreCommission collection */
+         200: {
+            content: {
+               "application/ld+json": {
+                  "hydra:member": components["schemas"]["MembreCommission.jsonld-membre_commission.out"][];
+                  "hydra:totalItems"?: number;
+                  /**
+                   * @example {
+                   *   "@id": "string",
+                   *   "type": "string",
+                   *   "hydra:first": "string",
+                   *   "hydra:last": "string",
+                   *   "hydra:previous": "string",
+                   *   "hydra:next": "string"
+                   * }
+                   */
+                  "hydra:view"?: {
+                     /** Format: iri-reference */
+                     "@id"?: string;
+                     "@type"?: string;
+                     /** Format: iri-reference */
+                     "hydra:first"?: string;
+                     /** Format: iri-reference */
+                     "hydra:last"?: string;
+                     /** Format: iri-reference */
+                     "hydra:previous"?: string;
+                     /** Format: iri-reference */
+                     "hydra:next"?: string;
+                  };
+                  "hydra:search"?: {
+                     "@type"?: string;
+                     "hydra:template"?: string;
+                     "hydra:variableRepresentation"?: string;
+                     "hydra:mapping"?: {
+                        "@type"?: string;
+                        variable?: string;
+                        property?: string | null;
+                        required?: boolean;
+                     }[];
+                  };
+               };
+               "text/html": components["schemas"]["MembreCommission-membre_commission.out"][];
+            };
+         };
+      };
+   };
+   /**
+    * Retrieves a MembreCommission resource.
+    * @description Retrieves a MembreCommission resource.
+    */
+   api_commissions_commissionIdmembres_uid_get: {
+      parameters: {
+         path: {
+            /** @description MembreCommission identifier */
+            commissionId: string;
+            /** @description MembreCommission identifier */
+            uid: string;
+         };
+      };
+      responses: {
+         /** @description MembreCommission resource */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["MembreCommission.jsonld-membre_commission.out"];
+               "text/html": components["schemas"]["MembreCommission-membre_commission.out"];
+            };
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Replaces the MembreCommission resource.
+    * @description Replaces the MembreCommission resource.
+    */
+   api_commissions_commissionIdmembres_uid_put: {
+      parameters: {
+         path: {
+            /** @description MembreCommission identifier */
+            commissionId: string;
+            /** @description MembreCommission identifier */
+            uid: string;
+         };
+      };
+      /** @description The updated MembreCommission resource */
+      requestBody: {
+         content: {
+            "application/ld+json": components["schemas"]["MembreCommission.jsonld-membre_commission.in"];
+            "text/html": components["schemas"]["MembreCommission-membre_commission.in"];
+         };
+      };
+      responses: {
+         /** @description MembreCommission resource updated */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["MembreCommission.jsonld-membre_commission.out"];
+               "text/html": components["schemas"]["MembreCommission-membre_commission.out"];
+            };
+         };
+         /** @description Invalid input */
+         400: {
+            content: never;
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+         /** @description Unprocessable entity */
+         422: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Removes the MembreCommission resource.
+    * @description Removes the MembreCommission resource.
+    */
+   api_commissions_commissionIdmembres_uid_delete: {
+      parameters: {
+         path: {
+            /** @description MembreCommission identifier */
+            commissionId: string;
+            /** @description MembreCommission identifier */
+            uid: string;
+         };
+      };
+      responses: {
+         /** @description MembreCommission resource deleted */
+         204: {
+            content: never;
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Retrieves a Commission resource.
+    * @description Retrieves a Commission resource.
+    */
+   api_commissions_id_get: {
+      parameters: {
+         path: {
+            /** @description Commission identifier */
+            id: string;
+         };
+      };
+      responses: {
+         /** @description Commission resource */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["Commission.jsonld-commission.out"];
+               "text/html": components["schemas"]["Commission-commission.out"];
+            };
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Updates the Commission resource.
+    * @description Updates the Commission resource.
+    */
+   api_commissions_id_patch: {
+      parameters: {
+         path: {
+            /** @description Commission identifier */
+            id: string;
+         };
+      };
+      /** @description The updated Commission resource */
+      requestBody: {
+         content: {
+            "application/merge-patch+json": components["schemas"]["Commission-commission.in"];
+         };
+      };
+      responses: {
+         /** @description Commission resource updated */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["Commission.jsonld-commission.out"];
+               "text/html": components["schemas"]["Commission-commission.out"];
+            };
+         };
+         /** @description Invalid input */
+         400: {
+            content: never;
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+         /** @description Unprocessable entity */
+         422: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Retrieves the collection of Demande resources.
+    * @description Retrieves the collection of Demande resources.
+    */
+   api_demandes_get_collection: {
+      parameters: {
+         query?: {
+            /** @description The collection page number */
+            page?: number;
+            /** @description The number of items per page */
+            itemsPerPage?: number;
+            "demandeur.nom"?: string;
+            "demandeur.prenom"?: string;
+            etat?: string;
+            "etat[]"?: string[];
+            "campagne.typeDemande"?: string;
+            "campagne.typeDemande[]"?: string[];
+            "campagne.typeDemande.libelle"?: string;
+            campagne?: string;
+            "campagne[]"?: string[];
+            demandeur?: string;
+            "demandeur[]"?: string[];
+            gestionnaire?: string;
+            "gestionnaire[]"?: string[];
+            libelleComposante?: string;
+            "libelleComposante[]"?: string[];
+            libelleFormation?: string;
+            "libelleFormation[]"?: string[];
+            composante?: string;
+            "composante[]"?: string[];
+            formation?: string;
+            "formation[]"?: string[];
+            discipline?: string;
+            "discipline[]"?: string[];
+            "order[demandeur.nom]"?: "asc" | "desc";
+            "order[dateDepot]"?: "asc" | "desc";
+            format_simple?: boolean;
+            archivees?: boolean;
+         };
+      };
+      responses: {
+         /** @description Demande collection */
+         200: {
+            content: {
+               "application/ld+json": {
+                  "hydra:member": components["schemas"]["Demande.jsonld-demande.out"][];
+                  "hydra:totalItems"?: number;
+                  /**
+                   * @example {
+                   *   "@id": "string",
+                   *   "type": "string",
+                   *   "hydra:first": "string",
+                   *   "hydra:last": "string",
+                   *   "hydra:previous": "string",
+                   *   "hydra:next": "string"
+                   * }
+                   */
+                  "hydra:view"?: {
+                     /** Format: iri-reference */
+                     "@id"?: string;
+                     "@type"?: string;
+                     /** Format: iri-reference */
+                     "hydra:first"?: string;
+                     /** Format: iri-reference */
+                     "hydra:last"?: string;
+                     /** Format: iri-reference */
+                     "hydra:previous"?: string;
+                     /** Format: iri-reference */
+                     "hydra:next"?: string;
+                  };
+                  "hydra:search"?: {
+                     "@type"?: string;
+                     "hydra:template"?: string;
+                     "hydra:variableRepresentation"?: string;
+                     "hydra:mapping"?: {
+                        "@type"?: string;
+                        variable?: string;
+                        property?: string | null;
+                        required?: boolean;
+                     }[];
+                  };
+               };
+               "text/html": components["schemas"]["Demande-demande.out"][];
+            };
+         };
+      };
+   };
+   /**
+    * Creates a Demande resource.
+    * @description Creates a Demande resource.
+    */
+   api_demandes_post: {
+      /** @description The new Demande resource */
+      requestBody: {
+         content: {
+            "application/ld+json": components["schemas"]["Demande.jsonld-demande.in"];
+            "text/html": components["schemas"]["Demande-demande.in"];
+         };
+      };
+      responses: {
+         /** @description Demande resource created */
+         201: {
+            content: {
+               "application/ld+json": components["schemas"]["Demande.jsonld-demande.out"];
+               "text/html": components["schemas"]["Demande-demande.out"];
+            };
+         };
+         /** @description Invalid input */
+         400: {
+            content: never;
+         };
+         /** @description Unprocessable entity */
+         422: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Retrieves the collection of ModificationEtatDemande resources.
+    * @description Retrieves the collection of ModificationEtatDemande resources.
+    */
+   api_demandes_demandeIdmodifications_get_collection: {
+      parameters: {
+         query?: {
+            /** @description The collection page number */
+            page?: number;
+            /** @description The number of items per page */
+            itemsPerPage?: number;
+            "order[dateModification]"?: "asc" | "desc";
+            "order[id]"?: "asc" | "desc";
+            "dateModification[before]"?: string;
+            "dateModification[strictly_before]"?: string;
+            "dateModification[after]"?: string;
+            "dateModification[strictly_after]"?: string;
+            demande?: string;
+            "demande[]"?: string[];
+         };
+         path: {
+            /** @description ModificationEtatDemande identifier */
+            demandeId: string;
+         };
+      };
+      responses: {
+         /** @description ModificationEtatDemande collection */
+         200: {
+            content: {
+               "application/ld+json": {
+                  "hydra:member": components["schemas"]["ModificationEtatDemande.jsonld"][];
+                  "hydra:totalItems"?: number;
+                  /**
+                   * @example {
+                   *   "@id": "string",
+                   *   "type": "string",
+                   *   "hydra:first": "string",
+                   *   "hydra:last": "string",
+                   *   "hydra:previous": "string",
+                   *   "hydra:next": "string"
+                   * }
+                   */
+                  "hydra:view"?: {
+                     /** Format: iri-reference */
+                     "@id"?: string;
+                     "@type"?: string;
+                     /** Format: iri-reference */
+                     "hydra:first"?: string;
+                     /** Format: iri-reference */
+                     "hydra:last"?: string;
+                     /** Format: iri-reference */
+                     "hydra:previous"?: string;
+                     /** Format: iri-reference */
+                     "hydra:next"?: string;
+                  };
+                  "hydra:search"?: {
+                     "@type"?: string;
+                     "hydra:template"?: string;
+                     "hydra:variableRepresentation"?: string;
+                     "hydra:mapping"?: {
+                        "@type"?: string;
+                        variable?: string;
+                        property?: string | null;
+                        required?: boolean;
+                     }[];
+                  };
+               };
+               "text/html": components["schemas"]["ModificationEtatDemande"][];
+            };
+         };
+      };
+   };
+   /**
+    * Retrieves a ModificationEtatDemande resource.
+    * @description Retrieves a ModificationEtatDemande resource.
+    */
+   api_demandes_demandeIdmodifications_id_get: {
+      parameters: {
+         path: {
+            /** @description ModificationEtatDemande identifier */
+            demandeId: string;
+            /** @description ModificationEtatDemande identifier */
+            id: string;
+         };
+      };
+      responses: {
+         /** @description ModificationEtatDemande resource */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["ModificationEtatDemande.jsonld"];
+               "text/html": components["schemas"]["ModificationEtatDemande"];
+            };
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Retrieves a Reponse resource.
+    * @description Retrieves a Reponse resource.
+    */
+   api_demandes_demandeIdquestions_questionIdreponse_get: {
+      parameters: {
+         path: {
+            /** @description Reponse identifier */
+            demandeId: string;
+            /** @description Reponse identifier */
+            questionId: string;
+         };
+      };
+      responses: {
+         /** @description Reponse resource */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["Reponse.jsonld-reponse.out"];
+               "text/html": components["schemas"]["Reponse-reponse.out"];
+            };
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Replaces the Reponse resource.
+    * @description Replaces the Reponse resource.
+    */
+   api_demandes_demandeIdquestions_questionIdreponse_put: {
+      parameters: {
+         path: {
+            /** @description Reponse identifier */
+            demandeId: string;
+            /** @description Reponse identifier */
+            questionId: string;
+         };
+      };
+      /** @description The updated Reponse resource */
+      requestBody: {
+         content: {
+            "application/ld+json": components["schemas"]["Reponse.jsonld-reponse.in"];
+            "text/html": components["schemas"]["Reponse-reponse.in"];
+         };
+      };
+      responses: {
+         /** @description Reponse resource updated */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["Reponse.jsonld-reponse.out"];
+               "text/html": components["schemas"]["Reponse-reponse.out"];
+            };
+         };
+         /** @description Invalid input */
+         400: {
+            content: never;
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+         /** @description Unprocessable entity */
+         422: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Retrieves a Demande resource.
+    * @description Retrieves a Demande resource.
+    */
+   api_demandes_id_get: {
+      parameters: {
+         path: {
+            /** @description Demande identifier */
+            id: string;
+         };
+      };
+      responses: {
+         /** @description Demande resource */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["Demande.jsonld-demande.out"];
+               "text/html": components["schemas"]["Demande-demande.out"];
+            };
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Updates the Demande resource.
+    * @description Updates the Demande resource.
+    */
+   api_demandes_id_patch: {
+      parameters: {
+         path: {
+            /** @description Demande identifier */
+            id: string;
+         };
+      };
+      /** @description The updated Demande resource */
+      requestBody: {
+         content: {
+            "application/merge-patch+json": components["schemas"]["Demande-demande.modif"];
+         };
+      };
+      responses: {
+         /** @description Demande resource updated */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["Demande.jsonld-demande.out"];
+               "text/html": components["schemas"]["Demande-demande.out"];
+            };
+         };
+         /** @description Invalid input */
+         400: {
+            content: never;
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+         /** @description Unprocessable entity */
+         422: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Retrieves the collection of EtapeDemande resources.
+    * @description Retrieves the collection of EtapeDemande resources.
+    */
+   api_etapes_demandes_get_collection: {
+      parameters: {
+         query?: {
+            /** @description The collection page number */
+            page?: number;
+            /** @description The number of items per page */
+            itemsPerPage?: number;
+         };
+      };
+      responses: {
+         /** @description EtapeDemande collection */
+         200: {
+            content: {
+               "application/ld+json": {
+                  "hydra:member": components["schemas"]["EtapeDemande.jsonld-etape_demande.out"][];
+                  "hydra:totalItems"?: number;
+                  /**
+                   * @example {
+                   *   "@id": "string",
+                   *   "type": "string",
+                   *   "hydra:first": "string",
+                   *   "hydra:last": "string",
+                   *   "hydra:previous": "string",
+                   *   "hydra:next": "string"
+                   * }
+                   */
+                  "hydra:view"?: {
+                     /** Format: iri-reference */
+                     "@id"?: string;
+                     "@type"?: string;
+                     /** Format: iri-reference */
+                     "hydra:first"?: string;
+                     /** Format: iri-reference */
+                     "hydra:last"?: string;
+                     /** Format: iri-reference */
+                     "hydra:previous"?: string;
+                     /** Format: iri-reference */
+                     "hydra:next"?: string;
+                  };
+                  "hydra:search"?: {
+                     "@type"?: string;
+                     "hydra:template"?: string;
+                     "hydra:variableRepresentation"?: string;
+                     "hydra:mapping"?: {
+                        "@type"?: string;
+                        variable?: string;
+                        property?: string | null;
+                        required?: boolean;
+                     }[];
+                  };
+               };
+               "text/html": components["schemas"]["EtapeDemande-etape_demande.out"][];
+            };
+         };
+      };
+   };
+   /**
+    * Retrieves a EtapeDemande resource.
+    * @description Retrieves a EtapeDemande resource.
+    */
+   api_etapes_demandes_id_get: {
+      parameters: {
+         path: {
+            /** @description EtapeDemande identifier */
+            id: string;
+         };
+      };
+      responses: {
+         /** @description EtapeDemande resource */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["EtapeDemande.jsonld-etape_demande.out"];
+               "text/html": components["schemas"]["EtapeDemande-etape_demande.out"];
+            };
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Retrieves a Question resource.
+    * @description Retrieves a Question resource.
+    */
+   api_questions_id_get: {
+      parameters: {
+         path: {
+            /** @description Question identifier */
+            id: string;
+         };
+      };
+      responses: {
+         /** @description Question resource */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["Question.jsonld-question.out"];
+               "text/html": components["schemas"]["Question-question.out"];
+            };
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Retrieves the collection of TypeDemande resources.
+    * @description Retrieves the collection of TypeDemande resources.
+    */
+   api_types_demandes_get_collection: {
+      parameters: {
+         query?: {
+            /** @description The collection page number */
+            page?: number;
+            /** @description The number of items per page */
+            itemsPerPage?: number;
+            "order[libelle]"?: "asc" | "desc";
+         };
+      };
+      responses: {
+         /** @description TypeDemande collection */
+         200: {
+            content: {
+               "application/ld+json": {
+                  "hydra:member": components["schemas"]["TypeDemande.jsonld-type_demande.out"][];
+                  "hydra:totalItems"?: number;
+                  /**
+                   * @example {
+                   *   "@id": "string",
+                   *   "type": "string",
+                   *   "hydra:first": "string",
+                   *   "hydra:last": "string",
+                   *   "hydra:previous": "string",
+                   *   "hydra:next": "string"
+                   * }
+                   */
+                  "hydra:view"?: {
+                     /** Format: iri-reference */
+                     "@id"?: string;
+                     "@type"?: string;
+                     /** Format: iri-reference */
+                     "hydra:first"?: string;
+                     /** Format: iri-reference */
+                     "hydra:last"?: string;
+                     /** Format: iri-reference */
+                     "hydra:previous"?: string;
+                     /** Format: iri-reference */
+                     "hydra:next"?: string;
+                  };
+                  "hydra:search"?: {
+                     "@type"?: string;
+                     "hydra:template"?: string;
+                     "hydra:variableRepresentation"?: string;
+                     "hydra:mapping"?: {
+                        "@type"?: string;
+                        variable?: string;
+                        property?: string | null;
+                        required?: boolean;
+                     }[];
+                  };
+               };
+               "text/html": components["schemas"]["TypeDemande-type_demande.out"][];
+            };
+         };
+      };
+   };
+   /**
+    * Creates a TypeDemande resource.
+    * @description Creates a TypeDemande resource.
+    */
+   api_types_demandes_post: {
+      /** @description The new TypeDemande resource */
+      requestBody: {
+         content: {
+            "application/ld+json": components["schemas"]["TypeDemande.jsonld-type_demande.in"];
+            "text/html": components["schemas"]["TypeDemande-type_demande.in"];
+         };
+      };
+      responses: {
+         /** @description TypeDemande resource created */
+         201: {
+            content: {
+               "application/ld+json": components["schemas"]["TypeDemande.jsonld-type_demande.out"];
+               "text/html": components["schemas"]["TypeDemande-type_demande.out"];
+            };
+         };
+         /** @description Invalid input */
+         400: {
+            content: never;
+         };
+         /** @description Unprocessable entity */
+         422: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Retrieves a TypeDemande resource.
+    * @description Retrieves a TypeDemande resource.
+    */
+   api_types_demandes_id_get: {
+      parameters: {
+         path: {
+            /** @description TypeDemande identifier */
+            id: string;
+         };
+      };
+      responses: {
+         /** @description TypeDemande resource */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["TypeDemande.jsonld-type_demande.out"];
+               "text/html": components["schemas"]["TypeDemande-type_demande.out"];
+            };
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Updates the TypeDemande resource.
+    * @description Updates the TypeDemande resource.
+    */
+   api_types_demandes_id_patch: {
+      parameters: {
+         path: {
+            /** @description TypeDemande identifier */
+            id: string;
+         };
+      };
+      /** @description The updated TypeDemande resource */
+      requestBody: {
+         content: {
+            "application/merge-patch+json": components["schemas"]["TypeDemande-type_demande.in"];
+         };
+      };
+      responses: {
+         /** @description TypeDemande resource updated */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["TypeDemande.jsonld-type_demande.out"];
+               "text/html": components["schemas"]["TypeDemande-type_demande.out"];
+            };
+         };
+         /** @description Invalid input */
+         400: {
+            content: never;
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+         /** @description Unprocessable entity */
+         422: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Retrieves the collection of CampagneDemande resources.
+    * @description Retrieves the collection of CampagneDemande resources.
+    */
+   api_types_demandes_typeIdcampagnes_get_collection: {
+      parameters: {
+         query?: {
+            /** @description The collection page number */
+            page?: number;
+            /** @description The number of items per page */
+            itemsPerPage?: number;
+         };
+         path: {
+            /** @description CampagneDemande identifier */
+            typeId: string;
+         };
+      };
+      responses: {
+         /** @description CampagneDemande collection */
+         200: {
+            content: {
+               "application/ld+json": {
+                  "hydra:member": components["schemas"]["CampagneDemande.jsonld-campagne.out"][];
+                  "hydra:totalItems"?: number;
+                  /**
+                   * @example {
+                   *   "@id": "string",
+                   *   "type": "string",
+                   *   "hydra:first": "string",
+                   *   "hydra:last": "string",
+                   *   "hydra:previous": "string",
+                   *   "hydra:next": "string"
+                   * }
+                   */
+                  "hydra:view"?: {
+                     /** Format: iri-reference */
+                     "@id"?: string;
+                     "@type"?: string;
+                     /** Format: iri-reference */
+                     "hydra:first"?: string;
+                     /** Format: iri-reference */
+                     "hydra:last"?: string;
+                     /** Format: iri-reference */
+                     "hydra:previous"?: string;
+                     /** Format: iri-reference */
+                     "hydra:next"?: string;
+                  };
+                  "hydra:search"?: {
+                     "@type"?: string;
+                     "hydra:template"?: string;
+                     "hydra:variableRepresentation"?: string;
+                     "hydra:mapping"?: {
+                        "@type"?: string;
+                        variable?: string;
+                        property?: string | null;
+                        required?: boolean;
+                     }[];
+                  };
+               };
+               "text/html": components["schemas"]["CampagneDemande-campagne.out"][];
+            };
+         };
+      };
+   };
+   /**
+    * Creates a CampagneDemande resource.
+    * @description Creates a CampagneDemande resource.
+    */
+   api_types_demandes_typeIdcampagnes_post: {
+      parameters: {
+         path: {
+            /** @description CampagneDemande identifier */
+            typeId: string;
+         };
+      };
+      /** @description The new CampagneDemande resource */
+      requestBody: {
+         content: {
+            "application/ld+json": components["schemas"]["CampagneDemande.jsonld-campagne.in"];
+            "text/html": components["schemas"]["CampagneDemande-campagne.in"];
+         };
+      };
+      responses: {
+         /** @description CampagneDemande resource created */
+         201: {
+            content: {
+               "application/ld+json": components["schemas"]["CampagneDemande.jsonld-campagne.out"];
+               "text/html": components["schemas"]["CampagneDemande-campagne.out"];
+            };
+         };
+         /** @description Invalid input */
+         400: {
+            content: never;
+         };
+         /** @description Unprocessable entity */
+         422: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Retrieves a CampagneDemande resource.
+    * @description Retrieves a CampagneDemande resource.
+    */
+   api_types_demandes_typeIdcampagnes_id_get: {
+      parameters: {
+         path: {
+            /** @description CampagneDemande identifier */
+            id: string;
+            /** @description CampagneDemande identifier */
+            typeId: string;
+         };
+      };
+      responses: {
+         /** @description CampagneDemande resource */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["CampagneDemande.jsonld-campagne.out"];
+               "text/html": components["schemas"]["CampagneDemande-campagne.out"];
+            };
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Updates the CampagneDemande resource.
+    * @description Updates the CampagneDemande resource.
+    */
+   api_types_demandes_typeIdcampagnes_id_patch: {
+      parameters: {
+         path: {
+            /** @description CampagneDemande identifier */
+            id: string;
+            /** @description CampagneDemande identifier */
+            typeId: string;
+         };
+      };
+      /** @description The updated CampagneDemande resource */
+      requestBody: {
+         content: {
+            "application/merge-patch+json": components["schemas"]["CampagneDemande-campagne.in"];
+         };
+      };
+      responses: {
+         /** @description CampagneDemande resource updated */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["CampagneDemande.jsonld-campagne.out"];
+               "text/html": components["schemas"]["CampagneDemande-campagne.out"];
+            };
+         };
+         /** @description Invalid input */
+         400: {
+            content: never;
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+         /** @description Unprocessable entity */
+         422: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Retrieves the collection of Demande resources.
+    * @description Retrieves the collection of Demande resources.
+    */
+   api_utilisateurs_uiddemandes_get_collection: {
+      parameters: {
+         query?: {
+            /** @description The collection page number */
+            page?: number;
+            /** @description The number of items per page */
+            itemsPerPage?: number;
+            "demandeur.nom"?: string;
+            "demandeur.prenom"?: string;
+            etat?: string;
+            "etat[]"?: string[];
+            "campagne.typeDemande"?: string;
+            "campagne.typeDemande[]"?: string[];
+            "campagne.typeDemande.libelle"?: string;
+            campagne?: string;
+            "campagne[]"?: string[];
+            demandeur?: string;
+            "demandeur[]"?: string[];
+            gestionnaire?: string;
+            "gestionnaire[]"?: string[];
+            libelleComposante?: string;
+            "libelleComposante[]"?: string[];
+            libelleFormation?: string;
+            "libelleFormation[]"?: string[];
+            composante?: string;
+            "composante[]"?: string[];
+            formation?: string;
+            "formation[]"?: string[];
+            discipline?: string;
+            "discipline[]"?: string[];
+            "order[demandeur.nom]"?: "asc" | "desc";
+            "order[dateDepot]"?: "asc" | "desc";
+            format_simple?: boolean;
+            archivees?: boolean;
+         };
+         path: {
+            /** @description Demande identifier */
+            uid: string;
+         };
+      };
+      responses: {
+         /** @description Demande collection */
+         200: {
+            content: {
+               "application/ld+json": {
+                  "hydra:member": components["schemas"]["Demande.jsonld-demande.out"][];
+                  "hydra:totalItems"?: number;
+                  /**
+                   * @example {
+                   *   "@id": "string",
+                   *   "type": "string",
+                   *   "hydra:first": "string",
+                   *   "hydra:last": "string",
+                   *   "hydra:previous": "string",
+                   *   "hydra:next": "string"
+                   * }
+                   */
+                  "hydra:view"?: {
+                     /** Format: iri-reference */
+                     "@id"?: string;
+                     "@type"?: string;
+                     /** Format: iri-reference */
+                     "hydra:first"?: string;
+                     /** Format: iri-reference */
+                     "hydra:last"?: string;
+                     /** Format: iri-reference */
+                     "hydra:previous"?: string;
+                     /** Format: iri-reference */
+                     "hydra:next"?: string;
+                  };
+                  "hydra:search"?: {
+                     "@type"?: string;
+                     "hydra:template"?: string;
+                     "hydra:variableRepresentation"?: string;
+                     "hydra:mapping"?: {
+                        "@type"?: string;
+                        variable?: string;
+                        property?: string | null;
+                        required?: boolean;
+                     }[];
+                  };
+               };
+               "text/html": components["schemas"]["Demande-demande.out"][];
+            };
+         };
+      };
+   };
+   /**
+    * Retrieves the collection of Entretien resources.
+    * @description Retrieves the collection of Entretien resources.
+    */
+   api_utilisateurs_uidentretiens_get_collection: {
+      parameters: {
+         query?: {
+            /** @description The collection page number */
+            page?: number;
+            /** @description The number of items per page */
+            itemsPerPage?: number;
+            "order[date]"?: "asc" | "desc";
+         };
+         path: {
+            /** @description Entretien identifier */
+            uid: string;
+         };
+      };
+      responses: {
+         /** @description Entretien collection */
+         200: {
+            content: {
+               "application/ld+json": {
+                  "hydra:member": components["schemas"]["Entretien.jsonld-entretien.out"][];
+                  "hydra:totalItems"?: number;
+                  /**
+                   * @example {
+                   *   "@id": "string",
+                   *   "type": "string",
+                   *   "hydra:first": "string",
+                   *   "hydra:last": "string",
+                   *   "hydra:previous": "string",
+                   *   "hydra:next": "string"
+                   * }
+                   */
+                  "hydra:view"?: {
+                     /** Format: iri-reference */
+                     "@id"?: string;
+                     "@type"?: string;
+                     /** Format: iri-reference */
+                     "hydra:first"?: string;
+                     /** Format: iri-reference */
+                     "hydra:last"?: string;
+                     /** Format: iri-reference */
+                     "hydra:previous"?: string;
+                     /** Format: iri-reference */
+                     "hydra:next"?: string;
+                  };
+                  "hydra:search"?: {
+                     "@type"?: string;
+                     "hydra:template"?: string;
+                     "hydra:variableRepresentation"?: string;
+                     "hydra:mapping"?: {
+                        "@type"?: string;
+                        variable?: string;
+                        property?: string | null;
+                        required?: boolean;
+                     }[];
+                  };
+               };
+               "text/html": components["schemas"]["Entretien-entretien.out"][];
+            };
+         };
+      };
+   };
+   /**
+    * Creates a Entretien resource.
+    * @description Creates a Entretien resource.
+    */
+   api_utilisateurs_uidentretiens_post: {
+      parameters: {
+         path: {
+            /** @description Entretien identifier */
+            uid: string;
+         };
+      };
+      /** @description The new Entretien resource */
+      requestBody: {
+         content: {
+            "application/ld+json": components["schemas"]["Entretien.jsonld-entretien.in"];
+            "text/html": components["schemas"]["Entretien-entretien.in"];
+         };
+      };
+      responses: {
+         /** @description Entretien resource created */
+         201: {
+            content: {
+               "application/ld+json": components["schemas"]["Entretien.jsonld-entretien.out"];
+               "text/html": components["schemas"]["Entretien-entretien.out"];
+            };
+         };
+         /** @description Invalid input */
+         400: {
+            content: never;
+         };
+         /** @description Unprocessable entity */
+         422: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Retrieves a Entretien resource.
+    * @description Retrieves a Entretien resource.
+    */
+   api_utilisateurs_uidentretiens_id_get: {
+      parameters: {
+         path: {
+            /** @description Entretien identifier */
+            uid: string;
+            /** @description Entretien identifier */
+            id: string;
+         };
+      };
+      responses: {
+         /** @description Entretien resource */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["Entretien.jsonld-entretien.out"];
+               "text/html": components["schemas"]["Entretien-entretien.out"];
+            };
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Removes the Entretien resource.
+    * @description Removes the Entretien resource.
+    */
+   api_utilisateurs_uidentretiens_id_delete: {
+      parameters: {
+         path: {
+            /** @description Entretien identifier */
+            uid: string;
+            /** @description Entretien identifier */
+            id: string;
+         };
+      };
+      responses: {
+         /** @description Entretien resource deleted */
+         204: {
+            content: never;
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Updates the Entretien resource.
+    * @description Updates the Entretien resource.
+    */
+   api_utilisateurs_uidentretiens_id_patch: {
+      parameters: {
+         path: {
+            /** @description Entretien identifier */
+            uid: string;
+            /** @description Entretien identifier */
+            id: string;
+         };
+      };
+      /** @description The updated Entretien resource */
+      requestBody: {
+         content: {
+            "application/merge-patch+json": components["schemas"]["Entretien-entretien.in"];
+         };
+      };
+      responses: {
+         /** @description Entretien resource updated */
+         200: {
+            content: {
+               "application/ld+json": components["schemas"]["Entretien.jsonld-entretien.out"];
+               "text/html": components["schemas"]["Entretien-entretien.out"];
+            };
+         };
+         /** @description Invalid input */
+         400: {
+            content: never;
+         };
+         /** @description Resource not found */
+         404: {
+            content: never;
+         };
+         /** @description Unprocessable entity */
+         422: {
+            content: never;
+         };
+      };
+   };
+   /**
+    * Retrieves the collection of Evenement resources.
+    * @description Retrieves the collection of Evenement resources.
+    */
+   api_evenements_get_collection: {
+      parameters: {
+         query?: {
+            /** @description The collection page number */
+            page?: number;
+            /** @description The number of items per page */
+            itemsPerPage?: number;
             type?: string;
             tauxHoraire?: components["schemas"]["TauxHoraire.html-ActiviteBeneficiaire.out"] | null;
         };
@@ -4816,6 +10452,7 @@ export interface components {
             pedagogique?: boolean;
             examens?: boolean;
             aideHumaine?: boolean;
+            decision?: boolean;
         };
         "TypeAmenagement-type_amenagement.in.jsonMergePatch": {
             libelle?: string;
@@ -4829,6 +10466,7 @@ export interface components {
             pedagogique?: boolean;
             examens?: boolean;
             aideHumaine?: boolean;
+            decision?: boolean;
         };
         "TypeAmenagement.html-amenagements_utilisateurs.out": {
             id?: number | null;
@@ -4851,6 +10489,7 @@ export interface components {
             pedagogique?: boolean;
             examens?: boolean;
             aideHumaine?: boolean;
+            decision?: boolean;
         };
         "TypeAmenagement.jsonld-amenagements_utilisateurs.out": components["schemas"]["HydraItemBaseSchema"] & {
             id?: number | null;
@@ -4873,6 +10512,7 @@ export interface components {
             pedagogique?: boolean;
             examens?: boolean;
             aideHumaine?: boolean;
+            decision?: boolean;
         };
         "TypeDemande-type_demande.in": {
             libelle: string;

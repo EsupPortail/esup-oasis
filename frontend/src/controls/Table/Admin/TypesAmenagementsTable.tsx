@@ -70,6 +70,16 @@ export function TypesAmenagementsTable({
           render: (actif) => <BooleanState value={actif} onLabel="Activé" offLabel="Désactivé" />,
         },
         {
+          title: "Décision",
+          dataIndex: "decision",
+          width: 120,
+          className: "text-center",
+          key: "decision",
+          render: (decision) => (
+            <BooleanState value={decision} onLabel="Oui" offLabel="Non" tooltip="Présence dans la décision d'établissement"/>
+          ),
+        },
+        {
           key: "actions",
           className: "text-right commandes",
           width: 150,

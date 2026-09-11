@@ -23,6 +23,7 @@ interface IAmenagementForm {
   actif: boolean;
   categorie: string;
   domaine: string;
+  decision: boolean;
 }
 
 /**
@@ -171,6 +172,14 @@ export function TypeAmenagementEdition({
                 label: DOMAINES_AMENAGEMENTS_INFOS[o].singulier,
               }))}
             />
+          </Form.Item>
+          <Form.Item 
+            name="decision"
+            label="Afficher dans la décision"
+            className="mt-2"
+            valuePropName="checked"
+          >
+            <Switch />
           </Form.Item>
         </Form>
       </Card>
