@@ -37,7 +37,7 @@ import {
 import { MonProfilContactPhase } from "@controls/Profil/MonProfilContactPhase";
 import "@routes/commun/MonProfil.scss";
 import { env } from "@/env";
-import { RoleApi } from "@lib";
+import { RoleApi, service } from "@lib";
 
 /**
  * Renders the current user's profile page.
@@ -142,7 +142,7 @@ export default function MonProfil(): ReactElement {
                 user?.isBeneficiaire &&
                   (user?.gestionnairesActifs || []).length > 0 && {
                     key: "contactPhase",
-                    label: `Votre contact ${env.REACT_APP_SERVICE}`,
+                    label: `Votre contact ${service.sigle}`,
                     children: (
                       <Row gutter={[16, 16]}>
                         <MonProfilContactPhase user={user} />

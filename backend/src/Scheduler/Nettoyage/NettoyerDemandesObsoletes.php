@@ -36,7 +36,7 @@ readonly class NettoyerDemandesObsoletes
                 "Cette campagne de demande est désormais fermée. 
                 Si vous souhaitez toujours être accompagné(e), veuillez renouveler 
                 votre demande à l'ouverture de la prochaine campagne ou prendre 
-                contact avec votre référent PHASE.",
+                contact avec votre référent.",
                 user: $demande->getDemandeur(), // refus auto = refus par le demandeur lui-même !
             );
         }

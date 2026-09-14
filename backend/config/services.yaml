@@ -49,9 +49,9 @@ services:
       $ldapDn: '%env(resolve:LDAP_DN)%'
 
   App\Service\SiScol\AbstractSiScolDataProvider:
-    factory: ['@App\Service\SiScol\SiScolDataProviderFactory', 'create']
+    factory: [ '@App\Service\SiScol\SiScolDataProviderFactory', 'create' ]
     autoconfigure: false
-    
+
   #APOGEE
   App\Service\SiScol\ApogeeProvider:
     arguments:
@@ -112,6 +112,26 @@ services:
       $espace: '%env(resolve:NUXEO_ESPACE)%'
   App\Service\Photo\PhotoProviderInterface:
     alias: App\Service\Photo\UnicampusProvider
+  App\Service\ParametreService:
+    arguments:
+      $appEnv:
+        APP_TITRE: '%env(resolve:APP_TITRE)%'
+        APP_ETABLISSEMENT: '%env(resolve:APP_ETABLISSEMENT)%'
+        APP_ETABLISSEMENT_ARTICLE: '%env(resolve:APP_ETABLISSEMENT_ARTICLE)%'
+        APP_ETABLISSEMENT_ABV: '%env(resolve:APP_ETABLISSEMENT_ABV)%'
+        APP_ETABLISSEMENT_ABV_ARTICLE: '%env(resolve:APP_ETABLISSEMENT_ABV_ARTICLE)%'
+        APP_ETABLISSEMENT_URL: '%env(resolve:APP_ETABLISSEMENT_URL)%'
+        APP_SERVICE: '%env(resolve:APP_SERVICE)%'
+        APP_SERVICE_DENOMINATION: '%env(resolve:APP_SERVICE_DENOMINATION)%'
+        APP_SERVICE_ARTICLE: '%env(resolve:APP_SERVICE_ARTICLE)%'
+        APP_SERVICE_DENOMINATION_LONGUE: '%env(resolve:APP_SERVICE_DENOMINATION_LONGUE)%'
+        APP_EMAIL_SERVICE: '%env(resolve:APP_EMAIL_SERVICE)%'
+        APP_URL_SERVICE: '%env(resolve:APP_URL_SERVICE)%'
+        APP_LOGO: '%env(resolve:APP_LOGO)%'
+        APP_LOGO_FOOTER_MAILS: '%env(resolve:APP_LOGO_FOOTER_MAILS)%'
+        APP_SERVICE_SPORTIFS_DENOMINATION: '%env(resolve:APP_SERVICE_SPORTIFS_DENOMINATION)%'
+        APP_SERVICE_SPORTIFS_ARTICLE: '%env(resolve:APP_SERVICE_SPORTIFS_ARTICLE)%'
+        APP_SERVICE_SPORTIFS_EMAIL: '%env(resolve:APP_SERVICE_SPORTIFS_EMAIL)%'
 
 when@test:
   services:
@@ -129,6 +149,6 @@ when@test:
     App\Service\Photo\PhotoProviderInterface:
       alias: App\Test\FakePhotoProvider
     App\Service\SiScol\SiScolDataProviderFactory:
-        public: true
-        autowire: true
-        autoconfigure: true
+      public: true
+      autowire: true
+      autoconfigure: true

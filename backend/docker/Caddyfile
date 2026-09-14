@@ -1,5 +1,7 @@
 {
-	{$CADDY_GLOBAL_OPTIONS}
+    {$CADDY_GLOBAL_OPTIONS}
+
+    admin 0.0.0.0:2019
 
     cache {
         otter
@@ -25,9 +27,9 @@
         }
     }
 
-	frankenphp {
-		{$FRANKENPHP_CONFIG}
-	}
+    frankenphp {
+        {$FRANKENPHP_CONFIG}
+    }
 }
 
 {$CADDY_EXTRA_CONFIG}
@@ -36,10 +38,10 @@
 
     cache
 
-	root * public/
-	encode zstd br gzip
+    root * public/
+    encode zstd br gzip
 
-	{$CADDY_SERVER_EXTRA_DIRECTIVES}
+    {$CADDY_SERVER_EXTRA_DIRECTIVES}
 
-	php_server
+    php_server
 }

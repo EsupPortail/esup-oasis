@@ -22,6 +22,7 @@ import {
   EtatDemande,
   getEtatDemande,
   getEtatDemandeOrdre,
+  service,
 } from "@lib";
 import { EtatDescription } from "@controls/Demande/EtatDescription";
 import "@controls/Demande/Avancement/AvancementDemande.scss";
@@ -29,7 +30,6 @@ import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
 import { ProfilItem } from "@controls/Items/ProfilItem";
 import { DerniereModifDemandeLabel } from "@controls/Avatars/DerniereModifDemandeLabel";
 import Spinner from "@controls/Spinner/Spinner";
-import { env } from "@/env";
 
 interface IProps {
   demande?: IDemande;
@@ -72,8 +72,8 @@ export default function AvancementDemande({
       {
         title:
           getEtatDemandeOrdre(etat) >= getEtatDemandeOrdre(ETAT_DEMANDE_RECEPTIONNEE)
-            ? `Votre demande a été réceptionnée par ${env.REACT_APP_SERVICE}`
-            : `Réception par ${env.REACT_APP_SERVICE}`,
+            ? `Votre demande a été réceptionnée par ${service.defini}`
+            : `Réception par ${service.defini}`,
       },
       {
         title:
@@ -139,7 +139,7 @@ export default function AvancementDemande({
 
           {getEtatDemandeOrdre(item?.etat as string) >
           getEtatDemandeOrdre(ETAT_DEMANDE_RECEPTIONNEE) ? (
-            <li>Votre demande a été réceptionnée par {env.REACT_APP_SERVICE}</li>
+            <li>Votre demande a été réceptionnée par {service.defini}</li>
           ) : undefined}
 
           {getEtatDemandeOrdre(item?.etat as string) >

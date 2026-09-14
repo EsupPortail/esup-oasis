@@ -120,7 +120,7 @@ class NuxeoStorageProvider implements StorageProviderInterface
         mixed $contents,
         string $filename,
         string $mimeType,
-        string $description = 'pj envoyée par appliphase',
+        string $description = 'pj envoyée par oasis',
     ): array {
         if (!$this->online) {
             return $this->fallbackProvider->store($contents, $filename, $mimeType);

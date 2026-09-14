@@ -18,7 +18,7 @@ import React from "react";
 import { AdminPanel } from "@controls/Admin/AdminPanel";
 import { useAuth } from "@/auth/AuthProvider";
 import "@routes/administration/Administration.scss";
-import { env } from "@/env";
+import { service } from "@lib";
 
 /**
  * Generates the items for the BilansGestionnaire component.
@@ -72,8 +72,8 @@ export default function Bilans(): React.ReactElement {
               onClickUrl="/administration/bilans/financier"
             />
             <AdminPanel
-              title={`Bilan d'activité ${env.REACT_APP_SERVICE} univ.`}
-              description={`Bilan d'activité ${env.REACT_APP_SERVICE} universitaire`}
+              title={`Bilan d'activité ${service.sigle} univ.`}
+              description={`Bilan d'activité ${service.sigle} universitaire`}
               icon={RadarChartOutlined}
               onClickUrl="/administration/bilans/activites"
             />

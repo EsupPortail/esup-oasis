@@ -10,6 +10,7 @@
 import { Card, Layout } from "antd";
 import PageTitle from "@utils/PageTitle/PageTitle";
 import { env } from "@/env";
+import { service } from "@lib";
 import { mailtoHref } from "@utils/url";
 import { useEffectiveTheme } from "@utils/theme/useEffectiveTheme";
 
@@ -29,11 +30,10 @@ export default function Rgpd() {
             />
           )}
 
-          <h2>Service {env.REACT_APP_SERVICE}</h2>
+          <h2>{service.DenominationLongue}</h2>
           <p>
-            Le Service {env.REACT_APP_SERVICE} de {env.REACT_APP_ETABLISSEMENT_ARTICLE} est
-            responsable du traitement des données à caractère personnel vous concernant et
-            collectées dans le cadre{" "}
+            {service.Defini} de {env.REACT_APP_ETABLISSEMENT_ARTICLE} est responsable du traitement
+            des données à caractère personnel vous concernant et collectées dans le cadre{" "}
             <b>
               du suivi et de l’accompagnement des étudiantes et des étudiants à besoins spécifiques
               pour la mise en place du plan d’accompagnement individuel et personnalisé
@@ -63,27 +63,19 @@ export default function Rgpd() {
           </p>
           <h3>Caractère facultatif du transfert de données</h3>
           <p>
-            Toute étudiante ou tout étudiant sollicitant un accompagnement par le Service{" "}
-            {env.REACT_APP_SERVICE} engendre de fait des opérations de traitement des données. Ce
-            traitement est obligatoire pour la gestion du processus d’accompagnement, son
-            évaluation, ses bilans.
+            Toute étudiante ou tout étudiant sollicitant un accompagnement par {service.defini}{" "}
+            engendre de fait des opérations de traitement des données. Ce traitement est obligatoire
+            pour la gestion du processus d’accompagnement, son évaluation, ses bilans.
           </p>
           <h2>Personnes concernées</h2>
           <p>
-            Ce traitement concerne les étudiant•es à besoins spécifiques accompagné•es par le
-            Service
-            {env.REACT_APP_SERVICE}.
+            Ce traitement concerne les étudiant•es à besoins spécifiques accompagné•es par{" "}
+            {service.defini}.
           </p>
           <h2>Destinataires des données</h2>
           <ul>
-            <li>
-              Données individuelles : le ou la chargé•e d’accompagnement du Service{" "}
-              {env.REACT_APP_SERVICE}
-            </li>
-            <li>
-              Données anonymes pour traitement de bilan de service : les agents du Service{" "}
-              {env.REACT_APP_SERVICE}
-            </li>
+            <li>Données individuelles : le ou la chargé•e d’accompagnement {service.de}</li>
+            <li>Données anonymes pour traitement de bilan de service : les agents {service.de}</li>
           </ul>
           <h2>Vos droits sur les données vous concernant</h2>
           <p>

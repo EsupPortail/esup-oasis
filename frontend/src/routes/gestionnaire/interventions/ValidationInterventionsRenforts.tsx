@@ -11,7 +11,7 @@ import React, { ReactElement } from "react";
 import "@routes/administration/Administration.scss";
 import { Layout, Typography } from "antd";
 import ValidationInterventionTable from "@controls/Table/ValidationInterventionTable";
-import { env } from "@/env";
+import { service } from "@lib";
 import { TimezoneAlert } from "@controls/Calendar/TimezoneAlert";
 
 /**
@@ -22,7 +22,7 @@ import { TimezoneAlert } from "@controls/Calendar/TimezoneAlert";
 export default function ValidationInterventionsRenforts(): ReactElement {
   return (
     <Layout.Content style={{ padding: "0 50px" }}>
-      <Typography.Title level={1}>Renforts service {env.REACT_APP_SERVICE}</Typography.Title>
+      <Typography.Title level={1}>Renforts {service.denomination}</Typography.Title>
       <Typography.Title level={2}>Interventions à valider</Typography.Title>
       <TimezoneAlert />
       <ValidationInterventionTable />

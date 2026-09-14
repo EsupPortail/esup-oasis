@@ -1,6 +1,10 @@
-###> ide
+###> outils/artefacts de dev
 .idea
-###< ide
+.antigravitycli
+.junie
+backend/.junie
+backend/supervisor*
+###< outils/artefacts de dev
 
 installation/frontend/.env
 installation/backend/.env

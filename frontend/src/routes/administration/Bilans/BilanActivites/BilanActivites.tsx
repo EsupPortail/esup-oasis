@@ -31,7 +31,7 @@ import GestionnairesField from "@controls/Forms/GestionnairesField";
 import { Dayjs } from "dayjs";
 import { useApi } from "@context/api/ApiProvider";
 import { TableBilanActivite } from "@controls/Admin/Bilans/TableBilanActivite";
-import { env } from "@/env";
+import { service } from "@lib";
 
 type FiltreBilan =
   Paths["/suivis/activite"]["post"]["requestBody"]["content"]["application/ld+json"];
@@ -79,14 +79,14 @@ export default function BilanActivites(): React.ReactElement {
           },
           {
             key: "bilan-activite",
-            title: `Bilan activités ${env.REACT_APP_SERVICE}`,
+            title: `Bilan activités ${service.sigle}`,
           },
         ]}
       />
       <Typography.Title level={1}>Bilans</Typography.Title>
 
       <Typography.Title level={2} className="mt-0 mb-4">
-        Bilan activités {env.REACT_APP_SERVICE}
+        Bilan activités {service.sigle}
       </Typography.Title>
 
       <TableBilanActivite setAjouterBilan={setAjouterBilan} form={form} />

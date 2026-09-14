@@ -14,9 +14,9 @@
                                         <td align="center">
                                             <a href="{{ frontUrl }}" referrerpolicy="no-referrer"
                                                target="_blank"
-                                               aria-label="Se rendre sur le site AppliPhase de l'université de Bordeaux">
+                                               aria-label="Se rendre sur le site {{ APP_TITRE }}">
                                                 <img border="0" class="img-responsive"
-                                                     src="{{ backUrl }}/images/logo-appliphase-email.png"
+                                                     src="{{ backUrl }}{{ APP_LOGO }}"
                                                      alt="" aria-hidden="true" style="max-width: 300px"/></a>
                                         </td>
                                     </tr>
@@ -38,12 +38,14 @@
                                             <p>Bonjour,</p>
                                             <p>Votre dossier "{{ typeDemande.libelle }}" a bien été validé.</p>
                                             <p>Vous devez contacter la personne en charge de l’accompagnement spécifique
-                                                au Service PHASE de votre campus pour préparer la mise en place de votre
+                                                {{ APP_SERVICE_DENOMINATION|articleDefiniContracte(APP_SERVICE_ARTICLE) }}
+                                                de votre campus pour préparer la mise en place de votre
                                                 plan d’accompagnement.</p>
                                             <p>Vous trouverez son contact sur cette page&nbsp;:
-                                                <a href="https://www.u-bordeaux.fr/formation/accompagnement-et-reussite-des-etudes/etudiants-besoins-specifiques">Étudiants
+                                                <a href="{{ APP_URL_SERVICE }}">Étudiants
                                                     à besoins spécifiques</a>.</p>
-                                            <p class="last">L'équipe AppliPhase.</p>
+                                            <p class="last">{{ APP_SERVICE_DENOMINATION|articleDefini(APP_SERVICE_ARTICLE|capitalize) }}
+                                                .</p>
                                         </td>
                                     </tr>
                                 </table>
@@ -57,21 +59,21 @@
                             <tr>
                                 <td>
                                     <a
-                                            href="https://u-bordeaux.fr" referrerpolicy="no-referrer"
+                                            href="{{ APP_ETABLISSEMENT_URL }}" referrerpolicy="no-referrer"
                                             target="_blank">
                                         <img border="0" width="50" style="width: 50px"
-                                             src="{{ backUrl }}/images/universite-bordeaux-medaillon.png"
-                                             alt="Logo Université de Bordeaux"/>
+                                             src="{{ backUrl }}{{ APP_LOGO_FOOTER_MAILS }}"
+                                             alt="Logo {{ APP_ETABLISSEMENT }}"/>
                                     </a>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="content-block">
                                 <span class="apple-link"><a
-                                            href="https://u-bordeaux.fr" referrerpolicy="no-referrer"
-                                            target="_blank">Université de Bordeaux</a> • <a
+                                            href="{{ APP_ETABLISSEMENT_URL }}" referrerpolicy="no-referrer"
+                                            target="_blank">{{ APP_ETABLISSEMENT }}</a> • <a
                                             href="{{ frontUrl }}" referrerpolicy="no-referrer"
-                                            target="_blank">AppliPhase</a></span>
+                                            target="_blank">{{ APP_TITRE }}</a></span>
                                 </td>
                             </tr>
                         </table>

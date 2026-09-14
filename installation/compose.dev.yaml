@@ -25,7 +25,11 @@ services:
     depends_on:
       - mailhog
     environment:
+      APP_ENV: "dev"
       MAILER_DSN: smtp://mailhog:1025
+    volumes:
+      - ../backend/docker/xdebug-conf.ini:/usr/local/etc/php/conf.d/99-xdebug-conf.ini:ro
+      - ../backend:/application
 
   frontend:
     build:

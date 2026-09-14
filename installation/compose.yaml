@@ -53,6 +53,8 @@ services:
       SERVER_NAME: ":80" # Attention : Nécessaire pour éviter que le backend tente de générer un certificat !
     ports:
       - "${BACKEND_PORT:-8000}:80"
+    expose:
+      - 2019
     volumes:
       - backend-jwt:/app/config/jwt
       - ../backend/fixtures:/app/fixtures
@@ -83,6 +85,7 @@ services:
       CLAMAV_PORT: ${CLAMAV_PORT:-3310}
       CLAMAV_STRICT_MODE: ${CLAMAV_STRICT_MODE:-true}
       GOTENBERG_DSN: ${GOTENBERG_DSN:-http://gotenberg:3000}
+      SOUIN_API_URL: "http://backend:2019/souin-api/souin"
 
 
   frontend:

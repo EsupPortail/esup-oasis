@@ -8,12 +8,11 @@
  */
 
 import { Button, Card, Dropdown, Form, Input, MenuProps, Popconfirm, Select, Space } from "antd";
-import { ROLE_INCONNU, ROLES_SELECT, RoleValues, Utilisateur } from "@lib";
+import { ROLE_INCONNU, ROLES_SELECT, RoleValues, service, Utilisateur } from "@lib";
 import React, { ReactElement, useEffect, useState } from "react";
 import { useApi } from "@context/api/ApiProvider";
 import { DeleteOutlined, DownOutlined, EditOutlined, SaveOutlined } from "@ant-design/icons";
 import { IUtilisateur, QK_ROLES_UTILISATEURS } from "@api";
-import { env } from "@/env";
 
 interface IUtilisateursEditer {
   utilisateur: IUtilisateur;
@@ -161,7 +160,7 @@ export function UtilisateurEditer({ utilisateur, onEdited }: IUtilisateursEditer
         <Form.Item
           name="services"
           className="mt-2"
-          label={`Bureaux ${env.REACT_APP_SERVICE}`}
+          label={`Bureaux ${service.sigle}`}
           required={roleRequis()}
           rules={
             roleRequis()

@@ -14,9 +14,9 @@
                                         <td align="center">
                                             <a href="{{ frontUrl }}" referrerpolicy="no-referrer"
                                                target="_blank"
-                                               aria-label="Se rendre sur le site AppliPhase de l'université de Bordeaux">
+                                               aria-label="Se rendre sur le site {{ APP_TITRE }}">
                                                 <img border="0" class="img-responsive"
-                                                     src="{{ backUrl }}/images/logo-appliphase-email.png"
+                                                     src="{{ backUrl }}{{ APP_LOGO }}"
                                                      alt="" aria-hidden="true" style="max-width: 300px"/></a>
                                         </td>
                                     </tr>
@@ -37,15 +37,20 @@
                                         <td>
                                             <p>Bonjour,</p>
                                             <p>Votre dossier de demande d'accompagnement au titre de
-                                                "{{ typeDemande.libelle }}" a bien été transmis au
-                                                service{% if typeDemande.estPourSportifs() %} Sports Haut et Bon niveau de l'Université de Bordeaux.
-                                            {% else %} PHASE.{% endif %} Il sera traité le plus rapidement
+                                                "{{ typeDemande.libelle }}" a bien été
+                                                transmis {% if typeDemande.estPourSportifs() %}
+                                                    {{ APP_SERVICE_SPORTIFS_DENOMINATION|articleDefiniContracte(APP_SERVICE_SPORTIFS_ARTICLE) }}
+                                                    {{ APP_ETABLISSEMENT|articlePartitif(APP_ETABLISSEMENT_ARTICLE) }}.
+                                                {% else %} {{ APP_SERVICE_DENOMINATION|articleDefiniContracte(APP_SERVICE_ARTICLE) }}.{% endif %}
+                                                Il sera traité le plus
+                                                rapidement
                                                 possible.{% if typeDemande.estPourSportifs() == false %}<br/>
-                                            Si vous ne l'avez pas encore rencontrée, n'hésitez pas à prendre contact
-                                            avec la personne en charge de d'accompagnement spécifique au Service
-                                            PHASE de votre campus.{% endif %}</p>
+                                                Si vous ne l'avez pas encore rencontrée, n'hésitez pas à prendre contact
+                                                avec la personne en charge de d'accompagnement spécifique au Service
+                                                {{ APP_SERVICE }} de votre campus.{% endif %}</p>
 
-                                            <p class="last">L'équipe AppliPhase.</p>
+                                            <p class="last">{{ APP_SERVICE_DENOMINATION|articleDefini(APP_SERVICE_ARTICLE|capitalize) }}
+                                                .</p>
                                         </td>
                                     </tr>
                                 </table>
@@ -59,21 +64,21 @@
                             <tr>
                                 <td>
                                     <a
-                                            href="https://u-bordeaux.fr" referrerpolicy="no-referrer"
+                                            href="{{ APP_ETABLISSEMENT_URL }}" referrerpolicy="no-referrer"
                                             target="_blank">
                                         <img border="0" width="50" style="width: 50px"
-                                             src="{{ backUrl }}/images/universite-bordeaux-medaillon.png"
-                                             alt="Logo Université de Bordeaux"/>
+                                             src="{{ backUrl }}{{ APP_LOGO_FOOTER_MAILS }}"
+                                             alt="Logo {{ APP_ETABLISSEMENT }}"/>
                                     </a>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="content-block">
                                 <span class="apple-link"><a
-                                            href="https://u-bordeaux.fr" referrerpolicy="no-referrer"
-                                            target="_blank">Université de Bordeaux</a> • <a
+                                            href="{{ APP_ETABLISSEMENT_URL }}" referrerpolicy="no-referrer"
+                                            target="_blank">{{ APP_ETABLISSEMENT }}</a> • <a
                                             href="{{ frontUrl }}" referrerpolicy="no-referrer"
-                                            target="_blank">AppliPhase</a></span>
+                                            target="_blank">{{ APP_TITRE }}</a></span>
                                 </td>
                             </tr>
                         </table>

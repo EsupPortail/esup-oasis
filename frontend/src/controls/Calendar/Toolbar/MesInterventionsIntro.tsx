@@ -10,7 +10,7 @@
 import React, { memo, ReactElement } from "react";
 import { Card, Col, Row, Typography } from "antd";
 import RenfortInterventionAddImage from "@controls/Images/RenfortInterventionAddImage";
-import { env } from "@/env";
+import { service } from "@lib";
 
 export const MesInterventionsIntro = memo(
   (): ReactElement => (
@@ -26,9 +26,9 @@ export const MesInterventionsIntro = memo(
               Vous pouvez voir ici les interventions que vous avez effectuées.
               <br />
               <br />
-              En tant que renfort {env.REACT_APP_SERVICE}, vous pouvez également saisir vos
-              interventions. Celles-ci devront être validées par un chargé d'accompagnement pour
-              pouvoir être envoyées à la RH pour paiement.
+              En tant que renfort {service.sigle}, vous pouvez également saisir vos interventions.
+              Celles-ci devront être validées par un chargé d'accompagnement pour pouvoir être
+              envoyées à la RH pour paiement.
             </Typography.Paragraph>
           </Col>
           <Col span={8} className="d-flex-center">

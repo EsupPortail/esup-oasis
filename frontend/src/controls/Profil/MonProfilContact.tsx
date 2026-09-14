@@ -11,7 +11,7 @@ import React, { ReactElement } from "react";
 import { Col, Form, Input, Typography } from "antd";
 import { InfoCircleOutlined, MailOutlined, PhoneOutlined, UserOutlined } from "@ant-design/icons";
 import { useAuth } from "@/auth/AuthProvider";
-import { env } from "@/env";
+import { service } from "@lib";
 
 /**
  * Render the contact section of the user profile
@@ -57,9 +57,8 @@ export function MonProfilContact(): ReactElement {
 
         <div className="legende mt-2">
           <InfoCircleOutlined className="mr-1" />
-          Votre mail et votre numéro de téléphone personnels ne sont utilisés que par le service{" "}
-          {env.REACT_APP_SERVICE}, ils ne sont pas communiqués aux autres utilisateurs de
-          l'application.
+          Votre mail et votre numéro de téléphone personnels ne sont utilisés que par{" "}
+          {service.defini}, ils ne sont pas communiqués aux autres utilisateurs de l'application.
         </div>
 
         {user?.isBeneficiaire && (

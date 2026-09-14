@@ -31,7 +31,7 @@ import React from "react";
 import MedalIcon from "@/assets/images/medal.svg?react";
 import ReferentIcon from "@/assets/images/referent.svg?react";
 import ArtIcon from "@/assets/images/art.svg?react";
-import { env } from "@/env";
+import { service } from "@lib";
 
 /**
  * Represents a configuration object for referentiel.
@@ -74,7 +74,7 @@ const ADMIN_CONFIG: AdminConfig[] = [
   },
   {
     id: "services",
-    title: `Bureaux ${env.REACT_APP_SERVICE}`,
+    title: `Bureaux ${service.sigle}`,
     description: "Liste des bureaux",
     icon: DeploymentUnitOutlined,
     apiPath: "/services",

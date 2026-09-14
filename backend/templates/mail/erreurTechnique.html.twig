@@ -15,9 +15,9 @@
                                         <td align="center">
                                             <a href="{{ frontUrl }}" referrerpolicy="no-referrer"
                                                target="_blank"
-                                               aria-label="Se rendre sur le site AppliPhase de l'université de Bordeaux">
+                                               aria-label="Se rendre sur le site {{ APP_TITRE }}">
                                                 <img border="0" class="img-responsive"
-                                                     src="{{ backUrl }}/images/logo-appliphase-email.png"
+                                                     src="{{ backUrl }}{{ APP_LOGO }}"
                                                      alt="" aria-hidden="true" style="max-width: 300px"/></a>
                                         </td>
                                     </tr>
@@ -37,7 +37,7 @@
                                     <tr>
                                         <td>
                                             <p>Bonjour,</p>
-                                            <P>Appliphase vient de rencontrer l'erreur technique suivante :</P>
+                                            <p>{{ APP_TITRE }} vient de rencontrer l'erreur technique suivante :</p>
                                             <p><strong>{{ message }}</strong></p>
                                             <p>Détails :</p>
                                             <p><strong>{{ exceptionMessage }}</strong></p>
@@ -61,21 +61,21 @@
                             <tr>
                                 <td>
                                     <a
-                                            href="https://u-bordeaux.fr" referrerpolicy="no-referrer"
+                                            href="{{ APP_ETABLISSEMENT_URL }}" referrerpolicy="no-referrer"
                                             target="_blank">
                                         <img border="0" width="50" style="width: 50px"
-                                             src="{{ backUrl }}/images/universite-bordeaux-medaillon.png"
-                                             alt="Logo Université de Bordeaux"/>
+                                             src="{{ backUrl }}{{ APP_LOGO_FOOTER_MAILS }}"
+                                             alt="Logo {{ APP_ETABLISSEMENT }}"/>
                                     </a>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="content-block">
                                 <span class="apple-link"><a
-                                            href="https://u-bordeaux.fr" referrerpolicy="no-referrer"
-                                            target="_blank">Université de Bordeaux</a> • <a
+                                            href="{{ APP_ETABLISSEMENT_URL }}" referrerpolicy="no-referrer"
+                                            target="_blank">{{ APP_ETABLISSEMENT }}</a> • <a
                                             href="{{ frontUrl }}" referrerpolicy="no-referrer"
-                                            target="_blank">AppliPhase</a></span>
+                                            target="_blank">{{ APP_TITRE }}</a></span>
                                 </td>
                             </tr>
                         </table>

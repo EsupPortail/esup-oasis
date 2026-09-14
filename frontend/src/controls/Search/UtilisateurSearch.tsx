@@ -14,7 +14,7 @@ import { Avatar, Drawer, Input, List } from "antd";
 import ListSelectable from "@controls/Forms/ListSelectable/ListSelectable";
 import { UserOutlined } from "@ant-design/icons";
 import { IUtilisateur } from "@api";
-import { env } from "@/env";
+import { service } from "@lib";
 
 interface IUtilisateurSearchProps {
   visible: boolean;
@@ -61,7 +61,7 @@ export function UtilisateurSearch({
       destroyOnHidden
       open={visible}
       onClose={handleClose}
-      title={`Ajouter un utilisateur à ${env.REACT_APP_SERVICE}`}
+      title={`Ajouter un utilisateur ${service.a}`}
     >
       <Input.Search
         placeholder="Rechercher un utilisateur"

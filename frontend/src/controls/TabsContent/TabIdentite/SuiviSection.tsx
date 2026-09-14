@@ -21,8 +21,7 @@ import {
 } from "antd";
 import { InfoCircleOutlined, LockOutlined, MinusOutlined } from "@ant-design/icons";
 import { IUtilisateur } from "@api";
-import { RoleValues } from "@lib";
-import { env } from "@/env";
+import { RoleValues, service } from "@lib";
 import { TabProfils } from "@controls/TabsContent/TabProfils";
 
 interface SuiviSectionProps {
@@ -42,7 +41,7 @@ export const SuiviSection: React.FC<SuiviSectionProps> = ({
 
   return (
     <Col xs={24} xl={12}>
-      <h2>Suivi {env.REACT_APP_SERVICE}</h2>
+      <h2>Suivi {service.sigle}</h2>
       {isFetching ? (
         <Skeleton active paragraph />
       ) : (

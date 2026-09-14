@@ -16,6 +16,7 @@ import NouvelleDemandeModale from "@controls/Modals/Demande/NouvelleDemandeModal
 import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
 import { useAuth } from "@/auth/AuthProvider";
 import { env } from "@/env";
+import { service } from "@lib";
 
 /**
  * Page de gestion des demandes (demandeur)
@@ -40,12 +41,12 @@ export default function Demandes() {
           type="info"
           showIcon={screens.lg}
           icon={<InfoCircleOutlined aria-hidden />}
-          title={`L'accompagnement ${env.REACT_APP_SERVICE}`}
+          title={`L'accompagnement ${service.sigle}`}
           description={
             <>
               <p className="semi-bold">
-                Le service {env.REACT_APP_SERVICE} accompagne les étudiants et étudiantes qui
-                souhaitent bénéficier d’aménagements d’études du fait d’un statut spécifique.
+                {service.DefiniLong} accompagne les étudiants et étudiantes qui souhaitent
+                bénéficier d’aménagements d’études du fait d’un statut spécifique.
               </p>
               <p>
                 L’accompagnement proposé a pour objectif la réalisation du projet d’étude malgré des
@@ -65,7 +66,7 @@ export default function Demandes() {
                     href={env.REACT_APP_URL_SERVICE}
                   >
                     <LinkOutlined className="mr-1" aria-hidden style={{ verticalAlign: "sub" }} />A
-                    propos du service {env.REACT_APP_SERVICE} et des accompagnements proposés
+                    propos {service.de} et des accompagnements proposés
                   </Typography.Link>
                 </div>
               )}

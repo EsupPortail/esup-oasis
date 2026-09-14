@@ -19,6 +19,7 @@ import {
   PaperClipOutlined,
 } from "@ant-design/icons";
 import { env } from "@/env";
+import { service } from "./service";
 
 export interface EtatInfo {
   id: string;
@@ -50,8 +51,7 @@ export const ETATS_DEMANDES: EtatInfo[] = [
   {
     id: ETAT_DEMANDE_EN_COURS,
     etape: "A",
-    description:
-      "{Article} demande est en cours de saisie, elle n'a pas été envoyée au service {service}.",
+    description: "{Article} demande est en cours de saisie, elle n'a pas été envoyée {au-service}.",
     icone: <EditOutlined aria-hidden />,
     ordre: 0,
     color: undefined,
@@ -65,8 +65,7 @@ export const ETATS_DEMANDES: EtatInfo[] = [
   {
     id: ETAT_DEMANDE_RECEPTIONNEE,
     etape: "A",
-    description:
-      "{Article} demande a été reçue par le service {service}, elle est en cours de traitement.",
+    description: "{Article} demande a été reçue par {le-service}, elle est en cours de traitement.",
     icone: <HourglassOutlined aria-hidden />,
     ordre: 10,
     color: "purple",
@@ -156,7 +155,7 @@ export const ETATS_DEMANDES: EtatInfo[] = [
   {
     id: ETAT_ATTENTE_ACCOMPAGNEMENT,
     etape: "D",
-    description: `Le service ${env.REACT_APP_SERVICE} est en train de mettre en place l'accompagnement associé à votre demande.`,
+    description: `${service.Defini} est en train de mettre en place l'accompagnement associé à votre demande.`,
     icone: <HourglassOutlined aria-hidden />,
     ordre: 45,
     color: "orange",

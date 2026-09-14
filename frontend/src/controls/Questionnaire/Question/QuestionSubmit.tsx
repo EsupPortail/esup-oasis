@@ -12,7 +12,7 @@ import { QuestionAide } from "@controls/Questionnaire/Question/QuestionAide";
 import { QuestionnaireQuestion, useQuestionnaire } from "@context/demande/QuestionnaireProvider";
 import { useNavigate } from "react-router-dom";
 import { queryClient } from "@/queryClient";
-import { env } from "@/env";
+import { service } from "@lib";
 import { QK_DEMANDES } from "@api";
 
 export function QuestionSubmit(props: { question: QuestionnaireQuestion }) {
@@ -62,8 +62,8 @@ export function QuestionSubmit(props: { question: QuestionnaireQuestion }) {
       <div className="legende">
         <p>
           <strong>Attention</strong> : Vous ne pourrez plus modifier votre demande une fois validée.
-          Elle sera examinée par le service {env.REACT_APP_SERVICE}. Vous pourrez suivre son
-          avancement dans la rubrique "Demandes".
+          Elle sera examinée par {service.defini}. Vous pourrez suivre son avancement dans la
+          rubrique "Demandes".
         </p>
       </div>
       <QuestionAide question={props.question} />

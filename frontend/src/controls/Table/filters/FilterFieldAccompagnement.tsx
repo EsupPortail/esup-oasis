@@ -10,7 +10,7 @@
 import React from "react";
 import { Col, Segmented } from "antd";
 import { FiltreBeneficiaire } from "@controls/Table/BeneficiaireTable";
-import { env } from "@/env";
+import { service } from "@lib";
 
 function booleanToString(value: boolean | undefined): string | undefined {
   if (value === undefined) return "undefined";
@@ -36,7 +36,7 @@ export function FilterFieldAccompagnement({
   return (
     <>
       <Col xs={24} sm={24} md={6}>
-        Accompagnement {env.REACT_APP_SERVICE}
+        Accompagnement {service.sigle}
       </Col>
       <Col xs={24} sm={24} md={18}>
         <Segmented

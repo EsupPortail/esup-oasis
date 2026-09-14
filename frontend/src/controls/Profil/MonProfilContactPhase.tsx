@@ -7,19 +7,18 @@
  * @author Julien Lemonnier <julien.lemonnier@u-bordeaux.fr>
  */
 
-import { RoleValues, Utilisateur } from "@lib";
+import { RoleValues, service, Utilisateur } from "@lib";
 import React, { ReactElement } from "react";
 import { Card, Col, Typography } from "antd";
 import { GestionnaireItem } from "@controls/Items/GestionnaireItem";
 import { UtilisateurAvatar } from "@controls/Avatars/UtilisateurAvatar";
-import { env } from "@/env";
 
 export function MonProfilContactPhase(props: { user: Utilisateur | undefined }): ReactElement {
   return (
     <Col xs={24} sm={24} md={24} lg={24} xl={12}>
       <Typography.Title level={2}>
         {props.user?.gestionnairesActifs?.length === 1 ? "Votre contact" : "Vos contacts"}{" "}
-        {env.REACT_APP_SERVICE}
+        {service.sigle}
       </Typography.Title>
       <div>
         <span className="semi-bold mb-1">Votre accompagnement actuel est réalisé par</span>

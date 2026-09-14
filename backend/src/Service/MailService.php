@@ -39,7 +39,7 @@ readonly class MailService
 {
     public function __construct(
         private MailerInterface $mailer,
-        private ParametreRepository $parametreRepository,
+        private ParametreService $parametreService,
         private UtilisateurRepository $utilisateurRepository,
         private LoggerInterface $logger,
         private EvenementRepository $evenementRepository,
@@ -89,15 +89,17 @@ readonly class MailService
             'destinataireTechnique' => true,
         ]);
 
+        $subject = '[' . $this->getNomApplication() . ']  Traitement de MAJ des inscriptions';
+
         $email = new TemplatedEmail()
             ->from($this->getEmailExpediteur())
-            ->subject('[Appliphase] Traitement de MAJ des inscriptions')
+            ->subject($subject)
             ->to(...array_map(
                 fn($destinataire) => new Address($destinataire->getEmail(), $this->nomAffichage($destinataire)),
                 $destinataires,
             ))
             ->htmlTemplate('mail/rapportMajInscriptions.html.twig')
-            ->context(['traites' => $traites, 'nonTraites' => $nonTraites]);
+            ->context(['traites' => $traites, 'nonTraites' => $nonTraites, ...$this->appEnvs()]);
 
         try {
             $this->mailer->send($email);
@@ -137,12 +139,14 @@ readonly class MailService
             ]),
         );
 
+        $subject = '[' . $this->getNomApplication() . ']  La fin de période approche';
+
         $email = new TemplatedEmail()
             ->from($this->getEmailExpediteur())
-            ->subject('[Appliphase] La fin de période approche')
+            ->subject($subject)
             ->bcc(...$destinataires, ...$destinatairesTechniques)
             ->htmlTemplate('mail/rappelEnvoiRH.html.twig')
-            ->context(['periode' => $periodeRH]);
+            ->context(['periode' => $periodeRH, ...$this->appEnvs()]);
 
         try {
             $this->mailer->send($email);
@@ -178,12 +182,14 @@ readonly class MailService
             ]),
         );
 
+        $subject = '[' . $this->getNomApplication() . ']  La fin de période approche';
+
         $email = new TemplatedEmail()
             ->from($this->getEmailExpediteur())
-            ->subject('[Appliphase] La fin de période approche')
+            ->subject($subject)
             ->bcc(...$destinataires, ...$destinatairesTechniques)
             ->htmlTemplate('mail/rappelValidationInterventionsRenforts.html.twig')
-            ->context(['periode' => $periodeRH]);
+            ->context(['periode' => $periodeRH, ...$this->appEnvs()]);
 
         try {
             $this->mailer->send($email);
@@ -212,11 +218,25 @@ readonly class MailService
      */
     protected function getEmailExpediteur(): string
     {
-        $expediteur = $this->parametreRepository->findOneBy([
-            'cle' => Parametre::EXPEDITEUR_EMAILS,
-        ]);
+        $expediteur = $this->parametreService->valeur(Parametre::EXPEDITEUR_EMAILS);
 
-        return $expediteur?->getValeurCourante()?->getValeur() ?? 'noreply@u-bordeaux.fr';
+        return $expediteur ?? 'noreply@u-bordeaux.fr';
+    }
+
+    protected function getNomApplication(): string
+    {
+        return $this->parametreService->valeur(Parametre::APP_TITRE) ?? 'Oasis';
+    }
+
+    protected function getNomServiceAvecArticle(): string
+    {
+        $nomService = $this->parametreService->valeur(Parametre::APP_SERVICE_DENOMINATION) ?? 'service Phase';
+        $articleService = $this->parametreService->valeur(Parametre::APP_SERVICE_ARTICLE) ?? 'le';
+
+        return match ($articleService) {
+            "l'" => $articleService,
+            default => $articleService . ' ',
+        } . $nomService;
     }
 
     /**
@@ -232,12 +252,14 @@ readonly class MailService
         string $template,
         array $context,
     ): void {
+        $subject = '[' . $this->getNomApplication() . ']  Récapitulatif de vos événements de la semaine';
+
         $email = new TemplatedEmail()
             ->from($this->getEmailExpediteur())
-            ->subject('[Appliphase] Récapitulatif de vos événements de la semaine')
+            ->subject($subject)
             ->to(new Address($utilisateurConcerne->getEmail(), $nomAffichage))
             ->htmlTemplate($template)
-            ->context($context);
+            ->context([...$context, ...$this->appEnvs()]);
 
         try {
             $this->mailer->send($email);
@@ -254,9 +276,11 @@ readonly class MailService
             'destinataireTechnique' => true,
         ]);
 
+        $subject = '[' . $this->getNomApplication() . ']  Test de mail';
+
         $email = new Email()
             ->from($this->getEmailExpediteur())
-            ->subject('[Appliphase] test de mail')
+            ->subject($subject)
             ->to(...array_map(
                 fn($destinataire) => new Address($destinataire->getEmail(), $this->nomAffichage($destinataire)),
                 $destinataires,
@@ -282,12 +306,15 @@ readonly class MailService
     {
         $destinataire = new Address($intervenant->getEmail(), $this->nomAffichage($intervenant));
 
+        $nomApplication = $this->getNomApplication();
+        $subject = '[' . $nomApplication . ']  Bienvenue sur la plateforme ' . $nomApplication;
+
         $email = new TemplatedEmail()
             ->from($this->getEmailExpediteur())
-            ->subject('[Appliphase] Bienvenue sur la plateforme Appliphase!')
+            ->subject($subject)
             ->to($destinataire)
             ->htmlTemplate('mail/bienvenueIntervenant.html.twig')
-            ->context(['intervenant' => $intervenant]);
+            ->context(['intervenant' => $intervenant, ...$this->appEnvs()]);
 
         try {
             $this->mailer->send($email);
@@ -307,12 +334,14 @@ readonly class MailService
     {
         $destinataire = new Address($demandeur->getEmail(), $this->nomAffichage($demandeur));
 
+        $subject = '[' . $this->getNomApplication() . '] Demande réceptionnée';
+
         $email = new TemplatedEmail()
             ->from($this->getEmailExpediteur())
-            ->subject('[Appliphase] Demande réceptionnée')
+            ->subject($subject)
             ->to($destinataire)
             ->htmlTemplate('mail/confirmationDemandeReceptionnee.html.twig')
-            ->context(['typeDemande' => $typeDemande]);
+            ->context(['typeDemande' => $typeDemande, ...$this->appEnvs()]);
 
         try {
             $this->mailer->send($email);
@@ -332,12 +361,14 @@ readonly class MailService
     ): void {
         $destinataire = new Address($demandeur->getEmail(), $this->nomAffichage($demandeur));
 
+        $subject = '[' . $this->getNomApplication() . '] Demande non conforme';
+
         $email = new TemplatedEmail()
             ->from($this->getEmailExpediteur())
-            ->subject('[Appliphase] Demande non conforme')
+            ->subject($subject)
             ->to($destinataire)
             ->htmlTemplate('mail/demandeIncomplete.html.twig')
-            ->context(['typeDemande' => $typeDemande, 'commentaire' => $commentaire]);
+            ->context(['typeDemande' => $typeDemande, 'commentaire' => $commentaire, ...$this->appEnvs()]);
 
         try {
             $this->mailer->send($email);
@@ -354,12 +385,14 @@ readonly class MailService
     {
         $destinataire = new Address($demandeur->getEmail(), $this->nomAffichage($demandeur));
 
+        $subject = '[' . $this->getNomApplication() . '] Demande validée';
+
         $email = new TemplatedEmail()
             ->from($this->getEmailExpediteur())
-            ->subject('[Appliphase] Demande validée')
+            ->subject($subject)
             ->to($destinataire)
             ->htmlTemplate('mail/demandeValidee.html.twig')
-            ->context(['typeDemande' => $typeDemande]);
+            ->context(['typeDemande' => $typeDemande, ...$this->appEnvs()]);
 
         try {
             $this->mailer->send($email);
@@ -379,12 +412,14 @@ readonly class MailService
     ): void {
         $destinataire = new Address($demandeur->getEmail(), $this->nomAffichage($demandeur));
 
+        $subject = '[' . $this->getNomApplication() . '] Demande refusée';
+
         $email = new TemplatedEmail()
             ->from($this->getEmailExpediteur())
-            ->subject('[Appliphase] Demande refusée')
+            ->subject($subject)
             ->to($destinataire)
             ->htmlTemplate('mail/demandeRefusee.html.twig')
-            ->context(['typeDemande' => $typeDemande, 'commentaire' => $commentaire]);
+            ->context(['typeDemande' => $typeDemande, 'commentaire' => $commentaire, ...$this->appEnvs()]);
 
         try {
             $this->mailer->send($email);
@@ -405,12 +440,19 @@ readonly class MailService
     ): void {
         $destinataire = new Address($demandeur->getEmail(), $this->nomAffichage($demandeur));
 
+        $subject = '[' . $this->getNomApplication() . '] Statut validé';
+
         $email = new TemplatedEmail()
             ->from($this->getEmailExpediteur())
-            ->subject('[Appliphase] Statut validé')
+            ->subject($subject)
             ->to($destinataire)
             ->htmlTemplate('mail/demandeStatutValide.html.twig')
-            ->context(['typeDemande' => $typeDemande, 'profil' => $profil, 'accompagnement' => $avecAccompagnement]);
+            ->context([
+                'typeDemande' => $typeDemande,
+                'profil' => $profil,
+                'accompagnement' => $avecAccompagnement,
+                ...$this->appEnvs(),
+            ]);
 
         try {
             $this->mailer->send($email);
@@ -427,12 +469,14 @@ readonly class MailService
     {
         $destinataire = new Address($demandeur->getEmail(), $this->nomAffichage($demandeur));
 
+        $subject = '[' . $this->getNomApplication() . '] Veuillez valider la charte';
+
         $email = new TemplatedEmail()
             ->from($this->getEmailExpediteur())
-            ->subject('[Appliphase] Veuillez valider la charte')
+            ->subject($subject)
             ->to($destinataire)
             ->htmlTemplate('mail/demandeCharteAValider.html.twig')
-            ->context(['typeDemande' => $typeDemande]);
+            ->context(['typeDemande' => $typeDemande, ...$this->appEnvs()]);
 
         try {
             $this->mailer->send($email);
@@ -450,12 +494,16 @@ readonly class MailService
     {
         $destinataire = new Address($demandeur->getEmail(), $this->nomAffichage($demandeur));
 
+        $leService = $this->getNomServiceAvecArticle();
+
+        $subject = '[' . $this->getNomApplication() . '] Veuillez prendre contact avec ' . $leService;
+
         $email = new TemplatedEmail()
             ->from($this->getEmailExpediteur())
-            ->subject('[Appliphase] Veuillez prendre contact avec le service Phase')
+            ->subject($subject)
             ->to($destinataire)
             ->htmlTemplate('mail/demandePrendreContact.html.twig')
-            ->context(['typeDemande' => $typeDemande]);
+            ->context(['typeDemande' => $typeDemande, ...$this->appEnvs()]);
 
         try {
             $this->mailer->send($email);
@@ -474,9 +522,11 @@ readonly class MailService
             'destinataireTechnique' => true,
         ]);
 
+        $subject = '[' . $this->getNomApplication() . '] Erreur technique';
+
         $email = new TemplatedEmail()
             ->from($this->getEmailExpediteur())
-            ->subject('[Appliphase] Erreur technique')
+            ->subject($subject)
             ->to(...array_map(
                 fn($destinataire) => new Address($destinataire->getEmail(), $this->nomAffichage($destinataire)),
                 $destinataires,
@@ -486,6 +536,7 @@ readonly class MailService
                 'message' => $message->getMessage(),
                 'exceptionMessage' => $message->getExceptionMessage(),
                 'trace' => $message->getTrace(),
+                ...$this->appEnvs(),
             ]);
 
         try {
@@ -501,23 +552,20 @@ readonly class MailService
     {
         $destinataire = $decision->getBeneficiaire();
         $destCopie = $destinataire->getBeneficiaires()->current()->getGestionnaire();
-        $destBccParam = $this->parametreRepository->findOneBy([
-            'cle' => Parametre::DESTINATAIRES_COPIE_DECISIONS,
-        ]);
-        $destBcc = array_map(
-            fn(ValeurParametre $dest) => $dest->getValeur(),
-            $destBccParam->getValeurCourante(multiple: true),
-        );
+
+        $destBcc = $this->parametreService->valeur(Parametre::DESTINATAIRES_COPIE_DECISIONS, true);
+
+        $subject = '[' . $this->getNomApplication() . ']  Décision d\'aménagements d\'examens';
 
         $email = new TemplatedEmail()
             ->from($this->getEmailExpediteur())
-            ->subject('[Appliphase] Décision d\'aménagements d\'examens')
+            ->subject($subject)
             ->to(new Address($destinataire->getEmail(), $this->nomAffichage($destinataire)))
             ->cc(new Address($destCopie->getEmail(), $this->nomAffichage($destCopie)))
             ->bcc(...$destBcc)
             ->htmlTemplate('mail/decisionAmenagement.html.twig')
             ->addPart(new DataPart($pdf, 'decision.pdf', 'application/pdf'))
-            ->context(['decision' => $decision]);
+            ->context(['decision' => $decision, ...$this->appEnvs()]);
 
         try {
             $this->mailer->send($email);
@@ -534,15 +582,17 @@ readonly class MailService
             'destinataireTechnique' => true,
         ]);
 
+        $subject = '[' . $this->getNomApplication() . '] Erreur technique';
+
         $email = new TemplatedEmail()
             ->from($this->getEmailExpediteur())
-            ->subject('[Appliphase] Erreur technique')
+            ->subject($subject)
             ->to(...array_map(
                 fn($destinataire) => new Address($destinataire->getEmail(), $this->nomAffichage($destinataire)),
                 $destinataires,
             ))
             ->htmlTemplate('mail/rapportNettoyage.html.twig')
-            ->context(['nb' => $count, 'removed' => $removed, 'errors' => $errors]);
+            ->context(['nb' => $count, 'removed' => $removed, 'errors' => $errors, ...$this->appEnvs()]);
 
         try {
             $this->mailer->send($email);
@@ -551,5 +601,10 @@ readonly class MailService
             $this->logger->error($e->getMessage());
             $this->logger->debug($e->getTraceAsString());
         }
+    }
+
+    private function appEnvs(): array
+    {
+        return $this->parametreService->getAppEnv();
     }
 }

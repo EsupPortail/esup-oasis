@@ -8,7 +8,7 @@
  */
 
 import { IUtilisateur, Path } from "@api";
-import { env } from "@/env";
+import { service } from "./service";
 
 export enum RoleValues {
   ROLE_BENEFICIAIRE = "ROLE_BENEFICIAIRE",
@@ -77,7 +77,7 @@ export const ROLES = [
   },
   {
     value: RoleValues.ROLE_REFERENT_COMPOSANTE,
-    label: `Référent•e ${env.REACT_APP_SERVICE}`,
+    label: `Référent•e ${service.sigle}`,
   },
 ];
 

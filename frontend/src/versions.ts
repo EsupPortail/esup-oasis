@@ -7,8 +7,7 @@
  * @author Julien Lemonnier <julien.lemonnier@u-bordeaux.fr>
  */
 
-import { RoleValues } from "@lib";
-import { env } from "@/env";
+import { RoleValues, service } from "@lib";
 
 /**
  * Version de l'application.
@@ -248,7 +247,7 @@ export const VERSIONS: IVersion[] = [
     description: "Bilan activité du service",
     changes: [
       {
-        description: `Bilan activité du service ${env.REACT_APP_SERVICE}`,
+        description: `Bilan activité ${service.de}`,
         roles: [RoleValues.ROLE_ADMIN],
         type: "add",
       },

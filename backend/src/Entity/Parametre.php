@@ -37,6 +37,9 @@ class Parametre
     public const string DESTINATAIRES_COPIE_DECISIONS = 'DESTINATAIRES_COPIE_DECISIONS';
     public const string SIGNATURE_DECISIONS = 'SIGNATURE_DECISIONS';
     public const string ROLES_A_JOUR = 'ROLES_A_JOUR';
+    public const string APP_TITRE = 'APP_TITRE';
+    public const string APP_SERVICE_DENOMINATION = 'APP_SERVICE_DENOMINATION';
+    public const string APP_SERVICE_ARTICLE = 'APP_SERVICE_ARTICLE';
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]

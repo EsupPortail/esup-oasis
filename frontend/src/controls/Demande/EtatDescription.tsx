@@ -22,8 +22,8 @@ import {
   ETAT_DEMANDE_REFUSEE,
   ETAT_DEMANDE_VALIDEE,
   ETATS_DEMANDES,
+  service,
 } from "@lib";
-import { env } from "@/env";
 
 interface IEtatDescriptionProps {
   demande: IDemande;
@@ -39,7 +39,10 @@ export function EtatDescription({ demande }: IEtatDescriptionProps) {
   description = description
     .replaceAll("{article}", article.toLocaleLowerCase())
     .replaceAll("{Article}", article.charAt(0).toUpperCase() + article.slice(1))
-    .replaceAll("{service}", env.REACT_APP_SERVICE || "")
+    .replaceAll("{service}", service.denomination)
+    .replaceAll("{le-service}", service.defini)
+    .replaceAll("{du-service}", service.de)
+    .replaceAll("{au-service}", service.a)
     .replaceAll("{contexte}", "vous ");
 
   switch (demande.etat) {

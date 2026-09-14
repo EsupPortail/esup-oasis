@@ -13,7 +13,7 @@ import { ServiceItem } from "@controls/Items/ServiceItem";
 import { Button, Flex, Popconfirm, Segmented, Space, Table, Tooltip } from "antd";
 import { BellOutlined, EditOutlined, UserSwitchOutlined } from "@ant-design/icons";
 import { useApi } from "@context/api/ApiProvider";
-import { ROLES_SELECT, RoleValues } from "@lib";
+import { ROLES_SELECT, RoleValues, service } from "@lib";
 import { IUtilisateur } from "@api";
 import { ColumnsType } from "antd/lib/table";
 import { useNavigate } from "react-router-dom";
@@ -73,7 +73,7 @@ export default function UtilisateursTable({ onEdit, onAskStats }: TableUtilisate
             options={[
               {
                 value: RoleValues.ROLE_PLANIFICATEUR,
-                label: `Service ${env.REACT_APP_SERVICE}`,
+                label: service.Denomination,
               },
               {
                 value: RoleValues.ROLE_MEMBRE_COMMISSION,
@@ -166,7 +166,7 @@ export default function UtilisateursTable({ onEdit, onAskStats }: TableUtilisate
             role === RoleValues.ROLE_MEMBRE_COMMISSION
               ? null
               : {
-                  title: `Bureaux ${env.REACT_APP_SERVICE}`,
+                  title: `Bureaux ${service.sigle}`,
                   dataIndex: "services",
                   responsive: ["xl"],
                   render: (value: string[]) => {

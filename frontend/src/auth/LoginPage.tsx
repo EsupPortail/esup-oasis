@@ -22,6 +22,7 @@ import { useTypedText } from "@utils/TypedText/useTypedText";
 import HomepageImage from "@controls/Images/HomepageImage";
 import PageTitle from "@utils/PageTitle/PageTitle";
 import { env } from "@/env";
+import { service } from "@lib";
 import { useEffectiveTheme } from "@utils/theme/useEffectiveTheme";
 
 function getMessageAccueil() {
@@ -184,10 +185,7 @@ export default function LoginPage(): ReactElement {
               l'authentification. Aucun cookie de traçage ou de publicité n'est utilisé.
               <br />
               Pour en savoir plus, merci de contacter{" "}
-              <a style={{ whiteSpace: "nowrap" }} href={`mailto:${env.REACT_APP_EMAIL_SERVICE}`}>
-                le service {env.REACT_APP_SERVICE}
-              </a>
-              .
+              <a href={`mailto:${env.REACT_APP_EMAIL_SERVICE}`}>{service.defini}</a>.
             </p>
             <p className="mb-0">
               <a href="/rgpd">Politique d'utilisation des données</a> <MinusOutlined aria-hidden />{" "}

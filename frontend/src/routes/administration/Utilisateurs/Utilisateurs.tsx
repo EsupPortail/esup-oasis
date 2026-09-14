@@ -17,7 +17,7 @@ import DashboardUtilisateurStats from "@controls/Dashboard/DashboardUtilisateurS
 import { UtilisateurEditer } from "@controls/Admin/Utilisateurs/UtilisateurEditer";
 import UtilisateursTable from "@controls/Table/Admin/UtilisateursTable";
 import { IUtilisateur } from "@api";
-import { env } from "@/env";
+import { service } from "@lib";
 
 /**
  * Renders the user administration page.
@@ -69,7 +69,7 @@ export default function Utilisateurs(): ReactElement {
         }}
         icon={<PlusOutlined />}
         type="primary"
-        tooltip={`Ajouter un utilisateur ${env.REACT_APP_SERVICE}`}
+        tooltip={`Ajouter un utilisateur ${service.a}`}
       />
       <Row gutter={[16, 16]}>
         <Col span={24}>

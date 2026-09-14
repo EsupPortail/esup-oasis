@@ -14,7 +14,7 @@ import { isEnCoursSurPeriode } from "@utils/dates";
 import { Skeleton, Space, Tooltip } from "antd";
 import { useInView } from "react-intersection-observer";
 import { InfoCircleOutlined } from "@ant-design/icons";
-import { env } from "@/env";
+import { service } from "@lib";
 
 export function BeneficiaireProfilItem(props: {
   profilBeneficiaire: string;
@@ -40,7 +40,7 @@ export function BeneficiaireProfilItem(props: {
     <Space size={2} align="center">
       <ProfilItem profil={data?.profil as string} maxWidth={170} />
       {data.avecAccompagnement === false && (
-        <Tooltip title={`Bénéficiaire sans accompagnement ${env.REACT_APP_SERVICE}`}>
+        <Tooltip title={`Bénéficiaire sans accompagnement ${service.sigle}`}>
           <InfoCircleOutlined />
         </Tooltip>
       )}

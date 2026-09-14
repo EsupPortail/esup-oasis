@@ -23,7 +23,7 @@ import {
   QK_STATISTIQUES_EVENEMENTS,
   QK_UTILISATEURS,
 } from "@api";
-import { env } from "@/env";
+import { service } from "@lib";
 
 interface IBeneficiaireProfilFormItemEditProps {
   utilisateur: IUtilisateur;
@@ -211,7 +211,7 @@ export function BeneficiaireProfilFormItemEdit({
                     setAvecAccompagnement(value.target.checked);
                   }}
                 >
-                  <span>Accompagnement par le service {env.REACT_APP_SERVICE}</span>
+                  <span>Accompagnement par {service.defini}</span>
                 </Checkbox>
               </Space>
 

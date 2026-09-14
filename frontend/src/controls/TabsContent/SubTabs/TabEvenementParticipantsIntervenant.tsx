@@ -11,11 +11,10 @@ import React, { ReactElement, useState } from "react";
 import { TYPE_EVENEMENT_RENFORT } from "@/constants";
 import { Button, Form } from "antd";
 import UtilisateurFormItemSelect from "@controls/Forms/UtilisateurFormItemSelect";
-import { Evenement, RoleValues } from "@lib";
+import { Evenement, RoleValues, service } from "@lib";
 import { MinusCircleOutlined, SearchOutlined } from "@ant-design/icons";
 import IntervenantRechercherDrawer from "@controls/Drawers/Intervenant/IntervenantRechercherDrawer";
 import { IPartialEvenement } from "@api";
-import { env } from "@/env";
 
 interface TabEvenementParticipantsIntervenantProps {
   evenement: Evenement | undefined;
@@ -50,7 +49,7 @@ export function TabEvenementParticipantsIntervenant({
         name="intervenant"
         label={
           evenement?.type === TYPE_EVENEMENT_RENFORT ? (
-            <b className="semi-bold">Renfort {env.REACT_APP_SERVICE}</b>
+            <b className="semi-bold">Renfort {service.sigle}</b>
           ) : (
             <b className="semi-bold">Intervenant</b>
           )

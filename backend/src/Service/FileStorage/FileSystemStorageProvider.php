@@ -60,7 +60,7 @@ readonly class FileSystemStorageProvider implements StorageProviderInterface
         mixed $contents,
         string $filename,
         string $mimeType,
-        string $description = 'pj envoyée par appliphase',
+        string $description = 'pj envoyée par oasis',
     ): array {
         $uniqId = uniqid($filename);
         $filepath = $this->basePath . '/' . $uniqId;

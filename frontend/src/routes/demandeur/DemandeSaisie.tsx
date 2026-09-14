@@ -15,6 +15,7 @@ import Spinner from "@controls/Spinner/Spinner";
 import { QuestionnaireProvider } from "@context/demande/QuestionnaireProvider";
 import { TypeDemandeContent } from "@controls/Questionnaire/TypeDemandeContent";
 import { env } from "@/env";
+import { service } from "@lib";
 
 /**
  * Page de gestion des demandes (demandeur)
@@ -29,14 +30,12 @@ export default function DemandeSaisie() {
     <Layout.Content style={{ padding: "0 50px" }}>
       <Typography.Title level={1}>
         Demande
-        <Tooltip
-          title={`Envoyer un email au service ${env.REACT_APP_SERVICE} pour obtenir de l'aide`}
-        >
+        <Tooltip title={`Envoyer un email ${service.a} pour obtenir de l'aide`}>
           <Button
             className="float-right mt-2"
             onClick={() => window.open(`mailto:${env.REACT_APP_EMAIL_SERVICE}`)}
             icon={<QuestionCircleOutlined aria-hidden />}
-            aria-label={`Envoyer un email au service ${env.REACT_APP_SERVICE} pour obtenir de l'aide`}
+            aria-label={`Envoyer un email ${service.a} pour obtenir de l'aide`}
           >
             Besoin d'aide
           </Button>

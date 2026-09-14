@@ -22,12 +22,14 @@ use App\ApiResource\TypeEvenement;
 use App\ApiResource\Utilisateur as UtilisateurResource;
 use App\Entity\Evenement;
 use App\Entity\InterventionForfait;
+use App\Entity\Parametre;
 use App\Entity\TauxHoraire;
 use App\Entity\TypeEvenement as TypeEvenementEntity;
 use App\Entity\Utilisateur;
 use App\Repository\EvenementRepository;
 use App\Repository\InterventionForfaitRepository;
 use App\Repository\PeriodeRHRepository;
+use App\Service\ParametreService;
 use Exception;
 
 use function array_key_exists;
@@ -43,6 +45,7 @@ class ServicesFaitsProvider implements ProviderInterface
         private readonly PeriodeRHRepository $periodeRHRepository,
         private readonly EvenementRepository $evenementRepository,
         private readonly InterventionForfaitRepository $interventionForfaitRepository,
+        private readonly ParametreService $parametreService,
     ) {
         $this->cachedResources = [
             TypeEvenementEntity::class => [],
@@ -84,7 +87,8 @@ class ServicesFaitsProvider implements ProviderInterface
         $servicesFaits = new ServicesFaits();
         $servicesFaits->id = $periode->id;
         $servicesFaits->periode = $periode;
-        $servicesFaits->structure = 'Service Phase Pôle FIPVU'; //todo: param de conf quelque part...table parametre?
+        $servicesFaits->structure =
+            $this->parametreService->valeur(Parametre::APP_SERVICE_DENOMINATION) ?? 'service Phase';
         $servicesFaits->lignes = [];
         $servicesFaits->uid = $uid ?? null;
         return $servicesFaits;

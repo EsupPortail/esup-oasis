@@ -34,7 +34,7 @@ import AnnulationFilter, {
 import { PREFETCH_TYPES_EVENEMENTS } from "@api";
 import BeneficiaireIntervenantFilter from "@controls/Filters/BeneficiaireIntervenant/BeneficiaireIntervenantFilter";
 import { FiltresFavorisEvenements } from "@controls/Calendar/Sider/FiltresFavorisEvenements";
-import { env } from "@/env";
+import { service } from "@lib";
 
 interface ICalendarSider {
   saisieEvtRenfort?: boolean;
@@ -163,7 +163,7 @@ export default function CalendarSider({ saisieEvtRenfort = false }: ICalendarSid
           >
             <Space orientation="vertical" size="small" className="w-100">
               <span className="label">
-                Gestionnaire {env.REACT_APP_SERVICE}
+                Gestionnaire {service.sigle}
                 <Tooltip title="Évènements que vous avez créés">
                   <Button
                     icon={<UserOutlined />}

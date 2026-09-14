@@ -10,7 +10,7 @@
 import React from "react";
 import { Avatar, Space, Tooltip } from "antd";
 import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
-import { env } from "@/env";
+import { service } from "@lib";
 
 export function AccompagnementAvatar(props: {
   avecAccompagnement?: boolean;
@@ -21,8 +21,8 @@ export function AccompagnementAvatar(props: {
     <Tooltip
       title={
         props.avecAccompagnement
-          ? `Bénéficiaire ayant demandé un accompagnement ${env.REACT_APP_SERVICE}`
-          : `Bénéficiaire n'ayant pas demandé d'accompagnement ${env.REACT_APP_SERVICE}`
+          ? `Bénéficiaire ayant demandé un accompagnement ${service.sigle}`
+          : `Bénéficiaire n'ayant pas demandé d'accompagnement ${service.sigle}`
       }
     >
       <Space size="small">
