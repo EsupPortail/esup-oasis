@@ -20,7 +20,7 @@ final class InscriptionTest extends TestCase
         // Un SI scolarité qui renseigne le niveau de la formation garde exactement
         // son affichage : la dérivation ne s'applique pas, même quand cycle, année
         // et type de diplôme permettraient de conclure autrement.
-        $formation = (new Formation())->setNiveau('Licence 1ère année');
+        $formation = (new Formation())->setNiveau('  Licence 1ère année  ');
         $inscription = (new Inscription())
             ->setFormation($formation)
             ->setCycle(2)
@@ -34,7 +34,9 @@ final class InscriptionTest extends TestCase
     {
         // Formation sans niveau (colonne vide ou SI qui ne la renseigne pas) :
         // la dérivation prend le relais plutôt que de laisser le champ vide.
-        foreach ([null, ''] as $niveauFormation) {
+        // Une colonne de longueur fixe peut arriver complétée d'espaces : ce n'est pas
+        // davantage un niveau renseigné qu'une valeur vide.
+        foreach ([null, '', ' ', '   '] as $niveauFormation) {
             $inscription = (new Inscription())
                 ->setFormation((new Formation())->setNiveau($niveauFormation))
                 ->setCycle(2)

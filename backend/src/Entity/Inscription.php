@@ -268,8 +268,11 @@ class Inscription
      */
     public function getNiveau(): ?string
     {
-        $niveauFormation = $this->formation?->getNiveau();
-        if (null !== $niveauFormation && '' !== $niveauFormation) {
+        // Le SI peut renvoyer une colonne de longueur fixe complétée d'espaces : une
+        // valeur qui ne contient que du blanc n'est pas un niveau renseigné, et ne doit
+        // donc pas empêcher la dérivation.
+        $niveauFormation = trim((string) ($this->formation?->getNiveau() ?? ''));
+        if ('' !== $niveauFormation) {
             return $niveauFormation;
         }
 
