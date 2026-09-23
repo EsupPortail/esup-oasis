@@ -165,5 +165,18 @@ export async function handleApiResponse(
 
   if (response.status === 204) return;
 
-  return response.json();
+  try {
+    return await response.json();
+  } catch (parseError) {
+    afficherErreur({
+      title: "Erreur",
+      description: <>Le serveur a renvoyé une réponse invalide.</>,
+      statusText: "Réponse invalide",
+      duration: 5,
+    });
+    logger.error(parseError, options);
+    throw new Error(`Invalid JSON response: ${response.status} ${response.statusText}`, {
+      cause: parseError,
+    });
+  }
 }

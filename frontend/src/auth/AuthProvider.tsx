@@ -140,7 +140,17 @@ export function AuthProvider({
           return;
         }
 
-        const userData: IUtilisateur = await userResponse.json();
+        let userData: IUtilisateur;
+        try {
+          userData = await userResponse.json();
+        } catch (parseError) {
+          logger.error("Réponse invalide lors du rechargement de l'utilisateur", parseError);
+          removeLocalStorageLogin();
+          setUser(undefined);
+          setErrorUser("Le serveur a renvoyé une réponse invalide. Veuillez réessayer.");
+          setLoadingUser(false);
+          return;
+        }
 
         if (!mounted) return;
 
@@ -171,7 +181,7 @@ export function AuthProvider({
         removeLocalStorageLogin();
         setUser(undefined);
         logger.error(error);
-        setErrorUser(error.message);
+        setErrorUser("Impossible de contacter le serveur. Veuillez réessayer.");
         setLoadingUser(false);
       });
 
@@ -233,6 +243,10 @@ export function AuthProvider({
                 ),
               });
               return;
+            }
+
+            if (!response.ok) {
+              throw new Error(`Échange du jeton d'accès échoué (${response.status})`);
             }
 
             return response.json();
