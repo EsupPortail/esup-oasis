@@ -90,13 +90,13 @@
 <div class="content">
     <header>
         <div class="expediteur">
-            <img src="{{ backUrl }}/images/logo_ub.svg" style="height: 125px" alt="logo"/>
+            <img src="{{ backUrl }}{{ data.APP_LOGO }}" style="height: 125px" alt="logo"/>
             {% set premierAmenagement = data.amenagements|first %}
             {% set premierBeneficiaire = premierAmenagement.beneficiaires|first %}
             <div class="gestionnaire">
-                Université de Bordeaux<br/>
+                {{ data.APP_ETABLISSEMENT }}<br/>
                 Dossier suivi par :<br/>
-                Service PHASE<br/>
+                {{ data.APP_SERVICE }}<br/>
                 {{ premierBeneficiaire.gestionnaire.prenom }} {{ premierBeneficiaire.gestionnaire.nom }}
                 <br/>
                 {{ premierBeneficiaire.gestionnaire.email }}
@@ -107,7 +107,7 @@
             <br/>
             {{ premierBeneficiaire.utilisateur.email }}
             <div class="date-lieu">
-                Talence, le {{ "now"|date("d/m/Y") }}
+                {{ data.lieu }}, le {{ "now"|date("d/m/Y") }}
             </div>
         </div>
     </header>

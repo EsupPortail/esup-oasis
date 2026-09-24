@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Fichier;
 use App\Entity\ValeurParametre;
 use App\Repository\ParametreRepository;
 
@@ -12,7 +13,7 @@ readonly class ParametreService
         private array $appEnv,
     ) {}
 
-    public function valeur(string $cle, bool $multiple = false): string|array|null
+    public function valeur(string $cle, bool $multiple = false): string|array|Fichier|null
     {
         //on cherche d'abord dans l'env, puis en base
         if (array_key_exists($cle, $this->appEnv)) {
@@ -30,7 +31,9 @@ readonly class ParametreService
             );
         }
 
-        return $param?->getValeurCourante()?->getValeur();
+        return $param?->isFichier()
+            ? $param?->getValeurCourante()?->getFichier()
+            : $param?->getValeurCourante()?->getValeur();
     }
 
     public function getAppEnv(): array

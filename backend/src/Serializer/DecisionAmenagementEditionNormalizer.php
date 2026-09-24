@@ -16,6 +16,7 @@ use App\ApiResource\DecisionAmenagementExamens;
 use App\Entity\Parametre;
 use App\Repository\ParametreRepository;
 use App\Service\FileStorage\StorageProviderInterface;
+use App\Service\ParametreService;
 use App\State\DecisionAmenagementExamens\DecisionAmenagementManager;
 use App\Util\AnneeUniversitaireAwareTrait;
 use Symfony\Component\HttpFoundation\File\File;
@@ -28,7 +29,7 @@ readonly class DecisionAmenagementEditionNormalizer implements NormalizerInterfa
     public function __construct(
         private DecisionAmenagementManager $decisionAmenagementManager,
         private StorageProviderInterface $storageProvider,
-        private ParametreRepository $parametreRepository,
+        private ParametreService $parametreService,
     ) {}
 
     /**
@@ -49,40 +50,17 @@ readonly class DecisionAmenagementEditionNormalizer implements NormalizerInterfa
             ->getAmenagementsActifs(), fn($amenagement) => $amenagement->getType()->isExamens());
 
         $data['annee'] = $this->anneeDuJour($this->now());
-        $data['president']['qualite'] = $this->parametreRepository
-            ->findOneBy([
-                'cle' => 'PRESIDENT_QUALITE',
-            ])
-            ?->getValeurCourante()
-            ->getValeur();
-        $data['president']['nom'] = $this->parametreRepository
-            ->findOneBy([
-                'cle' => 'PRESIDENT_NOM',
-            ])
-            ?->getValeurCourante()
-            ->getValeur();
-        $data['responsable_phase']['qualite'] = $this->parametreRepository
-            ->findOneBy([
-                'cle' => 'RESPONSABLE_PHASE_QUALITE',
-            ])
-            ?->getValeurCourante()
-            ->getValeur();
-        $data['responsable_phase']['nom'] = $this->parametreRepository
-            ->findOneBy([
-                'cle' => 'RESPONSABLE_PHASE_NOM',
-            ])
-            ?->getValeurCourante()
-            ->getValeur();
+        $data['lieu'] = $this->parametreService->valeur(Parametre::LIEU_COURRIER);
+        $data['adresse_postale'] = $this->parametreService->valeur(Parametre::ADRESSE_POSTALE);
+        $data['president']['qualite'] = $this->parametreService->valeur(Parametre::PRESIDENT_QUALITE);
+        $data['president']['nom'] = $this->parametreService->valeur(Parametre::PRESIDENT_NOM);
+        $data['responsable_phase']['qualite'] = $this->parametreService->valeur(Parametre::RESPONSABLE_PHASE_QUALITE);
+        $data['responsable_phase']['nom'] = $this->parametreService->valeur(Parametre::RESPONSABLE_PHASE_NOM);
 
         /**
          * Signature stockée en paramètre
          */
-        $fichier = $this->parametreRepository
-            ->findOneBy([
-                'cle' => Parametre::SIGNATURE_DECISIONS,
-            ])
-            ->getValeurCourante()
-            ?->getFichier();
+        $fichier = $this->parametreService->valeur(Parametre::SIGNATURE_DECISIONS);
 
         if ($fichier !== null) {
             $file = $this->storageProvider->get($fichier->getMetadata());
@@ -95,7 +73,7 @@ readonly class DecisionAmenagementEditionNormalizer implements NormalizerInterfa
         $data['responsable_phase']['signature']['contents'] = $file ?? null;
         $data['responsable_phase']['signature']['mimeType'] = $fichier?->getTypeMime();
 
-        return $data;
+        return array_merge($data, $this->parametreService->getAppEnv());
     }
 
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool

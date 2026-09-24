@@ -40,6 +40,12 @@ class Parametre
     public const string APP_TITRE = 'APP_TITRE';
     public const string APP_SERVICE_DENOMINATION = 'APP_SERVICE_DENOMINATION';
     public const string APP_SERVICE_ARTICLE = 'APP_SERVICE_ARTICLE';
+    public const string PRESIDENT_QUALITE = 'PRESIDENT_QUALITE';
+    public const string PRESIDENT_NOM = 'PRESIDENT_NOM';
+    public const string RESPONSABLE_PHASE_NOM = 'RESPONSABLE_PHASE_NOM';
+    public const string RESPONSABLE_PHASE_QUALITE = 'RESPONSABLE_PHASE_QUALITE';
+    public const string LIEU_COURRIER = 'LIEU_COURRIER';
+    public const string ADRESSE_POSTALE = 'ADRESSE_POSTALE';
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
