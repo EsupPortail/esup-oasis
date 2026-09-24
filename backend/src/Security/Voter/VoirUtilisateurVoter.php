@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\ApiResource\Demande;
 use App\ApiResource\Utilisateur;
 use App\Entity\ApplicationCliente;
 use App\Entity\Beneficiaire;
@@ -84,7 +85,7 @@ class VoirUtilisateurVoter extends Voter
             $demandesEtudiant = $this->demandeRepository->findByUid($subject->uid);
 
             if (array_any(array: $demandesEtudiant, callback: fn($demande) => in_array(
-                needle: $demande->commission?->getId(),
+                needle: $demande->getCampagne()->getCommission()?->getId(),
                 haystack: $commissionsAutorisees,
             ))) {
                 return true;

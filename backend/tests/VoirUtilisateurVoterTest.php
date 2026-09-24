@@ -16,6 +16,7 @@ use App\ApiResource\Formation;
 use App\ApiResource\Inscription;
 use App\ApiResource\Utilisateur;
 use App\Entity\Beneficiaire;
+use App\Entity\CampagneDemande;
 use App\Entity\Commission;
 use App\Entity\Composante;
 use App\Entity\Demande;
@@ -164,8 +165,11 @@ class VoirUtilisateurVoterTest extends TestCase
 
         $userCourant->method('getMembreCommissions')->willReturn(new ArrayCollection([$membreCommission]));
 
+        $campagne = $this->createMock(CampagneDemande::class);
+        $campagne->method('getCommission')->willReturn($commission);
+
         $demande = $this->createMock(Demande::class);
-        $demande->commission = $commission;
+        $demande->method('getCampagne')->willReturn($campagne);
 
         $this->demandeRepository->method('findByUid')->with('student123')->willReturn([$demande]);
 
