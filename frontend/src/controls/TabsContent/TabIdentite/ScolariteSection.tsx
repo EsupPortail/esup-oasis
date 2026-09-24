@@ -32,8 +32,20 @@ export const ScolariteSection: React.FC<ScolariteSectionProps> = ({ utilisateur,
             </Typography.Text>
           </Descriptions.Item>
           <Descriptions.Item label="Régime d'inscription">
-            {utilisateur?.statutEtudiant}
+            {utilisateur?.statutEtudiant || <MinusOutlined />}
           </Descriptions.Item>
+          {utilisateur.codeSituationSociale && utilisateur.codeSituationSociale !== "NO" && (
+            <Descriptions.Item label="Situation sociale">
+              {utilisateur.libelleSituationSociale || utilisateur.codeSituationSociale || (
+                <MinusOutlined />
+              )}
+            </Descriptions.Item>
+          )}
+          {(utilisateur.inscriptions?.length ?? 0) > 0 && (
+            <Descriptions.Item label="Inscription administrative">
+              {utilisateur.statutInscriptionAdministrative === "EN_COURS" ? "En cours" : "Terminée"}
+            </Descriptions.Item>
+          )}
           <Descriptions.Item label="Inscriptions" styles={{ label: { width: 200 } }}>
             <h3 className="sr-only">Inscriptions</h3>
             <Flex vertical style={{ width: "100%", overflowY: "auto" }} wrap="wrap">

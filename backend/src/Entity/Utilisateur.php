@@ -220,6 +220,15 @@ class Utilisateur implements UserInterface
     #[Map(if: false)]
     private ?bool $boursier = null;
 
+    // Situation sociale Apogée (cod_soc / lib_soc).
+    #[ORM\Column(length: 10, nullable: true)]
+    #[Map(if: false)]
+    private ?string $codeSituationSociale = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Map(if: false)]
+    private ?string $libelleSituationSociale = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     #[Map(if: false)]
     private ?string $statutEtudiant = null;
@@ -247,6 +256,10 @@ class Utilisateur implements UserInterface
     #[Map(if: false)]
     private ?bool $gestionnaire = false;
 
+    #[ORM\Embedded(class: Adresse::class, columnPrefix: 'adresse_')]
+    #[Map(if: false)]
+    private Adresse $adresse;
+
     public function __construct()
     {
         $this->beneficiaires = new ArrayCollection();
@@ -266,6 +279,7 @@ class Utilisateur implements UserInterface
         $this->decisionsAmenagementExamens = new ArrayCollection();
         $this->piecesJointes = new ArrayCollection();
         $this->bilans = new ArrayCollection();
+        $this->adresse = new Adresse();
     }
 
     public function getId(): ?int
@@ -1230,6 +1244,30 @@ class Utilisateur implements UserInterface
         return $this;
     }
 
+    public function getCodeSituationSociale(): ?string
+    {
+        return $this->codeSituationSociale;
+    }
+
+    public function setCodeSituationSociale(?string $codeSituationSociale): static
+    {
+        $this->codeSituationSociale = $codeSituationSociale;
+
+        return $this;
+    }
+
+    public function getLibelleSituationSociale(): ?string
+    {
+        return $this->libelleSituationSociale;
+    }
+
+    public function setLibelleSituationSociale(?string $libelleSituationSociale): static
+    {
+        $this->libelleSituationSociale = $libelleSituationSociale;
+
+        return $this;
+    }
+
     public function getStatutEtudiant(): ?string
     {
         return $this->statutEtudiant;
@@ -1240,6 +1278,37 @@ class Utilisateur implements UserInterface
         $this->statutEtudiant = $statutEtudiant;
 
         return $this;
+    }
+
+    public function getAdresse(): Adresse
+    {
+        return $this->adresse;
+    }
+
+    public function setAdresse(Adresse $adresse): static
+    {
+        $this->adresse = $adresse;
+
+        return $this;
+    }
+
+    /**
+     * Statut d'inscription administrative dérivé des inscriptions :
+     * "EN_COURS" tant qu'au moins une inscription couvre la date courante,
+     * "TERMINEE" sinon. Renvoyé en lecture seule via l'API.
+     */
+    public function getStatutInscriptionAdministrative(): string
+    {
+        $now = $this->now();
+        foreach ($this->getInscriptions() as $inscription) {
+            $debut = $inscription->getDebut();
+            $fin = $inscription->getFin();
+            if ($debut !== null && $debut <= $now && ($fin === null || $fin > $now)) {
+                return 'EN_COURS';
+            }
+        }
+
+        return 'TERMINEE';
     }
 
     public function getNumeroAnonyme(): ?int
