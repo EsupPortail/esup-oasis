@@ -1,0 +1,8 @@
+.amenagement-expire {
+    filter: grayscale(.66);
+    opacity: .66;
+
+    &.bg-yellow-xxlight {
+        opacity: .75;
+    }
+}

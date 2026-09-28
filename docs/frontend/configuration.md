@@ -8,27 +8,29 @@ du projet. Un fichier `.env.example` est fourni pour servir de base à la config
 
 ## Variables liées à l'établissement et au service d'accompagnement des étudiants
 
-| **Variable**                            | **Description**                                                       | **Exemple**                                            | **Obligatoire** |
-|-----------------------------------------|-----------------------------------------------------------------------|--------------------------------------------------------|-----------------|
-| `REACT_APP_TITRE`                       | Titre de l'application                                                | Oasis                                                  | Oui             |
-| `REACT_APP_ETABLISSEMENT`               | Nom de l'établissement                                                | université ESUP                                        | Oui             |
-| `REACT_APP_ETABLISSEMENT_ARTICLE`       | Nom de l'établissement avec article                                   | l'université ESUP                                      | Oui             |
-| `REACT_APP_ETABLISSEMENT_ABV`           | Abréviation du nom de l'établissement                                 | ESUP                                                   | Oui             |
-| `REACT_APP_ETABLISSEMENT_ABV_ARTICLE`   | Abréviation du nom de l'établissement avec article                    | l'ESUP                                                 | Oui             |
-| `REACT_APP_ETABLISSEMENT_URL`           | URL de l'établissement                                                | https://www.esup-portail.org                           | Non             |
-| `REACT_APP_SERVICE`                     | Sigle / nom court du service d'accompagnement des étudiants           | TANDEM                                                 | Oui             |
-| `REACT_APP_SERVICE_DENOMINATION`        | Dénomination du service affichée dans une phrase (cf. ci-dessous)     | Cellule Boussole                                       | Non             |
-| `REACT_APP_SERVICE_ARTICLE`             | Article défini de la dénomination : `le`, `la` ou `l'`                | la                                                     | Non             |
-| `REACT_APP_SERVICE_DENOMINATION_LONGUE` | Dénomination développée, 1ʳᵉ mention de la page RGPD (cf. ci-dessous) | Service Tandem d'Accompagnement des Étudiants (TANDEM) | Non             |
-| `REACT_APP_EMAIL_SERVICE`               | Email du service d'accompagnement des étudiants                       | accomp-etudiants@esup-portail.org                      | Oui             |
-| `REACT_APP_URL_SERVICE`                 | URL du service d'accompagnement des étudiants                         | https://accomp-etudiants.esup-portail.org              | Non             |
-| `REACT_APP_ESPACE_SANTE`                | Nom du service de santé des étudiants                                 | Espace Santé Étudiants                                 | Non             |
-| `REACT_APP_ESPACE_SANTE_ABV`            | Abréviation du nom du service de santé des étudiants                  | ESE                                                    | Non             |
-| `REACT_APP_ADRESSE_DPD`                 | Adresse postale du Délégué à la Protection des données (HTML)         | 1 rue de la données\<br />33000 BORDEAUX               | Non             |
-| `REACT_APP_EMAIL_DPD`                   | Email du Délégué à la Protection des Données                          | dpo@esup-portail.org                                   | Non             |
-| `REACT_APP_INFOS_AUTH`                  | URL d'aide à la connexion au SI de l'établissement                    | https://identite-numerique.esup-portail.org            | Non             |
-| `REACT_APP_LOGO`                        | Logo de l'établissement (URL)                                         | /images/logo.svg                                       | Non             |
-| `REACT_APP_LOGO_DARK`                   | Logo de l'établissement (URL) pour le mode dark                       | /images/logo-dark.svg                                  | Non             |
+| **Variable**                            | **Description**                                                       | **Exemple**                                            | **Obligatoire**                        |
+|------------------------------------------|-------------------------------------------------------------------------|-----------------------------------------------------------|-------------------------------------------|
+| `REACT_APP_TITRE`                       | Titre de l'application                                                | Oasis                                                  | Oui                                    |
+| `REACT_APP_ETABLISSEMENT`               | Nom de l'établissement                                                | université ESUP                                        | Oui                                    |
+| `REACT_APP_ETABLISSEMENT_ARTICLE`       | Nom de l'établissement avec article                                   | l'université ESUP                                      | Oui                                    |
+| `REACT_APP_ETABLISSEMENT_ABV`           | Abréviation du nom de l'établissement                                 | ESUP                                                   | Oui                                    |
+| `REACT_APP_ETABLISSEMENT_ABV_ARTICLE`   | Abréviation du nom de l'établissement avec article                    | l'ESUP                                                 | Oui                                    |
+| `REACT_APP_ETABLISSEMENT_URL`           | URL de l'établissement                                                | https://www.esup-portail.org                           | Non                                    |
+| `REACT_APP_SERVICE`                     | Sigle / nom court du service d'accompagnement des étudiants           | TANDEM                                                 | Oui                                    |
+| `REACT_APP_SERVICE_DENOMINATION`        | Dénomination du service affichée dans une phrase (cf. ci-dessous)     | Cellule Boussole                                       | Non                                    |
+| `REACT_APP_SERVICE_ARTICLE`             | Article défini de la dénomination : `le`, `la` ou `l'`                | la                                                     | Non                                    |
+| `REACT_APP_SERVICE_DENOMINATION_LONGUE` | Dénomination développée, 1ʳᵉ mention de la page RGPD (cf. ci-dessous) | Service Tandem d'Accompagnement des Étudiants (TANDEM) | Non                                    |
+| `REACT_APP_EMAIL_SERVICE`               | Email du service d'accompagnement des étudiants                       | accomp-etudiants@esup-portail.org                      | Oui                                    |
+| `REACT_APP_URL_SERVICE`                 | URL du service d'accompagnement des étudiants                         | https://accomp-etudiants.esup-portail.org              | Non                                    |
+| `REACT_APP_ESPACE_SANTE`                | Nom du service de santé des étudiants                                 | Espace Santé Étudiants                                 | Non                                    |
+| `REACT_APP_ESPACE_SANTE_ABV`            | Abréviation du nom du service de santé des étudiants                  | ESE                                                    | Non                                    |
+| `REACT_APP_DECISION_ETAB_LIB`           | Libellé utilisé pour la décision d'établissement                      | PAEH                                                   | Non, défaut "Décision d'établissement" |
+| `REACT_APP_DECISION_ETAB_ARTICLE`       | Article défini du libellé de la décision d'établissement : `le`, `la` ou `l'` | la                                              | Non, défaut "la"                       |
+| `REACT_APP_ADRESSE_DPD`                 | Adresse postale du Délégué à la Protection des données (HTML)         | 1 rue de la données\<br />33000 BORDEAUX               | Non                                    |
+| `REACT_APP_EMAIL_DPD`                   | Email du Délégué à la Protection des Données                          | dpo@esup-portail.org                                   | Non                                    |
+| `REACT_APP_INFOS_AUTH`                  | URL d'aide à la connexion au SI de l'établissement                    | https://identite-numerique.esup-portail.org            | Non                                    |
+| `REACT_APP_LOGO`                        | Logo de l'établissement (URL)                                         | /images/logo.svg                                       | Non                                    |
+| `REACT_APP_LOGO_DARK`                   | Logo de l'établissement (URL) pour le mode dark                       | /images/logo-dark.svg                                  | Non                                    |
 
 Pour la personnalisation du logo de l'établissement : se reporter à
 la [section dédiée](personnalisation-ui.md#logo-de-létablissement).
@@ -81,6 +83,20 @@ traitement… ») est ajoutée par l'application ; il ne faut donc pas la mettre
 > utilise `service <REACT_APP_SERVICE>` avec l'article `le`. Les instances déjà déployées qui ne
 > définissent que `REACT_APP_SERVICE` continuent d'afficher les mêmes textes qu'auparavant, sans
 > reconfiguration.
+
+### Dénomination de la décision d'établissement
+
+Chaque établissement peut personnaliser le nom donné au document généré pour formaliser les
+aménagements accordés à un⸱e bénéficiaire (« Décision d'établissement » par défaut, « PAEH »…). Le
+même mécanisme que pour le service (cf. ci-dessus) dérive les formes grammaticales à partir de 2
+variables :
+
+- `REACT_APP_DECISION_ETAB_LIB` : le **groupe nominal complet**, **sans article** (« Décision
+  d'établissement », « PAEH »).
+- `REACT_APP_DECISION_ETAB_ARTICLE` : l' **article défini** associé, parmi `le`, `la` ou `l'`.
+
+> **Rétrocompatibilité :** si `REACT_APP_DECISION_ETAB_ARTICLE` n'est pas renseignée, l'article
+> `la` est utilisé par défaut, cohérent avec le libellé par défaut « Décision d'établissement ».
 
 ## Variables pour le service de synchronisation des événements
 

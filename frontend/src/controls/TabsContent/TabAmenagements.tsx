@@ -5,6 +5,7 @@
  * For full copyright and license information please view the LICENSE file distributed with the source code.
  *
  * @author Julien Lemonnier <julien.lemonnier@u-bordeaux.fr>
+ * @author Fabien Léon <fabien.leon@univ-brest.fr>
  */
 
 import { DomaineAmenagementInfos, getAmenagementsByCategories } from "@lib";
@@ -14,7 +15,6 @@ import { CardAmenagement } from "@controls/Card/CardAmenagement";
 import { Avatar, Empty, Flex, Row, Typography } from "antd";
 import { useApi } from "@context/api/ApiProvider";
 import { ModalAmenagement } from "@controls/Modals/ModalAmenagement";
-import { useSearchParams } from "react-router-dom";
 import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
 import { ButtonAddAmenagement } from "@controls/TabsContent/ButtonAddAmenagement";
 
@@ -23,7 +23,6 @@ export function TabAmenagements(props: {
   domaineAmenagement: DomaineAmenagementInfos;
 }) {
   const screens = useBreakpoint();
-  const [searchParams] = useSearchParams();
   const [editedAmenagement, setEditedAmenagement] = React.useState<IAmenagement>();
   const { data: typesAmenagements } = useApi().useGetFullCollection(PREFETCH_TYPES_AMENAGEMENTS);
   const { data: categoriesAmenagements } = useApi().useGetFullCollection(
@@ -85,13 +84,13 @@ export function TabAmenagements(props: {
                 {c.typeAmenagements.map((ta) => (
                   <span key={ta["@id"]} style={{ width: "100%", display: "contents" }}>
                     {ta.amenagements.map((a) => (
-                      <CardAmenagement 
-                        couleur={props.domaineAmenagement.couleur} 
-                        categorie={c.libelle!} 
-                        amenagement={a} 
-                        type={ta.libelle}
-                        onClickEdit={ setEditedAmenagement }>
-                      </CardAmenagement>
+                      <CardAmenagement
+                        key={a["@id"]}
+                        categorie={c.libelle!}
+                        amenagement={a}
+                        type={ta}
+                        onClickEdit={setEditedAmenagement}
+                      ></CardAmenagement>
                     ))}
                   </span>
                 ))}

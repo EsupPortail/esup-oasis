@@ -23,6 +23,7 @@ import apiDownloader from "@utils/apiDownloader";
 import { EtatDecisionEtablissement } from "@controls/Avatars/DecisionEtablissementAvatar";
 import { queryClient } from "@/queryClient";
 import { env } from "@/env";
+import { decisionEtab } from "@lib";
 
 export function BoutonDecisionEtab(props: { utilisateurId: string }) {
   const auth = useAuth();
@@ -45,14 +46,14 @@ export function BoutonDecisionEtab(props: { utilisateurId: string }) {
     onSuccess: (data) => {
       setLoading(false);
       if (data.etat === EtatDecisionEtablissement.EDITE) {
-        message.success("Décision d'établissement envoyée").then();
+        message.success(`${decisionEtab.Denomination} : envoyé${decisionEtab.accordE}`).then();
       } else if (data.etat === EtatDecisionEtablissement.VALIDE) {
-        message.success("Demande d'édition de la décision d'établissement envoyée").then();
+        message.success(`Demande d'édition ${decisionEtab.de} envoyée`).then();
       }
     },
     onError: () => {
       setLoading(false);
-      message.error("Erreur lors du traitement de la décision d'établissement").then();
+      message.error(`Erreur lors du traitement ${decisionEtab.de}`).then();
     },
   });
 
@@ -70,7 +71,7 @@ export function BoutonDecisionEtab(props: { utilisateurId: string }) {
                 {
                   key: "apercu",
                   icon: <EyeOutlined />,
-                  label: "Aperçu de la décision",
+                  label: `Aperçu ${decisionEtab.de}`,
                   onClick: () => {
                     setLoading(true);
                     apiDownloader(
@@ -96,8 +97,8 @@ export function BoutonDecisionEtab(props: { utilisateurId: string }) {
                     <Popconfirm
                       title={
                         auth.user?.isAdmin
-                          ? "Envoyer la décision d'établissement ?"
-                          : "Demander l'édition de la décision d'établissement ?"
+                          ? `Envoyer ${decisionEtab.defini} ?`
+                          : `Demander l'édition ${decisionEtab.de} ?`
                       }
                       onConfirm={() => {
                         setLoading(true);
@@ -113,8 +114,8 @@ export function BoutonDecisionEtab(props: { utilisateurId: string }) {
                     >
                       <Button loading={loading} type="text" className="p-0 m-0 no-hover">
                         {auth.user?.isAdmin
-                          ? "Envoyer la décision étab."
-                          : "Demander l'édition décision étab."}
+                          ? `Envoyer ${decisionEtab.defini}`
+                          : `Demander l'édition ${decisionEtab.de}`}
                       </Button>
                     </Popconfirm>
                   ),
@@ -127,7 +128,7 @@ export function BoutonDecisionEtab(props: { utilisateurId: string }) {
               icon={<FileDoneOutlined />}
               className="text-warning border-orange mr-2"
             >
-              Décision d'étab. en attente
+              {decisionEtab.Denomination} en attente
             </Button>
           </Dropdown>
         </Tooltip>
@@ -141,7 +142,7 @@ export function BoutonDecisionEtab(props: { utilisateurId: string }) {
               {
                 key: "apercu",
                 icon: <EyeOutlined />,
-                label: "Aperçu de la décision",
+                label: `Aperçu ${decisionEtab.de}`,
                 onClick: () => {
                   setLoading(true);
                   apiDownloader(
@@ -166,7 +167,7 @@ export function BoutonDecisionEtab(props: { utilisateurId: string }) {
                 ? {
                     key: "send",
                     icon: <SendOutlined />,
-                    label: "Envoyer la décision",
+                    label: `Envoyer ${decisionEtab.defini}`,
                     onClick: () => {
                       setLoading(true);
                       mutateDecisionEtab.mutate({
@@ -182,7 +183,9 @@ export function BoutonDecisionEtab(props: { utilisateurId: string }) {
           }}
         >
           <Button disabled loading={loading} icon={<FileDoneOutlined />} className="mr-2">
-            {auth.user?.isAdmin ? "Éditer décision étab." : "Décision d'étab. demandée"}
+            {auth.user?.isAdmin
+              ? `Éditer ${decisionEtab.defini}`
+              : `${decisionEtab.Denomination} demandé${decisionEtab.accordE}`}
           </Button>
         </Dropdown>
       );
@@ -208,10 +211,12 @@ export function BoutonDecisionEtab(props: { utilisateurId: string }) {
               ).then();
             }}
           >
-            Décision d'étab. en cours d'envoi
+            {decisionEtab.Denomination} en cours d'envoi
           </Button>
           <Space className="legende">
-            <div>La décision sera envoyée dans les prochaines minutes.</div>
+            <div>
+              {decisionEtab.Defini} sera envoyé{decisionEtab.accordE} dans les prochaines minutes.
+            </div>
             <Tooltip title="Rafraîchir" placement="bottom">
               <Button
                 icon={<ReloadOutlined />}
@@ -233,7 +238,7 @@ export function BoutonDecisionEtab(props: { utilisateurId: string }) {
 
     case EtatDecisionEtablissement.EDITE:
       return (
-        <Tooltip title="Décision d'établissement envoyée">
+        <Tooltip title={`${decisionEtab.Denomination} : envoyé${decisionEtab.accordE}`}>
           <Button
             loading={loading}
             onClick={() => {
@@ -252,7 +257,7 @@ export function BoutonDecisionEtab(props: { utilisateurId: string }) {
             icon={<CheckCircleFilled />}
             className={`mr-2 ${EtatDecisionEtablissement.EDITE ? "text-success border-green-light" : ""}`}
           >
-            Décision étab. envoyée
+            {decisionEtab.Denomination} : envoyé{decisionEtab.accordE}
           </Button>
         </Tooltip>
       );

@@ -11,6 +11,7 @@ import React from "react";
 import { Col, Select } from "antd";
 import { FiltreBeneficiaire } from "@controls/Table/BeneficiaireTable";
 import { EtatDecisionEtablissement } from "@controls/Avatars/DecisionEtablissementAvatar";
+import { decisionEtab } from "@lib";
 
 interface FilterFieldDecisionEtablissementProps {
   filtreBeneficiaire: FiltreBeneficiaire;
@@ -24,7 +25,7 @@ export function FilterFieldDecisionEtablissement({
   return (
     <>
       <Col xs={24} sm={24} md={6}>
-        Décision d'établissement
+        {decisionEtab.Denomination}
       </Col>
       <Col xs={24} sm={24} md={18}>
         <Select

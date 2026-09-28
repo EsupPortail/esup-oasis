@@ -12,7 +12,7 @@ import { NavigateFunction } from "react-router-dom";
 import { Badge, Button, MenuProps } from "antd";
 import { BellOutlined } from "@ant-design/icons";
 import { IStatistiquesEvenements } from "@api";
-import { Utilisateur } from "@lib";
+import { decisionEtab, Utilisateur } from "@lib";
 import {
   IAffichage,
   IFiltresEvenements,
@@ -167,9 +167,9 @@ function getGestionnaireItems(
       key: "notifications-decision-valider",
       count: stats.nbDecisionsAttenteValidation,
       libelles: [
-        "Toutes les décisions d'étab. sont validées",
-        "1 décision d'étab. à valider",
-        "{count} décisions d'étab. à valider",
+        `${decisionEtab.Denomination} : tout est validé`,
+        `${decisionEtab.Denomination} : 1 à valider`,
+        `${decisionEtab.Denomination} : {count} à valider `,
       ],
       onClick: () =>
         navigate(
@@ -194,9 +194,9 @@ function getAdminItems(
       key: "notifications-decision-editer",
       count: stats.nbDecisionsAEditer,
       libelles: [
-        "Toutes les décisions d'étab. sont éditées",
-        "1 décision d'étab. à éditer",
-        "{count} décisions d'étab. à éditer",
+        `${decisionEtab.Denomination} : tout est édité`,
+        `${decisionEtab.Denomination} : 1 à éditer`,
+        `${decisionEtab.Denomination} : {count} à éditer`,
       ],
       onClick: () =>
         navigate(

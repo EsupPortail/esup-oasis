@@ -555,6 +555,10 @@ th.pointer {
 .ant-tag-yellow {
   border-color: variables.$app-contrast !important;
   color: variables.$app-contrast !important;
+
+  &.text-yellow-dark {
+    @extend .text-yellow-dark;
+  }
 }
 
 .ant-menu.ant-menu-sub.ant-menu-vertical {
@@ -860,3 +864,10 @@ footer .ant-btn-link {
   background-color: variables.$light-grey !important;
 }
 
+.ant-table > .ant-table-container {
+  overflow-y: hidden;
+}
+
+.ant-ribbon .ant-ribbon-content {
+  color: variables.$black;
+}

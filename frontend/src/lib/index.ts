@@ -5,3 +5,4 @@ export * from "./demande";
 export * from "./referentiels";
 export * from "./service";
 export * from "./etablissement";
+export * from "./decisionEtab";

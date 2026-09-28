@@ -5,6 +5,7 @@
  * For full copyright and license information please view the LICENSE file distributed with the source code.
  *
  * @author Julien Lemonnier <julien.lemonnier@u-bordeaux.fr>
+ * @author Fabien Léon <fabien.leon@univ-brest.fr>
  */
 
 import { useApi } from "@context/api/ApiProvider";
@@ -13,7 +14,7 @@ import { EditOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 import { ITypeAmenagement } from "@api";
 import BooleanState from "@controls/State/BooleanState";
-import { getDomaineAmenagement } from "@lib";
+import { decisionEtab, getDomaineAmenagement } from "@lib";
 
 interface TypesAmenagementsTableProps {
   categorieId: string;
@@ -70,13 +71,18 @@ export function TypesAmenagementsTable({
           render: (actif) => <BooleanState value={actif} onLabel="Activé" offLabel="Désactivé" />,
         },
         {
-          title: "Décision",
+          title: decisionEtab.Denomination,
           dataIndex: "decision",
           width: 120,
           className: "text-center",
           key: "decision",
           render: (decision) => (
-            <BooleanState value={decision} onLabel="Oui" offLabel="Non" tooltip="Présence dans la décision d'établissement"/>
+            <BooleanState
+              value={decision}
+              onLabel="Inclus"
+              offLabel="Non"
+              tooltip={`Inclure dans ${decisionEtab.defini}`}
+            />
           ),
         },
         {

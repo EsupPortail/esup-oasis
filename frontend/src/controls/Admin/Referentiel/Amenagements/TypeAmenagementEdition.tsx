@@ -5,13 +5,14 @@
  * For full copyright and license information please view the LICENSE file distributed with the source code.
  *
  * @author Julien Lemonnier <julien.lemonnier@u-bordeaux.fr>
+ * @author Fabien Léon <fabien.leon@univ-brest.fr>
  */
 
 import { Button, Card, Divider, Drawer, Form, Input, Radio, Select, Switch } from "antd";
 import { useApi } from "@context/api/ApiProvider";
 import React, { ReactElement, useEffect } from "react";
 import { ITypeAmenagement, PREFETCH_CATEGORIES_AMENAGEMENTS, QK_TYPES_AMENAGEMENTS } from "@api";
-import { DOMAINES_AMENAGEMENTS_INFOS, getDomaineAmenagement } from "@lib";
+import { decisionEtab, DOMAINES_AMENAGEMENTS_INFOS, getDomaineAmenagement } from "@lib";
 
 interface AmenagementsEditionProps {
   editedItem?: ITypeAmenagement;
@@ -41,7 +42,7 @@ export function TypeAmenagementEdition({
   const [form] = Form.useForm();
 
   const { data: categories } = useApi().useGetFullCollection(PREFETCH_CATEGORIES_AMENAGEMENTS);
-
+  console.log(decisionEtab);
   const mutationPost = useApi().usePost({
     path: "/types_amenagements",
     invalidationQueryKeys: [QK_TYPES_AMENAGEMENTS],
@@ -144,7 +145,7 @@ export function TypeAmenagementEdition({
           <Form.Item
             name="libelleLong"
             label="Libellé long"
-            help="Le libellé long est utilisé pour éditer les décisions d'établissement."
+            help={`Le libellé long est utilisé pour l'édition ${decisionEtab.de}`}
           >
             <Input />
           </Form.Item>
@@ -173,9 +174,12 @@ export function TypeAmenagementEdition({
               }))}
             />
           </Form.Item>
-          <Form.Item 
+
+          <Divider />
+
+          <Form.Item
             name="decision"
-            label="Afficher dans la décision"
+            label={`Inclure dans ${decisionEtab.defini}`}
             className="mt-2"
             valuePropName="checked"
           >

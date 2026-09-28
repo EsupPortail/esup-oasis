@@ -26,6 +26,8 @@ type EnvType = {
   REACT_APP_URL_SERVICE: string | null;
   REACT_APP_ESPACE_SANTE: string | null;
   REACT_APP_ESPACE_SANTE_ABV: string | null;
+  REACT_APP_DECISION_ETAB_LIB: string;
+  REACT_APP_DECISION_ETAB_ARTICLE: string | null;
   REACT_APP_ADRESSE_DPD: string | null;
   REACT_APP_EMAIL_DPD: string | null;
   REACT_APP_INFOS_AUTH: string | null;
@@ -95,9 +97,15 @@ function toFeatureEnabled(
 }
 
 export const env: EnvType = {
+  // Valeur par défaut pour Décision d'étab / PAEH
+  ...{ REACT_APP_DECISION_ETAB_LIB: "décision d'établissement" },
+  // Valeur par défaut du préfixe de l'API
   ...{ REACT_APP_API_PREFIX: "" },
+  // Fichier .env
   ...(import.meta.env as unknown as EnvType),
+  // Variables injectées à l'env
   ...(window.env as unknown as EnvType),
+
   // À partir de la 2.4, la version de l'application est récupérée depuis le build.
   // On empêche que la variable soit écrasée par une précédente configuration.
   REACT_APP_VERSION: (import.meta.env as unknown as EnvType).REACT_APP_VERSION,

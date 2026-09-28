@@ -35,12 +35,8 @@ export const IdentiteSection: React.FC<IdentiteSectionProps> = ({
   const user = useAuth().user;
 
   return (
-    <Row
-      gutter={16}
-      className={screens.xl ? "" : "d-flex-column-reverse"}
-      style={{ alignItems: "center" }}
-    >
-      <Col xs={24} xl={18}>
+    <Row gutter={[16, 16]} style={{ alignItems: screens.xl ? "center" : undefined }}>
+      <Col xs={24} xl={18} style={{ order: screens.xl ? 0 : 1 }}>
         {isFetching ? (
           <Skeleton active paragraph />
         ) : (
@@ -60,7 +56,7 @@ export const IdentiteSection: React.FC<IdentiteSectionProps> = ({
               </Descriptions.Item>
               <Descriptions.Item label="Date de naissance">
                 {utilisateur.dateNaissance ? (
-                  <Space>
+                  <Space orientation="vertical" size={0}>
                     <span>{dayjs(utilisateur.dateNaissance).format("DD/MM/YYYY")}</span>
                     <span className="semi-bold">
                       ({calculerAge(utilisateur.dateNaissance)} ans)
@@ -144,7 +140,7 @@ export const IdentiteSection: React.FC<IdentiteSectionProps> = ({
           </>
         )}
       </Col>
-      <Col xs={24} xl={6} className="d-flex-center">
+      <Col xs={24} xl={6} className="d-flex-center" style={{ order: screens.xl ? 1 : 0 }}>
         <UtilisateurAvatarImage
           utilisateurId={utilisateur["@id"] as string}
           as="img"
