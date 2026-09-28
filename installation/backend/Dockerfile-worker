@@ -2,11 +2,12 @@ ARG APP_VERSION=latest
 FROM ghcr.io/esupportail/esup-oasis/backend-worker:${APP_VERSION}
 
 # perso apogée
-COPY ./personnalisation/config/apogee/* /app/config/apogee/
+COPY ./personnalisation/config/apogee/* /application/config/apogee/
 
 # perso templates / images / css
-COPY ./personnalisation/templates/mail/* /app/templates/mail/
-COPY ./personnalisation/templates/Decisions/* /app/templates/Decisions/
-COPY ./personnalisation/templates/ServicesFaits/* /app/templates/ServicesFaits/
-COPY ./personnalisation/public/css/* /app/public/css/
-COPY ./personnalisation/public/images/* /app/public/images/
+COPY ./personnalisation/templates/mail/* /application/templates/mail/
+COPY ./personnalisation/templates/Decisions/* /application/templates/Decisions/
+COPY ./personnalisation/templates/ServicesFaits/* /application/templates/ServicesFaits/
+COPY ./personnalisation/public/css/* /application/public/css/
+COPY ./personnalisation/public/images/* /application/public/images/
+COPY ./personnalisation/SiScol/* /application/src/Service/SiScol/
