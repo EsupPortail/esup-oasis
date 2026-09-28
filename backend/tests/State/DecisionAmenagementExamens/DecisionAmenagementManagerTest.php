@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace App\Tests\State\DecisionAmenagementExamens;
 
-use App\Entity\AvisEse;
 use App\Entity\Amenagement;
+use App\Entity\AvisEse;
 use App\Entity\Beneficiaire;
 use App\Entity\DecisionAmenagementExamens;
 use App\Entity\TypeAmenagement;
@@ -21,16 +21,17 @@ use App\Entity\Utilisateur;
 use App\Repository\DecisionAmenagementExamensRepository;
 use App\State\DecisionAmenagementExamens\DecisionAmenagementManager;
 use DateTimeImmutable;
+use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionProperty;
-use PHPUnit\Framework\TestCase;
+use stdClass;
 use Symfony\Component\Clock\MockClock;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * Filet de sécurité sur le fix isActif (granularité jour) : la décision
- * d'examen suit la durée réelle de l'aménagement. Le dernier jour, inclusif,
+ * suit la durée réelle de l'aménagement. Le dernier jour, inclusif,
  * l'aménagement reste actif donc la décision doit être conservée ; le
  * lendemain il s'éteint donc la décision supprimable est retirée.
  */
@@ -39,9 +40,9 @@ final class DecisionAmenagementManagerTest extends TestCase
     private const string START = '2025-09-01';
     private const string END = '2026-08-31';
 
-    private function examAmenagement(string $now): Amenagement
+    private function amenagementDecision(string $now): Amenagement
     {
-        $type = (new TypeAmenagement())->setExamens(true);
+        $type = new TypeAmenagement()->setDecision(true);
 
         $amenagement = new Amenagement();
         $amenagement->setType($type);
@@ -50,7 +51,7 @@ final class DecisionAmenagementManagerTest extends TestCase
         $amenagement->setClock(new MockClock(new DateTimeImmutable($now)));
         // Un id non nul : la déduplication de Utilisateur::getAmenagementsActifs
         // indexe par id et déclencherait sinon une déprécation sur clé nulle.
-        (new ReflectionProperty(Amenagement::class, 'id'))->setValue($amenagement, 1);
+        new ReflectionProperty(Amenagement::class, 'id')->setValue($amenagement, 1);
 
         return $amenagement;
     }
@@ -65,23 +66,22 @@ final class DecisionAmenagementManagerTest extends TestCase
             $benef->addAmenagement($amenagement);
         }
 
-        $utilisateur = $this->createPartialMock(
-            Utilisateur::class,
-            ['getBeneficiairesActifs', 'getEtatAvisEse', 'getDecisionAmenagementExamens'],
-        );
+        $utilisateur = $this->createPartialMock(Utilisateur::class, [
+            'getBeneficiairesActifs',
+            'getEtatAvisEse',
+            'getDecisionAmenagementExamens',
+        ]);
         $utilisateur->method('getBeneficiairesActifs')->willReturn([$benef]);
         // Pas d'avis ESE en cours : l'existence de la décision ne dépend que de
-        // l'aménagement d'examen, c'est ce qu'on veut isoler.
+        // l'aménagement, c'est ce qu'on veut isoler.
         $utilisateur->method('getEtatAvisEse')->willReturn(AvisEse::ETAT_AUCUN);
         $utilisateur->method('getDecisionAmenagementExamens')->willReturn($decision);
 
         return $utilisateur;
     }
 
-    private function manager(
-        string $now,
-        DecisionAmenagementExamensRepository $repository,
-    ): DecisionAmenagementManager {
+    private function manager(string $now, DecisionAmenagementExamensRepository $repository): DecisionAmenagementManager
+    {
         // UtilisateurManager est readonly (non doublable) et inutilisé par
         // majEtatDecision ; on instancie sans constructeur et on n'injecte que
         // les collaborateurs réellement sollicités par ce chemin.
@@ -98,22 +98,21 @@ final class DecisionAmenagementManagerTest extends TestCase
     private function messageBus(): MessageBusInterface
     {
         $bus = $this->createMock(MessageBusInterface::class);
-        $bus->method('dispatch')->willReturn(new Envelope(new \stdClass()));
+        $bus->method('dispatch')->willReturn(new Envelope(new stdClass()));
 
         return $bus;
     }
 
     public function testKeepsExamDecisionThroughAccommodationLastDay(): void
     {
-        $decision = (new DecisionAmenagementExamens())
-            ->setEtat(DecisionAmenagementExamens::ETAT_ATTENTE_VALIDATION_CAS);
+        $decision = new DecisionAmenagementExamens()->setEtat(DecisionAmenagementExamens::ETAT_ATTENTE_VALIDATION_CAS);
 
         $repository = $this->createMock(DecisionAmenagementExamensRepository::class);
         $repository->expects(self::never())->method('remove');
         $repository->expects(self::once())->method('save');
 
         $now = self::END . ' 11:00:00';
-        $beneficiaire = $this->beneficiaire([$this->examAmenagement($now)], $decision);
+        $beneficiaire = $this->beneficiaire([$this->amenagementDecision($now)], $decision);
 
         $this->manager($now, $repository)->majEtatDecision(
             $beneficiaire,
@@ -124,15 +123,14 @@ final class DecisionAmenagementManagerTest extends TestCase
 
     public function testRemovesExamDecisionDayAfterAccommodationEnds(): void
     {
-        $decision = (new DecisionAmenagementExamens())
-            ->setEtat(DecisionAmenagementExamens::ETAT_ATTENTE_VALIDATION_CAS);
+        $decision = new DecisionAmenagementExamens()->setEtat(DecisionAmenagementExamens::ETAT_ATTENTE_VALIDATION_CAS);
 
         $repository = $this->createMock(DecisionAmenagementExamensRepository::class);
         $repository->expects(self::once())->method('remove');
         $repository->expects(self::never())->method('save');
 
         $now = '2026-09-01 00:00:01';
-        $beneficiaire = $this->beneficiaire([$this->examAmenagement($now)], $decision);
+        $beneficiaire = $this->beneficiaire([$this->amenagementDecision($now)], $decision);
 
         $this->manager($now, $repository)->majEtatDecision(
             $beneficiaire,
