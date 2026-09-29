@@ -15,21 +15,17 @@ namespace App\MessageHandler;
 use App\ApiResource\DecisionAmenagementExamens as DecisionResource;
 use App\ApiResource\Utilisateur;
 use App\Entity\DecisionAmenagementExamens;
-use App\Entity\Fichier;
-use App\Entity\PieceJointeBeneficiaire;
 use App\Message\DecisionEditionDemandeeMessage;
 use App\Message\RessourceModifieeMessage;
 use App\Repository\DecisionAmenagementExamensRepository;
-use App\Repository\PieceJointeBeneficiaireRepository;
 use App\Serializer\DecisionAmenagementEditionNormalizer;
 use App\Serializer\Encoder\PdfEncoder;
-use App\Service\FileStorage\StorageProviderInterface;
+use App\Service\Decision\ArchivageDecision;
 use App\Service\MailService;
 use App\State\Utilisateur\UtilisateurManager;
 use Exception;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Message\RedispatchMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -38,18 +34,15 @@ use Symfony\Component\Messenger\Stamp\DelayStamp;
 #[AsMessageHandler(handles: DecisionEditionDemandeeMessage::class)]
 readonly class DecisionEditionDemandeeMessageHandler
 {
-    use ClockAwareTrait;
-
     public function __construct(
         private DecisionAmenagementExamensRepository $decisionAmenagementExamensRepository,
         private DecisionAmenagementEditionNormalizer $decisionAmenagementEditionNormalizer,
-        private PieceJointeBeneficiaireRepository $pieceJointeBeneficiaireRepository,
         private UtilisateurManager $utilisateurManager,
         private PdfEncoder $pdfEncoder,
         private MailService $mailService,
         private LoggerInterface $logger,
-        private StorageProviderInterface $storageProvider,
         private MessageBusInterface $messageBus,
+        private ArchivageDecision $archivageDecision,
     ) {}
 
     public function __invoke(DecisionEditionDemandeeMessage $message): void
@@ -77,29 +70,11 @@ readonly class DecisionEditionDemandeeMessageHandler
 
         //on stocke une copie dans le dossier de l'étudiant
         try {
-            $filename = 'decision-' . $decision->getId() . '.pdf';
-            $mimeType = 'application/pdf';
-            $dateEnvoi = $this->now();
-            $description = "Décision d'aménagements au " . $dateEnvoi->format('d/m/Y');
-            $metadata = $this->storageProvider->store(
-                contents: $pdf,
-                filename: $filename,
-                mimeType: $mimeType,
-                description: $description,
+            $this->archivageDecision->archiver(
+                decision: $decision,
+                pdf: $pdf,
+                auteur: $this->utilisateurManager->parUid($message->getUidDemandeur()),
             );
-            $fichier = new Fichier();
-            $fichier->setNom($filename);
-            $fichier->setProprietaire($decision->getBeneficiaire());
-            $fichier->setMetadata($metadata);
-            $fichier->setTypeMime($mimeType);
-            $decision->setFichier($fichier);
-            $pieceJointe = new PieceJointeBeneficiaire();
-            $pieceJointe->setFichier($fichier);
-            $pieceJointe->setBeneficiaire($decision->getBeneficiaire());
-            $pieceJointe->setUtilisateurCreation($this->utilisateurManager->parUid($message->getUidDemandeur()));
-            $pieceJointe->setDateDepot($dateEnvoi);
-            $pieceJointe->setLibelle($description);
-            $this->pieceJointeBeneficiaireRepository->save($pieceJointe, true);
         } catch (Exception) {
             $this->logger->error('Erreur d\'enregistrement de la copie pdf de la décision');
         }
