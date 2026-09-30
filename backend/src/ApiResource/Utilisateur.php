@@ -566,6 +566,40 @@ final class Utilisateur
         }
     }
 
+    /**
+     * Code de la situation sociale (lecture seule), tel que renvoyé par le SI scolarité.
+     */
+    #[Groups([self::GROUP_OUT])]
+    #[ApiProperty(
+        security: "object == null or object.uid == user.getUserIdentifier() or is_granted('ROLE_PLANIFICATEUR')",
+    )]
+    public ?string $codeSituationSociale {
+        get {
+            $prop = new ReflectionProperty(self::class, 'codeSituationSociale');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->codeSituationSociale = $this->entity->getCodeSituationSociale();
+            }
+            return $this->codeSituationSociale ?? null;
+        }
+    }
+
+    /**
+     * Libellé de la situation sociale (lecture seule), tel que renvoyé par le SI scolarité.
+     */
+    #[Groups([self::GROUP_OUT])]
+    #[ApiProperty(
+        security: "object == null or object.uid == user.getUserIdentifier() or is_granted('ROLE_PLANIFICATEUR')",
+    )]
+    public ?string $libelleSituationSociale {
+        get {
+            $prop = new ReflectionProperty(self::class, 'libelleSituationSociale');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->libelleSituationSociale = $this->entity->getLibelleSituationSociale();
+            }
+            return $this->libelleSituationSociale ?? null;
+        }
+    }
+
     #[Groups([self::GROUP_OUT])]
     #[ApiProperty(
         security: "object == null or object.uid == user.getUserIdentifier() or is_granted('ROLE_PLANIFICATEUR')",
@@ -577,6 +611,58 @@ final class Utilisateur
                 $this->statutEtudiant = $this->entity->getStatutEtudiant();
             }
             return $this->statutEtudiant ?? null;
+        }
+    }
+
+    /**
+     * Adresse postale sous forme de tableau associatif (`{ligne1, ligne2, codePostal,
+     * ville, pays}`), pour qu'API Platform la sérialise en ligne dans la ressource
+     * plutôt que de transformer l'embeddable en nœud anonyme JSON-LD. Null quand
+     * aucune composante n'est renseignée : la propriété disparaît alors de l'affichage.
+     *
+     * @var array{ligne1: ?string, ligne2: ?string, codePostal: ?string, ville: ?string, pays: ?string}|null
+     */
+    #[Groups([self::GROUP_OUT])]
+    #[ApiProperty(
+        security: "object == null or object.uid == user.getUserIdentifier() or is_granted('ROLE_PLANIFICATEUR')",
+        openapiContext: [
+            'type' => 'object',
+            'nullable' => true,
+            'properties' => [
+                'ligne1' => ['type' => 'string', 'nullable' => true],
+                'ligne2' => ['type' => 'string', 'nullable' => true],
+                'codePostal' => ['type' => 'string', 'nullable' => true],
+                'ville' => ['type' => 'string', 'nullable' => true],
+                'pays' => ['type' => 'string', 'nullable' => true],
+            ],
+        ],
+    )]
+    public ?array $adresse {
+        get {
+            $prop = new ReflectionProperty(self::class, 'adresse');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $adresse = $this->entity->getAdresse();
+                $this->adresse = $adresse->isEmpty() ? null : $adresse->toArray();
+            }
+            return $this->adresse ?? null;
+        }
+    }
+
+    /**
+     * "EN_COURS" si au moins une inscription couvre la date du jour, "TERMINEE" sinon.
+     * Lecture seule, dérivé de la liste des inscriptions.
+     */
+    #[Groups([self::GROUP_OUT])]
+    #[ApiProperty(
+        security: "object == null or object.uid == user.getUserIdentifier() or is_granted('ROLE_PLANIFICATEUR')",
+    )]
+    public ?string $statutInscriptionAdministrative {
+        get {
+            $prop = new ReflectionProperty(self::class, 'statutInscriptionAdministrative');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->statutInscriptionAdministrative = $this->entity->getStatutInscriptionAdministrative();
+            }
+            return $this->statutInscriptionAdministrative ?? null;
         }
     }
 
