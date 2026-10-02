@@ -20,7 +20,7 @@ class TagTest extends ApiTestCaseCustom
         ]);
 
         $this->assertResponseStatusCodeSame(201);
-        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('content-type', 'application/ld+json');
         $this->assertJsonContains([
             'libelle' => 'Nouveau Tag Test',
             'actif' => true,

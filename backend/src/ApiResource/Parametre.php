@@ -30,7 +30,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
     normalizationContext: ['groups' => [self::GROUP_OUT]],
     denormalizationContext: ['groups' => [self::GROUP_IN]],
     openapi: new Operation(tags: ['Referentiel']),
-    order: ['cle' => 'ASC '],
+    order: ['cle' => 'ASC'],
     security: 'is_granted("' . \App\Entity\Utilisateur::ROLE_GESTIONNAIRE . '")',
     provider: ParametreProvider::class,
     stateOptions: new Options(entityClass: \App\Entity\Parametre::class),

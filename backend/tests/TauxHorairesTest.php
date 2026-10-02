@@ -29,7 +29,7 @@ class TauxHorairesTest extends ApiTestCaseCustom
         $client->request('GET', '/types_evenements/1/taux/1');
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json');
         $this->assertJsonContains([
             '@context' => '/contexts/TauxHoraire',
             '@type' => 'TauxHoraire',

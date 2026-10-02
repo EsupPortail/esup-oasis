@@ -46,7 +46,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: ['groups' => [self::GROUP_OUT]],
     denormalizationContext: ['groups' => [self::GROUP_IN]],
     openapi: new Operation(tags: ['Referentiel']),
-    order: ['debut' => 'DESC '],
+    order: ['debut' => 'DESC'],
     provider: ValeurParametreProvider::class,
     processor: ValeurParametreProcessor::class,
     stateOptions: new Options(entityClass: \App\Entity\ValeurParametre::class),

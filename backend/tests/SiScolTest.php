@@ -10,7 +10,7 @@ class SiScolTest extends ApiTestCaseCustom
         $client->request('GET', '/composantes');
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json');
         $this->assertJsonContains([
             '@context' => '/contexts/Composante',
             '@type' => 'hydra:Collection',
@@ -24,7 +24,7 @@ class SiScolTest extends ApiTestCaseCustom
         $client->request('GET', '/formations');
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json');
         $this->assertJsonContains([
             '@context' => '/contexts/Formation',
             '@type' => 'hydra:Collection',

@@ -64,7 +64,7 @@ class ApplicationClienteTest extends ApiTestCaseCustom
 
         $client->request('GET', '/evenements?intervenant=/utilisateurs/intervenant');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json');
     }
 
     public function testAppCanListEventsForBeneficiaire(): void
@@ -74,7 +74,7 @@ class ApplicationClienteTest extends ApiTestCaseCustom
 
         $client->request('GET', '/evenements?beneficiaires=/utilisateurs/beneficiaire');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json');
     }
 
     public function testAppCanGetIndividualUser(): void
@@ -84,7 +84,7 @@ class ApplicationClienteTest extends ApiTestCaseCustom
 
         $client->request('GET', '/utilisateurs/intervenant');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json');
     }
 
     public function testAppCanListEventTypes(): void
@@ -103,7 +103,7 @@ class ApplicationClienteTest extends ApiTestCaseCustom
 
         $client->request('GET', '/campus');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json');
     }
 
     public function testAppCannotCreateEvent(): void

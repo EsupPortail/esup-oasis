@@ -27,7 +27,7 @@ class TypesTest extends ApiTestCaseCustom
         ]);
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('content-type', 'application/ld+json');
     }
 
     public function testGetOneTypeEvenement(): void

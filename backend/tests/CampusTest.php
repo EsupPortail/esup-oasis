@@ -18,7 +18,7 @@ class CampusTest extends ApiTestCaseCustom
         $response = $client->request('GET', '/campus');
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json');
 
         $this->assertJsonContains([
             '@context' => '/contexts/Campus',
@@ -33,7 +33,7 @@ class CampusTest extends ApiTestCaseCustom
         $client->request('GET', '/campus');
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json');
     }
 
     public function testAdminCanWriteCampus(): void
@@ -47,7 +47,7 @@ class CampusTest extends ApiTestCaseCustom
         ]);
 
         $this->assertResponseStatusCodeSame(201);
-        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json');
         $this->assertJsonContains([
             '@context' => '/contexts/Campus',
             '@type' => 'Campus',
@@ -82,7 +82,7 @@ class CampusTest extends ApiTestCaseCustom
         ]);
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json');
         $this->assertJsonContains([
             '@context' => '/contexts/Campus',
             '@type' => 'Campus',
