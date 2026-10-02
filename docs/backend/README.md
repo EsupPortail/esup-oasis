@@ -200,5 +200,6 @@ instances de l'application.
 * [Traitements asynchrones](traitements_asynchrones.md)
 * [Authentification](auth.md)
 * [Connecteurs](connecteurs.md)
+* [Décision d'aménagements](decision.md)
 * [Stockage de fichiers](pieces_justificatives.md)
 * [Questionnaire des demandes](questionnaires.md)
