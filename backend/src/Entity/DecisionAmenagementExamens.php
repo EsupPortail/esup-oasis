@@ -70,6 +70,16 @@ class DecisionAmenagementExamens
     #[Map(if: false)]
     private ?Fichier $fichier = null;
 
+    /** Observations libres du gestionnaire, reprises sur le document. */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Map(if: false)]
+    private ?string $observations = null;
+
+    /** Date de l'avis du médecin ; exigée avant l'édition pour les seuls profils qui le demandent. */
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Map(if: false)]
+    private ?DateTimeInterface $dateAvisMedecin = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -143,6 +153,32 @@ class DecisionAmenagementExamens
     public function setFichier(?Fichier $fichier): static
     {
         $this->fichier = $fichier;
+
+        return $this;
+    }
+
+    public function getDateAvisMedecin(): ?DateTimeInterface
+    {
+        return $this->dateAvisMedecin;
+    }
+
+    public function setDateAvisMedecin(?DateTimeInterface $dateAvisMedecin): static
+    {
+        $this->dateAvisMedecin = $dateAvisMedecin === null
+            ? null
+            : DateTime::createFromInterface($dateAvisMedecin);
+
+        return $this;
+    }
+
+    public function getObservations(): ?string
+    {
+        return $this->observations;
+    }
+
+    public function setObservations(?string $observations): static
+    {
+        $this->observations = $observations;
 
         return $this;
     }
