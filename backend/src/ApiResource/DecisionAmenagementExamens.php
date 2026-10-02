@@ -18,11 +18,15 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use App\State\DecisionAmenagementExamens\DecisionAmenagementExamensProcessor;
 use App\State\DecisionAmenagementExamens\DecisionAmenagementExamensProvider;
+use App\State\DecisionAmenagementExamens\DecisionObservationsProcessor;
+use App\Validator\DateAvisMedecinRequiseConstraint;
 use App\Validator\EtatDecisionValideConstraint;
+use DateTimeInterface;
 use ReflectionProperty;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     operations: [
@@ -36,6 +40,17 @@ use Symfony\Component\Serializer\Attribute\Ignore;
             uriVariables: ['uid', 'annee'],
             securityPostDenormalize: "is_granted('" . self::MODIFIER_DECISION . "', object)",
         ),
+        // saisies libres, modifiables tant que la décision n'est pas envoyée, sans changer son état
+        new Patch(
+            uriTemplate: self::OBSERVATIONS_URI,
+            uriVariables: ['uid', 'annee'],
+            security: "is_granted('" . \App\Entity\Utilisateur::ROLE_GESTIONNAIRE . "') and object.etat in ['"
+                . \App\Entity\DecisionAmenagementExamens::ETAT_ATTENTE_VALIDATION_CAS . "', '"
+                . \App\Entity\DecisionAmenagementExamens::ETAT_VALIDE . "']",
+            denormalizationContext: ['groups' => [self::GROUP_OBSERVATIONS_IN]],
+            validationContext: ['groups' => [self::GROUP_OBSERVATIONS_IN]],
+            processor: DecisionObservationsProcessor::class,
+        ),
     ],
     normalizationContext: ['groups' => [self::GROUP_OUT]],
     denormalizationContext: ['groups' => [self::GROUP_IN]],
@@ -44,14 +59,17 @@ use Symfony\Component\Serializer\Attribute\Ignore;
     processor: DecisionAmenagementExamensProcessor::class,
     stateOptions: new Options(entityClass: \App\Entity\DecisionAmenagementExamens::class),
 )]
+#[DateAvisMedecinRequiseConstraint]
 #[Map(target: \App\Entity\DecisionAmenagementExamens::class)]
 class DecisionAmenagementExamens
 {
     public const string ITEM_URI = '/utilisateurs/{uid}/decisions/{annee}';
+    public const string OBSERVATIONS_URI = self::ITEM_URI . '/observations';
     public const string MODIFIER_DECISION = 'MODIFIER_DECISION';
 
     public const string GROUP_IN = 'decision:in';
     public const string GROUP_OUT = 'decision:out';
+    public const string GROUP_OBSERVATIONS_IN = 'decision:observations:in';
 
     #[Ignore]
     public ?int $id {
@@ -106,6 +124,34 @@ class DecisionAmenagementExamens
             return $this->urlContenu ?? null;
         }
     }
+
+    #[Groups([self::GROUP_OUT, self::GROUP_OBSERVATIONS_IN])]
+    #[Assert\Length(max: 4000, groups: [self::GROUP_OBSERVATIONS_IN])]
+    public ?string $observations {
+        get {
+            $prop = new ReflectionProperty(self::class, 'observations');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->observations = $this->entity->getObservations();
+            }
+            return $this->observations ?? null;
+        }
+    }
+
+    // exposée aussi sur la fiche du bénéficiaire, qui en déduit si la demande d'édition est possible
+    #[Groups([Utilisateur::GROUP_OUT, self::GROUP_OUT, self::GROUP_OBSERVATIONS_IN])]
+    public ?DateTimeInterface $dateAvisMedecin {
+        get {
+            $prop = new ReflectionProperty(self::class, 'dateAvisMedecin');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->dateAvisMedecin = $this->entity->getDateAvisMedecin();
+            }
+            return $this->dateAvisMedecin ?? null;
+        }
+    }
+
+    // renseignée par les providers (cf. ExigenceAvisMedical) : l'interface applique la même règle que le serveur
+    #[Groups([Utilisateur::GROUP_OUT, self::GROUP_OUT])]
+    public bool $dateAvisMedecinRequise = false;
 
     public function __construct(
         private readonly ?\App\Entity\DecisionAmenagementExamens $entity = null,
