@@ -25,6 +25,7 @@ class DecisionObservationsTest extends ApiTestCaseCustom
         $decision = $this->decision();
         $decision->setEtat(DecisionAmenagementExamens::ETAT_VALIDE);
         $decision->setObservations(null)->setDateAvisMedecin(null);
+        $this->exigerAvisMedical(false);
         static::getContainer()->get('doctrine')->getManager()->flush();
 
         parent::tearDown();
@@ -73,6 +74,63 @@ class DecisionObservationsTest extends ApiTestCaseCustom
         $this->assertSame('2026-06-15', $decision->getDateAvisMedecin()?->format('Y-m-d'));
         // l'enregistrement des observations ne fait pas avancer la décision
         $this->assertSame($etat, $decision->getEtat());
+    }
+
+    public function testEditionIsRefusedWithoutDateWhenProfilRequiresIt(): void
+    {
+        $client = $this->createClientWithCredentials('admin');
+        $this->exigerAvisMedical(true);
+        $this->etatDecision(DecisionAmenagementExamens::ETAT_VALIDE);
+
+        $client->request('PATCH', self::DECISION, [
+            'headers' => ['Content-Type' => 'application/merge-patch+json'],
+            'json' => ['etat' => DecisionAmenagementExamens::ETAT_EDITION_DEMANDEE],
+        ]);
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertJsonContains(['violations' => [['propertyPath' => 'dateAvisMedecin']]]);
+        $this->assertSame(DecisionAmenagementExamens::ETAT_VALIDE, $this->decision()->getEtat());
+
+        // la date saisie, l'édition passe
+        $client->request('PATCH', self::URI, [
+            'headers' => ['Content-Type' => 'application/merge-patch+json'],
+            'json' => ['dateAvisMedecin' => '2026-06-15'],
+        ]);
+        $client->request('PATCH', self::DECISION, [
+            'headers' => ['Content-Type' => 'application/merge-patch+json'],
+            'json' => ['etat' => DecisionAmenagementExamens::ETAT_EDITION_DEMANDEE],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSame(DecisionAmenagementExamens::ETAT_EDITION_DEMANDEE, $this->decision()->getEtat());
+    }
+
+    public function testGestionnaireRequestIsRefusedWithoutDateWhenProfilRequiresIt(): void
+    {
+        $client = $this->createClientWithCredentials('gestionnaire');
+        $this->exigerAvisMedical(true);
+        $this->etatDecision(DecisionAmenagementExamens::ETAT_ATTENTE_VALIDATION_CAS);
+
+        $client->request('PATCH', self::DECISION, [
+            'headers' => ['Content-Type' => 'application/merge-patch+json'],
+            'json' => ['etat' => DecisionAmenagementExamens::ETAT_VALIDE],
+        ]);
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame(DecisionAmenagementExamens::ETAT_ATTENTE_VALIDATION_CAS, $this->decision()->getEtat());
+    }
+
+    public function testEditionWithoutDateStaysPossibleWhenNoProfilRequiresIt(): void
+    {
+        $client = $this->createClientWithCredentials('admin');
+        $this->etatDecision(DecisionAmenagementExamens::ETAT_VALIDE);
+
+        $client->request('PATCH', self::DECISION, [
+            'headers' => ['Content-Type' => 'application/merge-patch+json'],
+            'json' => ['etat' => DecisionAmenagementExamens::ETAT_EDITION_DEMANDEE],
+        ]);
+
+        $this->assertResponseIsSuccessful();
     }
 
     public function testObservationsCannotChangeEtat(): void
@@ -144,6 +202,17 @@ class DecisionObservationsTest extends ApiTestCaseCustom
             'beneficiaire' => $beneficiaire,
             'debut' => new DateTime('2025-09-01'),
         ]);
+    }
+
+    /** Active ou non l'exigence sur le profil du bénéficiaire (un profil de handicap, avec typologie). */
+    private function exigerAvisMedical(bool $requis): void
+    {
+        $manager = static::getContainer()->get('doctrine')->getManager();
+        $beneficiaire = $manager->getRepository(Utilisateur::class)->findOneBy(['uid' => 'beneficiaire-decision']);
+        foreach ($beneficiaire->getBeneficiaires() as $profil) {
+            $profil->getProfil()->setAvisMedicalRequis($requis)->setAvecTypologie(true);
+        }
+        $manager->flush();
     }
 
     /** Après la création du client : la requête passe par la connexion de son noyau. */

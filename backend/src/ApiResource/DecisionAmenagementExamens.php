@@ -19,6 +19,7 @@ use ApiPlatform\Metadata\Patch;
 use App\State\DecisionAmenagementExamens\DecisionAmenagementExamensProcessor;
 use App\State\DecisionAmenagementExamens\DecisionAmenagementExamensProvider;
 use App\State\DecisionAmenagementExamens\DecisionObservationsProcessor;
+use App\Validator\DateAvisMedecinRequiseConstraint;
 use App\Validator\EtatDecisionValideConstraint;
 use DateTimeInterface;
 use ReflectionProperty;
@@ -58,6 +59,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     processor: DecisionAmenagementExamensProcessor::class,
     stateOptions: new Options(entityClass: \App\Entity\DecisionAmenagementExamens::class),
 )]
+#[DateAvisMedecinRequiseConstraint]
 #[Map(target: \App\Entity\DecisionAmenagementExamens::class)]
 class DecisionAmenagementExamens
 {
@@ -135,7 +137,8 @@ class DecisionAmenagementExamens
         }
     }
 
-    #[Groups([self::GROUP_OUT, self::GROUP_OBSERVATIONS_IN])]
+    // exposée aussi sur la fiche du bénéficiaire, qui en déduit si la demande d'édition est possible
+    #[Groups([Utilisateur::GROUP_OUT, self::GROUP_OUT, self::GROUP_OBSERVATIONS_IN])]
     public ?DateTimeInterface $dateAvisMedecin {
         get {
             $prop = new ReflectionProperty(self::class, 'dateAvisMedecin');
@@ -145,6 +148,10 @@ class DecisionAmenagementExamens
             return $this->dateAvisMedecin ?? null;
         }
     }
+
+    // renseignée par les providers (cf. ExigenceAvisMedical) : l'interface applique la même règle que le serveur
+    #[Groups([Utilisateur::GROUP_OUT, self::GROUP_OUT])]
+    public bool $dateAvisMedecinRequise = false;
 
     public function __construct(
         private readonly ?\App\Entity\DecisionAmenagementExamens $entity = null,

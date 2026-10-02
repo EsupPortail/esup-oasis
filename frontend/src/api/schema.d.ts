@@ -3288,9 +3288,13 @@ export interface components {
             observations?: string | null;
             /** Format: date */
             dateAvisMedecin?: string | null;
+            dateAvisMedecinRequise?: boolean;
         };
         "DecisionAmenagementExamens.html-utilisateur.out": {
             etat?: string;
+            /** Format: date */
+            dateAvisMedecin?: string | null;
+            dateAvisMedecinRequise?: boolean;
         };
         "DecisionAmenagementExamens.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
             etat?: string;
@@ -3302,9 +3306,13 @@ export interface components {
             observations?: string | null;
             /** Format: date */
             dateAvisMedecin?: string | null;
+            dateAvisMedecinRequise?: boolean;
         };
         "DecisionAmenagementExamens.jsonld-utilisateur.out": components["schemas"]["HydraItemBaseSchema"] & {
             etat?: string;
+            /** Format: date */
+            dateAvisMedecin?: string | null;
+            dateAvisMedecinRequise?: boolean;
         };
         "DecisionAmenagementExamens.pdf-decision.out": {
             etat?: string;
@@ -3312,6 +3320,7 @@ export interface components {
             observations?: string | null;
             /** Format: date */
             dateAvisMedecin?: string | null;
+            dateAvisMedecinRequise?: boolean;
         };
         "Demande-demande.in": {
             /**
@@ -4423,23 +4432,27 @@ export interface components {
             libelle: string;
             actif?: boolean;
             avecTypologie?: boolean;
+            avisMedicalRequis?: boolean;
         };
         "ProfilBeneficiaire-profil.in.jsonMergePatch": {
             libelle?: string;
             actif?: boolean;
             avecTypologie?: boolean;
+            avisMedicalRequis?: boolean;
         };
         "ProfilBeneficiaire.html-profil.out": {
             id?: number | null;
             libelle: string;
             actif?: boolean;
             avecTypologie?: boolean;
+            avisMedicalRequis?: boolean;
         };
         "ProfilBeneficiaire.jsonld-profil.out": components["schemas"]["HydraItemBaseSchema"] & {
             id?: number | null;
             libelle: string;
             actif?: boolean;
             avecTypologie?: boolean;
+            avisMedicalRequis?: boolean;
         };
         "Question.html-question.out": {
             id?: number | null;

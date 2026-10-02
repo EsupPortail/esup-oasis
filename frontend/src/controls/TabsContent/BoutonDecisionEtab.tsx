@@ -80,6 +80,13 @@ export function BoutonDecisionEtab(props: { utilisateurId: string }) {
     />
   );
 
+  // le serveur dit si la date de l'avis médical conditionne l'édition : l'interface annonce son refus sans le deviner
+  const dateAvisMedecinManquante =
+    !!utilisateur.decisionAmenagementAnneeEnCours.dateAvisMedecinRequise &&
+    !utilisateur.decisionAmenagementAnneeEnCours.dateAvisMedecin;
+  const messageDateManquante =
+    "Veuillez saisir une date d'avis médical afin de générer le document.";
+
   switch (utilisateur.decisionAmenagementAnneeEnCours.etat) {
     case EtatDecisionEtablissement.ATTENTE_VALIDATION_CAS:
       return (
@@ -115,7 +122,16 @@ export function BoutonDecisionEtab(props: { utilisateurId: string }) {
                   {
                     key: "send",
                     icon: <SendOutlined />,
-                    label: (
+                    disabled: dateAvisMedecinManquante,
+                    label: dateAvisMedecinManquante ? (
+                      <Tooltip title={messageDateManquante}>
+                        <span>
+                          {auth.user?.isAdmin
+                            ? `Envoyer ${decisionEtab.defini}`
+                            : `Demander l'édition ${decisionEtab.de}`}
+                        </span>
+                      </Tooltip>
+                    ) : (
                       <Popconfirm
                         title={
                           auth.user?.isAdmin
@@ -193,16 +209,25 @@ export function BoutonDecisionEtab(props: { utilisateurId: string }) {
                   ? {
                       key: "send",
                       icon: <SendOutlined />,
-                      label: `Envoyer ${decisionEtab.defini}`,
-                      onClick: () => {
-                        setLoading(true);
-                        mutateDecisionEtab.mutate({
-                          data: {
-                            etat: EtatDecisionEtablissement.EDITION_DEMANDEE,
+                      disabled: dateAvisMedecinManquante,
+                      label: dateAvisMedecinManquante ? (
+                        <Tooltip title={messageDateManquante}>
+                          <span>Envoyer {decisionEtab.defini}</span>
+                        </Tooltip>
+                      ) : (
+                        `Envoyer ${decisionEtab.defini}`
+                      ),
+                      onClick: dateAvisMedecinManquante
+                        ? undefined
+                        : () => {
+                            setLoading(true);
+                            mutateDecisionEtab.mutate({
+                              data: {
+                                etat: EtatDecisionEtablissement.EDITION_DEMANDEE,
+                              },
+                              "@id": decisionIri,
+                            });
                           },
-                          "@id": decisionIri,
-                        });
-                      },
                     }
                   : null,
               ],
