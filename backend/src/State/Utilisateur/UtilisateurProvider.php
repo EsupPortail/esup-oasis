@@ -20,6 +20,7 @@ use ApiPlatform\State\Pagination\PaginatorInterface;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\DecisionAmenagementExamens;
 use App\ApiResource\Utilisateur;
+use App\Entity\Beneficiaire;
 use App\Service\ErreurLdapException;
 use App\State\DecisionAmenagementExamens\DecisionAmenagementManager;
 use App\State\MappedCollectionPaginator;
@@ -117,6 +118,17 @@ class UtilisateurProvider implements ProviderInterface
             null => null,
             default => new DecisionAmenagementExamens($decisionEnCours),
         };
+
+        $utilisateur->gestionnairesActifs = array_unique(array_reduce($entity->getBeneficiaires()->toArray(), fn(
+            $carry,
+            Beneficiaire $benef,
+        ) => match (true) {
+            $this->now() < $benef->getDebut() || null !== $benef->getFin() && $this->now() > $benef->getFin() => $carry,
+            default => [
+                ...($carry ?? []),
+                new Utilisateur($benef->getGestionnaire()),
+            ],
+        }) ?? [], SORT_REGULAR);
 
         return $utilisateur;
     }
