@@ -8,7 +8,7 @@
  */
 
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 
 /**
  * Scroll en haut de la page à chaque changement de route.

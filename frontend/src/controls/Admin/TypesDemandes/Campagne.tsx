@@ -18,7 +18,7 @@ import { isEnCoursSurPeriode } from "@utils/dates";
 import { CampagneEdition } from "@controls/Admin/TypesDemandes/CampagneEdition";
 import { entiteParent, ICampagneDemande } from "@api";
 import QuestionnaireModale from "@controls/Admin/TypesDemandes/QuestionnaireModale";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import ExternalLink from "@/assets/images/external-link.svg?react";
 
 export function Campagne(props: {

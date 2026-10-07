@@ -55,7 +55,9 @@ describe("envoyerFichierFetch", () => {
     };
     vi.stubGlobal(
       "XMLHttpRequest",
-      vi.fn(() => fakeXhr),
+      vi.fn(function () {
+        return fakeXhr;
+      }),
     );
   });
 

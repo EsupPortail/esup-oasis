@@ -35,10 +35,7 @@ import { env } from "@/env";
 import dayjs from "dayjs";
 
 export type FiltreDecrivable =
-  | FiltreBeneficiaire
-  | FiltreIntervenant
-  | FiltreDemande
-  | FiltreAmenagement;
+  FiltreBeneficiaire | FiltreIntervenant | FiltreDemande | FiltreAmenagement;
 
 type FiltreDescriptionType = {
   key: string;

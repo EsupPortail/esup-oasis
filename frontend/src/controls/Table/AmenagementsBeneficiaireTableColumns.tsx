@@ -24,7 +24,7 @@ import {
 import BooleanState from "@controls/State/BooleanState";
 import { ListeUtilisateurTag } from "@controls/Tags/ListeUtilisateurTag";
 import { BeneficiaireAvisEseAvatar } from "@controls/Avatars/BeneficiaireAvisEseAvatar";
-import { NavigateFunction } from "react-router-dom";
+import { NavigateFunction } from "react-router";
 import ExternalLink from "@/assets/images/external-link.svg?react";
 import { FiltreAmenagement } from "@controls/Table/AmenagementTableLayout";
 import { EllipsisMiddle } from "@controls/Typography/EllipsisMiddle";

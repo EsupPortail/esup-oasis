@@ -8,7 +8,7 @@
  */
 
 import { useAuth } from "@/auth/AuthProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useApi } from "@context/api/ApiProvider";
 import { Button, Card, Col, Empty, List, Row, Typography } from "antd";
 import { ServiceFaitItem } from "@controls/ServicesFaits/ServiceFaitItem";

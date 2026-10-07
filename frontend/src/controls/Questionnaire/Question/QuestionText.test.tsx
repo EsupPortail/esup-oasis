@@ -9,8 +9,9 @@
 
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Form } from "antd";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { afterEach, describe, it, expect, vi, beforeEach } from "vitest";
 import { QuestionText } from "./QuestionText";
+import { drainAntdTimers } from "@/test";
 
 const mockEnvoyerReponse = vi.fn();
 let mockMode = "edition";
@@ -37,6 +38,12 @@ function renderText() {
     </Form>,
   );
 }
+
+// antd arme un timer non annulé au démontage (cf. drainAntdTimers) : ces tests
+// étant synchrones, on le laisse s'écouler avant la destruction de l'environnement.
+afterEach(async () => {
+  await drainAntdTimers();
+});
 
 describe("QuestionText", () => {
   beforeEach(() => {

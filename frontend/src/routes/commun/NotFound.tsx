@@ -9,7 +9,7 @@
 
 import { Button } from "antd";
 import { HomeOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import PageTitle from "@utils/PageTitle/PageTitle";
 import styles from "./NotFound.module.scss";
 

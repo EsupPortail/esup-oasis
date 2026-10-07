@@ -9,7 +9,7 @@
 
 import React, { lazy, ReactElement, Suspense, useMemo } from "react";
 import { useAuth } from "@/auth/AuthProvider";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router";
 import OAuthCallback from "@/auth/OAuthCallback";
 import AppLayout from "@controls/AppLayout/AppLayout";
 import { APP_ROUTES } from "@routes/AppRoutes";

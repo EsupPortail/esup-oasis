@@ -235,7 +235,7 @@ body.dark-mode {
   }
 
   // Onglets en mode carte : contenu
-  .tabs-tab-card .ant-tabs-content-holder {
+  .tabs-tab-card .ant-tabs-content-holder, .tabs-tab-card .ant-tabs-body-holder {
     background-color: var(--ant-color-bg-container);
     border-color: var(--ant-color-border);
   }

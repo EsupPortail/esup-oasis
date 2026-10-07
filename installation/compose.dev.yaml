@@ -42,8 +42,11 @@ services:
       WATCHPACK_POLLING: true
     volumes:
       - ../frontend:/app:delegated
-      - /app/node_modules
+      - frontend_node_modules:/app/node_modules
 
   postgres:
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
+
+volumes:
+  frontend_node_modules:

@@ -13,7 +13,7 @@ import { EditOutlined, MinusOutlined, UserSwitchOutlined } from "@ant-design/ico
 import { useApi } from "@context/api/ApiProvider";
 import { IComposante, IComposanteQuery, IUtilisateur } from "@api";
 import { ColumnsType } from "antd/lib/table";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { GestionnaireItem } from "@controls/Items/GestionnaireItem";
 import { env } from "@/env";
 

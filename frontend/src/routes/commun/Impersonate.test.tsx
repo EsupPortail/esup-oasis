@@ -25,8 +25,8 @@ vi.mock("@/queryClient", () => ({ queryClient: { clear: mockQueryClientClear } }
 const mockNavigate = vi.fn();
 let mockParams: { uid?: string } = { uid: "cible@test.fr" };
 
-vi.mock("react-router-dom", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("react-router-dom")>();
+vi.mock("react-router", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("react-router")>();
   return { ...actual, useNavigate: () => mockNavigate, useParams: () => mockParams };
 });
 

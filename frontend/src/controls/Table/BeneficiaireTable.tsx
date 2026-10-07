@@ -18,7 +18,7 @@ import { useAuth } from "@/auth/AuthProvider";
 import { useDrawers } from "@context/drawers/DrawersContext";
 import BeneficiaireTableExport from "@controls/Table/BeneficiaireTableExport";
 import { SorterResult } from "antd/es/table/interface";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router";
 import Unfilter from "@/assets/images/unfilter.svg?react";
 import { BeneficiaireTableFilter } from "@controls/Table/BeneficiaireTableFilter";
 import { ascendToAsc } from "@utils/array";

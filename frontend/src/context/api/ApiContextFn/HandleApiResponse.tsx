@@ -9,7 +9,7 @@
 
 import { Button, notification, Space } from "antd";
 import { CopyOutlined, LoginOutlined } from "@ant-design/icons";
-import { NavigateFunction } from "react-router-dom";
+import { NavigateFunction } from "react-router";
 import { ReactElement } from "react";
 import { RequestMethod } from "@context/api/ApiProvider";
 import { queryClient } from "@/queryClient";

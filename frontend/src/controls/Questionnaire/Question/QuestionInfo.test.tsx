@@ -9,8 +9,9 @@
 
 import { render, screen } from "@testing-library/react";
 import { Form } from "antd";
-import { describe, it, expect } from "vitest";
+import { afterEach, describe, it, expect } from "vitest";
 import { QuestionInfo } from "./QuestionInfo";
+import { drainAntdTimers } from "@/test";
 
 function renderQuestion(aide: string) {
   return render(
@@ -19,6 +20,12 @@ function renderQuestion(aide: string) {
     </Form>,
   );
 }
+
+// antd arme un timer non annulé au démontage (cf. drainAntdTimers) : ces tests
+// étant synchrones, on le laisse s'écouler avant la destruction de l'environnement.
+afterEach(async () => {
+  await drainAntdTimers();
+});
 
 describe("QuestionInfo — sanitisation du HTML d'aide (XSS)", () => {
   it("préserve la mise en forme légitime", () => {

@@ -9,7 +9,7 @@
  */
 
 import { Breadcrumb, Button, Card, DatePicker, Form, Layout, Space, Typography } from "antd";
-import { NavLink } from "react-router-dom";
+import { NavLink } from "react-router";
 import { FilterOutlined, HomeFilled } from "@ant-design/icons";
 import React, { useState } from "react";
 import { IProfil, Paths } from "@api";

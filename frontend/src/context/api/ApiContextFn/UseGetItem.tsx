@@ -13,7 +13,7 @@ import {
   handleApiResponse,
   IErreurNotification,
 } from "@context/api/ApiContextFn/HandleApiResponse";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { ApiPathMethodParameters, ApiPathMethodQuery, ApiPathMethodResponse, Path } from "@api";
 import { buildUrl } from "@context/api/ApiContextFn/UrlBuilder";
 import { RequestMethod } from "@context/api/ApiProvider";

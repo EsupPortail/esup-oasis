@@ -9,7 +9,7 @@
 
 import React, { ReactElement, useState } from "react";
 import { Breadcrumb, Col, FloatButton, Layout, Row, Space, Typography } from "antd";
-import { NavLink } from "react-router-dom";
+import { NavLink } from "react-router";
 import { HomeFilled, PlusOutlined } from "@ant-design/icons";
 import { ClubSportifEdition } from "@controls/Admin/Referentiel/ClubsSportifs/ClubSportifEdition";
 import { IClubSportif } from "@api";

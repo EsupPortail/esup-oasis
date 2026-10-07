@@ -10,7 +10,7 @@
 import React, { ReactElement, useEffect, useMemo, useState } from "react";
 import { Menu, MenuProps } from "antd";
 import { useAuth } from "@/auth/AuthProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useAccessibilite } from "@context/accessibilite/AccessibiliteContext";
 import { useTheme } from "@context/theme/ThemeContext";
 import { useDrawers } from "@context/drawers/DrawersContext";

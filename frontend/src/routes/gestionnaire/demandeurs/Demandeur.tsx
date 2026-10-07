@@ -9,7 +9,7 @@
 
 import React, { ReactElement } from "react";
 import { Layout, Skeleton, Space, Tabs, Typography } from "antd";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { FileDoneOutlined, UserOutlined } from "@ant-design/icons";
 import { useApi } from "@context/api/ApiProvider";
 import { TabIdentite } from "@controls/TabsContent/TabIdentite";

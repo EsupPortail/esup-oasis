@@ -8,7 +8,11 @@ COPY frontend/package.json frontend/yarn.lock ./
 ## Install dependencies
 RUN yarn install --frozen-lockfile
 
+COPY installation/frontend/entrypoint-dev.sh /entrypoint-dev.sh
+RUN chmod +x /entrypoint-dev.sh
+
 EXPOSE 80
 ENV PORT=80
 
+ENTRYPOINT ["/entrypoint-dev.sh"]
 CMD ["yarn", "start", "--port", "80", "--host", "0.0.0.0"]

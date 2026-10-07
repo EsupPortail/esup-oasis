@@ -9,7 +9,7 @@
 
 import React from "react";
 import { Button, Layout, Tooltip, Typography } from "antd";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import Spinner from "@controls/Spinner/Spinner";
 import { QuestionnaireProvider } from "@context/demande/QuestionnaireProvider";

@@ -16,7 +16,7 @@ import useOAuth2 from "@/auth/hook/useOAuth2";
 import { IUtilisateur } from "@api";
 import { queryClient } from "@/queryClient";
 import useLocalStorageState from "use-local-storage-state";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { env } from "@/env";
 import { jwtDecode } from "jwt-decode";
 import { logger } from "@utils/logger";

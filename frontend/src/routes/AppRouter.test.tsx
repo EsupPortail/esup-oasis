@@ -13,7 +13,7 @@ vi.mock("@/auth/LoginPage", () => ({ default: () => <div data-testid="login-page
 vi.mock("@/auth/OAuthCallback", () => ({ default: () => <div data-testid="oauth-callback" /> }));
 // AppLayout rend un <Outlet/> pour que les routes enfants (filtrées par rôle) s'affichent.
 vi.mock("@controls/AppLayout/AppLayout", async () => {
-  const { Outlet } = await import("react-router-dom");
+  const { Outlet } = await import("react-router");
   return {
     default: () => (
       <div data-testid="app-layout">

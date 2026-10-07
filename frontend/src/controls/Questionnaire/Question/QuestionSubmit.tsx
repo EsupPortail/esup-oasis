@@ -10,7 +10,7 @@
 import { App, Button, Form } from "antd";
 import { QuestionAide } from "@controls/Questionnaire/Question/QuestionAide";
 import { QuestionnaireQuestion, useQuestionnaire } from "@context/demande/QuestionnaireProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { queryClient } from "@/queryClient";
 import { service } from "@lib";
 import { QK_DEMANDES } from "@api";

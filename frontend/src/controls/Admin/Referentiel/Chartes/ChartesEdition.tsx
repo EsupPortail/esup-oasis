@@ -141,7 +141,11 @@ export function ChartesEdition({ editedItem, setEditedItem }: ChartesEditionProp
         </Form>
         <h3>Contenu de la charte</h3>
         <Suspense fallback={<span>Chargement de l'éditeur...</span>}>
-          <HtmlEditor value={contenu} onChange={(c) => setContenu(c)} />
+          <HtmlEditor
+            value={contenu}
+            onChange={(c) => setContenu(c)}
+            ariaLabel="Contenu de la charte"
+          />
         </Suspense>
       </Card>
     </Drawer>

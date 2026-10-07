@@ -20,7 +20,7 @@ import {
   Space,
   Typography,
 } from "antd";
-import { NavLink } from "react-router-dom";
+import { NavLink } from "react-router";
 import { HomeFilled } from "@ant-design/icons";
 import React from "react";
 import { IComposante, IFormation, IProfil, IUtilisateur, Paths, QK_SUIVIS_ACTIVITE } from "@api";

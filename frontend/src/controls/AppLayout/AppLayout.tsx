@@ -11,7 +11,7 @@ import React, { ReactElement } from "react";
 import { Button, Layout } from "antd";
 import AllModals from "@controls/Modals/AllModals";
 import AllDrawers from "@controls/Drawers/AllDrawers";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router";
 import AppLayoutMenu from "@controls/AppLayout/AppLayoutMenu";
 import "@controls/AppLayout/AppLayout.scss";
 import { MinusOutlined } from "@ant-design/icons";

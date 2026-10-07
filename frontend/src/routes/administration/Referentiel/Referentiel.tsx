@@ -11,7 +11,7 @@ import React, { ReactElement, useState } from "react";
 import { Breadcrumb, Col, FloatButton, Layout, Row, Space, Typography } from "antd";
 import "@routes/administration/Administration.scss";
 import { HomeFilled, PlusOutlined } from "@ant-design/icons";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useParams } from "react-router";
 import ADMIN_CONFIG from "@routes/administration/AdminConfig";
 import { IReferentielEditable } from "@lib";
 import { ReferentielItemEdition } from "@controls/Admin/Referentiel/ReferentielItemEdition";

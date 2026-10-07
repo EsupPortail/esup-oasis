@@ -8,7 +8,7 @@
  */
 
 import React, { ReactElement, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { env } from "@/env";
 import { etablissement } from "@lib";
 

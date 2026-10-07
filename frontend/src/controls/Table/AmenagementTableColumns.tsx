@@ -17,7 +17,7 @@ import { ChargesAccompagnementsItem } from "@controls/Items/ChargesAccompagnemen
 import { EtudiantItem } from "@controls/Items/EtudiantItem";
 import { InscriptionItem } from "@controls/Items/InscriptionItem";
 import { SuiviAmenagementItem } from "@controls/Items/SuiviAmenagementItem";
-import { NavigateFunction } from "react-router-dom";
+import { NavigateFunction } from "react-router";
 import Icon, { EditOutlined, EyeOutlined } from "@ant-design/icons";
 import { ListeUtilisateurTag } from "@controls/Tags/ListeUtilisateurTag";
 import ExternalLink from "@/assets/images/external-link.svg?react";

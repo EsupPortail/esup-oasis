@@ -8,7 +8,7 @@
  */
 
 import React from "react";
-import { NavigateFunction } from "react-router-dom";
+import { NavigateFunction } from "react-router";
 import { Badge, Button, MenuProps } from "antd";
 import { BellOutlined } from "@ant-design/icons";
 import { IStatistiquesEvenements } from "@api";

@@ -9,7 +9,7 @@
 
 import { IAmenagement, ICategorieAmenagement, ITypeAmenagement } from "@api";
 import { useAuth } from "@/auth/AuthProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useApi } from "@context/api/ApiProvider";
 import { Table } from "antd";
 import { amenagementTableColumns } from "@controls/Table/AmenagementTableColumns";

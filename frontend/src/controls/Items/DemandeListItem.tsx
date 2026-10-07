@@ -20,7 +20,7 @@ import {
   ETAT_DEMANDE_NON_CONFORME,
   ETAT_DEMANDE_REFUSEE,
 } from "@lib";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { EtatDemandeAvatar } from "@controls/Avatars/EtatDemandeAvatar";
 import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
 import { CampagneDemandeDateItem } from "./CampagneDemandeDateItem";

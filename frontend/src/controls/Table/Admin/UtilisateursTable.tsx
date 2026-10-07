@@ -16,7 +16,7 @@ import { useApi } from "@context/api/ApiProvider";
 import { ROLES_SELECT, RoleValues, service } from "@lib";
 import { IUtilisateur } from "@api";
 import { ColumnsType } from "antd/lib/table";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { FilterProps } from "@utils/table";
 import Highlighter from "react-highlight-words";
 import { removeAccents } from "@utils/string";

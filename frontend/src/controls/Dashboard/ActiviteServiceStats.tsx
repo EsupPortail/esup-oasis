@@ -9,7 +9,7 @@
 
 import React, { ReactElement } from "react";
 import { Card, Col, Row, Tooltip, Typography } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { WarningFilled } from "@ant-design/icons";
 import { pluriel } from "@utils/string";
 import { useAuth } from "@/auth/AuthProvider";

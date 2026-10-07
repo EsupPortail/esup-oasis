@@ -9,7 +9,7 @@
 
 import React, { ReactElement, useState } from "react";
 import { Avatar, Button, Card, Col, Flex, Row, Tooltip, Typography } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { DownOutlined } from "@ant-design/icons";
 import { pluriel } from "@utils/string";
 import { IEtatDemande, IStatistiquesEvenements } from "@api";

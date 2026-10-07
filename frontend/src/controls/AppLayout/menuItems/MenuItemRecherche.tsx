@@ -10,7 +10,7 @@
 
 import { UseStateDispatch } from "@utils/utils";
 import { RoleValues, Utilisateur } from "@lib";
-import { NavigateFunction } from "react-router-dom";
+import { NavigateFunction } from "react-router";
 import { Button, MenuProps, Tooltip } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import BeneficiaireIntervenantSearchDrawer from "@controls/Drawers/BeneficiaireIntervenant/BeneficiaireIntervenantSearchDrawer";

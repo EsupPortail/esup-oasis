@@ -9,7 +9,7 @@
 
 import React, { ReactElement } from "react";
 import { Breadcrumb, Layout, Space, Typography } from "antd";
-import { NavLink } from "react-router-dom";
+import { NavLink } from "react-router";
 import { HomeFilled } from "@ant-design/icons";
 import ParametresTable from "@controls/Table/Admin/ParametresTable";
 import "@routes/administration/Parametres/Parametres.scss";

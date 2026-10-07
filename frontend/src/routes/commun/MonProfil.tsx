@@ -23,7 +23,7 @@ import {
 import { HomeOutlined, SaveOutlined } from "@ant-design/icons";
 import { useApi } from "@context/api/ApiProvider";
 import { useAuth } from "@/auth/AuthProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { IUtilisateur, PREFETCH_CAMPUS, QK_UTILISATEURS } from "@api";
 import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
 import { MonProfilContact } from "@controls/Profil/MonProfilContact";

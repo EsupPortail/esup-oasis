@@ -14,9 +14,9 @@ import { CheckCircleFilled, HourglassOutlined } from "@ant-design/icons";
 import { env } from "@/env";
 
 export enum EtatAvisEse {
-  "ETAT_EN_COURS" = "EN_COURS",
-  "ETAT_EN_ATTENTE" = "EN_ATTENTE",
-  "ETAT_AUCUN" = "AUCUN",
+  ETAT_EN_COURS = "EN_COURS",
+  ETAT_EN_ATTENTE = "EN_ATTENTE",
+  ETAT_AUCUN = "AUCUN",
 }
 
 export function BeneficiaireAvisEseAvatar(props: {

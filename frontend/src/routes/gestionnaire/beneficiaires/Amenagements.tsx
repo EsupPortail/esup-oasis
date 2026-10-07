@@ -11,7 +11,7 @@ import React, { ReactElement } from "react";
 import { Flex, Layout, Segmented, Typography } from "antd";
 import AmenagementTableLayout from "@controls/Table/AmenagementTableLayout";
 import { useAuth } from "@/auth/AuthProvider";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 
 export enum ModeAffichageAmenagement {
   ParAmenagement = "amenagement",

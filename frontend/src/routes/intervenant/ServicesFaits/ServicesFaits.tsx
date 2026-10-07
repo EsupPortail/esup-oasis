@@ -17,7 +17,7 @@ import { IPeriode, IServicesFaits, IServicesFaitsLigne } from "@api";
 import { ServicesFaitsDetailsTable } from "@controls/Table/ServicesFaitsDetailsTable";
 import { isEnCoursSurPeriode } from "@utils/dates";
 import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import { to2Digits } from "@utils/number";
 import { EvenementsEnCoursTable } from "@controls/ServicesFaits/EvenementsEnCoursTable";
 import { InterventionsForfaitEnCoursTable } from "@controls/ServicesFaits/InterventionsForfaitEnCoursTable";

@@ -16,7 +16,7 @@ import { TypeDemandeItem } from "@controls/Items/TypeDemandeItem";
 import { EtatDemandeAvatar } from "@controls/Avatars/EtatDemandeAvatar";
 import dayjs from "dayjs";
 import Icon, { EyeOutlined, PlusOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import ExternalLink from "@/assets/images/external-link.svg?react";
 import NouvelleDemandeModaleGestionnaire from "@controls/Modals/Demande/NouvelleDemandeModaleGestionnaire";
 

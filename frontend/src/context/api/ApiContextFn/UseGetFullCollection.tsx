@@ -9,7 +9,7 @@
 
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { useMemo, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { PaginateResult, RequestMethod } from "@context/api/ApiProvider";
 import {
   ApiPathMethodParameters,

@@ -7,7 +7,7 @@
  * @author Julien Lemonnier <julien.lemonnier@u-bordeaux.fr>
  */
 
-import { NavigateFunction } from "react-router-dom";
+import { NavigateFunction } from "react-router";
 import { MenuProps } from "antd";
 import { Utilisateur } from "@lib";
 import { menuItemDemandeurs } from "@controls/AppLayout/menuItems/MenuItemDemandeurs";

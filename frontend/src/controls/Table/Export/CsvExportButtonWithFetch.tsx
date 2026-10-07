@@ -20,8 +20,7 @@ export interface CsvExportButtonWithFetchProps<P extends PaginatedPath, T extend
   parameters?: ApiPathMethodParameters<P, "get">;
   /** En-têtes CSV : tableau statique ou fonction calculée après récupération complète */
   headers:
-    | { label: string; key: string }[]
-    | ((items: FetchItems<P>) => { label: string; key: string }[]);
+    { label: string; key: string }[] | ((items: FetchItems<P>) => { label: string; key: string }[]);
   filename: string;
   getData: (items: FetchItems<P>) => T[];
   /** Quand false, diffère le téléchargement jusqu'à ce que les données de référence soient prêtes */

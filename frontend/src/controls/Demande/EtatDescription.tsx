@@ -10,7 +10,7 @@
 
 import React from "react";
 import { Button, Space } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { IDemande } from "@api";
 import {
   ETAT_ATTENTE_ACCOMPAGNEMENT,

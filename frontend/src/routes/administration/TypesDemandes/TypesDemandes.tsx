@@ -9,7 +9,7 @@
 
 import React, { useState } from "react";
 import { Badge, Breadcrumb, Button, Layout, Space, Table, Tabs, Tooltip, Typography } from "antd";
-import { NavLink } from "react-router-dom";
+import { NavLink } from "react-router";
 import { CaretRightFilled, EditOutlined, HomeFilled } from "@ant-design/icons";
 import { useApi } from "@context/api/ApiProvider";
 import Spinner from "@controls/Spinner/Spinner";

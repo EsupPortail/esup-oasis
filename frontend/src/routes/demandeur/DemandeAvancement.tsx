@@ -9,7 +9,7 @@
 
 import React from "react";
 import { Button, Card, Layout, Typography } from "antd";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 
 import AvancementDemande from "@controls/Demande/Avancement/AvancementDemande";
 import { ETAT_ATTENTE_CHARTES } from "@lib";

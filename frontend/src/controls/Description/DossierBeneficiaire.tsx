@@ -27,7 +27,7 @@ import { TabAmenagements } from "@controls/TabsContent/TabAmenagements";
 import { TabDecisionEtab } from "@controls/TabsContent/TabDecisionEtab";
 import { useAuth } from "@/auth/AuthProvider";
 import { UtilisateurTags } from "@controls/Tags/UtilisateurTags";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import { TabAvisEse } from "@controls/TabsContent/TabAvisEse";
 import { BeneficiaireAvisEseAvatar } from "@controls/Avatars/BeneficiaireAvisEseAvatar";
 import { TabEntretiens } from "@controls/TabsContent/TabEntretiens";

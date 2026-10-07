@@ -9,7 +9,7 @@
 
 import React, { ReactElement, useState } from "react";
 import { Breadcrumb, Col, FloatButton, Layout, Row, Space, Typography } from "antd";
-import { NavLink } from "react-router-dom";
+import { NavLink } from "react-router";
 import { HomeFilled, PlusOutlined } from "@ant-design/icons";
 import { ProfilsEdition } from "@controls/Admin/Referentiel/Profils/ProfilsEdition";
 import { ProfilsTable } from "@controls/Table/Admin/ProfilsTable";

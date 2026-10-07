@@ -8,7 +8,7 @@
  */
 
 import React, { ReactElement, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { queryToObject } from "@utils/url";
 import "@/auth/OAuthCallback.scss";
 import Spinner from "@controls/Spinner/Spinner";

@@ -8,7 +8,7 @@
  */
 
 import React, { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 import { useAuth } from "@/auth/AuthProvider";
 import {
   initialAffichageFiltres,

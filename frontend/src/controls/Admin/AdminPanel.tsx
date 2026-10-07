@@ -7,7 +7,7 @@
  * @author Julien Lemonnier <julien.lemonnier@u-bordeaux.fr>
  */
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { Button, Tooltip } from "antd";
 import { default as Icon } from "@ant-design/icons";
 import React, { ReactElement } from "react";

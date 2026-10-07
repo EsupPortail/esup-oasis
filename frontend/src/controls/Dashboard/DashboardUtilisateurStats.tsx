@@ -10,7 +10,7 @@
 import React, { ReactElement } from "react";
 import { Alert, Button, Row } from "antd";
 import "@routes/gestionnaire/dashboard/Dashboard.scss";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useApi } from "@context/api/ApiProvider";
 import { PREFETCH_ETAT_DEMANDE, PREFETCH_TYPES_EVENEMENTS } from "@api";
 import { EyeOutlined, WarningFilled } from "@ant-design/icons";

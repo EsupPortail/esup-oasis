@@ -9,7 +9,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Breadcrumb, FloatButton, Layout, Space, Typography } from "antd";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useParams } from "react-router";
 import { HomeFilled, PlusOutlined } from "@ant-design/icons";
 import { useApi } from "@context/api/ApiProvider";
 import Spinner from "@controls/Spinner/Spinner";

@@ -12,7 +12,7 @@ import { QueryClient, useMutation, UseMutationResult } from "@tanstack/react-que
 import { handleApiResponse } from "@context/api/ApiContextFn/HandleApiResponse";
 import { handleInvalidation } from "@context/api/ApiContextFn/HandleInvalidation";
 import { MutationPostParams, RequestMethod } from "@context/api/ApiProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { ApiPathMethodParameters, ApiPathMethodResponse, Path } from "@api";
 import { buildUrl } from "@context/api/ApiContextFn/UrlBuilder";
 import { useAuth } from "@/auth/AuthProvider";

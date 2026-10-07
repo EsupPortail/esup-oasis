@@ -20,7 +20,7 @@ import { FiltreAmenagement, filtreAmenagementToApi } from "@controls/Table/Amena
 import { Slider, Table } from "antd";
 import { DomaineAmenagementInfos, getDomaineAmenagement, Utilisateur } from "@lib";
 import { amenagementsBeneficiaireTableColumns } from "@controls/Table/AmenagementsBeneficiaireTableColumns";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { ModeAffichageAmenagement } from "@routes/gestionnaire/beneficiaires/Amenagements";
 import { useAuth } from "@/auth/AuthProvider";
 import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";

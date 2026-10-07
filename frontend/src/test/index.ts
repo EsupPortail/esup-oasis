@@ -22,4 +22,5 @@ export {
   type RenderWithProvidersResult,
   type RenderHookWithProvidersResult,
 } from "./render";
+export { drainAntdTimers } from "./timers";
 export * from "./fixtures";

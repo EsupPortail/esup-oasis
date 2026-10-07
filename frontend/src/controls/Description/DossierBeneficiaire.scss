@@ -5,7 +5,7 @@
     margin-bottom: 0;
   }
 
-  .ant-tabs-content-holder {
+  .ant-tabs-content-holder, .ant-tabs-body-holder {
     padding: 16px 28px;
     background-color: variables.$white;
     border-left: 1px solid variables.$light-grey-border;

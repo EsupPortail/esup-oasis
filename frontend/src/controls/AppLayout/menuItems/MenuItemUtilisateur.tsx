@@ -8,7 +8,7 @@
  */
 
 import { AuthContextType } from "@/auth/AuthProvider";
-import { NavigateFunction } from "react-router-dom";
+import { NavigateFunction } from "react-router";
 import { ItemType, MenuItemType } from "antd/es/menu/interface";
 import { LabelUtilisateurMenu, menuProfils } from "@controls/AppLayout/AppLayoutCommun";
 import { LogoutOutlined, PieChartOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons";

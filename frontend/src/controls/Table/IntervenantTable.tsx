@@ -25,7 +25,7 @@ import FiltreDescription from "@controls/Table/FiltreDescription";
 import { usePreferences } from "@context/utilisateurPreferences/UtilisateurPreferencesProvider";
 import { useFiltreSessionStorage } from "@controls/Table/hooks/useFiltreSessionStorage";
 import { FiltreSessionSwitch } from "@controls/Table/FiltreSessionSwitch";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { getCountLibelle } from "@utils/table";
 
 export interface FiltreIntervenant {

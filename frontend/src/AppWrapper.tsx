@@ -8,7 +8,7 @@
  */
 
 import React, { ComponentType, ReactNode, Suspense } from "react";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router";
 import App from "@/App";
 import { AuthProvider } from "@/auth/AuthProvider";
 import Spinner from "@controls/Spinner/Spinner";

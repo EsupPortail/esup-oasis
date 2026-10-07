@@ -9,7 +9,7 @@
 
 import React from "react";
 import { screen } from "@testing-library/react";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { describe, it, expect } from "vitest";
 import { renderWithProviders, renderHookWithProviders } from "./render";
 import { createTestQueryClient } from "./queryClient";

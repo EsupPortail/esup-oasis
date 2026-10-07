@@ -12,7 +12,7 @@ import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import { ITypeDemande, QK_DEMANDES, QK_UTILISATEURS_DEMANDES } from "@api";
 import { useApi } from "@context/api/ApiProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export default function PostulerButton(props: { typeDemande: ITypeDemande; demandeurId: string }) {
   const navigate = useNavigate();

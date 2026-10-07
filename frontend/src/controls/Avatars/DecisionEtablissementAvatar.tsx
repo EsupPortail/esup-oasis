@@ -19,10 +19,10 @@ import {
 import { IDecisionEtablissement } from "@api";
 
 export enum EtatDecisionEtablissement {
-  "EDITE" = "EDITE",
-  "VALIDE" = "VALIDE",
-  "ATTENTE_VALIDATION_CAS" = "ATTENTE_VALIDATION_CAS",
-  "EDITION_DEMANDEE" = "EDITION_DEMANDEE",
+  EDITE = "EDITE",
+  VALIDE = "VALIDE",
+  ATTENTE_VALIDATION_CAS = "ATTENTE_VALIDATION_CAS",
+  EDITION_DEMANDEE = "EDITION_DEMANDEE",
 }
 
 export function DecisionEtablissementAvatar(props: {

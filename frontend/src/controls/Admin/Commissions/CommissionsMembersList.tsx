@@ -31,7 +31,7 @@ import {
 import { useApi } from "@context/api/ApiProvider";
 import { RoleValues, Utilisateur } from "@lib";
 import { UtilisateurAvatar } from "@controls/Avatars/UtilisateurAvatar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { env } from "@/env";
 
 import { CommissionsMemberAddForm } from "@controls/Admin/Commissions/CommissionsMemberAddForm";

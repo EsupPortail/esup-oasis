@@ -16,7 +16,7 @@ import {
   HarmonyOSOutlined,
 } from "@ant-design/icons";
 import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import { IAmenagement, ITypeAmenagement } from "@api";
 import { getLibellePeriode, isEnCoursSurPeriode } from "@utils/dates";
 import { EllipsisParagraph } from "../Typography/EllipsisParagraph";

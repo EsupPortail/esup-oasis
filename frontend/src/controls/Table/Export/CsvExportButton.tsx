@@ -22,8 +22,7 @@ Wrapper unifié pour les exports CSV.
 - Sans `path` : délègue à CsvExportButton (données préparées par l'appelant).
 */
 type CsvExportButtonProps<P extends PaginatedPath, T extends object = object> =
-  | ({ path: P } & CsvExportButtonWithFetchProps<P, T>)
-  | CsvExportButtonWithoutFetchProps<T>;
+  ({ path: P } & CsvExportButtonWithFetchProps<P, T>) | CsvExportButtonWithoutFetchProps<T>;
 
 export default function CsvExportButton<P extends PaginatedPath, T extends object = object>(
   props: CsvExportButtonProps<P, T>,

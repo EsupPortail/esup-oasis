@@ -9,7 +9,7 @@
 
 import React, { ReactElement } from "react";
 import { useAuth } from "@/auth/AuthProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { Alert, Button, Space, Typography } from "antd";
 
 export default function AlertCompleterProfil(): ReactElement {
