@@ -43,6 +43,14 @@ export const BENEFICIAIRE_PROFIL_A_DETERMINER = "/profils/-1";
 export const PARAMETRE_COEF_COUT_CHARGE = "/parametres/COEFFICIENT_CHARGES";
 
 /**
+ * Id du paramètre "Informations complémentaires"
+ *
+ * @example "/parametres/CONST_INFOS_COMPLEMENTAIRES"
+ * @constant {string}
+ */
+export const PARAMETRE_CONST_INFOS_COMPLEMENTAIRES = "/parametres/CONST_INFOS_COMPLEMENTAIRES";
+
+/**
  * Taille max des fichiers en upload, en Mo.
  * Configurable via la variable d'environnement REACT_APP_MAX_FILE_SIZE (10 Mo par défaut).
  *

@@ -144,6 +144,9 @@ export function buildTheme(mode: "light" | "dark", accessibilite: IAccessibilite
       colorWarning: APP_WARNING_COLOR,
       // Texte désactivé : contraste WCAG AA minimum (4.5:1) pour tous les modes
       colorTextDisabled: isDark ? "rgba(255, 255, 255, 0.55)" : "rgba(0, 0, 0, 0.55)",
+      // Texte de description (Empty, Statistic...) : le défaut antd rgba(0, 0, 0, 0.45)
+      // ne donne que 3,5:1 sur fond blanc. 0.6 ≈ #666 (cf. $legende) → 5,7:1, conforme AA.
+      colorTextDescription: isDark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)",
       // Contraste light : texte noir forcé
       ...(contrast &&
         !isDark && {

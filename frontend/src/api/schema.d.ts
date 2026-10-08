@@ -3850,6 +3850,22 @@ export interface components {
             "@id": string;
             "@type": string;
         };
+        "InfoComplementaire.customcsv": {
+            libelle?: string;
+            valeur?: string;
+        };
+        "InfoComplementaire.html-utilisateur.out": {
+            libelle?: string;
+            valeur?: string;
+        };
+        "InfoComplementaire.jsonld": {
+            libelle?: string;
+            valeur?: string;
+        };
+        "InfoComplementaire.jsonld-utilisateur.out": {
+            libelle?: string;
+            valeur?: string;
+        };
         "Inscription.html-amenagement.out": {
             formation?: components["schemas"]["Formation.html-amenagement.out"];
         };
@@ -4824,7 +4840,7 @@ export interface components {
             pedagogique?: boolean;
             examens?: boolean;
             aideHumaine?: boolean;
-            decision?: boolean | null;
+            decision?: boolean;
         };
         "TypeAmenagement-type_amenagement.in.jsonMergePatch": {
             libelle?: string;
@@ -4838,7 +4854,7 @@ export interface components {
             pedagogique?: boolean;
             examens?: boolean;
             aideHumaine?: boolean;
-            decision?: boolean | null;
+            decision?: boolean;
         };
         "TypeAmenagement.html-amenagements_utilisateurs.out": {
             id?: number | null;
@@ -4861,7 +4877,7 @@ export interface components {
             pedagogique?: boolean;
             examens?: boolean;
             aideHumaine?: boolean;
-            decision?: boolean | null;
+            decision?: boolean;
         };
         "TypeAmenagement.jsonld-amenagements_utilisateurs.out": components["schemas"]["HydraItemBaseSchema"] & {
             id?: number | null;
@@ -4884,7 +4900,7 @@ export interface components {
             pedagogique?: boolean;
             examens?: boolean;
             aideHumaine?: boolean;
-            decision?: boolean | null;
+            decision?: boolean;
         };
         "TypeDemande-type_demande.in": {
             libelle: string;
@@ -5170,6 +5186,7 @@ export interface components {
              */
             decisionAmenagementAnneeEnCours?: string | null;
             numeroAnonyme?: number | null;
+            infosComplementaires?: components["schemas"]["InfoComplementaire.customcsv"][];
         };
         "Utilisateur.customcsv-services_faits.out": Record<string, never>;
         "Utilisateur.html-ActiviteBeneficiaire.out": {
@@ -5246,6 +5263,7 @@ export interface components {
             abonneRecapHebdo?: boolean;
             decisionAmenagementAnneeEnCours?: components["schemas"]["DecisionAmenagementExamens.html-utilisateur.out"] | null;
             numeroAnonyme?: number | null;
+            infosComplementaires?: components["schemas"]["InfoComplementaire.html-utilisateur.out"][];
         };
         "Utilisateur.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
             readonly uid?: string;
@@ -5282,6 +5300,7 @@ export interface components {
             abonneRecapHebdo?: boolean;
             readonly decisionAmenagementAnneeEnCours?: components["schemas"]["DecisionAmenagementExamens.jsonld"] | null;
             numeroAnonyme?: number | null;
+            readonly infosComplementaires?: components["schemas"]["InfoComplementaire.jsonld"][];
         };
         "Utilisateur.jsonld-ActiviteBeneficiaire.out": components["schemas"]["HydraItemBaseSchema"] & {
             email?: string;
@@ -5357,6 +5376,7 @@ export interface components {
             abonneRecapHebdo?: boolean;
             decisionAmenagementAnneeEnCours?: components["schemas"]["DecisionAmenagementExamens.jsonld-utilisateur.out"] | null;
             numeroAnonyme?: number | null;
+            infosComplementaires?: components["schemas"]["InfoComplementaire.jsonld-utilisateur.out"][];
         };
         "Utilisateur.pdf-services_faits.out": Record<string, never>;
         "ValeurParametre-valeur_param.in": {

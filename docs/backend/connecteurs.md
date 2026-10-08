@@ -60,13 +60,14 @@ pour lequel on n'a pas d'inscription en cours en base.
 
 Plusieurs possibilités:
 
-* personnaliser la requête Apogée
+* personnaliser les requêtes Apogée obligatoires
+* définir une requête de récupération des informations complémentaires
 * écrire sa propre classe de récupération des données
 
-#### Personnaliser la requête
+#### Personnaliser les requêtes
 
-Deux requêtes sont utilisées et adaptables pour vos besoins en modifiant simplement les fichiers sql disponibles dans
-le dossier `config/apogee` (attention à bien respecter les noms des champs retournés !) :
+Deux requêtes sont utilisées et adaptables pour vos besoins en modifiant simplement les fichiers
+sql disponibles dans le dossier `config/apogee` (attention à bien respecter les noms des champs retournés !) :
 
 * `apogee_get_formation.sql` : récupère le diplôme, la discipline, et le niveau LMD d'une version d'étape
 * `apogee_get_inscriptions.sql` : récupère pour un étudiant la liste de ses inscriptions et données personnelles
@@ -83,8 +84,20 @@ le dossier `config/apogee` (attention à bien respecter les noms des champs reto
     * témoin "boursier"
     * régime d'inscription
 
-Les versions livrées de ces requêtes s'appuient sur une table locale `extern_niveau_etape` pour remonter le niveau LMD,
-vous devrez donc les adapter. Le niveau LMD peut être simplement laissé vide.
+Les versions livrées des requêtes obligatoires s'appuient sur une table locale `extern_niveau_etape` pour remonter le
+niveau LMD, vous devrez donc les adapter. Le niveau LMD peut être simplement laissé vide si vous le souhaitez.
+
+#### Récupération des informations complémentaires
+
+Une troisième requête, optionnelle, `apogee_get_informations_complementaires.sql`, peut récupèrer des informations "non
+utiles" pour le bonfonctionnement de l'application mais qui peuvent être utiles au travail des gestionnaires; elles
+seront affichées dansle dossier des bénéficiaires. Ce fichier peut être laissé vide si aucune donnée supplémentaire
+n'est nécessaire (laversion livrée contient un exemple commenté).
+
+A l'usage, les résultats de cette requête sont mis en cache afin d'éviter de surcharger le SI scolarité (les appels se
+font à la demande sur consultation, contrairement aux données obligatoires qui sont dupliquées dans la base Oasis et
+mises à jour périodiquement par une tâche planifiée). Vous pouvez contrôler la durée de vie de ce cache via la variable
+d'environnement `SI_SCOL_DUREE_VALIDITE_CACHE`, qui est une durée en secondes (3600 par défaut).
 
 #### Implémentation de sa propre classe
 
@@ -92,13 +105,21 @@ Vous pouvez aussi opter pour une réimplémentation locale de l'interfaçage ave
 apogée, pour un établissement utilisant Pegase...) en étendant la classe abstraite
 [`App\Service\SiScol\AbstractSiScolDataProvider`](../../backend/src/Service/SiScol/AbstractSiScolDataProvider.php).
 
-Les méthodes à implémenter sont le miroir des deux requêtes plus haut : `getInscriptions` doit retourner un tableau des
-inscriptions, `getFormation` retourne un tableau contenant les informations de cette formation. Attention à respecter le
-format de tableau en prenant exemple sur l'implémentation fournie.
+Les méthodes à implémenter sont le miroir des requêtes plus haut :
 
-Une 3ème méthode getProviderId () doit retourner une chaine de caractères (de votre choix, mais unique parmi les
-implémentations disponibles) servant d'identifiant pour cette iméplmentation; il faudra ensuite utiliser cette valeur
-pour renseigner la variable d'environnement `SI_SCOL`, dont la valeur par défaut est `APOGEE`.
+* `getInscriptions` doit retourner un tableau des inscriptions,
+* `getFormation` retourne un tableau contenant les informations de cette formation.
+* `infosComplementaires` retourne un tableau contenant les informations complémentaires pour une liste d'étudiants
+  donnée,
+* `listeInfosComplementairesDisponibles` retourne un tableau contenant les libellés des informations complémentaires
+  disponibles.
+
+Attention à respecter les formats de tableaux en prenant exemple sur l'implémentation fournie.
+
+> [!WARNING]
+> Une dernière méthode `getProviderId` doit retourner une chaine de caractères (de votre choix, mais unique parmi les
+> implémentations disponibles) servant d'identifiant pour cette implémentation; il faudra ensuite utiliser cette valeur
+> pour renseigner la variable d'environnement `SI_SCOL`, dont la valeur par défaut est `APOGEE`.
 
 ## GED Nuxeo
 

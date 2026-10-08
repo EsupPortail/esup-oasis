@@ -27,6 +27,13 @@ use Symfony\Component\ObjectMapper\Attribute\Map;
 ])]
 class ValeurParametre
 {
+    public function __construct(?int $fakeId = null)
+    {
+        if ($fakeId !== null) {
+            $this->id = $fakeId;
+        }
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column]

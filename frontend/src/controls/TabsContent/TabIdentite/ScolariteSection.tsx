@@ -7,10 +7,11 @@
  * @author Julien Lemonnier <julien.lemonnier@u-bordeaux.fr>
  */
 
-import React from "react";
-import { Col, Descriptions, Flex, Skeleton, Typography } from "antd";
-import { MinusOutlined } from "@ant-design/icons";
-import { IUtilisateur } from "@api";
+import React, { useMemo, useState } from "react";
+import { Button, Descriptions, Empty, Flex, Skeleton, Typography } from "antd";
+import { DownOutlined, MinusOutlined, UpOutlined } from "@ant-design/icons";
+import { IInscription, IUtilisateur } from "@api";
+import { isEnCoursSurPeriode } from "@utils/dates";
 import { ScolariteListItem } from "@controls/TabsContent/TabScolarite";
 
 interface ScolariteSectionProps {
@@ -18,16 +19,31 @@ interface ScolariteSectionProps {
   isFetching: boolean;
 }
 
+const ID_INSCRIPTIONS_PRECEDENTES = "inscriptions-precedentes";
+
+const parDebutDecroissant = (i1: IInscription, i2: IInscription): number =>
+  (i2.debut || "").localeCompare(i1.debut || "");
+
 export const ScolariteSection: React.FC<ScolariteSectionProps> = ({ utilisateur, isFetching }) => {
+  const [afficherPrecedentes, setAfficherPrecedentes] = useState(false);
+
+  const { inscriptionsEnCours, inscriptionsPrecedentes } = useMemo(() => {
+    const triees = [...(utilisateur.inscriptions || [])].sort(parDebutDecroissant);
+    return {
+      inscriptionsEnCours: triees.filter((i) => isEnCoursSurPeriode(i.debut, i.fin)),
+      inscriptionsPrecedentes: triees.filter((i) => !isEnCoursSurPeriode(i.debut, i.fin)),
+    };
+  }, [utilisateur.inscriptions]);
+
   return (
-    <Col xs={24} xl={12}>
+    <>
       <h2>Scolarité</h2>
       {isFetching ? (
         <Skeleton active paragraph />
       ) : (
         <Descriptions bordered column={1} style={{ overflowX: "auto" }}>
           <Descriptions.Item label="Numéro étudiant">
-            <Typography.Text copyable={utilisateur.numeroEtudiant !== undefined}>
+            <Typography.Text copyable={!!utilisateur.numeroEtudiant}>
               {utilisateur.numeroEtudiant || <MinusOutlined />}
             </Typography.Text>
           </Descriptions.Item>
@@ -37,15 +53,41 @@ export const ScolariteSection: React.FC<ScolariteSectionProps> = ({ utilisateur,
           <Descriptions.Item label="Inscriptions" styles={{ label: { width: 200 } }}>
             <h3 className="sr-only">Inscriptions</h3>
             <Flex vertical style={{ width: "100%", overflowY: "auto" }} wrap="wrap">
-              {[...(utilisateur.inscriptions || [])]
-                .sort((i1, i2) => (i2.debut || "").localeCompare(i1.debut || ""))
-                .map((i) => (
+              {inscriptionsEnCours.length === 0 ? (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description="Aucune inscription en cours"
+                />
+              ) : (
+                inscriptionsEnCours.map((i) => (
                   <ScolariteListItem key={i["@id"]} inscription={i} titleClassName="" />
-                ))}
+                ))
+              )}
+
+              {inscriptionsPrecedentes.length > 0 && (
+                <>
+                  <Button
+                    className="mt-2 w-100"
+                    style={{ alignSelf: "flex-start" }}
+                    icon={afficherPrecedentes ? <UpOutlined /> : <DownOutlined />}
+                    onClick={() => setAfficherPrecedentes(!afficherPrecedentes)}
+                    aria-expanded={afficherPrecedentes}
+                    aria-controls={ID_INSCRIPTIONS_PRECEDENTES}
+                  >
+                    Inscriptions précédentes ({inscriptionsPrecedentes.length})
+                  </Button>
+                  <div id={ID_INSCRIPTIONS_PRECEDENTES}>
+                    {afficherPrecedentes &&
+                      inscriptionsPrecedentes.map((i) => (
+                        <ScolariteListItem key={i["@id"]} inscription={i} titleClassName="" />
+                      ))}
+                  </div>
+                </>
+              )}
             </Flex>
           </Descriptions.Item>
         </Descriptions>
       )}
-    </Col>
+    </>
   );
 };

@@ -7,7 +7,7 @@
  * @author Julien Lemonnier <julien.lemonnier@u-bordeaux.fr>
  */
 
-import React from "react";
+import React, { useRef } from "react";
 import { Col, Descriptions, Input, Row, Skeleton } from "antd";
 
 interface CommentaireDemandeSectionProps {
@@ -25,6 +25,8 @@ export const CommentaireDemandeSection: React.FC<CommentaireDemandeSectionProps>
   setCommentaire,
   mutateDemande,
 }) => {
+  const commentaireAuFocus = useRef<string | undefined>(undefined);
+
   return (
     <Row gutter={16}>
       <Col xs={24} xl={24}>
@@ -45,14 +47,19 @@ export const CommentaireDemandeSection: React.FC<CommentaireDemandeSectionProps>
                 autoSize={{ minRows: 3 }}
                 value={commentaire}
                 onChange={(e) => setCommentaire(e.target.value)}
-                onBlur={() =>
+                onFocus={() => {
+                  commentaireAuFocus.current = commentaire;
+                }}
+                onBlur={() => {
+                  if (commentaire === commentaireAuFocus.current) return;
+
                   mutateDemande({
                     data: {
                       commentaire: commentaire,
                     },
                     "@id": demandeId,
-                  })
-                }
+                  });
+                }}
               />
             </Descriptions.Item>
           </Descriptions>

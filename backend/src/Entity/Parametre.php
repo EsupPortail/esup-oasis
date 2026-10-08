@@ -46,6 +46,8 @@ class Parametre
     public const string RESPONSABLE_PHASE_QUALITE = 'RESPONSABLE_PHASE_QUALITE';
     public const string LIEU_COURRIER = 'LIEU_COURRIER';
     public const string ADRESSE_POSTALE = 'ADRESSE_POSTALE';
+    // on réserve CONST_* pour les paramètres aux valeurs non modifiables
+    public const string CONST_INFOS_COMPLEMENTAIRES = 'CONST_INFOS_COMPLEMENTAIRES';
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]

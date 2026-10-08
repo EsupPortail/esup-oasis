@@ -122,7 +122,7 @@ export function FiltresFavoris<T extends FiltreDecrivable>(props: {
                     </Button>
                   </Tooltip>
                   <Tooltip
-                    placement="left"
+                    placement="top"
                     title={
                       filtre.favori ? "Retirer le filtre favori" : "Définir comme filtre favori"
                     }
@@ -159,7 +159,9 @@ export function FiltresFavoris<T extends FiltreDecrivable>(props: {
                       message.success("Filtre supprimé").then();
                     }}
                   >
-                    <Button icon={<DeleteOutlined />} className="text-danger" />
+                    <Tooltip title="Supprimer le filtre" placement="bottom">
+                      <Button icon={<DeleteOutlined />} className="text-danger" />
+                    </Tooltip>
                   </Popconfirm>
                 </Space.Compact>
               }

@@ -19,15 +19,14 @@ use DateTimeInterface;
 
 class FakeSiScolDataProvider extends AbstractSiScolDataProvider
 {
-
     /**
      * @inheritDoc
      */
     public function getProviderId(): string
     {
-        return "fake";
+        return 'fake';
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -73,5 +72,20 @@ class FakeSiScolDataProvider extends AbstractSiScolDataProvider
             'niveau' => 'Niveau de test',
             'discipline' => 'Discipline de test',
         ];
+    }
+
+    /**
+     * @param iterable<Utilisateur> $etudiants
+     * @return array|string[][]
+     */
+    protected function infosComplementaires(iterable $etudiants): array
+    {
+        $result = [];
+        foreach ($etudiants as $etudiant) {
+            $result[$etudiant->getNumeroEtudiant()] = [
+                'someKey' => 'someValue',
+            ];
+        }
+        return $result;
     }
 }

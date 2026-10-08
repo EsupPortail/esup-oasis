@@ -19,6 +19,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\Pagination\PaginatorInterface;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\DecisionAmenagementExamens;
+use App\ApiResource\InfoComplementaire;
 use App\ApiResource\Utilisateur;
 use App\Entity\Beneficiaire;
 use App\Service\ErreurLdapException;
@@ -68,6 +69,9 @@ class UtilisateurProvider implements ProviderInterface
 
         $results = $this->collectionProvider->provide($operation, $uriVariables, $context);
         assert($results instanceof PaginatorInterface);
+        //ici on veut forcer la mise en cache "en masse" des infos complémentaires, pour éviter de nombreuses requêtes séparées
+        $this->utilisateurManager->prechargerInfosComplementaires($results);
+
         return new MappedCollectionPaginator($results, $this->transformWithDecision(...));
     }
 
@@ -129,6 +133,12 @@ class UtilisateurProvider implements ProviderInterface
                 new Utilisateur($benef->getGestionnaire()),
             ],
         }) ?? [], SORT_REGULAR);
+
+        if ($entity->getNumeroEtudiant()) {
+            foreach ($this->utilisateurManager->infosComplementaires($entity) as $cle => $valeur) {
+                $utilisateur->infosComplementaires[] = new InfoComplementaire($cle, $valeur);
+            }
+        }
 
         return $utilisateur;
     }

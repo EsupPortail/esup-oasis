@@ -747,4 +747,14 @@ readonly class UtilisateurManager
     {
         $this->utilisateurRepository->save($utilisateur, true); //le recalcul est déclenché systématiquement par le repository
     }
+
+    public function prechargerInfosComplementaires(iterable $utilisateurs): void
+    {
+        $this->scolProvider->getInfosComplementairesMultiple($utilisateurs);
+    }
+
+    public function infosComplementaires(Utilisateur $etudiant): array
+    {
+        return $this->scolProvider->getInfosComplementaires($etudiant);
+    }
 }

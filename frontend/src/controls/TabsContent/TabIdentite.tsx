@@ -9,13 +9,14 @@
 
 import React, { useEffect, useState } from "react";
 import { useApi } from "@context/api/ApiProvider";
-import { App, Form, Row, Skeleton } from "antd";
+import { App, Col, Form, Row, Skeleton } from "antd";
 import { useAuth } from "@/auth/AuthProvider";
 import { QK_UTILISATEURS } from "@api";
 import { IdentiteSection } from "@controls/TabsContent/TabIdentite/IdentiteSection";
 import { ScolariteSection } from "@controls/TabsContent/TabIdentite/ScolariteSection";
 import { SuiviSection } from "@controls/TabsContent/TabIdentite/SuiviSection";
 import { CommentaireDemandeSection } from "@controls/TabsContent/TabIdentite/CommentaireDemandeSection";
+import { InfosComplementairesSection } from "@controls/TabsContent/TabIdentite/InfosComplementairesSection";
 
 export function TabIdentite(props: {
   utilisateurId: string;
@@ -77,8 +78,6 @@ export function TabIdentite(props: {
 
   return (
     <div>
-      <h2 className="sr-only">Identité</h2>
-
       <IdentiteSection
         utilisateur={utilisateur}
         isFetching={isFetching}
@@ -86,16 +85,20 @@ export function TabIdentite(props: {
       />
 
       <Row gutter={16}>
-        <ScolariteSection utilisateur={utilisateur} isFetching={isFetching} />
-
-        {user?.isGestionnaire && (
-          <SuiviSection
-            utilisateur={utilisateur}
-            isFetching={isFetching}
-            mutateUtilisateur={mutateUtilisateur.mutate}
-            form={form}
-          />
-        )}
+        <Col xs={24} xl={12}>
+          <ScolariteSection utilisateur={utilisateur} isFetching={isFetching} />
+          <InfosComplementairesSection utilisateur={utilisateur} isFetching={isFetching} />
+        </Col>
+        <Col xs={24} xl={12}>
+          {user?.isGestionnaire && (
+            <SuiviSection
+              utilisateur={utilisateur}
+              isFetching={isFetching}
+              mutateUtilisateur={mutateUtilisateur.mutate}
+              form={form}
+            />
+          )}
+        </Col>
       </Row>
 
       {props.demandeId && user?.isGestionnaire && (

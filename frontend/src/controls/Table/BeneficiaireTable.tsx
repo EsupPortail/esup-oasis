@@ -7,9 +7,10 @@
  * @author Julien Lemonnier <julien.lemonnier@u-bordeaux.fr>
  */
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { IBeneficiaire } from "@api";
 import { beneficiaireTableColumns } from "@controls/Table/BeneficiaireTableColumns";
+import { BeneficiaireTableColumnsDropdown } from "@controls/Table/BeneficiaireTableColumnsDropdown";
 import { RoleValues } from "@lib";
 import { Button, Flex, Space, Table } from "antd";
 import Icon from "@ant-design/icons";
@@ -28,6 +29,8 @@ import { useFiltreSessionStorage } from "@controls/Table/hooks/useFiltreSessionS
 import { FiltreSessionSwitch } from "@controls/Table/FiltreSessionSwitch";
 import { getCountLibelle } from "@utils/table";
 import dayjs from "dayjs";
+import { PARAMETRE_CONST_INFOS_COMPLEMENTAIRES } from "@/constants";
+import { useBeneficiaireTableColumnPrefs } from "./hooks/useBeneficiaireTableColumnPrefs";
 
 export const FILTRE_BENEFICIAIRE_DEFAULT: FiltreBeneficiaire = {
   "order[nom]": "asc" as "asc" | "desc" | undefined,
@@ -65,25 +68,16 @@ function filtreBeneficiaireDefault(
   filtreType: string | null,
   filtreValeur: string | null,
 ): FiltreBeneficiaire {
-  switch (filtreType) {
-    case "etatDecisionAmenagement":
-      return {
-        ...FILTRE_BENEFICIAIRE_DEFAULT,
-        etatDecisionAmenagement: filtreValeur as string,
-      };
-    case "etatAvisEse":
-      return {
-        ...FILTRE_BENEFICIAIRE_DEFAULT,
-        etatAvisEse: filtreValeur as string,
-      };
-    case "profil":
-      return {
-        ...FILTRE_BENEFICIAIRE_DEFAULT,
-        "filtreBeneficiaire[profil]": filtreValeur as string,
-      };
-    default:
-      return FILTRE_BENEFICIAIRE_DEFAULT;
-  }
+  if (!filtreType || !filtreValeur) return FILTRE_BENEFICIAIRE_DEFAULT;
+  const keyMap: Record<string, keyof FiltreBeneficiaire> = {
+    etatDecisionAmenagement: "etatDecisionAmenagement",
+    etatAvisEse: "etatAvisEse",
+    profil: "filtreBeneficiaire[profil]",
+  };
+  const key = keyMap[filtreType];
+  return key
+    ? { ...FILTRE_BENEFICIAIRE_DEFAULT, [key]: filtreValeur }
+    : FILTRE_BENEFICIAIRE_DEFAULT;
 }
 
 const SESSION_KEY_FILTRE_BENEFICIAIRE = "oasis:filter:beneficiaire";
@@ -93,8 +87,35 @@ export default function BeneficiaireTable() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const auth = useAuth();
+  const isGestionnaire = auth.user?.isGestionnaire;
   const { getPreferenceArray, preferencesChargees } = usePreferences();
   const { enabled: sessionEnabled, toggle: toggleSession } = useFiltreSessionStorage();
+
+  // 1. Informations complémentaires dynamiques (paramètre CONST_INFOS_COMPLEMENTAIRES)
+  const { data: parametresColonnesCompl } = useApi().useGetItem({
+    path: "/parametres/{cle}",
+    url: PARAMETRE_CONST_INFOS_COMPLEMENTAIRES,
+    enabled: !!isGestionnaire,
+    onError: () => {},
+  });
+
+  // undefined tant que le paramètre n'est pas chargé (gestionnaire) ; [] pour les autres profils
+  const colonnesComplementaires = useMemo(() => {
+    if (!parametresColonnesCompl) return isGestionnaire ? undefined : [];
+    return (parametresColonnesCompl.valeursCourantes || [])
+      .map((v) => v.valeur)
+      .filter((v): v is string => typeof v === "string" && v.length > 0);
+  }, [parametresColonnesCompl, isGestionnaire]);
+
+  // 2. Gestion des préférences de colonnes (sélection, ordre, persistance)
+  const {
+    colonnesOrdonnees,
+    colonnesAffichees,
+    colonnesVisibles,
+    handleChangeColonnesVisibles,
+    handleReorderColonnes,
+    handleResetColonnes,
+  } = useBeneficiaireTableColumnPrefs(isGestionnaire, colonnesComplementaires);
 
   // Capture si sessionStorage avait des données au montage (indépendamment de sessionEnabled,
   // car sessionEnabled peut être faux avant que les préférences ne chargent)
@@ -186,7 +207,7 @@ export default function BeneficiaireTable() {
   const count = dataBeneficiaires?.totalItems;
 
   const onClick = (record: IBeneficiaire) => {
-    if (auth.user?.isGestionnaire) {
+    if (isGestionnaire) {
       navigate(`/beneficiaires/${record.uid}`);
     } else {
       setDrawerUtilisateur({
@@ -248,10 +269,19 @@ export default function BeneficiaireTable() {
                 </Button>
               </Space.Compact>
             )}
-            {auth.user?.isGestionnaire && (
-              <>
-                <BeneficiaireTableExport filtreBeneficiaire={filtreBeneficiaire} />
-              </>
+            <BeneficiaireTableColumnsDropdown
+              colonnesDisponibles={colonnesOrdonnees}
+              colonnesVisibles={colonnesVisibles}
+              onChangeColonnesVisibles={handleChangeColonnesVisibles}
+              onReorderColonnes={handleReorderColonnes}
+              onReset={handleResetColonnes}
+              className={isGestionnaire ? "mr-1" : undefined}
+            />
+            {isGestionnaire && (
+              <BeneficiaireTableExport
+                filtreBeneficiaire={filtreBeneficiaire}
+                colonnesVisibles={colonnesAffichees}
+              />
             )}
           </div>
         </Space>
@@ -279,12 +309,10 @@ export default function BeneficiaireTable() {
             user: auth.user,
             filter: filtreBeneficiaire,
             setFilter: setFiltreBeneficiaire,
-            onBeneficiaireSelected: (beneficiaire) => {
-              onClick(beneficiaire);
-            },
-            onImpersonate: (uid) => {
-              navigate(`/impersonate/${uid}`);
-            },
+            colonnesVisibles: colonnesAffichees,
+            onBeneficiaireSelected: onClick,
+            onImpersonate: (uid) => navigate(`/impersonate/${uid}`),
+            colonnesComplementaires,
           })}
           rowKey={(record) => record["@id"] as string}
           onChange={(

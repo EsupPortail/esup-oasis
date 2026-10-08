@@ -18,6 +18,8 @@ export default function ParametresTable(props: { masquerParametresMenu: boolean 
   const [editedItem, setEditedItem] = useState<IParametre>();
   const { data: parametres, isFetching: isFetchingParametres } = useApi().useGetFullCollection({
     path: "/parametres",
+    itemsPerPage: 9999,
+    concurrency: 1,
   });
 
   return (
@@ -36,6 +38,9 @@ export default function ParametresTable(props: { masquerParametresMenu: boolean 
             title: "Nom du paramètre",
             dataIndex: "cle",
             key: "cle",
+            render: (value: string) => (
+              <span className="medium">{value?.replace(/^CONST_/, "")}</span>
+            ),
           },
           {
             title: "Valeur courante",
@@ -70,16 +75,17 @@ export default function ParametresTable(props: { masquerParametresMenu: boolean 
             key: "actions",
             className: "text-right commandes",
             width: 150,
-            render: (_, record) => (
-              <Button
-                icon={<EditOutlined />}
-                onClick={() => {
-                  setEditedItem(record);
-                }}
-              >
-                Éditer
-              </Button>
-            ),
+            render: (_, record) =>
+              !record.cle?.startsWith("CONST_") && (
+                <Button
+                  icon={<EditOutlined />}
+                  onClick={() => {
+                    setEditedItem(record);
+                  }}
+                >
+                  Éditer
+                </Button>
+              ),
           },
         ]}
       />

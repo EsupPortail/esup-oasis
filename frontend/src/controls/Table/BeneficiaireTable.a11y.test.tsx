@@ -22,7 +22,12 @@ vi.mock("@/auth/AuthProvider", () => ({
 }));
 
 vi.mock("@context/utilisateurPreferences/UtilisateurPreferencesProvider", () => ({
-  usePreferences: () => ({ getPreferenceArray: vi.fn(() => []), preferencesChargees: true }),
+  usePreferences: () => ({
+    getPreferenceArray: vi.fn(() => []),
+    getPreferenceJson: vi.fn(() => ({})),
+    setPreferenceJson: vi.fn(),
+    preferencesChargees: true,
+  }),
 }));
 
 vi.mock("@controls/Table/hooks/useFiltreSessionStorage", () => ({

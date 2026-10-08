@@ -87,7 +87,12 @@ export function TabProfils({ utilisateur, title }: ITabProfilsProps): ReactEleme
               </Form.Item>
             ))}
             <Form.Item className="mb-1">
-              <Button onClick={() => add()} icon={<PlusOutlined />} className="mt-1 mb-0">
+              <Button
+                type="primary"
+                onClick={() => add()}
+                icon={<PlusOutlined />}
+                className="mt-1 mb-0 w-100"
+              >
                 Ajouter un profil
               </Button>
 

@@ -20,6 +20,20 @@ use Psr\Log\LoggerInterface;
 use RuntimeException;
 use SensitiveParameter;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Contracts\Cache\CacheInterface;
+
+use function array_filter;
+use function implode;
+use function iterator_to_array;
+use function oci_bind_by_name;
+use function oci_execute;
+use function oci_fetch_array;
+use function oci_fetch_object;
+use function oci_parse;
+use function oci_pconnect;
+use function preg_replace;
+use function str_replace;
+use function trim;
 
 class ApogeeProvider extends AbstractSiScolDataProvider
 {
@@ -33,16 +47,24 @@ class ApogeeProvider extends AbstractSiScolDataProvider
         private readonly string $requeteInscriptions,
         #[Autowire('%env(file:resolve:APOGEE_REQUETE_FORMATION)%')]
         private readonly string $requeteFormation,
-    ) {}
+        #[Autowire('%env(file:resolve:APOGEE_REQUETE_INFOS_COMPLEMENTAIRES)%')]
+        private string $requeteInfosComp,
+        CacheInterface $cache,
+        #[Autowire('%env(int:resolve:SI_SCOL_DUREE_VALIDITE_CACHE)%')]
+        private readonly int $dureeValiditeCache,
+    ) {
+        $this->requeteInfosComp = trim(preg_replace('#/\*.*?\*/#s', '', $this->requeteInfosComp));
+        parent::__construct($cache, $this->logger, $this->dureeValiditeCache);
+    }
 
     /**
      * @inheritDoc
      */
     public function getProviderId(): string
     {
-        return "apogee";
+        return 'apogee';
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -159,6 +181,107 @@ class ApogeeProvider extends AbstractSiScolDataProvider
                 'discipline' => $row->LIB_DSI,
             ];
         }
+        return $data;
+    }
+
+    protected function infosComplementaires(iterable $etudiants): array
+    {
+        if (empty($this->requeteInfosComp)) {
+            return [];
+        }
+
+        $this->logger->debug('début récupération des infos complémentaires');
+
+        try {
+            $db = $this->connect();
+        } catch (RuntimeException) {
+            $this->logger->warning('Récupération des infos complémentaires impossible, apogée indisponible');
+            return [];
+        }
+
+        //par défaut pas d'infos complémentaires à afficher
+        $codEtus = array_map(
+            fn(Utilisateur $etudiant) => $etudiant->getNumeroEtudiant(),
+            array_filter(
+                iterator_to_array($etudiants),
+                fn(Utilisateur $etudiant) => $etudiant->getNumeroEtudiant() !== null,
+            ),
+        );
+        $codEtus = implode(',', $codEtus);
+
+        $sql = str_replace(':codesEtudiants', $codEtus, $this->requeteInfosComp);
+
+        $stmt = oci_parse($db, $sql);
+
+        oci_execute($stmt);
+
+        $data = [];
+        while ($row = oci_fetch_array($stmt, OCI_ASSOC)) {
+            $codEtu = $row['COD_ETU'] ?? null;
+            if (null === $codEtu) {
+                continue;
+            }
+            foreach ($row as $key => $value) {
+                if ($key == 'COD_ETU' || empty($value)) {
+                    continue;
+                }
+
+                $data[$codEtu][$key] = $value;
+            }
+        }
+
+        return $data;
+    }
+
+    public function listeInfosComplementairesDisponibles(): array
+    {
+        //on appelle infosComplémentaires sur un étudiant avec une inscription valide pour récupérer la liste des champs
+        $sql = "select max(cod_etu) as cod_etu 
+                from individu i 
+                    join ins_adm_anu ia on i.cod_ind = ia.cod_ind
+                where eta_iaa = 'E'";
+
+        if (empty($this->requeteInfosComp)) {
+            return [];
+        } else {
+            $this->logger->debug($this->requeteInfosComp);
+        }
+
+        try {
+            $db = $this->connect();
+        } catch (RuntimeException) {
+            $this->logger->warning('Récupération de la liste ds infos complémentaires impossible, apogée indisponible');
+            return [];
+        }
+
+        $stmt = oci_parse($db, $sql);
+        oci_execute($stmt);
+
+        if (!($row = oci_fetch_object($stmt))) {
+            $this->logger->warning(
+                'Récupération de la liste ds infos complémentaires impossible, aucun étudiant trouvé.',
+            );
+            return [];
+        }
+
+        $codEtu = $row->COD_ETU;
+        $sqlInfos = str_replace(':codesEtudiants', $codEtu, $this->requeteInfosComp);
+        $stmtInfos = oci_parse($db, $sqlInfos);
+
+        oci_execute($stmtInfos);
+
+        $data = [];
+        $id = 1;
+        if ($row = oci_fetch_array($stmtInfos, OCI_ASSOC)) {
+            foreach ($row as $key => $value) {
+                if ($key == 'COD_ETU') {
+                    continue;
+                }
+                $data[$id] = $key;
+                $id++;
+            }
+        }
+
         return $data;
     }
 }
