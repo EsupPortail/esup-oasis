@@ -27,7 +27,7 @@ class ModifierDecisionVoter extends Voter
 
     /**
      * @param string $attribute
-     * @param mixed $subject
+     * @param array{DecisionAmenagementExamens, DecisionAmenagementExamens} $subject la décision avant et après la requête
      * @param TokenInterface $token
      * @param Vote|null $vote* @return bool
      */
@@ -37,6 +37,16 @@ class ModifierDecisionVoter extends Voter
         TokenInterface $token,
         ?Vote $vote = null,
     ): bool {
+        [$avant, $subject] = $subject;
+
+        // état inchangé : saisie des observations, possible tant que la décision n'est pas envoyée
+        if ($avant->etat === $subject->etat) {
+            return in_array($avant->etat, [
+                \App\Entity\DecisionAmenagementExamens::ETAT_ATTENTE_VALIDATION_CAS,
+                \App\Entity\DecisionAmenagementExamens::ETAT_VALIDE,
+            ], true);
+        }
+
         if (
             in_array(Utilisateur::ROLE_ADMIN, $token->getRoleNames())
             && in_array(

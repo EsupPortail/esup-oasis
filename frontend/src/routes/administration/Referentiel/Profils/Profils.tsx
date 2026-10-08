@@ -77,6 +77,7 @@ export default function Profils(): ReactElement {
           setEditedItem({
             actif: true,
             avecTypologie: false,
+            avisMedicalRequis: false,
           } as IProfil);
         }}
       />

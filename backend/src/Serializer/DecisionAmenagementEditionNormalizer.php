@@ -48,6 +48,9 @@ readonly class DecisionAmenagementEditionNormalizer implements NormalizerInterfa
         $data['amenagements'] = array_filter($entity
             ->getBeneficiaire()
             ->getAmenagementsActifs(), fn($amenagement) => $amenagement->getType()->isDecision());
+        // saisies du gestionnaire, reprises par les gabarits qui les affichent
+        $data['observations'] = $entity->getObservations();
+        $data['dateAvisMedecin'] = $entity->getDateAvisMedecin();
 
         $data['annee'] = $this->anneeDuJour($this->now());
         $data['lieu'] = $this->parametreService->valeur(Parametre::LIEU_COURRIER);

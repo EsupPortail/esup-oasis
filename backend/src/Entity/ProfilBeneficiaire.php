@@ -55,6 +55,15 @@ class ProfilBeneficiaire
     #[Map(if: false)]
     private(set) ?bool $avecTypologie = false;
 
+    /**
+     * Les bénéficiaires de ce profil doivent disposer d'un avis médical pour que
+     * leur décision d'aménagements puisse être éditée. Désactivé par défaut : un
+     * profil sportif ou artiste, par exemple, n'est jamais concerné.
+     */
+    #[ORM\Column(options: ['default' => false])]
+    #[Map(if: false)]
+    private(set) ?bool $avisMedicalRequis = false;
+
     #[ORM\ManyToMany(targetEntity: TypeDemande::class, mappedBy: 'profilsAssocies')]
     #[Map(if: false)]
     private Collection $typesDemandes;
@@ -145,6 +154,18 @@ class ProfilBeneficiaire
     public function setAvecTypologie(bool $avecTypologie): static
     {
         $this->avecTypologie = $avecTypologie;
+
+        return $this;
+    }
+
+    public function isAvisMedicalRequis(): ?bool
+    {
+        return $this->avisMedicalRequis;
+    }
+
+    public function setAvisMedicalRequis(bool $avisMedicalRequis): static
+    {
+        $this->avisMedicalRequis = $avisMedicalRequis;
 
         return $this;
     }

@@ -18,11 +18,14 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use App\State\DecisionAmenagementExamens\DecisionAmenagementExamensProcessor;
 use App\State\DecisionAmenagementExamens\DecisionAmenagementExamensProvider;
+use App\Validator\DateAvisMedecinRequiseConstraint;
 use App\Validator\EtatDecisionValideConstraint;
+use DateTimeInterface;
 use ReflectionProperty;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     operations: [
@@ -34,7 +37,7 @@ use Symfony\Component\Serializer\Attribute\Ignore;
         new Patch(
             uriTemplate: self::ITEM_URI,
             uriVariables: ['uid', 'annee'],
-            securityPostDenormalize: "is_granted('" . self::MODIFIER_DECISION . "', object)",
+            securityPostDenormalize: "is_granted('" . self::MODIFIER_DECISION . "', [previous_object, object])",
         ),
     ],
     normalizationContext: ['groups' => [self::GROUP_OUT]],
@@ -44,6 +47,7 @@ use Symfony\Component\Serializer\Attribute\Ignore;
     processor: DecisionAmenagementExamensProcessor::class,
     stateOptions: new Options(entityClass: \App\Entity\DecisionAmenagementExamens::class),
 )]
+#[DateAvisMedecinRequiseConstraint]
 #[Map(target: \App\Entity\DecisionAmenagementExamens::class)]
 class DecisionAmenagementExamens
 {
@@ -106,6 +110,34 @@ class DecisionAmenagementExamens
             return $this->urlContenu ?? null;
         }
     }
+
+    #[Groups([self::GROUP_OUT, self::GROUP_IN])]
+    #[Assert\Length(max: 4000)]
+    public ?string $observations {
+        get {
+            $prop = new ReflectionProperty(self::class, 'observations');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->observations = $this->entity->getObservations();
+            }
+            return $this->observations ?? null;
+        }
+    }
+
+    // exposée aussi sur la fiche du bénéficiaire, qui en déduit si la demande d'édition est possible
+    #[Groups([Utilisateur::GROUP_OUT, self::GROUP_OUT, self::GROUP_IN])]
+    public ?DateTimeInterface $dateAvisMedecin {
+        get {
+            $prop = new ReflectionProperty(self::class, 'dateAvisMedecin');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->dateAvisMedecin = $this->entity->getDateAvisMedecin();
+            }
+            return $this->dateAvisMedecin ?? null;
+        }
+    }
+
+    // renseignée par DecisionAmenagementManager::versRessource : l'interface applique la même règle que le serveur
+    #[Groups([Utilisateur::GROUP_OUT, self::GROUP_OUT])]
+    public bool $dateAvisMedecinRequise = false;
 
     public function __construct(
         private readonly ?\App\Entity\DecisionAmenagementExamens $entity = null,

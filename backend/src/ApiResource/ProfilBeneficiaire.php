@@ -92,6 +92,21 @@ final class ProfilBeneficiaire
         }
     }
 
+    /**
+     * L'édition de la décision d'aménagements exige un avis médical pour les
+     * bénéficiaires de ce profil.
+     */
+    #[Groups([self::GROUP_OUT, self::GROUP_IN])]
+    public bool $avisMedicalRequis {
+        get {
+            $prop = new ReflectionProperty(self::class, 'avisMedicalRequis');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->avisMedicalRequis = $this->entity->isAvisMedicalRequis();
+            }
+            return $this->avisMedicalRequis ?? false;
+        }
+    }
+
     public function __construct(
         private readonly ?\App\Entity\ProfilBeneficiaire $entity = null,
     ) {}

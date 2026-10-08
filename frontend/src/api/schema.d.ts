@@ -3256,28 +3256,59 @@ export interface components {
         };
         "DecisionAmenagementExamens-decision.in.jsonMergePatch": {
             etat?: string;
+            observations?: string | null;
+            /** Format: date-time */
+            dateAvisMedecin?: string | null;
         };
         "DecisionAmenagementExamens.html-decision.out": {
             etat?: string;
             urlContenu?: string | null;
+            observations?: string | null;
+            /** Format: date-time */
+            dateAvisMedecin?: string | null;
+            /** @default false */
+            dateAvisMedecinRequise: boolean;
         };
         "DecisionAmenagementExamens.html-utilisateur.out": {
             etat?: string;
+            /** Format: date-time */
+            dateAvisMedecin?: string | null;
+            /** @default false */
+            dateAvisMedecinRequise: boolean;
         };
         "DecisionAmenagementExamens.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
             etat?: string;
             readonly urlContenu?: string | null;
+            observations?: string | null;
+            /** Format: date-time */
+            dateAvisMedecin?: string | null;
+            /** @default false */
+            readonly dateAvisMedecinRequise: boolean;
         };
         "DecisionAmenagementExamens.jsonld-decision.out": components["schemas"]["HydraItemBaseSchema"] & {
             etat?: string;
             urlContenu?: string | null;
+            observations?: string | null;
+            /** Format: date-time */
+            dateAvisMedecin?: string | null;
+            /** @default false */
+            dateAvisMedecinRequise: boolean;
         };
         "DecisionAmenagementExamens.jsonld-utilisateur.out": components["schemas"]["HydraItemBaseSchema"] & {
             etat?: string;
+            /** Format: date-time */
+            dateAvisMedecin?: string | null;
+            /** @default false */
+            dateAvisMedecinRequise: boolean;
         };
         "DecisionAmenagementExamens.pdf-decision.out": {
             etat?: string;
             urlContenu?: string | null;
+            observations?: string | null;
+            /** Format: date-time */
+            dateAvisMedecin?: string | null;
+            /** @default false */
+            dateAvisMedecinRequise: boolean;
         };
         "Demande-demande.in": {
             /**
@@ -4389,23 +4420,43 @@ export interface components {
             libelle: string;
             actif?: boolean;
             avecTypologie?: boolean;
+            /**
+             * @description L'édition de la décision d'aménagements exige un avis médical pour les
+             *     bénéficiaires de ce profil.
+             */
+            avisMedicalRequis?: boolean;
         };
         "ProfilBeneficiaire-profil.in.jsonMergePatch": {
             libelle?: string;
             actif?: boolean;
             avecTypologie?: boolean;
+            /**
+             * @description L'édition de la décision d'aménagements exige un avis médical pour les
+             *     bénéficiaires de ce profil.
+             */
+            avisMedicalRequis?: boolean;
         };
         "ProfilBeneficiaire.html-profil.out": {
             id?: number | null;
             libelle: string;
             actif?: boolean;
             avecTypologie?: boolean;
+            /**
+             * @description L'édition de la décision d'aménagements exige un avis médical pour les
+             *     bénéficiaires de ce profil.
+             */
+            avisMedicalRequis?: boolean;
         };
         "ProfilBeneficiaire.jsonld-profil.out": components["schemas"]["HydraItemBaseSchema"] & {
             id?: number | null;
             libelle: string;
             actif?: boolean;
             avecTypologie?: boolean;
+            /**
+             * @description L'édition de la décision d'aménagements exige un avis médical pour les
+             *     bénéficiaires de ce profil.
+             */
+            avisMedicalRequis?: boolean;
         };
         "Question.html-question.out": {
             id?: number | null;

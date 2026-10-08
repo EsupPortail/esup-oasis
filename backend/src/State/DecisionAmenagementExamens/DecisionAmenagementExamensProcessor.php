@@ -42,6 +42,7 @@ readonly class DecisionAmenagementExamensProcessor implements ProcessorInterface
         //PATCH seulement
         $entity = $this->decisionAmenagementExamensRepository->find($data->id);
         $entity->setEtat($data->etat);
+        $entity->setObservations($data->observations)->setDateAvisMedecin($data->dateAvisMedecin);
         $this->decisionAmenagementExamensRepository->save($entity, true);
 
         //on envoie un message de MAJ pour traitement async

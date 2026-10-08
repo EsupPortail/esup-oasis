@@ -14,7 +14,6 @@ namespace App\State\DecisionAmenagementExamens;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use App\ApiResource\DecisionAmenagementExamens;
 
 readonly class DecisionAmenagementExamensProvider implements ProviderInterface
 {
@@ -29,7 +28,7 @@ readonly class DecisionAmenagementExamensProvider implements ProviderInterface
 
         return match ($entity) {
             null => null,
-            default => new DecisionAmenagementExamens($entity),
+            default => $this->decisionAmenagementManager->versRessource($entity),
         };
     }
 }

@@ -28,10 +28,12 @@ class EtatDecisionValideConstraintValidator extends ConstraintValidator
         }
 
         //les CAS peuvent passer à VALIDE, les admins à EDITION DEMANDEE
+        //en attente : état inchangé, simple saisie des observations (cf. la sécurité de l'opération)
 
         if (!in_array($value, [
             DecisionAmenagementExamens::ETAT_EDITION_DEMANDEE,
             DecisionAmenagementExamens::ETAT_VALIDE,
+            DecisionAmenagementExamens::ETAT_ATTENTE_VALIDATION_CAS,
         ])) {
             $this->context->buildViolation($constraint->message)->addViolation();
         }

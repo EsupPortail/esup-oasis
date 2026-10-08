@@ -124,6 +124,10 @@
             plusieurs aménagements d'épreuves au titre de l'année universitaire {{ data.annee }}/{{ data.annee + 1 }}.
         </p>
 
+        {% if data.dateAvisMedecin is not empty %}
+            <p>Vu l'avis rendu par le médecin le {{ data.dateAvisMedecin|date('d/m/Y') }}.</p>
+        {% endif %}
+
         <div class="amenagements">
             Je vous informe que j'ai pris la décision de vous accorder le bénéfice
             {{ data.amenagements|length > 1 ? "des aménagements suivants" : "de l'aménagement suivant" }}&nbsp;:
@@ -137,6 +141,12 @@
                 {% endfor %}
             </ul>
         </div>
+
+        {% if data.observations|default('')|trim is not empty %}
+            <div class="page-break-avoid">
+                <p>Observations particulières&nbsp;:<br/>{{ data.observations|nl2br }}</p>
+            </div>
+        {% endif %}
 
         <div class="page-break-avoid">
             <p>Le bénéfice {{ data.amenagements|length > 1 ? "des aménagements" : "de l'aménagement" }}

@@ -18,7 +18,6 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\Pagination\PaginatorInterface;
 use ApiPlatform\State\ProviderInterface;
-use App\ApiResource\DecisionAmenagementExamens;
 use App\ApiResource\Utilisateur;
 use App\Entity\Beneficiaire;
 use App\Service\ErreurLdapException;
@@ -116,7 +115,7 @@ class UtilisateurProvider implements ProviderInterface
         $decisionEnCours = $this->decisionAmenagementManager->getDecisionCourante($entity);
         $utilisateur->decisionAmenagementAnneeEnCours = match ($decisionEnCours) {
             null => null,
-            default => new DecisionAmenagementExamens($decisionEnCours),
+            default => $this->decisionAmenagementManager->versRessource($decisionEnCours),
         };
 
         $utilisateur->gestionnairesActifs = array_unique(array_reduce($entity->getBeneficiaires()->toArray(), fn(

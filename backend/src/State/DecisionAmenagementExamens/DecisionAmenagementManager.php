@@ -13,6 +13,7 @@
 namespace App\State\DecisionAmenagementExamens;
 
 use App\Entity\AvisEse;
+use App\Entity\Beneficiaire;
 use App\Entity\DecisionAmenagementExamens;
 use App\Entity\Utilisateur;
 use App\Message\RessourceModifieeMessage;
@@ -112,5 +113,40 @@ class DecisionAmenagementManager
     {
         $bornes = $this->bornesAnneeDuJour();
         return $utilisateur->getDecisionAmenagementExamens($bornes['debut'], $bornes['fin']);
+    }
+
+    // ressource de l'API, avec l'exigence de la date de l'avis médical que l'interface applique comme le serveur
+    public function versRessource(DecisionAmenagementExamens $decision): \App\ApiResource\DecisionAmenagementExamens
+    {
+        $ressource = new \App\ApiResource\DecisionAmenagementExamens($decision);
+        $ressource->dateAvisMedecinRequise = $this->dateAvisMedecinRequise($decision);
+
+        return $ressource;
+    }
+
+    /**
+     * L'édition exige la date de l'avis médical dès qu'un profil de handicap du bénéficiaire, sur la période
+     * de la décision, active l'option (ProfilBeneficiaire::avisMedicalRequis).
+     */
+    public function dateAvisMedecinRequise(DecisionAmenagementExamens $decision): bool
+    {
+        $beneficiaire = $decision->getBeneficiaire();
+        if (null === $beneficiaire || null === $decision->getDebut() || null === $decision->getFin()) {
+            return false;
+        }
+
+        // accompagnés ou non : la décision reprend les aménagements de tous les profils actifs
+        $profils = $beneficiaire->getBeneficiairesParIntervalle(
+            $decision->getDebut(),
+            $decision->getFin(),
+            avecAccompagnement: false,
+        );
+
+        return array_any(
+            $profils,
+            // l'option ne vaut que pour un profil de handicap, celui qui porte une typologie
+            fn(Beneficiaire $profil) => true === $profil->getProfil()?->isAvecTypologie()
+                && true === $profil->getProfil()->isAvisMedicalRequis(),
+        );
     }
 }
