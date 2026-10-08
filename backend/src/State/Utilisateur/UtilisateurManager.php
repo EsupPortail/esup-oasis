@@ -523,8 +523,25 @@ readonly class UtilisateurManager
             usort($inscriptions, fn($a, $b) => $a['debut'] <=> $b['debut']);
 
             $last = array_key_last($inscriptions);
+
+            // situation sociale Apogée projetée depuis la dernière inscription.
+            $codeSituationSociale = $inscriptions[$last]['codeSituationSociale'] ?? null;
+            $utilisateur->setCodeSituationSociale($codeSituationSociale);
+            $utilisateur->setLibelleSituationSociale($inscriptions[$last]['libelleSituationSociale'] ?? null);
+
             $utilisateur->setBoursier($inscriptions[$last]['boursier'] ?? false);
             $utilisateur->setStatutEtudiant($inscriptions[$last]['statut'] ?? '');
+
+            // projection de l'adresse Apogée la plus récente vers Utilisateur::adresse.
+            // Les lignes ligne2 (Apogée AD2) et complement (AD3) sont concaténées sur la même ligne
+            // d'affichage car notre modèle ne porte que ligne1/ligne2.
+            $adresse = $utilisateur->getAdresse();
+            $adresse->setLigne1($inscriptions[$last]['adresseLigne1'] ?? null);
+            $complement = trim(($inscriptions[$last]['adresseLigne2'] ?? '') . ' ' . ($inscriptions[$last]['adresseComplement'] ?? ''));
+            $adresse->setLigne2($complement === '' ? null : $complement);
+            $adresse->setCodePostal($inscriptions[$last]['adresseCodePostal'] ?? null);
+            $adresse->setVille($inscriptions[$last]['adresseVille'] ?? null);
+            $adresse->setPays($inscriptions[$last]['adressePays'] ?? null);
         }
 
         //supprimer les disparues
@@ -538,6 +555,17 @@ readonly class UtilisateurManager
                 ) {
                     //trouvée, on passe son chemin
                     unset($inscriptions[$id]);
+                    //rafraîchissement des données d'étape : le compteur d'inscriptions
+                    //et le cursus aménagé peuvent évoluer côté SI en cours d'année
+                    $existante
+                        ->setCodeEtape($inscription['codeEtape'] ?? null)
+                        ->setNombreInscriptionsEtape($inscription['nombreInscriptionsEtape'] ?? null)
+                        ->setCodeCursusAmenage($inscription['codeCursusAmenage'] ?? null)
+                        ->setLibelleCursusAmenage($inscription['libelleCursusAmenage'] ?? null)
+                        ->setCycle($inscription['cycle'] ?? null)
+                        ->setAnneeDansDiplome($inscription['anneeDansDiplome'] ?? null)
+                        ->setCodeTypeDiplome($inscription['codeTypeDiplome'] ?? null)
+                        ->setSante($inscription['sante'] ?? false);
                     if (null === $existante->getFormation()->getDiplome()) {
                         //rattrapage pour bilan activité
                         $formation = $this->formationManager->getFormation(
@@ -568,7 +596,17 @@ readonly class UtilisateurManager
                 discipline: $inscription['discipline'],
                 diplome: $inscription['diplome'],
             );
-            $new->setDebut($inscription['debut'])->setFin($inscription['fin'])->setFormation($formation);
+            $new->setDebut($inscription['debut'])
+                ->setFin($inscription['fin'])
+                ->setFormation($formation)
+                ->setCodeEtape($inscription['codeEtape'] ?? null)
+                ->setNombreInscriptionsEtape($inscription['nombreInscriptionsEtape'] ?? null)
+                ->setCodeCursusAmenage($inscription['codeCursusAmenage'] ?? null)
+                ->setLibelleCursusAmenage($inscription['libelleCursusAmenage'] ?? null)
+                ->setCycle($inscription['cycle'] ?? null)
+                ->setAnneeDansDiplome($inscription['anneeDansDiplome'] ?? null)
+                ->setCodeTypeDiplome($inscription['codeTypeDiplome'] ?? null)
+                ->setSante($inscription['sante'] ?? false);
 
             $utilisateur->addInscription($new);
         }

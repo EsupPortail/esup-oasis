@@ -29,6 +29,39 @@ class FakeSiScolDataProvider extends AbstractSiScolDataProvider
     }
     
     /**
+     * Situation sociale simulée renvoyée par le mock, surchargeable depuis les
+     * tests pour exercer les différentes branches de la projection réelle
+     * (UtilisateurManager) sans dépendre d'Apogée. Valeurs par défaut : étudiant
+     * non boursier ("NO"/"Normal").
+     */
+    public static bool $boursier = false;
+    public static ?string $codeSituationSociale = 'NO';
+    public static ?string $libelleSituationSociale = 'Normal';
+
+    /**
+     * Adresse simulée, surchargeable depuis les tests pour exercer la
+     * projection de l'adresse Apogée vers Utilisateur::adresse.
+     * Valeurs par défaut : pas d'adresse connue.
+     */
+    public static ?string $adresseLigne1 = null;
+    public static ?string $adresseLigne2 = null;
+    public static ?string $adresseComplement = null;
+    public static ?string $adresseCodePostal = null;
+    public static ?string $adresseVille = null;
+    public static ?string $adressePays = null;
+
+    /**
+     * Données d'étape simulées renvoyées par le mock, surchargeables depuis les
+     * tests pour exercer les différentes branches de la projection réelle
+     * (UtilisateurManager) sans dépendre d'Apogée. Valeurs par défaut : null,
+     * comme un SI qui ne renseigne pas ces champs.
+     */
+    public static ?string $codeEtape = null;
+    public static ?int $nombreInscriptionsEtape = null;
+    public static ?string $codeCursusAmenage = null;
+    public static ?string $libelleCursusAmenage = null;
+
+    /**
      * @inheritDoc
      */
     public function getInscriptions(Utilisateur $etudiant, DateTimeInterface $debut, ?DateTimeInterface $fin): array
@@ -57,11 +90,23 @@ class FakeSiScolDataProvider extends AbstractSiScolDataProvider
                 'libComposante' => 'Composante de test',
                 'debut' => new DateTime($debut->format('Y') . '-09-01'),
                 'fin' => new DateTime(((int) $debut->format('Y') + 1) . '-08-31'),
-                'boursier' => false,
+                'boursier' => self::$boursier,
+                'codeSituationSociale' => self::$codeSituationSociale,
+                'libelleSituationSociale' => self::$libelleSituationSociale,
+                'adresseLigne1' => self::$adresseLigne1,
+                'adresseLigne2' => self::$adresseLigne2,
+                'adresseComplement' => self::$adresseComplement,
+                'adresseCodePostal' => self::$adresseCodePostal,
+                'adresseVille' => self::$adresseVille,
+                'adressePays' => self::$adressePays,
                 'statut' => 'FI',
                 'niveau' => 'L1',
                 'discipline' => 'Informatique',
                 'diplome' => 'Licence',
+                'codeEtape' => self::$codeEtape,
+                'nombreInscriptionsEtape' => self::$nombreInscriptionsEtape,
+                'codeCursusAmenage' => self::$codeCursusAmenage,
+                'libelleCursusAmenage' => self::$libelleCursusAmenage,
             ],
         ];
     }
