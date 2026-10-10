@@ -60,7 +60,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: ['groups' => [self::GROUP_OUT]],
     denormalizationContext: ['groups' => [self::GROUP_IN]],
     openapi: new Operation(tags: ['Utilisateurs']),
-    order: ['debut' => 'DESC '],
+    order: ['debut' => 'DESC'],
     security: "is_granted('ROLE_PLANIFICATEUR')",
     provider: BeneficiaireProfilProvider::class,
     processor: BeneficiaireProfilProcessor::class,

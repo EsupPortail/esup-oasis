@@ -29,7 +29,7 @@ class BeneficiairesProfilsTest extends ApiTestCaseCustom
         $client->request('GET', '/utilisateurs/beneficiaire/profils/1');
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json');
         $this->assertJsonContains([
             '@context' => '/contexts/BeneficiaireProfil',
             '@type' => 'BeneficiaireProfil',
@@ -57,7 +57,7 @@ class BeneficiairesProfilsTest extends ApiTestCaseCustom
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
-        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json');
         $this->assertJsonContains([
             '@context' => '/contexts/BeneficiaireProfil',
             '@type' => 'BeneficiaireProfil',
@@ -198,7 +198,7 @@ class BeneficiairesProfilsTest extends ApiTestCaseCustom
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
-        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json');
         $this->assertJsonContains([
             '@context' => '/contexts/BeneficiaireProfil',
             '@type' => 'BeneficiaireProfil',

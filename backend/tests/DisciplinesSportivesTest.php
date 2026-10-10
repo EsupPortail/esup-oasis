@@ -22,7 +22,7 @@ class DisciplinesSportivesTest extends ApiTestCaseCustom
         $client->request('GET', '/disciplines_sportives');
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json');
         $this->assertJsonContains([
             '@context' => '/contexts/DisciplineSportive',
             '@type' => 'hydra:Collection',

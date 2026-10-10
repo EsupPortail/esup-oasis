@@ -13,7 +13,7 @@ class BilansTest extends ApiTestCaseCustom
         $response = $client->request('GET', '/suivis/intervenants');
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json');
 
         $this->assertJsonContains([
             '@context' => '/contexts/ActiviteIntervenant',
@@ -40,7 +40,7 @@ class BilansTest extends ApiTestCaseCustom
         $response = $client->request('GET', '/suivis/beneficiaires');
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('Content-Type', 'application/ld+json');
 
         $this->assertJsonContains([
             '@context' => '/contexts/ActiviteBeneficiaire',

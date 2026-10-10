@@ -10,7 +10,7 @@ class AmenagementsTest extends ApiTestCaseCustom
         $response = $client->request('GET', '/types_amenagements');
 
         $this->assertResponseIsSuccessful();
-        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('content-type', 'application/ld+json');
 
         $this->assertJsonContains([
             '@context' => '/contexts/TypeAmenagement',
@@ -33,7 +33,7 @@ class AmenagementsTest extends ApiTestCaseCustom
         ]);
 
         $this->assertResponseStatusCodeSame(201);
-        $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
+        $this->assertResponseHeaderSame('content-type', 'application/ld+json');
 
         $this->assertJsonContains([
             '@context' => '/contexts/TypeAmenagement',

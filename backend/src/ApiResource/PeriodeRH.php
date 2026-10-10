@@ -42,7 +42,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: ['groups' => [self::GROUP_OUT]],
     denormalizationContext: ['groups' => [self::GROUP_IN]],
     openapi: new Operation(tags: ['Referentiel']),
-    order: ['debut' => 'DESC '],
+    order: ['debut' => 'DESC'],
     security: "is_granted('ROLE_PLANIFICATEUR') or is_granted('ROLE_INTERVENANT')",
     provider: PeriodeProvider::class,
     processor: PeriodeProcessor::class,
