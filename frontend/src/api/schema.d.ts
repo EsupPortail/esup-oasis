@@ -3890,6 +3890,11 @@ export interface components {
             debut?: string;
             /** Format: date-time */
             fin?: string;
+            codeEtape?: string | null;
+            niveau?: string | null;
+            redoublant?: boolean;
+            codeCursusAmenage?: string | null;
+            libelleCursusAmenage?: string | null;
         };
         "Inscription.html-demande.out": {
             formation?: components["schemas"]["Formation.html-demande.out"];
@@ -3897,6 +3902,11 @@ export interface components {
             debut?: string;
             /** Format: date-time */
             fin?: string;
+            codeEtape?: string | null;
+            niveau?: string | null;
+            redoublant?: boolean;
+            codeCursusAmenage?: string | null;
+            libelleCursusAmenage?: string | null;
         };
         "Inscription.html-utilisateur.out": {
             formation?: components["schemas"]["Formation.html-utilisateur.out"];
@@ -3904,6 +3914,11 @@ export interface components {
             debut?: string;
             /** Format: date-time */
             fin?: string;
+            codeEtape?: string | null;
+            niveau?: string | null;
+            redoublant?: boolean;
+            codeCursusAmenage?: string | null;
+            libelleCursusAmenage?: string | null;
         };
         "Inscription.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
             id?: number;
@@ -3926,6 +3941,11 @@ export interface components {
             debut?: string;
             /** Format: date-time */
             fin?: string;
+            codeEtape?: string | null;
+            niveau?: string | null;
+            redoublant?: boolean;
+            codeCursusAmenage?: string | null;
+            libelleCursusAmenage?: string | null;
         };
         "Inscription.jsonld-demande.out": components["schemas"]["HydraItemBaseSchema"] & {
             formation?: components["schemas"]["Formation.jsonld-demande.out"];
@@ -3933,6 +3953,11 @@ export interface components {
             debut?: string;
             /** Format: date-time */
             fin?: string;
+            codeEtape?: string | null;
+            niveau?: string | null;
+            redoublant?: boolean;
+            codeCursusAmenage?: string | null;
+            libelleCursusAmenage?: string | null;
         };
         "Inscription.jsonld-utilisateur.out": components["schemas"]["HydraItemBaseSchema"] & {
             formation?: components["schemas"]["Formation.jsonld-utilisateur.out"];
@@ -3940,6 +3965,11 @@ export interface components {
             debut?: string;
             /** Format: date-time */
             fin?: string;
+            codeEtape?: string | null;
+            niveau?: string | null;
+            redoublant?: boolean;
+            codeCursusAmenage?: string | null;
+            libelleCursusAmenage?: string | null;
         };
         "IntervenantBilanFinancier.customcsv": {
             uid?: string;
@@ -5290,7 +5320,17 @@ export interface components {
             intervenantFin?: string | null;
             inscriptions?: components["schemas"]["Inscription.html-utilisateur.out"][];
             boursier?: boolean | null;
+            codeSituationSociale?: string | null;
+            libelleSituationSociale?: string | null;
             statutEtudiant?: string | null;
+            adresse?: {
+                ligne1?: string | null;
+                ligne2?: string | null;
+                codePostal?: string | null;
+                ville?: string | null;
+                pays?: string | null;
+            } | null;
+            statutInscriptionAdministrative?: string | null;
             abonneImmediat?: boolean;
             abonneVeille?: boolean;
             abonneAvantVeille?: boolean;
@@ -5401,7 +5441,19 @@ export interface components {
             intervenantFin?: string | null;
             inscriptions?: components["schemas"]["Inscription.jsonld-utilisateur.out"][];
             boursier?: boolean | null;
+            codeSituationSociale?: string | null;
+            libelleSituationSociale?: string | null;
             statutEtudiant?: string | null;
+            adresse?: {
+                "@id"?: string;
+                "@type"?: string;
+                ligne1?: string | null;
+                ligne2?: string | null;
+                codePostal?: string | null;
+                ville?: string | null;
+                pays?: string | null;
+            } | null;
+            statutInscriptionAdministrative?: string | null;
             abonneImmediat?: boolean;
             abonneVeille?: boolean;
             abonneAvantVeille?: boolean;

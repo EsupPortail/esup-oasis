@@ -86,6 +86,93 @@ final class Inscription
         }
     }
 
+    /**
+     * code étape Apogée conservé pour exposer le cursus
+     * d'inscription du bénéficiaire et permettre au front de regrouper
+     * les inscriptions du même parcours.
+     */
+    #[Groups([Utilisateur::GROUP_OUT, Demande::GROUP_OUT, Utilisateur::AMENAGEMENTS_UTILISATEURS_OUT])]
+    public ?string $codeEtape {
+        get {
+            $prop = new ReflectionProperty(self::class, 'codeEtape');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->codeEtape = $this->entity->getCodeEtape();
+            }
+            return $this->codeEtape ?? null;
+        }
+    }
+
+    /**
+     * Niveau d'études de l'inscription (L1/L2/L3/M1/M2/D1-D3, BUT1…).
+     *
+     * Le niveau porté par la formation fait foi ; il n'est dérivé que s'il est
+     * absent, à partir des données Apogée nationales (cycle du diplôme + année
+     * dans le diplôme), avec repli sur le préfixe du code étape pour les
+     * instances où celui-ci encode le niveau (L1INFO, M1ARTS…). null quand
+     * aucune source ne permet de conclure (PASS, LAS, codes locaux).
+     */
+    #[Groups([Utilisateur::GROUP_OUT, Demande::GROUP_OUT, Utilisateur::AMENAGEMENTS_UTILISATEURS_OUT])]
+    public ?string $niveau {
+        get {
+            $prop = new ReflectionProperty(self::class, 'niveau');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                // Source unique : l'arbitrage entre le niveau de la formation et
+                // la dérivation (résolveur + repli sur le code étape) vit sur l'entité.
+                $this->niveau = $this->entity->getNiveau();
+            }
+            return $this->niveau ?? null;
+        }
+    }
+
+    /**
+     * code du cursus aménagé SISE (cod_sis_cur_amg). null hors
+     * cursus aménagé.
+     */
+    #[Groups([Utilisateur::GROUP_OUT, Demande::GROUP_OUT, Utilisateur::AMENAGEMENTS_UTILISATEURS_OUT])]
+    public ?string $codeCursusAmenage {
+        get {
+            $prop = new ReflectionProperty(self::class, 'codeCursusAmenage');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->codeCursusAmenage = $this->entity->getCodeCursusAmenage();
+            }
+            return $this->codeCursusAmenage ?? null;
+        }
+    }
+
+    /**
+     * libellé du cursus aménagé (lib_cur_amg), affiché tel quel
+     * sur la fiche bénéficiaire. null hors cursus aménagé.
+     */
+    #[Groups([Utilisateur::GROUP_OUT, Demande::GROUP_OUT, Utilisateur::AMENAGEMENTS_UTILISATEURS_OUT])]
+    public ?string $libelleCursusAmenage {
+        get {
+            $prop = new ReflectionProperty(self::class, 'libelleCursusAmenage');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->libelleCursusAmenage = $this->entity->getLibelleCursusAmenage();
+            }
+            return $this->libelleCursusAmenage ?? null;
+        }
+    }
+
+    /**
+     * Redoublement déduit à la volée du compteur natif du SI scolarité
+     * (nbr_ins_etp, au-delà de un) via RedoublementCalculator, avec garde sur le
+     * cursus aménagé. Jamais persisté.
+     */
+    #[Groups([Utilisateur::GROUP_OUT, Demande::GROUP_OUT, Utilisateur::AMENAGEMENTS_UTILISATEURS_OUT])]
+    public bool $redoublant {
+        get {
+            $prop = new ReflectionProperty(self::class, 'redoublant');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->redoublant = (new \App\Service\SiScol\RedoublementCalculator())->estRedoublant(
+                    $this->entity->getNombreInscriptionsEtape(),
+                    $this->entity->getCodeCursusAmenage(),
+                );
+            }
+            return $this->redoublant ?? false;
+        }
+    }
+
     public function __construct(
         private readonly ?\App\Entity\Inscription $entity = null,
     ) {}
