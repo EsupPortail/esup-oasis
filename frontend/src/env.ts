@@ -52,6 +52,8 @@ type EnvType = {
   REACT_APP_DARKMODE: boolean;
   REACT_APP_GERER_DEMANDES: boolean;
   REACT_APP_MAX_FILE_SIZE: string | null;
+  // Reflet de la variable backend PARAPHEUR : affiche les réglages de la signature électronique
+  REACT_APP_PARAPHEUR: string | null;
 
   // Variables liées aux couleurs de l'application
   REACT_APP_PRIMARY_COLOR: string;

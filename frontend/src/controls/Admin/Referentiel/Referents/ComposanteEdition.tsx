@@ -13,7 +13,7 @@ import React from "react";
 import { useApi } from "@context/api/ApiProvider";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import UtilisateurFormItemSelect from "@controls/Forms/UtilisateurFormItemSelect";
-import { RoleValues } from "@lib";
+import { decisionEtab, parapheurConfigure, RoleValues } from "@lib";
 
 export function ComposanteEdition(props: {
   editedItem: IComposante;
@@ -33,7 +33,7 @@ export function ComposanteEdition(props: {
     <Drawer
       className="bg-light-grey"
       open
-      title="Éditer les référent•es de composante"
+      title={parapheurConfigure() ? "Éditer la composante" : "Éditer les référent•es de composante"}
       onClose={() => props.setEditedItem(undefined)}
       size="large"
     >
@@ -61,6 +61,19 @@ export function ComposanteEdition(props: {
           <Form.Item name="libelle" label="Composante" rules={[{ required: true }]} required>
             <Input disabled />
           </Form.Item>
+
+          {parapheurConfigure() && (
+            <>
+              <Divider>Signature électronique</Divider>
+              <Form.Item
+                name="circuitSignature"
+                label="Circuit de signature"
+                extra={`Identifiant du circuit dans le parapheur. Laisser vide pour envoyer ${decisionEtab.defini} par e-mail.`}
+              >
+                <Input allowClear />
+              </Form.Item>
+            </>
+          )}
 
           <Divider>Référent•es</Divider>
           <Form.List name="referents">
