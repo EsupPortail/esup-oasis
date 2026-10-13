@@ -18,11 +18,13 @@ use App\Entity\DecisionAmenagementExamens;
 use App\Entity\Utilisateur;
 use App\Message\RessourceModifieeMessage;
 use App\Repository\DecisionAmenagementExamensRepository;
+use App\Service\Signature\SignatureElectronique;
 use App\State\Utilisateur\UtilisateurManager;
 use App\Util\AnneeUniversitaireAwareTrait;
 use DateTime;
 use DateTimeInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class DecisionAmenagementManager
@@ -34,6 +36,7 @@ class DecisionAmenagementManager
         private readonly DecisionAmenagementExamensRepository $decisionAmenagementExamensRepository,
         private readonly UtilisateurManager $utilisateurManager,
         private readonly MessageBusInterface $messageBus,
+        private readonly SignatureElectronique $signatureElectronique,
     ) {}
 
     public function parUidEtAnnee(string $uid, int $annee): ?DecisionAmenagementExamens
@@ -64,6 +67,11 @@ class DecisionAmenagementManager
          */
 
         $decision = $beneficiaire->getDecisionAmenagementExamens($debutPeriode, $finPeriode);
+
+        // en signature, le parapheur rendra la décision signée ou refusée ; refusée, le gestionnaire la reprendra
+        if (in_array($decision?->getEtat(), [DecisionAmenagementExamens::ETAT_EN_SIGNATURE, DecisionAmenagementExamens::ETAT_REFUSEE], true)) {
+            return;
+        }
 
         $now = $this->now();
         $dateConsideree = match (true) {
@@ -120,6 +128,7 @@ class DecisionAmenagementManager
     {
         $ressource = new \App\ApiResource\DecisionAmenagementExamens($decision);
         $ressource->dateAvisMedecinRequise = $this->dateAvisMedecinRequise($decision);
+        $ressource->motifSignatureImpossible = $this->signatureElectronique->motifSansCircuit($decision);
 
         return $ressource;
     }
@@ -148,5 +157,34 @@ class DecisionAmenagementManager
             fn(Beneficiaire $profil) => true === $profil->getProfil()?->isAvecTypologie()
                 && true === $profil->getProfil()->isAvisMedicalRequis(),
         );
+    }
+
+    /**
+     * Refuse une modification qui changerait une décision en signature ou refusée : aménagements repris
+     * dans la décision, avis de santé. En signature, le document signé ne dirait plus ce qu'affiche OASIS ;
+     * refusée, la décision attend d'être reprise par un gestionnaire.
+     *
+     * @throws UnprocessableEntityHttpException
+     */
+    public function interdireSiVerrouillee(Utilisateur $beneficiaire): void
+    {
+        foreach ($beneficiaire->getDecisionsAmenagementExamens() as $decision) {
+            // une décision d'une année terminée ne reprend plus rien de modifiable
+            if ($decision->getFin() < $this->now()) {
+                continue;
+            }
+
+            match ($decision->getEtat()) {
+                DecisionAmenagementExamens::ETAT_EN_SIGNATURE => throw new UnprocessableEntityHttpException(
+                    'La décision d\'aménagements de ce bénéficiaire est en cours de signature électronique : '
+                    . 'ses aménagements et ses avis de santé ne peuvent pas être modifiés avant la fin du circuit.',
+                ),
+                DecisionAmenagementExamens::ETAT_REFUSEE => throw new UnprocessableEntityHttpException(
+                    'La décision d\'aménagements de ce bénéficiaire a été refusée dans le circuit de signature : '
+                    . 'reprenez-la avant de modifier ses aménagements et ses avis de santé.',
+                ),
+                default => null,
+            };
+        }
     }
 }

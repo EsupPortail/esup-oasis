@@ -47,6 +47,16 @@ class ModifierDecisionVoter extends Voter
             ], true);
         }
 
+        // en signature, seul le retour du parapheur fait avancer la décision
+        if ($avant->etat === \App\Entity\DecisionAmenagementExamens::ETAT_EN_SIGNATURE) {
+            return false;
+        }
+
+        // refusée par le parapheur, la décision est reprise en repassant en attente
+        if ($avant->etat === \App\Entity\DecisionAmenagementExamens::ETAT_REFUSEE) {
+            return $subject->etat === \App\Entity\DecisionAmenagementExamens::ETAT_ATTENTE_VALIDATION_CAS;
+        }
+
         if (
             in_array(Utilisateur::ROLE_ADMIN, $token->getRoleNames())
             && in_array(

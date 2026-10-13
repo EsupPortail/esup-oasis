@@ -21,11 +21,13 @@ use App\Entity\Utilisateur;
 use App\Repository\DecisionAmenagementExamensRepository;
 use App\State\DecisionAmenagementExamens\DecisionAmenagementManager;
 use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionProperty;
 use stdClass;
 use Symfony\Component\Clock\MockClock;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -137,5 +139,107 @@ final class DecisionAmenagementManagerTest extends TestCase
             new DateTimeImmutable(self::START),
             new DateTimeImmutable(self::END),
         );
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function instantsProvider(): array
+    {
+        return [
+            'aménagement en cours' => [self::END . ' 11:00:00'],
+            'aménagement terminé' => ['2026-09-01 00:00:01'],
+        ];
+    }
+
+    /**
+     * @return array<string, array{string, string}>
+     */
+    public static function etatsVerrouillesProvider(): array
+    {
+        $etats = [];
+        foreach (self::instantsProvider() as $instant => [$now]) {
+            $etats["en signature, $instant"] = [DecisionAmenagementExamens::ETAT_EN_SIGNATURE, $now];
+            $etats["refusée, $instant"] = [DecisionAmenagementExamens::ETAT_REFUSEE, $now];
+        }
+
+        return $etats;
+    }
+
+    #[DataProvider('etatsVerrouillesProvider')]
+    public function testLeavesLockedDecisionUntouched(string $etat, string $now): void
+    {
+        // en signature ou refusée, la décision attend le parapheur ou sa reprise : ni remise en validation, ni suppression
+        $decision = new DecisionAmenagementExamens()->setEtat($etat);
+
+        $repository = $this->createMock(DecisionAmenagementExamensRepository::class);
+        $repository->expects(self::never())->method('remove');
+        $repository->expects(self::never())->method('save');
+
+        $beneficiaire = $this->beneficiaire([$this->amenagementDecision($now)], $decision);
+
+        $this->manager($now, $repository)->majEtatDecision(
+            $beneficiaire,
+            new DateTimeImmutable(self::START),
+            new DateTimeImmutable(self::END),
+        );
+
+        self::assertSame($etat, $decision->getEtat());
+    }
+
+    public function testChangesAreRefusedWhileDecisionIsEnSignature(): void
+    {
+        $this->expectException(UnprocessableEntityHttpException::class);
+        $this->expectExceptionMessage('en cours de signature');
+        $this->verrou()->interdireSiVerrouillee($this->beneficiaireAvecDecision(DecisionAmenagementExamens::ETAT_EN_SIGNATURE));
+    }
+
+    public function testChangesAreRefusedUntilRefusedDecisionIsResumed(): void
+    {
+        $this->expectException(UnprocessableEntityHttpException::class);
+        $this->expectExceptionMessage('reprenez-la');
+        $this->verrou()->interdireSiVerrouillee($this->beneficiaireAvecDecision(DecisionAmenagementExamens::ETAT_REFUSEE));
+    }
+
+    public function testChangesAreAllowedOnceDecisionIsResumed(): void
+    {
+        $this->expectNotToPerformAssertions();
+        $this->verrou()->interdireSiVerrouillee(
+            $this->beneficiaireAvecDecision(DecisionAmenagementExamens::ETAT_ATTENTE_VALIDATION_CAS),
+        );
+    }
+
+    public function testRefusedDecisionOfEndedYearDoesNotLockChanges(): void
+    {
+        $this->expectNotToPerformAssertions();
+        // refusée l'an dernier et jamais reprise : elle ne bloque pas l'année en cours
+        $this->verrou()->interdireSiVerrouillee(
+            $this->beneficiaireAvecDecision(DecisionAmenagementExamens::ETAT_REFUSEE, '2024-09-01', '2025-08-31'),
+        );
+    }
+
+    public function testDecisionOfComingYearStillLocksChanges(): void
+    {
+        $this->expectException(UnprocessableEntityHttpException::class);
+        $this->verrou()->interdireSiVerrouillee(
+            $this->beneficiaireAvecDecision(DecisionAmenagementExamens::ETAT_EN_SIGNATURE, '2026-09-01', '2027-08-31'),
+        );
+    }
+
+    // le verrou ne lit que les décisions du bénéficiaire et la date du jour, ici au cours de l'année 2025-2026
+    private function verrou(): DecisionAmenagementManager
+    {
+        return $this->manager('2026-03-02 10:00:00', $this->createMock(DecisionAmenagementExamensRepository::class));
+    }
+
+    private function beneficiaireAvecDecision(string $etat, string $debut = self::START, string $fin = self::END): Utilisateur
+    {
+        $beneficiaire = new Utilisateur();
+        $beneficiaire->addDecisionsAmenagementExamen(new DecisionAmenagementExamens()
+            ->setEtat($etat)
+            ->setDebut(new DateTimeImmutable($debut))
+            ->setFin(new DateTimeImmutable($fin)));
+
+        return $beneficiaire;
     }
 }

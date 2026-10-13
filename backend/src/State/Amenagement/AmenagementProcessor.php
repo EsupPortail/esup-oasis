@@ -23,6 +23,7 @@ use App\Repository\AmenagementRepository;
 use App\Repository\TypeAmenagementRepository;
 use App\Repository\TypeSuiviAmenagementRepository;
 use App\Service\ErreurLdapException;
+use App\State\DecisionAmenagementExamens\DecisionAmenagementManager;
 use App\State\Utilisateur\UtilisateurManager;
 use App\Util\AnneeUniversitaireAwareTrait;
 use Override;
@@ -38,6 +39,7 @@ class AmenagementProcessor implements ProcessorInterface
         private readonly TypeSuiviAmenagementRepository $typeSuiviAmenagementRepository,
         private readonly UtilisateurManager $utilisateurManager,
         private readonly MessageBusInterface $messageBus,
+        private readonly DecisionAmenagementManager $decisionAmenagementManager,
     ) {}
 
     /**
@@ -54,6 +56,9 @@ class AmenagementProcessor implements ProcessorInterface
 
         //DELETE
         if ($operation instanceof Delete) {
+            if ($entity->getType()->isDecision()) {
+                $this->decisionAmenagementManager->interdireSiVerrouillee($this->utilisateurManager->parUid($uriVariables['uid']));
+            }
             $this->messageBus->dispatch(new AmenagementModifieMessage($entity));
             $this->amenagementRepository->remove($entity, true);
             //liste des aménagements par utilisateurs impactée!
@@ -63,6 +68,11 @@ class AmenagementProcessor implements ProcessorInterface
         }
 
         //POST/PATCH
+        $type = $this->typeAmenagementRepository->find($data->typeAmenagement->id);
+        if ($type->isDecision() || $entity->getType()?->isDecision()) {
+            $this->decisionAmenagementManager->interdireSiVerrouillee($this->utilisateurManager->parUid($uriVariables['uid']));
+        }
+
         /**
          * debut et fin sont calculés si vides
          */
@@ -90,7 +100,7 @@ class AmenagementProcessor implements ProcessorInterface
         $entity->setCommentaire($data->commentaire);
         $entity->setSemestre1($data->semestre1);
         $entity->setSemestre2($data->semestre2);
-        $entity->setType($this->typeAmenagementRepository->find($data->typeAmenagement->id));
+        $entity->setType($type);
         $entity->setSuivi(match ($data->suivi) {
             null => null,
             default => $this->typeSuiviAmenagementRepository->find($data->suivi->id),

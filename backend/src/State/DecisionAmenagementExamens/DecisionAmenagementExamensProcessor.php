@@ -19,6 +19,7 @@ use App\Entity\Utilisateur;
 use App\Message\DecisionEditionDemandeeMessage;
 use App\Message\RessourceModifieeMessage;
 use App\Repository\DecisionAmenagementExamensRepository;
+use App\Service\Signature\SignatureElectronique;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -28,6 +29,7 @@ readonly class DecisionAmenagementExamensProcessor implements ProcessorInterface
         private DecisionAmenagementExamensRepository $decisionAmenagementExamensRepository,
         private Security $security,
         private MessageBusInterface $messageBus,
+        private SignatureElectronique $signatureElectronique,
     ) {}
 
     /**
@@ -41,6 +43,13 @@ readonly class DecisionAmenagementExamensProcessor implements ProcessorInterface
     {
         //PATCH seulement
         $entity = $this->decisionAmenagementExamensRepository->find($data->id);
+
+        // composante reliée à un circuit : le circuit de signature remplace la validation par l'administrateur
+        if (\App\Entity\DecisionAmenagementExamens::ETAT_VALIDE === $data->etat
+            && null !== $this->signatureElectronique->circuitPour($entity)) {
+            $data->etat = \App\Entity\DecisionAmenagementExamens::ETAT_EDITION_DEMANDEE;
+        }
+
         $entity->setEtat($data->etat);
         $entity->setObservations($data->observations)->setDateAvisMedecin($data->dateAvisMedecin);
         $this->decisionAmenagementExamensRepository->save($entity, true);
