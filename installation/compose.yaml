@@ -60,6 +60,8 @@ services:
       - ../backend/fixtures:/app/fixtures
       - ../backend/docker/entrypoint.sh:/usr/local/bin/docker-entrypoint:ro #todo: supprimer quand on aura une image de base à jour
       - ../backend/src/Command:/app/src/Command #todo: supprimer quand on aura une image de base à jour
+      # signature électronique par FAST-Parapheur : certificat client, hors de l'image (cf. FAST_CERTIFICAT)
+      # - ./secrets/parapheur:/run/secrets/parapheur:ro
 
 
   backend-worker:
@@ -86,6 +88,9 @@ services:
       CLAMAV_STRICT_MODE: ${CLAMAV_STRICT_MODE:-true}
       GOTENBERG_DSN: ${GOTENBERG_DSN:-http://gotenberg:3000}
       SOUIN_API_URL: "http://backend:2019/souin-api/souin"
+    # signature électronique par FAST-Parapheur : le worker dépose et suit les décisions, même montage que le backend
+    # volumes:
+    #   - ./secrets/parapheur:/run/secrets/parapheur:ro
 
 
   frontend:

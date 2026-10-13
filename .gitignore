@@ -9,3 +9,5 @@ backend/supervisor*
 installation/frontend/.env
 installation/backend/.env
 installation/.env
+# certificats et clés montés en volume (signature électronique)
+installation/secrets/
