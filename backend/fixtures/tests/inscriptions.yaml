@@ -9,3 +9,9 @@ App\Entity\Inscription:
     formation: '@formation_1'
     debut: <date_create('today')>
     fin: <date_create('next year')>
+  # le bénéficiaire de la décision est inscrit, dans une composante sans circuit de signature
+  inscription_3:
+    etudiant: '@utilisateur-beneficiaire-decision'
+    formation: '@formation_1'
+    debut: <date_create('today')>
+    fin: <date_create('next year')>
