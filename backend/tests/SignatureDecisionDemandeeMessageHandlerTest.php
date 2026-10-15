@@ -55,7 +55,8 @@ class SignatureDecisionDemandeeMessageHandlerTest extends KernelTestCase
         $this->inscription = new Inscription()
             ->setFormation($this->formation)
             ->setDebut(new DateTime('-1 month'))
-            ->setFin(new DateTime('+1 month'));
+            ->setFin(new DateTime('+1 month'))
+            ->setPrincipale(true);
         $decision->getBeneficiaire()->addInscription($this->inscription);
         $this->formation->getComposante()->setCircuitSignature('circuit-test');
         $decision->setEtat(DecisionAmenagementExamens::ETAT_EN_SIGNATURE);

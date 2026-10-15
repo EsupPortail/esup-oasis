@@ -3,3 +3,7 @@ App\Entity\Formation:
     composante: '@composante_1'
     libelle: 'formation 1'
     codeExterne: 'CODE_F_1'
+  formation_2:
+    composante: '@composante_2'
+    libelle: 'formation 2'
+    codeExterne: 'CODE_F_2'

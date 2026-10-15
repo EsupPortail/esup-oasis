@@ -451,7 +451,8 @@ class SignatureDecisionTest extends ApiTestCaseCustom
         $inscription = new Inscription()
             ->setFormation($formation)
             ->setDebut(new DateTime('-1 month'))
-            ->setFin(new DateTime('+1 month'));
+            ->setFin(new DateTime('+1 month'))
+            ->setPrincipale(true);
         $manager->getRepository(Utilisateur::class)->findOneBy(['uid' => 'beneficiaire-decision'])
             ->addInscription($inscription);
         $manager->persist($inscription);

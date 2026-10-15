@@ -12,10 +12,10 @@ import { ColumnType } from "antd/es/table";
 import { IBeneficiaire, IDecisionEtablissement, IUtilisateur } from "@api";
 import { BeneficiaireProfilItem } from "@controls/Items/BeneficiaireProfilItem";
 import { ChargesAccompagnementsItem } from "@controls/Items/ChargesAccompagnementsItem";
-import { ComposanteItem } from "@controls/Items/ComposanteItem";
+import { InscriptionsGroupeesItem } from "@controls/Items/InscriptionsGroupeesItem";
 import React from "react";
 import { Button, Popconfirm, Space, Tooltip } from "antd";
-import Icon, { EyeOutlined, MinusOutlined, UserSwitchOutlined } from "@ant-design/icons";
+import Icon, { EyeOutlined, UserSwitchOutlined } from "@ant-design/icons";
 import { ascToAscend } from "@utils/array";
 import { FilterProps } from "@utils/table";
 import { FiltreBeneficiaire } from "@controls/Table/BeneficiaireTable";
@@ -28,14 +28,12 @@ import {
   EtatAvisEse,
 } from "@controls/Avatars/BeneficiaireAvisEseAvatar";
 import UtilisateurAvatarImage from "@controls/Avatars/UtilisateurAvatarImage";
-import { EllipsisMiddle } from "@controls/Typography/EllipsisMiddle";
 import Highlighter from "react-highlight-words";
 import { removeAccents } from "@utils/string";
 import { DecisionEtablissementAvatar } from "@controls/Avatars/DecisionEtablissementAvatar";
 
 import { UseStateDispatch } from "@utils/utils";
 import { env } from "@/env";
-import dayjs from "dayjs";
 
 interface TableBeneficiairesColumnsProps {
   user: Utilisateur | undefined;
@@ -110,31 +108,10 @@ export function beneficiaireTableColumns({
     {
       title: "Inscription",
       dataIndex: "inscription",
-      render: (_value: string, record: IBeneficiaire) => {
-        return record.inscriptions ? (
-          record.inscriptions
-            .filter((inscription) => dayjs(inscription.fin).isAfter())
-            .map((inscription) => (
-              <Space
-                key={inscription["@id"]}
-                className="mt-05 mb-05"
-                orientation="vertical"
-                size={2}
-              >
-                <ComposanteItem composanteId={inscription?.formation?.composante} />
-                <EllipsisMiddle
-                  className="light"
-                  style={{ maxWidth: 350 }}
-                  suffixCount={12}
-                  content={inscription?.formation?.libelle as string}
-                  expandable
-                />
-              </Space>
-            ))
-        ) : (
-          <MinusOutlined />
-        );
-      },
+      width: 450,
+      render: (_value: string, record: IBeneficiaire) => (
+        <InscriptionsGroupeesItem inscriptions={record.inscriptions} />
+      ),
     },
 
     {

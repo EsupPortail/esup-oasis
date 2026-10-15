@@ -9,12 +9,14 @@
 
 import {
   IAmenagement,
+  IComposante,
   ICategorieAmenagement,
   ITag,
   ITypeAmenagement,
   ITypeSuiviAmenagement,
   IUtilisateur,
   PREFETCH_CATEGORIES_AMENAGEMENTS,
+  PREFETCH_COMPOSANTES,
   PREFETCH_TAGS,
   PREFETCH_TYPES_AMENAGEMENTS,
   PREFETCH_TYPES_SUIVI_AMENAGEMENTS,
@@ -27,14 +29,16 @@ import dayjs from "dayjs";
 import { ModeAffichageAmenagement } from "@routes/gestionnaire/beneficiaires/Amenagements";
 import { env } from "@/env";
 import CsvExportButton from "@controls/Table/Export/CsvExportButton";
+import { getInscriptionsHeaders } from "@controls/Table/Export/inscriptionsExportHeaders";
+import { useExportInscriptions } from "@controls/Table/Export/useExportInscriptions";
+import { formaterInscriptionsExport, PorteeExportInscriptions } from "@lib/inscription";
 
-const headers = [
+const getHeaders = (portee: PorteeExportInscriptions) => [
   { label: "Nom", key: "nom" },
   { label: "Prénom", key: "prenom" },
   { label: "Email", key: "email" },
   { label: "Numéro étudiant", key: "numeroEtudiant" },
-  { label: "Composante", key: "composante" },
-  { label: "Formation", key: "formation" },
+  ...getInscriptionsHeaders(portee),
   { label: "Domaine", key: "domaine" },
   { label: "Catégorie", key: "categorie" },
   { label: "Type", key: "type" },
@@ -49,13 +53,15 @@ const headers = [
   { label: "Tags", key: "tags" },
 ];
 
-function getAmenagementsData(
+export function getAmenagementsData(
   amenagements: IAmenagement[],
   categories: ICategorieAmenagement[] | undefined,
   types: ITypeAmenagement[] | undefined,
   suivis: ITypeSuiviAmenagement[] | undefined,
   cas: IUtilisateur[] | undefined,
   tags: ITag[] | undefined,
+  composantes: IComposante[] | undefined,
+  portee: PorteeExportInscriptions,
 ) {
   return amenagements.map((amenagement) => {
     const beneficiaire = amenagement.beneficiaire;
@@ -87,11 +93,7 @@ function getAmenagementsData(
       fin: amenagement.fin ? dayjs(amenagement.fin).format("DD/MM/YYYY") : undefined,
       commentaire: amenagement.commentaire?.replaceAll('"', '""'),
       suivi: suivis?.find((s) => s["@id"] === amenagement.suivi)?.libelle?.replaceAll('"', '""'),
-      composante: (beneficiaire?.inscriptions || [])[0]?.formation?.composante?.libelle?.replaceAll(
-        '"',
-        '""',
-      ),
-      formation: (beneficiaire?.inscriptions || [])[0]?.formation?.libelle?.replaceAll('"', '""'),
+      ...formaterInscriptionsExport(beneficiaire?.inscriptions, portee, composantes),
       chargeAccompagnement: (beneficiaire?.gestionnairesActifs || [])
         .map((g) => {
           const ca = cas?.find((c) => c["@id"] === g);
@@ -150,34 +152,48 @@ export default function AmenagementTableExport({
     enabled: exportSubmit,
   });
 
+  const { data: composantes } = useApi().useGetFullCollection({
+    ...PREFETCH_COMPOSANTES,
+    enabled: exportSubmit,
+  });
+
   const refDataReady = !!(
     categories?.items &&
     types?.items &&
     suivis?.items &&
     cas?.items &&
-    tags?.items
+    tags?.items &&
+    composantes?.items
   );
 
+  const { portee, demanderPortee, modalPortee } = useExportInscriptions();
+
   return (
-    <CsvExportButton<"/amenagements">
-      key={exportKey}
-      path="/amenagements"
-      itemsPerPage={500}
-      query={filtreAmenagementToApi(filtreAmenagement, ModeAffichageAmenagement.ParAmenagement)}
-      headers={headers}
-      filename="amenagements"
-      getData={(items) =>
-        getAmenagementsData(
-          items,
-          categories?.items,
-          types?.items,
-          suivis?.items,
-          cas?.items,
-          tags?.items,
-        )
-      }
-      ready={refDataReady}
-      onStart={() => setExportState((prev) => ({ ...prev, exportSubmit: true }))}
-    />
+    <>
+      <CsvExportButton<"/amenagements">
+        key={exportKey}
+        path="/amenagements"
+        itemsPerPage={500}
+        query={filtreAmenagementToApi(filtreAmenagement, ModeAffichageAmenagement.ParAmenagement)}
+        headers={getHeaders(portee)}
+        filename="amenagements"
+        getData={(items) =>
+          getAmenagementsData(
+            items,
+            categories?.items,
+            types?.items,
+            suivis?.items,
+            cas?.items,
+            tags?.items,
+            composantes?.items,
+            portee,
+          )
+        }
+        ready={refDataReady}
+        onBeforeStart={demanderPortee}
+        onStart={() => setExportState((prev) => ({ ...prev, exportSubmit: true }))}
+      />
+      {modalPortee}
+    </>
   );
 }

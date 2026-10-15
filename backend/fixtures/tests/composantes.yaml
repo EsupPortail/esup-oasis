@@ -2,3 +2,6 @@ App\Entity\Composante:
   composante_1:
     libelle: 'composante 1'
     codeExterne: 'CODE_C_1'
+  composante_2:
+    libelle: 'composante 2'
+    codeExterne: 'CODE_C_2'

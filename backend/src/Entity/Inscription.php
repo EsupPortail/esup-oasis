@@ -42,6 +42,9 @@ class Inscription
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?DateTimeInterface $fin = null;
 
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private ?bool $principale = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -91,6 +94,18 @@ class Inscription
     public function setFin(DateTimeInterface $fin): self
     {
         $this->fin = DateTime::createFromInterface($fin);
+
+        return $this;
+    }
+
+    public function isPrincipale(): ?bool
+    {
+        return $this->principale;
+    }
+
+    public function setPrincipale(bool $isPrincipale): static
+    {
+        $this->principale = $isPrincipale;
 
         return $this;
     }

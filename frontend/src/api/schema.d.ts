@@ -2609,18 +2609,42 @@ export interface components {
             tauxHoraire?: components["schemas"]["TauxHoraire.jsonld-ActiviteBeneficiaire.out"] | null;
         };
         "ActiviteBilanFinancier.customcsv": {
-            periode?: components["schemas"]["PeriodeRH.customcsv"];
-            typeEvenement?: components["schemas"]["TypeEvenement.customcsv"];
-            tauxHoraire?: components["schemas"]["TauxHoraire.customcsv"] | null;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            periode?: string;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            typeEvenement?: string;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            tauxHoraire?: string | null;
             nbHeures?: string;
             coeffCharges?: string;
             readonly montantBrut?: string;
             readonly montantBrutCharge?: string;
         };
         "ActiviteBilanFinancier.jsonld": {
-            periode?: components["schemas"]["PeriodeRH.jsonld"];
-            typeEvenement?: components["schemas"]["TypeEvenement.jsonld"];
-            tauxHoraire?: components["schemas"]["TauxHoraire.jsonld"] | null;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            periode?: string;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            typeEvenement?: string;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            tauxHoraire?: string | null;
             nbHeures?: string;
             coeffCharges?: string;
             readonly montantBrut?: string;
@@ -2800,7 +2824,7 @@ export interface components {
              */
             fichier?: string | null;
         };
-        "BeneficiaireProfil-beneficiaires_profils.in": {
+        "BeneficiaireProfil-beneficiaires_profils.in_validation.beneficiaires_profils.validation.in": {
             /**
              * Format: iri-reference
              * @example https://example.com/
@@ -2818,7 +2842,7 @@ export interface components {
             typologies?: string[];
             avecAccompagnement?: boolean;
         };
-        "BeneficiaireProfil-beneficiaires_profils.in.jsonMergePatch": {
+        "BeneficiaireProfil-beneficiaires_profils.in_validation.beneficiaires_profils.validation.in.jsonMergePatch": {
             /**
              * Format: iri-reference
              * @example https://example.com/
@@ -2855,6 +2879,44 @@ export interface components {
             typologies?: string[];
             avecAccompagnement?: boolean;
         };
+        "BeneficiaireProfil.html-beneficiaires_profils.out_validation.beneficiaires_profils.validation.delete": {
+            id?: number | null;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            profil?: string;
+            /** Format: date-time */
+            debut?: string;
+            /** Format: date-time */
+            fin?: string | null;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            gestionnaire?: string;
+            typologies?: string[];
+            avecAccompagnement?: boolean;
+        };
+        "BeneficiaireProfil.html-beneficiaires_profils.out_validation.beneficiaires_profils.validation.in": {
+            id?: number | null;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            profil?: string;
+            /** Format: date-time */
+            debut: string;
+            /** Format: date-time */
+            fin?: string | null;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            gestionnaire: string;
+            typologies?: string[];
+            avecAccompagnement?: boolean;
+        };
         "BeneficiaireProfil.jsonld-beneficiaires_profils.out": components["schemas"]["HydraItemBaseSchema"] & {
             id?: number | null;
             /**
@@ -2871,6 +2933,44 @@ export interface components {
              * @example https://example.com/
              */
             gestionnaire?: string;
+            typologies?: string[];
+            avecAccompagnement?: boolean;
+        };
+        "BeneficiaireProfil.jsonld-beneficiaires_profils.out_validation.beneficiaires_profils.validation.delete": components["schemas"]["HydraItemBaseSchema"] & {
+            id?: number | null;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            profil?: string;
+            /** Format: date-time */
+            debut?: string;
+            /** Format: date-time */
+            fin?: string | null;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            gestionnaire?: string;
+            typologies?: string[];
+            avecAccompagnement?: boolean;
+        };
+        "BeneficiaireProfil.jsonld-beneficiaires_profils.out_validation.beneficiaires_profils.validation.in": components["schemas"]["HydraItemBaseSchema"] & {
+            id?: number | null;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            profil?: string;
+            /** Format: date-time */
+            debut: string;
+            /** Format: date-time */
+            fin?: string | null;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            gestionnaire: string;
             typologies?: string[];
             avecAccompagnement?: boolean;
         };
@@ -3187,24 +3287,12 @@ export interface components {
             circuitSignature?: string | null;
             referents?: string[];
         };
-        "Composante.html-amenagement.out": {
-            libelle?: string;
-        };
-        "Composante.html-amenagements_utilisateurs.out": {
-            libelle?: string;
-        };
         "Composante.html-composante.out": {
             id?: number;
             libelle?: string;
             /** @description Circuit du parapheur qui signe les décisions d'aménagements ; vide, elles partent par e-mail. */
             circuitSignature?: string | null;
             referents?: string[];
-        };
-        "Composante.jsonld-amenagement.out": components["schemas"]["HydraItemBaseSchema"] & {
-            libelle?: string;
-        };
-        "Composante.jsonld-amenagements_utilisateurs.out": components["schemas"]["HydraItemBaseSchema"] & {
-            libelle?: string;
         };
         "Composante.jsonld-composante.out": components["schemas"]["HydraItemBaseSchema"] & {
             id?: number;
@@ -3309,28 +3397,6 @@ export interface components {
             dateAvisMedecinRequise: boolean;
             motifSignatureImpossible?: string | null;
         };
-        "DecisionAmenagementExamens.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
-            etat?: string;
-            /** @description ETAT_SIGNATURE_* de l'entité, null si la décision n'est pas passée par la signature électronique. */
-            readonly etatSignature?: string | null;
-            /**
-             * Format: date-time
-             * @description Date de la dernière signature du circuit.
-             */
-            readonly dateSignature?: string | null;
-            /**
-             * Format: date-time
-             * @description Dernière interrogation du parapheur, pour situer la fraîcheur de l'état affiché.
-             */
-            readonly derniereVerificationSignature?: string | null;
-            readonly urlContenu?: string | null;
-            observations?: string | null;
-            /** Format: date-time */
-            dateAvisMedecin?: string | null;
-            /** @default false */
-            readonly dateAvisMedecinRequise: boolean;
-            readonly motifSignatureImpossible?: string | null;
-        };
         "DecisionAmenagementExamens.jsonld-decision.out": components["schemas"]["HydraItemBaseSchema"] & {
             etat?: string;
             /** @description ETAT_SIGNATURE_* de l'entité, null si la décision n'est pas passée par la signature électronique. */
@@ -3407,7 +3473,7 @@ export interface components {
              */
             typeDemande: string;
         };
-        "Demande-demande.modif.jsonMergePatch": {
+        "Demande-demande.modif_validation.demande.modif.jsonMergePatch": {
             /**
              * Format: iri-reference
              * @example https://example.com/
@@ -3452,6 +3518,37 @@ export interface components {
             profilAttribue?: string | null;
             commentaire?: string | null;
         };
+        "Demande.html-demande.out_validation.demande.modif": {
+            id?: number | null;
+            demandeur?: components["schemas"]["Utilisateur.html-demande.out"] | null;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            campagne?: string;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            typeDemande?: string;
+            idCommission?: number | null;
+            /** Format: date-time */
+            dateDepot?: string | null;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            etat?: string;
+            etapes?: components["schemas"]["EtapeDemandeEtudiant.html-demande.out"][];
+            /** @default false */
+            complete: boolean;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            profilAttribue?: string | null;
+            commentaire?: string | null;
+        };
         "Demande.jsonld-demande.out": components["schemas"]["HydraItemBaseSchema"] & {
             id?: number | null;
             demandeur: components["schemas"]["Utilisateur.jsonld-demande.out"] | null;
@@ -3465,6 +3562,37 @@ export interface components {
              * @example https://example.com/
              */
             typeDemande: string;
+            idCommission?: number | null;
+            /** Format: date-time */
+            dateDepot?: string | null;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            etat?: string;
+            etapes?: components["schemas"]["EtapeDemandeEtudiant.jsonld-demande.out"][];
+            /** @default false */
+            complete: boolean;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            profilAttribue?: string | null;
+            commentaire?: string | null;
+        };
+        "Demande.jsonld-demande.out_validation.demande.modif": components["schemas"]["HydraItemBaseSchema"] & {
+            id?: number | null;
+            demandeur?: components["schemas"]["Utilisateur.jsonld-demande.out"] | null;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            campagne?: string;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            typeDemande?: string;
             idCommission?: number | null;
             /** Format: date-time */
             dateDepot?: string | null;
@@ -3783,6 +3911,57 @@ export interface components {
             /** Format: date-time */
             dateValidation?: string | null;
         };
+        "Evenement.html-evenement.out_validation.deleteValidation": {
+            id?: number | null;
+            libelle?: string | null;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            type?: string;
+            beneficiaires?: string[];
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            intervenant?: string | null;
+            suppleants?: string[];
+            enseignants?: string[];
+            /** Format: date-time */
+            debut?: string;
+            /** Format: date-time */
+            fin?: string;
+            tempsPreparation?: number;
+            tempsSupplementaire?: number;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            campus?: string;
+            salle?: string | null;
+            equipements?: string[];
+            /** Format: date-time */
+            dateAnnulation?: string | null;
+            /** Format: date-time */
+            dateEnvoiRH?: string | null;
+            /** Format: date-time */
+            dateCreation?: string;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            utilisateurCreation?: string;
+            /** Format: date-time */
+            dateModification?: string | null;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            utilisateurModification?: string | null;
+            valide?: boolean | null;
+            /** Format: date-time */
+            dateValidation?: string | null;
+        };
         "Evenement.jsonld-evenement.out": components["schemas"]["HydraItemBaseSchema"] & {
             id?: number | null;
             libelle?: string | null;
@@ -3834,6 +4013,57 @@ export interface components {
             /** Format: date-time */
             dateValidation?: string | null;
         };
+        "Evenement.jsonld-evenement.out_validation.deleteValidation": components["schemas"]["HydraItemBaseSchema"] & {
+            id?: number | null;
+            libelle?: string | null;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            type?: string;
+            beneficiaires?: string[];
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            intervenant?: string | null;
+            suppleants?: string[];
+            enseignants?: string[];
+            /** Format: date-time */
+            debut?: string;
+            /** Format: date-time */
+            fin?: string;
+            tempsPreparation?: number;
+            tempsSupplementaire?: number;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            campus?: string;
+            salle?: string | null;
+            equipements?: string[];
+            /** Format: date-time */
+            dateAnnulation?: string | null;
+            /** Format: date-time */
+            dateEnvoiRH?: string | null;
+            /** Format: date-time */
+            dateCreation?: string;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            utilisateurCreation?: string;
+            /** Format: date-time */
+            dateModification?: string | null;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            utilisateurModification?: string | null;
+            valide?: boolean | null;
+            /** Format: date-time */
+            dateValidation?: string | null;
+        };
         "Formation.html": {
             id?: number;
             /**
@@ -3848,11 +4078,19 @@ export interface components {
             diplome?: string | null;
         };
         "Formation.html-amenagement.out": {
-            composante?: components["schemas"]["Composante.html-amenagement.out"];
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            composante?: string;
             libelle?: string;
         };
         "Formation.html-amenagements_utilisateurs.out": {
-            composante?: components["schemas"]["Composante.html-amenagements_utilisateurs.out"];
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            composante?: string;
             libelle?: string;
         };
         "Formation.html-demande.out": {
@@ -3889,11 +4127,19 @@ export interface components {
             diplome?: string | null;
         };
         "Formation.jsonld-amenagement.out": components["schemas"]["HydraItemBaseSchema"] & {
-            composante?: components["schemas"]["Composante.jsonld-amenagement.out"];
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            composante?: string;
             libelle?: string;
         };
         "Formation.jsonld-amenagements_utilisateurs.out": components["schemas"]["HydraItemBaseSchema"] & {
-            composante?: components["schemas"]["Composante.jsonld-amenagements_utilisateurs.out"];
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            composante?: string;
             libelle?: string;
         };
         "Formation.jsonld-demande.out": components["schemas"]["HydraItemBaseSchema"] & {
@@ -3968,6 +4214,11 @@ export interface components {
         };
         "Inscription.html-amenagement.out": {
             formation?: components["schemas"]["Formation.html-amenagement.out"];
+            /** Format: date-time */
+            debut?: string;
+            /** Format: date-time */
+            fin?: string;
+            principale?: boolean;
         };
         "Inscription.html-amenagements_utilisateurs.out": {
             formation?: components["schemas"]["Formation.html-amenagements_utilisateurs.out"];
@@ -3975,6 +4226,7 @@ export interface components {
             debut?: string;
             /** Format: date-time */
             fin?: string;
+            principale?: boolean;
         };
         "Inscription.html-demande.out": {
             formation?: components["schemas"]["Formation.html-demande.out"];
@@ -3982,6 +4234,7 @@ export interface components {
             debut?: string;
             /** Format: date-time */
             fin?: string;
+            principale?: boolean;
         };
         "Inscription.html-utilisateur.out": {
             formation?: components["schemas"]["Formation.html-utilisateur.out"];
@@ -3989,21 +4242,15 @@ export interface components {
             debut?: string;
             /** Format: date-time */
             fin?: string;
+            principale?: boolean;
         };
-        "Inscription.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
-            id?: number;
-            /**
-             * Format: iri-reference
-             * @example https://example.com/
-             */
-            formation?: string;
+        "Inscription.jsonld-amenagement.out": components["schemas"]["HydraItemBaseSchema"] & {
+            formation?: components["schemas"]["Formation.jsonld-amenagement.out"];
             /** Format: date-time */
             debut?: string;
             /** Format: date-time */
             fin?: string;
-        };
-        "Inscription.jsonld-amenagement.out": components["schemas"]["HydraItemBaseSchema"] & {
-            formation?: components["schemas"]["Formation.jsonld-amenagement.out"];
+            principale?: boolean;
         };
         "Inscription.jsonld-amenagements_utilisateurs.out": components["schemas"]["HydraItemBaseSchema"] & {
             formation?: components["schemas"]["Formation.jsonld-amenagements_utilisateurs.out"];
@@ -4011,6 +4258,7 @@ export interface components {
             debut?: string;
             /** Format: date-time */
             fin?: string;
+            principale?: boolean;
         };
         "Inscription.jsonld-demande.out": components["schemas"]["HydraItemBaseSchema"] & {
             formation?: components["schemas"]["Formation.jsonld-demande.out"];
@@ -4018,6 +4266,7 @@ export interface components {
             debut?: string;
             /** Format: date-time */
             fin?: string;
+            principale?: boolean;
         };
         "Inscription.jsonld-utilisateur.out": components["schemas"]["HydraItemBaseSchema"] & {
             formation?: components["schemas"]["Formation.jsonld-utilisateur.out"];
@@ -4025,15 +4274,24 @@ export interface components {
             debut?: string;
             /** Format: date-time */
             fin?: string;
+            principale?: boolean;
         };
         "IntervenantBilanFinancier.customcsv": {
             uid?: string;
-            intervenant?: components["schemas"]["Utilisateur.customcsv"];
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            intervenant?: string;
             activitesParPeriode?: components["schemas"]["ActiviteBilanFinancier.customcsv"][];
         };
         "IntervenantBilanFinancier.jsonld": {
             uid?: string;
-            intervenant?: components["schemas"]["Utilisateur.jsonld"];
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            intervenant?: string;
             activitesParPeriode?: components["schemas"]["ActiviteBilanFinancier.jsonld"][];
         };
         "InterventionForfait-forfait.in": {
@@ -4143,26 +4401,58 @@ export interface components {
             utilisateurModification?: string | null;
         };
         "LigneServiceFait.customcsv-services_faits.out": {
-            intervenant?: components["schemas"]["Utilisateur.customcsv-services_faits.out"];
-            type?: components["schemas"]["TypeEvenement.customcsv-services_faits.out"];
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            intervenant?: string;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            type?: string;
             nbHeures?: string;
             tauxHoraire?: components["schemas"]["TauxHoraire.customcsv-services_faits.out"] | null;
         };
         "LigneServiceFait.html-services_faits.out": {
-            intervenant?: components["schemas"]["Utilisateur.html-services_faits.out"];
-            type?: components["schemas"]["TypeEvenement.html-services_faits.out"];
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            intervenant?: string;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            type?: string;
             nbHeures?: string;
             tauxHoraire?: components["schemas"]["TauxHoraire.html-services_faits.out"] | null;
         };
         "LigneServiceFait.jsonld-services_faits.out": {
-            intervenant?: components["schemas"]["Utilisateur.jsonld-services_faits.out"];
-            type?: components["schemas"]["TypeEvenement.jsonld-services_faits.out"];
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            intervenant?: string;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            type?: string;
             nbHeures?: string;
             tauxHoraire?: components["schemas"]["TauxHoraire.jsonld-services_faits.out"] | null;
         };
         "LigneServiceFait.pdf-services_faits.out": {
-            intervenant?: components["schemas"]["Utilisateur.pdf-services_faits.out"];
-            type?: components["schemas"]["TypeEvenement.pdf-services_faits.out"];
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            intervenant?: string;
+            /**
+             * Format: iri-reference
+             * @example https://example.com/
+             */
+            type?: string;
             nbHeures?: string;
             tauxHoraire?: components["schemas"]["TauxHoraire.pdf-services_faits.out"] | null;
         };
@@ -4335,23 +4625,6 @@ export interface components {
             butoir?: string;
             envoyee?: boolean;
         };
-        "PeriodeRH.customcsv": {
-            id?: number | null;
-            /** Format: date-time */
-            debut: string;
-            /** Format: date-time */
-            fin: string;
-            /** Format: date-time */
-            butoir: string;
-            envoyee?: boolean;
-            /** Format: date-time */
-            dateEnvoi?: string | null;
-            /**
-             * Format: iri-reference
-             * @example https://example.com/
-             */
-            utilisateurEnvoi?: string | null;
-        };
         "PeriodeRH.customcsv-services_faits.out": {
             id?: number | null;
             /** Format: date-time */
@@ -4396,23 +4669,6 @@ export interface components {
              * @example https://example.com/
              */
             utilisateurEnvoi?: string | null;
-        };
-        "PeriodeRH.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
-            readonly id?: number | null;
-            /** Format: date-time */
-            debut: string;
-            /** Format: date-time */
-            fin: string;
-            /** Format: date-time */
-            butoir: string;
-            envoyee?: boolean;
-            /** Format: date-time */
-            readonly dateEnvoi?: string | null;
-            /**
-             * Format: iri-reference
-             * @example https://example.com/
-             */
-            readonly utilisateurEnvoi?: string | null;
         };
         "PeriodeRH.jsonld-periode.out": components["schemas"]["HydraItemBaseSchema"] & {
             id?: number | null;
@@ -4858,20 +5114,6 @@ export interface components {
             /** Format: date-time */
             fin?: string | null;
         };
-        "TauxHoraire.customcsv": {
-            id?: number | null;
-            typeId?: number;
-            /**
-             * Format: iri-reference
-             * @example https://example.com/
-             */
-            typeEvenement?: string;
-            montant: string;
-            /** Format: date-time */
-            debut?: string;
-            /** Format: date-time */
-            fin?: string | null;
-        };
         "TauxHoraire.customcsv-services_faits.out": {
             id?: number | null;
             montant: string;
@@ -4890,14 +5132,6 @@ export interface components {
         };
         "TauxHoraire.html-taux.out": {
             id?: number | null;
-            montant: string;
-            /** Format: date-time */
-            debut?: string;
-            /** Format: date-time */
-            fin?: string | null;
-        };
-        "TauxHoraire.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
-            readonly id?: number | null;
             montant: string;
             /** Format: date-time */
             debut?: string;
@@ -4960,7 +5194,6 @@ export interface components {
             pedagogique?: boolean;
             examens?: boolean;
             aideHumaine?: boolean;
-            decision?: boolean | null;
             decision?: boolean;
         };
         "TypeAmenagement-type_amenagement.in.jsonMergePatch": {
@@ -4975,7 +5208,6 @@ export interface components {
             pedagogique?: boolean;
             examens?: boolean;
             aideHumaine?: boolean;
-            decision?: boolean | null;
             decision?: boolean;
         };
         "TypeAmenagement.html-amenagements_utilisateurs.out": {
@@ -4999,7 +5231,6 @@ export interface components {
             pedagogique?: boolean;
             examens?: boolean;
             aideHumaine?: boolean;
-            decision?: boolean | null;
             decision?: boolean;
         };
         "TypeAmenagement.jsonld-amenagements_utilisateurs.out": components["schemas"]["HydraItemBaseSchema"] & {
@@ -5023,7 +5254,6 @@ export interface components {
             pedagogique?: boolean;
             examens?: boolean;
             aideHumaine?: boolean;
-            decision?: boolean | null;
             decision?: boolean;
         };
         "TypeDemande-type_demande.in": {
@@ -5144,24 +5374,6 @@ export interface components {
             tauxHoraires?: string[];
             forfait?: boolean;
         };
-        "TypeEvenement.customcsv": {
-            id?: number | null;
-            libelle: string;
-            actif?: boolean;
-            couleur?: string | null;
-            visibleParDefaut?: boolean;
-            /** @default false */
-            avecValidation: boolean;
-            tauxHoraires?: string[];
-            /**
-             * Format: iri-reference
-             * @example https://example.com/
-             */
-            tauxActif?: string | null;
-            forfait?: boolean;
-        };
-        "TypeEvenement.customcsv-services_faits.out": Record<string, never>;
-        "TypeEvenement.html-services_faits.out": Record<string, never>;
         "TypeEvenement.html-typesEvenements.out": {
             id?: number | null;
             libelle: string;
@@ -5178,23 +5390,6 @@ export interface components {
             tauxActif?: string | null;
             forfait?: boolean;
         };
-        "TypeEvenement.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
-            readonly id?: number | null;
-            libelle: string;
-            actif?: boolean;
-            couleur?: string | null;
-            visibleParDefaut?: boolean;
-            /** @default false */
-            avecValidation: boolean;
-            tauxHoraires?: string[];
-            /**
-             * Format: iri-reference
-             * @example https://example.com/
-             */
-            readonly tauxActif?: string | null;
-            forfait?: boolean;
-        };
-        "TypeEvenement.jsonld-services_faits.out": components["schemas"]["HydraItemBaseSchema"] & Record<string, never>;
         "TypeEvenement.jsonld-typesEvenements.out": components["schemas"]["HydraItemBaseSchema"] & {
             id?: number | null;
             libelle: string;
@@ -5211,7 +5406,6 @@ export interface components {
             tauxActif?: string | null;
             forfait?: boolean;
         };
-        "TypeEvenement.pdf-services_faits.out": Record<string, never>;
         "TypeSuiviAmenagement-type_suivi_amenagement.in": {
             libelle: string;
             actif?: boolean;
@@ -5269,49 +5463,6 @@ export interface components {
             abonneRecapHebdo?: boolean;
             numeroAnonyme?: number | null;
         };
-        "Utilisateur.customcsv": {
-            uid?: string;
-            roleId?: string | null;
-            email?: string;
-            nom?: string;
-            prenom?: string;
-            /** Format: date-time */
-            dateNaissance?: string | null;
-            genre?: string | null;
-            numeroEtudiant?: number | null;
-            /** Format: email */
-            emailPerso?: string | null;
-            telPerso?: string | null;
-            contactUrgence?: string | null;
-            roles?: ("ROLE_ADMIN" | "ROLE_GESTIONNAIRE" | "ROLE_RENFORT" | "ROLE_USER" | "ROLE_BENEFICIAIRE" | "ROLE_DEMANDEUR" | "ROLE_INTERVENANT" | "ROLE_PLANIFICATEUR" | "ROLE_ADMIN_TECHNIQUE" | "ROLE_MEMBRE_COMMISSION" | "ROLE_REFERENT_COMPOSANTE" | "ROLE_VALIDER_CONFORMITE_DEMANDE" | "ROLE_ATTRIBUER_PROFIL")[];
-            services?: string[];
-            campus?: string[];
-            competences?: string[];
-            typesEvenements?: string[];
-            profils?: string[];
-            etatAvisEse?: string;
-            amenagements?: string[];
-            tags?: string[];
-            gestionnairesActifs?: string[];
-            /** Format: date-time */
-            intervenantDebut?: string | null;
-            /** Format: date-time */
-            intervenantFin?: string | null;
-            inscriptions?: string[];
-            boursier?: boolean | null;
-            statutEtudiant?: string | null;
-            abonneImmediat?: boolean;
-            abonneVeille?: boolean;
-            abonneAvantVeille?: boolean;
-            abonneRecapHebdo?: boolean;
-            /**
-             * Format: iri-reference
-             * @example https://example.com/
-             */
-            decisionAmenagementAnneeEnCours?: string | null;
-            numeroAnonyme?: number | null;
-        };
-        "Utilisateur.customcsv-services_faits.out": Record<string, never>;
         "Utilisateur.html-ActiviteBeneficiaire.out": {
             email?: string;
             nom?: string;
@@ -5350,7 +5501,6 @@ export interface components {
             prenom?: string;
             inscriptions?: components["schemas"]["Inscription.html-demande.out"][];
         };
-        "Utilisateur.html-services_faits.out": Record<string, never>;
         "Utilisateur.html-utilisateur.out": {
             uid?: string;
             email?: string;
@@ -5385,42 +5535,6 @@ export interface components {
             abonneAvantVeille?: boolean;
             abonneRecapHebdo?: boolean;
             decisionAmenagementAnneeEnCours?: components["schemas"]["DecisionAmenagementExamens.html-utilisateur.out"] | null;
-            numeroAnonyme?: number | null;
-        };
-        "Utilisateur.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
-            readonly uid?: string;
-            readonly email?: string;
-            readonly nom?: string;
-            readonly prenom?: string;
-            /** Format: date-time */
-            readonly dateNaissance?: string | null;
-            readonly genre?: string | null;
-            readonly numeroEtudiant?: number | null;
-            /** Format: email */
-            emailPerso?: string | null;
-            telPerso?: string | null;
-            contactUrgence?: string | null;
-            roles?: ("ROLE_ADMIN" | "ROLE_GESTIONNAIRE" | "ROLE_RENFORT" | "ROLE_USER" | "ROLE_BENEFICIAIRE" | "ROLE_DEMANDEUR" | "ROLE_INTERVENANT" | "ROLE_PLANIFICATEUR" | "ROLE_ADMIN_TECHNIQUE" | "ROLE_MEMBRE_COMMISSION" | "ROLE_REFERENT_COMPOSANTE" | "ROLE_VALIDER_CONFORMITE_DEMANDE" | "ROLE_ATTRIBUER_PROFIL")[];
-            services?: string[];
-            campus?: string[];
-            competences?: string[];
-            typesEvenements?: string[];
-            profils?: string[];
-            readonly etatAvisEse?: string;
-            readonly tags?: string[];
-            readonly gestionnairesActifs?: string[];
-            /** Format: date-time */
-            intervenantDebut?: string | null;
-            /** Format: date-time */
-            intervenantFin?: string | null;
-            readonly inscriptions?: components["schemas"]["Inscription.jsonld"][];
-            readonly boursier?: boolean | null;
-            readonly statutEtudiant?: string | null;
-            abonneImmediat?: boolean;
-            abonneVeille?: boolean;
-            abonneAvantVeille?: boolean;
-            abonneRecapHebdo?: boolean;
-            readonly decisionAmenagementAnneeEnCours?: components["schemas"]["DecisionAmenagementExamens.jsonld"] | null;
             numeroAnonyme?: number | null;
         };
         "Utilisateur.jsonld-ActiviteBeneficiaire.out": components["schemas"]["HydraItemBaseSchema"] & {
@@ -5461,7 +5575,6 @@ export interface components {
             prenom?: string;
             inscriptions?: components["schemas"]["Inscription.jsonld-demande.out"][];
         };
-        "Utilisateur.jsonld-services_faits.out": components["schemas"]["HydraItemBaseSchema"] & Record<string, never>;
         "Utilisateur.jsonld-utilisateur.out": components["schemas"]["HydraItemBaseSchema"] & {
             uid?: string;
             email?: string;
@@ -5498,7 +5611,6 @@ export interface components {
             decisionAmenagementAnneeEnCours?: components["schemas"]["DecisionAmenagementExamens.jsonld-utilisateur.out"] | null;
             numeroAnonyme?: number | null;
         };
-        "Utilisateur.pdf-services_faits.out": Record<string, never>;
         "ValeurParametre-valeur_param.in": {
             valeur?: string | null;
             /**
@@ -6707,7 +6819,7 @@ export interface operations {
         /** @description The updated Demande resource */
         requestBody: {
             content: {
-                "application/merge-patch+json": components["schemas"]["Demande-demande.modif.jsonMergePatch"];
+                "application/merge-patch+json": components["schemas"]["Demande-demande.modif_validation.demande.modif.jsonMergePatch"];
             };
         };
         responses: {
@@ -6717,8 +6829,8 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/ld+json": components["schemas"]["Demande.jsonld-demande.out"];
-                    "text/html": components["schemas"]["Demande.html-demande.out"];
+                    "application/ld+json": components["schemas"]["Demande.jsonld-demande.out_validation.demande.modif"];
+                    "text/html": components["schemas"]["Demande.html-demande.out_validation.demande.modif"];
                 };
             };
             /** @description Invalid input */
@@ -15436,8 +15548,8 @@ export interface operations {
         /** @description The new BeneficiaireProfil resource */
         requestBody: {
             content: {
-                "application/ld+json": components["schemas"]["BeneficiaireProfil-beneficiaires_profils.in"];
-                "text/html": components["schemas"]["BeneficiaireProfil-beneficiaires_profils.in"];
+                "application/ld+json": components["schemas"]["BeneficiaireProfil-beneficiaires_profils.in_validation.beneficiaires_profils.validation.in"];
+                "text/html": components["schemas"]["BeneficiaireProfil-beneficiaires_profils.in_validation.beneficiaires_profils.validation.in"];
             };
         };
         responses: {
@@ -15447,8 +15559,8 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/ld+json": components["schemas"]["BeneficiaireProfil.jsonld-beneficiaires_profils.out"];
-                    "text/html": components["schemas"]["BeneficiaireProfil.html-beneficiaires_profils.out"];
+                    "application/ld+json": components["schemas"]["BeneficiaireProfil.jsonld-beneficiaires_profils.out_validation.beneficiaires_profils.validation.in"];
+                    "text/html": components["schemas"]["BeneficiaireProfil.html-beneficiaires_profils.out_validation.beneficiaires_profils.validation.in"];
                 };
             };
             /** @description Invalid input */
@@ -15594,7 +15706,7 @@ export interface operations {
         /** @description The updated BeneficiaireProfil resource */
         requestBody: {
             content: {
-                "application/merge-patch+json": components["schemas"]["BeneficiaireProfil-beneficiaires_profils.in.jsonMergePatch"];
+                "application/merge-patch+json": components["schemas"]["BeneficiaireProfil-beneficiaires_profils.in_validation.beneficiaires_profils.validation.in.jsonMergePatch"];
             };
         };
         responses: {
@@ -15604,8 +15716,8 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/ld+json": components["schemas"]["BeneficiaireProfil.jsonld-beneficiaires_profils.out"];
-                    "text/html": components["schemas"]["BeneficiaireProfil.html-beneficiaires_profils.out"];
+                    "application/ld+json": components["schemas"]["BeneficiaireProfil.jsonld-beneficiaires_profils.out_validation.beneficiaires_profils.validation.in"];
+                    "text/html": components["schemas"]["BeneficiaireProfil.html-beneficiaires_profils.out_validation.beneficiaires_profils.validation.in"];
                 };
             };
             /** @description Invalid input */

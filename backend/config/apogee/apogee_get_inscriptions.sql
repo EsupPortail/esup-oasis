@@ -2,6 +2,7 @@ select iae.cod_anu,
        vet.cod_etp,
        vet.cod_vrs_vet,
        vet.lib_web_vet,
+       iae.tem_iae_prm,
        cmp.cod_cmp,
        cmp.lib_cmp,
        to_char(i.date_nai_ind, 'YYYY-MM-DD') as date_nai_ind,
@@ -31,6 +32,5 @@ from ins_adm_etp iae
          left outer join adresse annuelle on annuelle.cod_ind_ina = i.cod_ind and annuelle.cod_anu_ina = iae.cod_anu
 where i.cod_etu = :codEtu
   and iae.cod_anu between :debut and :fin
-  and iae.tem_iae_prm = 'O'
   and iae.eta_iae = 'E'
 order by iae.cod_anu

@@ -62,7 +62,7 @@ final class Composante
         }
     }
 
-    #[Groups([Utilisateur::AMENAGEMENTS_UTILISATEURS_OUT, Amenagement::GROUP_OUT, self::GROUP_OUT])]
+    #[Groups([self::GROUP_OUT])]
     public string $libelle {
         get {
             $prop = new ReflectionProperty(self::class, 'libelle');

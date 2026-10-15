@@ -25,6 +25,8 @@ export interface CsvExportButtonWithoutFetchProps<T extends object = object> {
   totalItems?: number;
   /** Appelé quand l'utilisateur clique sur le bouton d'export */
   onStart?: () => void;
+  /** Si fourni, appelé au clic à la place du démarrage direct : l'export ne démarre que si `demarrer` est appelé. */
+  onBeforeStart?: (demarrer: () => void) => void;
   onDownloaded?: () => void;
   icon?: React.ReactNode;
   label?: React.ReactNode;
@@ -42,6 +44,7 @@ export default function CsvExportButtonWithoutFetch<T extends object = object>({
   fetchedCount,
   totalItems,
   onStart,
+  onBeforeStart,
   onDownloaded,
   icon = <ExportOutlined />,
   label = "Exporter",
@@ -63,8 +66,12 @@ export default function CsvExportButtonWithoutFetch<T extends object = object>({
       <Button
         icon={icon}
         onClick={() => {
-          setStarted(true);
-          onStart?.();
+          const demarrer = () => {
+            setStarted(true);
+            onStart?.();
+          };
+          if (onBeforeStart) onBeforeStart(demarrer);
+          else demarrer();
         }}
       >
         {label}
@@ -99,6 +106,12 @@ export default function CsvExportButtonWithoutFetch<T extends object = object>({
       onClick={() => {
         setDownloaded(true);
         onDownloaded?.();
+        // Retour au bouton initial une fois le téléchargement lancé (hors du clic, pour ne pas
+        // démonter le lien avant le téléchargement) : un nouvel export repasse par onBeforeStart.
+        setTimeout(() => {
+          setStarted(false);
+          setDownloaded(false);
+        }, 0);
       }}
       aria-label="Exporter le tableau au format CSV (Excel)"
     >

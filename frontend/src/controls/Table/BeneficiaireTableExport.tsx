@@ -20,24 +20,27 @@ import { useApi } from "@context/api/ApiProvider";
 import { FiltreBeneficiaire } from "@controls/Table/BeneficiaireTable";
 import { env } from "@/env";
 import CsvExportButton from "@controls/Table/Export/CsvExportButton";
+import { getInscriptionsHeaders } from "@controls/Table/Export/inscriptionsExportHeaders";
+import { useExportInscriptions } from "@controls/Table/Export/useExportInscriptions";
+import { formaterInscriptionsExport, PorteeExportInscriptions } from "@lib/inscription";
 
-const headers = [
+const getHeaders = (portee: PorteeExportInscriptions) => [
   { label: "Nom", key: "nom" },
   { label: "Prénom", key: "prenom" },
   { label: "Email", key: "email" },
   { label: "Numéro étudiant", key: "numeroEtudiant" },
-  { label: "Composantes", key: "composantes" },
-  { label: "Formations", key: "formations" },
+  ...getInscriptionsHeaders(portee),
   { label: "Gestionnaires", key: "gestionnaires" },
   { label: "Tags", key: "tags" },
   { label: `Avis ${env.REACT_APP_ESPACE_SANTE_ABV || "santé"}`, key: "avisESE" },
 ];
 
-function getBeneficiairesData(
+export function getBeneficiairesData(
   beneficiaires: IBeneficiaire[],
   composantes: IComposante[] | undefined,
   gestionnaires: IUtilisateur[] | undefined,
   tags: ITag[] | undefined,
+  portee: PorteeExportInscriptions,
 ) {
   return beneficiaires.map((beneficiaire) => {
     return {
@@ -47,25 +50,7 @@ function getBeneficiairesData(
       prenom: beneficiaire.prenom,
       email: beneficiaire.email,
       numeroEtudiant: beneficiaire.numeroEtudiant,
-      composantes: beneficiaire.inscriptions
-        ?.map((inscription) => inscription.formation)
-        ?.map((formation) => formation?.composante)
-        ?.map((composante) => {
-          if (!composante) return null;
-          return composantes?.find((c) => c["@id"] === composante);
-        })
-        .map((composante) => composante?.libelle?.replaceAll('"', '""'))
-        .join(", "),
-      formations: beneficiaire.inscriptions
-        ?.map((inscription) => inscription.formation)
-        ?.map((formation) => {
-          if (!formation) return null;
-          if (formation.codeExterne) {
-            return `[${formation.codeExterne}] ${formation.libelle?.replaceAll('"', '""')}`;
-          }
-          return `${formation.libelle?.replaceAll('"', '""')}`;
-        })
-        .join(", "),
+      ...formaterInscriptionsExport(beneficiaire.inscriptions, portee, composantes),
       gestionnaires: beneficiaire.gestionnairesActifs
         ?.map((gestionnaire) => gestionnaires?.find((g) => g["@id"] === gestionnaire))
         .map((gestionnaire) => `${gestionnaire?.nom?.toLocaleUpperCase()} ${gestionnaire?.prenom}`)
@@ -115,20 +100,25 @@ export default function BeneficiaireTableExport({
   });
 
   const refDataReady = !!(composantes?.items && gestionnaires?.items && tags?.items);
+  const { portee, demanderPortee, modalPortee } = useExportInscriptions();
 
   return (
-    <CsvExportButton<"/beneficiaires">
-      key={exportKey}
-      path="/beneficiaires"
-      itemsPerPage={200}
-      query={{ ...filtreBeneficiaire }}
-      headers={headers}
-      filename="beneficiaires"
-      getData={(items) =>
-        getBeneficiairesData(items, composantes?.items, gestionnaires?.items, tags?.items)
-      }
-      ready={refDataReady}
-      onStart={() => setExportState((prev) => ({ ...prev, exportSubmit: true }))}
-    />
+    <>
+      <CsvExportButton<"/beneficiaires">
+        key={exportKey}
+        path="/beneficiaires"
+        itemsPerPage={200}
+        query={{ ...filtreBeneficiaire }}
+        headers={getHeaders(portee)}
+        filename="beneficiaires"
+        getData={(items) =>
+          getBeneficiairesData(items, composantes?.items, gestionnaires?.items, tags?.items, portee)
+        }
+        ready={refDataReady}
+        onBeforeStart={demanderPortee}
+        onStart={() => setExportState((prev) => ({ ...prev, exportSubmit: true }))}
+      />
+      {modalPortee}
+    </>
   );
 }

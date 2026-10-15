@@ -8,13 +8,10 @@
  *
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { DomaineAmenagementInfos, RoleValues, Utilisateur } from "@lib";
 import React from "react";
-import { Badge, Button, Flex, Space, Tooltip } from "antd";
-import Icon, { CheckOutlined, MinusOutlined, PauseOutlined } from "@ant-design/icons";
-import { ComposanteItem } from "@controls/Items/ComposanteItem";
+import { Badge, Button, Flex, Tooltip } from "antd";
+import Icon, { CheckOutlined, PauseOutlined } from "@ant-design/icons";
 import { EtudiantItem } from "@controls/Items/EtudiantItem";
 import {
   AmenagementCellData,
@@ -27,15 +24,15 @@ import { BeneficiaireAvisEseAvatar } from "@controls/Avatars/BeneficiaireAvisEse
 import { NavigateFunction } from "react-router";
 import ExternalLink from "@/assets/images/external-link.svg?react";
 import { FiltreAmenagement } from "@controls/Table/AmenagementTableLayout";
-import { EllipsisMiddle } from "@controls/Typography/EllipsisMiddle";
 import { EllipsisParagraph } from "@controls/Typography/EllipsisParagraph";
 import { ascToAscend } from "@utils/array";
 import { FilterProps } from "@utils/table";
 import { ColumnsType } from "antd/lib/table";
-import { IBeneficiaire, ICategorieAmenagement, ITypeAmenagement } from "@api";
+import { ICategorieAmenagement, ITypeAmenagement } from "@api";
 import { ColumnType } from "antd/es/table";
 import { FiltreBeneficiaire } from "@controls/Table/BeneficiaireTable";
 import { env } from "@/env";
+import { InscriptionsGroupeesItem } from "@controls/Items/InscriptionsGroupeesItem";
 
 function AmenagementBeneficiaireTableCell(props: {
   amenagement: AmenagementCellData | null | undefined;
@@ -65,14 +62,16 @@ function AmenagementBeneficiaireTableCell(props: {
   );
 }
 
+type CategorieBeneficiaireHierarchie = {
+  key: string;
+  categorie: ICategorieAmenagement;
+  types: ITypeAmenagement[];
+};
+
 type AmenagementBeneficiaireHierarchie = {
   key: string;
   domaine: DomaineAmenagementInfos;
-  categories: {
-    key: string;
-    categorie: ICategorieAmenagement;
-    types: ITypeAmenagement[];
-  }[];
+  categories: Record<string, CategorieBeneficiaireHierarchie>;
 };
 
 export function amenagementsBeneficiaireTableColumns(props: {
@@ -85,14 +84,14 @@ export function amenagementsBeneficiaireTableColumns(props: {
   fixPremiereColonne: boolean;
 }): ColumnsType<IAmenagementsBeneficiaireTableDataSource> {
   function buildHierarchie(): AmenagementBeneficiaireHierarchie[] {
-    const hierarchie: Record<string, any> = [];
+    const hierarchie: Record<string, AmenagementBeneficiaireHierarchie> = {};
     props.typesAmenagements.forEach((ta) => {
       if (ta.typeAmenagement === undefined || !ta.domaine) return;
       if (hierarchie[ta.domaine.id] === undefined) {
         hierarchie[ta.domaine.id] = {
           key: ta.domaine.id,
           domaine: ta.domaine,
-          categories: [],
+          categories: {},
         };
       }
 
@@ -126,7 +125,7 @@ export function amenagementsBeneficiaireTableColumns(props: {
       ...FilterProps<FiltreBeneficiaire>("nom", props.filtre, props.setFiltre),
       filteredValue: props.filtre?.nom ? [props.filtre?.nom] : null,
       onCell: props.user.isGestionnaire
-        ? (record: any) => {
+        ? (record: IAmenagementsBeneficiaireTableDataSource) => {
             return {
               className: "pointer",
               onClick: () => {
@@ -135,7 +134,7 @@ export function amenagementsBeneficiaireTableColumns(props: {
             };
           }
         : undefined,
-      render: (_value: string, record: any) => {
+      render: (_value: string, record: IAmenagementsBeneficiaireTableDataSource) => {
         return (
           <Flex justify="space-between" align="center">
             <EtudiantItem
@@ -161,33 +160,21 @@ export function amenagementsBeneficiaireTableColumns(props: {
           </Flex>
         );
       },
-    } as ColumnType<IBeneficiaire>,
+    } as ColumnType<IAmenagementsBeneficiaireTableDataSource>,
     {
       title: "Inscription",
-      dataIndex: "inscription",
-      render: (value: any) => {
-        return value ? (
-          <Space orientation="vertical" size={2}>
-            <ComposanteItem composanteId={value?.formation?.composante["@id"]} />
-            <EllipsisMiddle
-              className="light"
-              style={{ maxWidth: 350 }}
-              suffixCount={12}
-              content={value?.formation?.libelle as string}
-              expandable
-            />
-          </Space>
-        ) : (
-          <MinusOutlined />
-        );
-      },
+      dataIndex: "inscriptions",
+      width: 450,
+      render: (_value: unknown, record: IAmenagementsBeneficiaireTableDataSource) => (
+        <InscriptionsGroupeesItem inscriptions={record.inscriptions} />
+      ),
     },
     props.user.isGestionnaire
       ? {
           title: <div style={{ width: 100 }}>Avis {env.REACT_APP_ESPACE_SANTE_ABV || "santé"}</div>,
           dataIndex: "avisESE",
           className: "text-center",
-          render: (_value: string, record: any) => {
+          render: (_value: string, record: IAmenagementsBeneficiaireTableDataSource) => {
             return (
               <BeneficiaireAvisEseAvatar
                 utilisateurId={record.key}
@@ -216,7 +203,7 @@ export function amenagementsBeneficiaireTableColumns(props: {
               ),
               key: `${d.domaine.id}_count`,
               className: `text-center bg-${d.domaine.couleur}-xlight`,
-              render: (_value: any, record: any) => {
+              render: (_value: unknown, record: IAmenagementsBeneficiaireTableDataSource) => {
                 const nb = props.typesAmenagements.filter(
                   (c) =>
                     c.domaine.id === d.domaine.id && record[c.typeAmenagement["@id"] as string],
@@ -254,7 +241,7 @@ export function amenagementsBeneficiaireTableColumns(props: {
       ? {
           title: <div style={{ width: 200 }}>Tags</div>,
           dataIndex: "tags",
-          render: (_value: string, record: any) => {
+          render: (_value: string, record: IAmenagementsBeneficiaireTableDataSource) => {
             return <ListeUtilisateurTag utilisateurId={record.key} />;
           },
         }

@@ -23,24 +23,27 @@ import { useApi } from "@context/api/ApiProvider";
 import dayjs from "dayjs";
 import { FiltreDemande } from "@controls/Table/DemandeTable";
 import CsvExportButton from "@controls/Table/Export/CsvExportButton";
+import { getInscriptionsHeaders } from "@controls/Table/Export/inscriptionsExportHeaders";
+import { useExportInscriptions } from "@controls/Table/Export/useExportInscriptions";
+import { formaterInscriptionsExport, PorteeExportInscriptions } from "@lib/inscription";
 
-const headers = [
+const getHeaders = (portee: PorteeExportInscriptions) => [
   { label: "Demandeur (nom)", key: "demandeur.nom" },
   { label: "Demandeur (prénom)", key: "demandeur.prenom" },
-  { label: "Composantes", key: "composantes" },
-  { label: "Formations", key: "formations" },
+  ...getInscriptionsHeaders(portee),
   { label: "Type de demande", key: "typeDemande" },
   { label: "Date de dépôt", key: "dateDepot" },
   { label: "Etat de la demande", key: "etat" },
   { label: "Profil attribué", key: "profilAttribue" },
 ];
 
-function getDemandesExportData(
+export function getDemandesExportData(
   demandes: IDemande[],
   composantes: IComposante[] | undefined,
   etats: IEtatDemande[] | undefined,
   typesDemandes: ITypeDemande[] | undefined,
   profils: IProfil[] | undefined,
+  portee: PorteeExportInscriptions,
 ) {
   return demandes.map((demande) => {
     return {
@@ -48,18 +51,7 @@ function getDemandesExportData(
       "demandeur.nom": demande.demandeur?.nom,
       "demandeur.prenom": demande.demandeur?.prenom,
       dateDepot: demande.dateDepot ? dayjs(demande.dateDepot).format("DD/MM/YYYY") : "",
-      composantes: demande.demandeur?.inscriptions
-        ?.map((inscription) => inscription.formation)
-        ?.map((formation) => formation?.composante)
-        ?.map((composante) => {
-          if (!composante) return null;
-          return composantes?.find((c) => c["@id"] === composante);
-        })
-        .map((composante) => composante?.libelle?.replaceAll('"', '""'))
-        .join(", "),
-      formations: demande.demandeur?.inscriptions
-        ?.map((inscription) => inscription.formation?.libelle?.replaceAll('"', '""'))
-        .join(", "),
+      ...formaterInscriptionsExport(demande.demandeur?.inscriptions, portee, composantes),
       typeDemande: typesDemandes
         ?.find((t) => t["@id"] === demande.typeDemande)
         ?.libelle?.replaceAll('"', '""'),
@@ -110,25 +102,32 @@ export default function DemandeTableExport(props: { filtreDemande: FiltreDemande
     profils?.items
   );
 
+  const { portee, demanderPortee, modalPortee } = useExportInscriptions();
+
   return (
-    <CsvExportButton<"/demandes">
-      key={exportKey}
-      path="/demandes"
-      itemsPerPage={200}
-      query={{ ...props.filtreDemande, format_simple: true }}
-      headers={headers}
-      filename="demandes"
-      getData={(items) =>
-        getDemandesExportData(
-          items,
-          composantes?.items,
-          etats?.items,
-          typesDemandes?.items,
-          profils?.items,
-        )
-      }
-      ready={refDataReady}
-      onStart={() => setExportState((prev) => ({ ...prev, exportSubmit: true }))}
-    />
+    <>
+      <CsvExportButton<"/demandes">
+        key={exportKey}
+        path="/demandes"
+        itemsPerPage={200}
+        query={{ ...props.filtreDemande, format_simple: true }}
+        headers={getHeaders(portee)}
+        filename="demandes"
+        getData={(items) =>
+          getDemandesExportData(
+            items,
+            composantes?.items,
+            etats?.items,
+            typesDemandes?.items,
+            profils?.items,
+            portee,
+          )
+        }
+        ready={refDataReady}
+        onBeforeStart={demanderPortee}
+        onStart={() => setExportState((prev) => ({ ...prev, exportSubmit: true }))}
+      />
+      {modalPortee}
+    </>
   );
 }

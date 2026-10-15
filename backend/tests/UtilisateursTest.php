@@ -361,7 +361,37 @@ class UtilisateursTest extends ApiTestCaseCustom
         $this->assertJsonContains([
             '@context' => '/contexts/Inscription',
             '@id' => '/inscriptions/1',
+            'principale' => true,
         ]);
+    }
+
+    public function testGetInscriptionSecondaire(): void
+    {
+        $client = $this->createClientWithCredentials('admin');
+        $client->request('GET', '/inscriptions/4');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonContains([
+            '@context' => '/contexts/Inscription',
+            '@id' => '/inscriptions/4',
+            'principale' => false,
+        ]);
+    }
+
+    public function testGetUtilisateurHasMultipleInscriptions(): void
+    {
+        $client = $this->createClientWithCredentials('admin');
+        $client->request('GET', '/utilisateurs/beneficiaire');
+
+        $this->assertResponseIsSuccessful();
+        $data = $client->getResponse()->toArray();
+        $this->assertArrayHasKey('inscriptions', $data);
+        $this->assertCount(2, $data['inscriptions']);
+
+        $inscriptions = $data['inscriptions'];
+        $principaleValues = array_column($inscriptions, 'principale');
+        $this->assertContains(true, $principaleValues);
+        $this->assertContains(false, $principaleValues);
     }
 
     public function testIntervenantCanSeeBeneficiaryOfTheirEvents(): void

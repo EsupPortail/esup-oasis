@@ -7,95 +7,26 @@
  * @author Julien Lemonnier <julien.lemonnier@u-bordeaux.fr>
  */
 
-import { Avatar, Card, Empty, List, Tooltip } from "antd";
 import React, { ReactElement } from "react";
-import { IInscription, IUtilisateur } from "@api";
-import { getLibellePeriode, isEnCoursSurPeriode } from "@utils/dates";
-import { ComposanteItem } from "@controls/Items/ComposanteItem";
+import { IUtilisateur } from "@api";
 import { etablissement } from "@lib";
-import { CheckOutlined, PlusOutlined } from "@ant-design/icons";
+import { InscriptionsDetail } from "@controls/Items/InscriptionsDetail";
 
 interface ITabScolariteProps {
   utilisateur: IUtilisateur;
 }
 
-interface ITabScolariteItemProps {
-  inscription: IInscription;
-  titleClassName?: string;
-}
-
-/**
- * Renders a single item in the TabScolarite component.
- *
- * @param {ITabScolariteItemProps} props - The props object.
- * @param {IInscription} props.inscription - The inscription object containing information about the item.
- *
- * @return {ReactElement} - The rendered item component.
- */
-export function ScolariteListItem({
-  inscription,
-  titleClassName = "text-primary",
-}: ITabScolariteItemProps): ReactElement {
-  return (
-    <Card className="mb-1 mt-1">
-      <Card.Meta
-        avatar={
-          isEnCoursSurPeriode(inscription.debut, inscription.fin) ? (
-            <Tooltip title="En cours">
-              <Avatar
-                size="small"
-                className="bg-success"
-                icon={<CheckOutlined className="fs-08" aria-hidden />}
-              >
-                <CheckOutlined className="mt-1" />
-              </Avatar>
-            </Tooltip>
-          ) : (
-            <Tooltip title="Terminé">
-              <Avatar
-                size="small"
-                icon={<PlusOutlined rotate={45} className="fs-08 text-text" aria-hidden />}
-              />
-            </Tooltip>
-          )
-        }
-        title={
-          <div style={{ whiteSpace: "wrap", lineHeight: 1.25 }} className={titleClassName}>
-            <div className="mb-1">{inscription.formation?.libelle}</div>
-            <ComposanteItem composanteId={inscription.formation?.composante} />
-          </div>
-        }
-        description={getLibellePeriode(inscription.debut, inscription.fin, "MMM")}
-      />
-    </Card>
-  );
-}
-
 /**
  * Renders the "TabScolarite" component.
- * This component displays the user's registrations.
  *
  * @param {ITabScolariteProps} props - The component props.
- * @param {IUtilisateur} props.utilisateur - The user object containing the registrations.
- *
- * @returns {ReactElement} The rendered component.
+ * @returns {ReactElement} The rendered "TabScolarite" component.
  */
 export function TabScolarite({ utilisateur }: ITabScolariteProps): ReactElement {
   return (
     <>
       <p className="semi-bold">Inscriptions {etablissement.abv.a}</p>
-      {utilisateur.inscriptions?.length === 0 ? (
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Aucune inscription" />
-      ) : (
-        <List className="ant-list-radius no-hover">
-          {utilisateur.inscriptions?.map((inscription) => (
-            <ScolariteListItem
-              key={inscription?.formation?.codeExterne}
-              inscription={inscription}
-            />
-          ))}
-        </List>
-      )}
+      <InscriptionsDetail inscriptions={utilisateur.inscriptions} />
     </>
   );
 }

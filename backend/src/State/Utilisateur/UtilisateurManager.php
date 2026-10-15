@@ -559,6 +559,7 @@ readonly class UtilisateurManager
         //ajouter les nouvelles
         foreach ($inscriptions as $inscription) {
             $new = new Inscription();
+
             $formation = $this->formationManager->getFormation(
                 codeFormation: $inscription['codeFormation'],
                 libFormation: $inscription['libFormation'],
@@ -568,7 +569,11 @@ readonly class UtilisateurManager
                 discipline: $inscription['discipline'],
                 diplome: $inscription['diplome'],
             );
-            $new->setDebut($inscription['debut'])->setFin($inscription['fin'])->setFormation($formation);
+            $new
+                ->setDebut($inscription['debut'])
+                ->setFin($inscription['fin'])
+                ->setFormation($formation)
+                ->setPrincipale($inscription['principale'] ?? true);
 
             $utilisateur->addInscription($new);
         }

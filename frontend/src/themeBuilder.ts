@@ -144,6 +144,11 @@ export function buildTheme(mode: "light" | "dark", accessibilite: IAccessibilite
       colorWarning: APP_WARNING_COLOR,
       // Texte désactivé : contraste WCAG AA minimum (4.5:1) pour tous les modes
       colorTextDisabled: isDark ? "rgba(255, 255, 255, 0.55)" : "rgba(0, 0, 0, 0.55)",
+      // Texte secondaire (Typography « secondary », description de Card.Meta, etc.) : la valeur par défaut
+      // d'Ant Design (0.45) ne fait que 3,4:1 sur fond blanc, sous le seuil WCAG AA. Dark mode surchargé plus bas.
+      ...(!isDark && { colorTextDescription: "rgba(0, 0, 0, 0.6)" }),
+      // Séparateurs (Divider, List, Table, filets de carte) : valeurs par défaut d'Ant Design (0.06 / 0.12) accentuées.
+      colorSplit: isDark ? "rgba(253, 253, 253, 0.18)" : "rgba(5, 5, 5, 0.12)",
       // Contraste light : texte noir forcé
       ...(contrast &&
         !isDark && {

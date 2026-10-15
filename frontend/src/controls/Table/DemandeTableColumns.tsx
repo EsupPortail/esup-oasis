@@ -14,7 +14,6 @@ import { IDemande, IEtatDemande, IUtilisateur } from "@api";
 import { ColumnType } from "antd/es/table";
 import { Button, Flex, Popconfirm, Space, Tooltip } from "antd";
 import { FilterProps } from "@utils/table";
-import { ComposanteItem } from "@controls/Items/ComposanteItem";
 import { TypeDemandeItem } from "@controls/Items/TypeDemandeItem";
 import dayjs from "dayjs";
 import { EtatDemandeAvatar } from "@controls/Avatars/EtatDemandeAvatar";
@@ -23,12 +22,12 @@ import React from "react";
 import { FiltreDemande } from "@controls/Table/DemandeTable";
 import ExternalLink from "@/assets/images/external-link.svg?react";
 import UtilisateurAvatarImage from "@controls/Avatars/UtilisateurAvatarImage";
-import { EllipsisMiddle } from "@controls/Typography/EllipsisMiddle";
 import Highlighter from "react-highlight-words";
 import { removeAccents } from "@utils/string";
 
 import { UseStateDispatch } from "@utils/utils";
 import { env } from "@/env";
+import { InscriptionsGroupeesItem } from "@controls/Items/InscriptionsGroupeesItem";
 
 export function demandeTableColumns({
   filter,
@@ -126,44 +125,16 @@ export function demandeTableColumns({
           as="Flex"
         />
       ),
-    } as ColumnType<IDemande>,
+    },
     {
-      title: "Composante",
-      dataIndex: "composante[]",
-      key: "composante[]",
+      title: "Inscription",
+      dataIndex: "inscription",
+      width: 450,
       responsive: ["lg"],
-      width: 125,
-      render: (_value, record) => {
-        const composante = [...(record.demandeur?.inscriptions || [])].sort((i1, i2) =>
-          (i2.debut || "").localeCompare(i1.debut || ""),
-        )[0]?.formation?.composante;
-        if (composante) {
-          return <ComposanteItem composanteId={composante} ellipsis />;
-        }
-        return null;
-      },
-    } as ColumnType<IDemande>,
-    {
-      title: "Formation",
-      dataIndex: "formation[]",
-      key: "formation[]",
-      responsive: ["xl"],
-      width: 200,
-      render: (_value, record) => {
-        const libelleFormation = [...(record.demandeur?.inscriptions || [])].sort((i1, i2) =>
-          (i2.debut || "").localeCompare(i1.debut || ""),
-        )[0]?.formation?.libelle;
-        return (
-          <EllipsisMiddle
-            className="light"
-            style={{ maxWidth: 200 }}
-            suffixCount={12}
-            content={libelleFormation || ""}
-            expandable
-          />
-        );
-      },
-    } as ColumnType<IDemande>,
+      render: (_value: string, record) => (
+        <InscriptionsGroupeesItem inscriptions={record.demandeur?.inscriptions} />
+      ),
+    },
     {
       title: "Dépôt",
       dataIndex: "dateDepot",
@@ -175,7 +146,7 @@ export function demandeTableColumns({
       render: (_value, record) =>
         record.dateDepot ? dayjs(record.dateDepot).format("DD/MM/YYYY") : <MinusOutlined />,
       filteredValue: null,
-    } as ColumnType<IDemande>,
+    },
     {
       title: "État",
       dataIndex: "etat",
@@ -183,7 +154,7 @@ export function demandeTableColumns({
       render: (_value, record) => {
         return <EtatDemandeAvatar etatDemandeId={record.etat} />;
       },
-    } as ColumnType<IDemande>,
+    },
     {
       key: "actions",
       className: "text-right",

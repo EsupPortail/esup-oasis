@@ -4,14 +4,29 @@ App\Entity\Inscription:
     formation: '@formation_1'
     debut: <date_create('2020-09-01')>
     fin: <date_create('2021-08-31')>
+    principale: true
   inscription_2:
     etudiant: '@demandeur'
     formation: '@formation_1'
     debut: <date_create('today')>
     fin: <date_create('next year')>
-  # le bénéficiaire de la décision est inscrit, dans une composante sans circuit de signature
+    principale: true
   inscription_3:
+    etudiant: '@demandeur'
+    formation: '@formation_1'
+    debut: <date_create('today')>
+    fin: <date_create('next year')>
+    principale: true
+  inscription_4:
+    etudiant: '@beneficiaire'
+    formation: '@formation_2'
+    debut: <date_create('today')>
+    fin: <date_create('next year')>
+    principale: false
+  # le bénéficiaire de la décision est inscrit, dans une composante sans circuit de signature
+  inscription_5:
     etudiant: '@utilisateur-beneficiaire-decision'
     formation: '@formation_1'
     debut: <date_create('today')>
     fin: <date_create('next year')>
+    principale: true

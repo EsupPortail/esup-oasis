@@ -8,7 +8,7 @@
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ITag, ITypeAmenagement, PREFETCH_TAGS } from "@api";
+import { IComposante, ITag, ITypeAmenagement, PREFETCH_COMPOSANTES, PREFETCH_TAGS } from "@api";
 import { useMemo, useState } from "react";
 import { useApi } from "@context/api/ApiProvider";
 import { FiltreAmenagement, filtreAmenagementToApi } from "@controls/Table/AmenagementTableLayout";
@@ -22,18 +22,21 @@ import { ModeAffichageAmenagement } from "@routes/gestionnaire/beneficiaires/Ame
 import { useAuth } from "@/auth/AuthProvider";
 import { env } from "@/env";
 import CsvExportButton from "@controls/Table/Export/CsvExportButton";
+import { getInscriptionsHeaders } from "@controls/Table/Export/inscriptionsExportHeaders";
+import { useExportInscriptions } from "@controls/Table/Export/useExportInscriptions";
+import { formaterInscriptionsExport, PorteeExportInscriptions } from "@lib/inscription";
 
 function getHeader(
   typesAmenagementsUtilises: TypesDomainesAmenagements[],
   user: Utilisateur | undefined,
+  portee: PorteeExportInscriptions,
 ) {
   const headers = [
     { label: "Nom", key: "nom" },
     { label: "Prénom", key: "prenom" },
     { label: "Email", key: "email" },
     { label: "Numéro étudiant", key: "numeroEtudiant" },
-    { label: "Composante", key: "composante" },
-    { label: "Formation", key: "formation" },
+    ...getInscriptionsHeaders(portee),
     user?.isGestionnaire ? { label: "Tags", key: "tags" } : null,
     user?.isGestionnaire
       ? { label: `Avis ${env.REACT_APP_ESPACE_SANTE_ABV || "santé"}`, key: "avisESE" }
@@ -68,10 +71,12 @@ function getHeader(
   return headers.filter((h) => h) as { label: string; key: string }[];
 }
 
-function formatAmenagementsBeneficiaireData(
+export function formatAmenagementsBeneficiaireData(
   amenagements: any[],
   typesAmenagementsUtilises: TypesDomainesAmenagements[],
-  tags?: ITag[],
+  tags: ITag[] | undefined,
+  composantes: IComposante[] | undefined,
+  portee: PorteeExportInscriptions,
 ) {
   return amenagements.map((amenagement) => {
     const data: any = {
@@ -81,8 +86,7 @@ function formatAmenagementsBeneficiaireData(
       prenom: amenagement.prenom,
       email: amenagement.email,
       numeroEtudiant: amenagement.numeroEtudiant,
-      composante: amenagement.inscription?.formation?.composante?.libelle?.replaceAll('"', '""'),
-      formation: amenagement.inscription?.formation?.libelle?.replaceAll('"', '""'),
+      ...formaterInscriptionsExport(amenagement.inscriptions, portee, composantes),
       tags:
         (amenagement.tags as string[])
           ?.map((tag) => tags?.find((t) => t["@id"] === tag))
@@ -159,6 +163,11 @@ export default function AmenagementsBeneficiaireTableExport({
     enabled: exportSubmit,
   });
 
+  const { data: composantes } = useApi().useGetFullCollection({
+    ...PREFETCH_COMPOSANTES,
+    enabled: exportSubmit,
+  });
+
   const typesAmenagementsUtilises = useMemo(
     () =>
       getTypesAmenagements(amenagements?.items || [], typesAmenagements).sort((a, b) =>
@@ -172,22 +181,34 @@ export default function AmenagementsBeneficiaireTableExport({
     [amenagements?.items, typesAmenagementsUtilises],
   );
 
-  const refDataReady = !!(amenagements?.items && tags?.items);
+  const refDataReady = !!(amenagements?.items && tags?.items && composantes?.items);
   const globalFetchedCount = amFetchedCount + tagsFetchedCount;
   const globalTotalItems = amIsLoadingPage1 ? 0 : amTotalItems + tagsTotalItems;
 
+  const { portee, demanderPortee, modalPortee } = useExportInscriptions();
+
   return (
-    <CsvExportButton
-      key={exportKey}
-      getData={() =>
-        formatAmenagementsBeneficiaireData(data || [], typesAmenagementsUtilises, tags?.items)
-      }
-      headers={getHeader(typesAmenagementsUtilises, user)}
-      filename="amenagements"
-      ready={refDataReady}
-      fetchedCount={globalFetchedCount}
-      totalItems={globalTotalItems}
-      onStart={() => setExportState((prev) => ({ ...prev, exportSubmit: true }))}
-    />
+    <>
+      <CsvExportButton
+        key={exportKey}
+        getData={() =>
+          formatAmenagementsBeneficiaireData(
+            data || [],
+            typesAmenagementsUtilises,
+            tags?.items,
+            composantes?.items,
+            portee,
+          )
+        }
+        headers={getHeader(typesAmenagementsUtilises, user, portee)}
+        filename="amenagements"
+        ready={refDataReady}
+        fetchedCount={globalFetchedCount}
+        totalItems={globalTotalItems}
+        onBeforeStart={demanderPortee}
+        onStart={() => setExportState((prev) => ({ ...prev, exportSubmit: true }))}
+      />
+      {modalPortee}
+    </>
   );
 }

@@ -40,9 +40,9 @@ class ApogeeProvider extends AbstractSiScolDataProvider
      */
     public function getProviderId(): string
     {
-        return "apogee";
+        return 'apogee';
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -89,6 +89,7 @@ class ApogeeProvider extends AbstractSiScolDataProvider
                 'niveau' => $row->NIVEAU,
                 'discipline' => $row->LIB_DSI,
                 'diplome' => $row->LIB_DIP,
+                'principale' => ($row->TEM_IAE_PRM ?? 'O') == 'O',
             ];
         }
 

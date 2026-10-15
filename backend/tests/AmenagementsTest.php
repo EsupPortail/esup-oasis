@@ -99,12 +99,20 @@ class AmenagementsTest extends ApiTestCaseCustom
         ]);
 
         $client = $this->createClientWithCredentials('beneficiaire');
-        $client->request('GET', '/utilisateurs/beneficiaire/amenagements');
+        $response = $client->request('GET', '/utilisateurs/beneficiaire/amenagements');
 
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
             'hydra:totalItems' => $before + 1,
         ]);
+
+        $data = $response->toArray();
+        $this->assertNotEmpty($data['hydra:member']);
+        $inscriptions = $data['hydra:member'][0]['beneficiaire']['inscriptions'];
+        $this->assertNotEmpty($inscriptions);
+        $this->assertArrayHasKey('debut', $inscriptions[0]);
+        $this->assertArrayHasKey('fin', $inscriptions[0]);
+        $this->assertArrayHasKey('principale', $inscriptions[0]);
     }
 
     public function testBeneficiaireCannotSeeOtherAmenagements(): void

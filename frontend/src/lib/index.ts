@@ -7,3 +7,4 @@ export * from "./service";
 export * from "./etablissement";
 export * from "./decisionEtab";
 export * from "./parapheur";
+export * from "./inscription";

@@ -8,10 +8,10 @@
  */
 
 import React from "react";
-import { Col, Descriptions, Flex, Skeleton, Typography } from "antd";
+import { Col, Descriptions, Skeleton, Typography } from "antd";
 import { MinusOutlined } from "@ant-design/icons";
 import { IUtilisateur } from "@api";
-import { ScolariteListItem } from "@controls/TabsContent/TabScolarite";
+import { InscriptionsDetail } from "@controls/Items/InscriptionsDetail";
 
 interface ScolariteSectionProps {
   utilisateur: IUtilisateur;
@@ -36,13 +36,7 @@ export const ScolariteSection: React.FC<ScolariteSectionProps> = ({ utilisateur,
           </Descriptions.Item>
           <Descriptions.Item label="Inscriptions" styles={{ label: { width: 200 } }}>
             <h3 className="sr-only">Inscriptions</h3>
-            <Flex vertical style={{ width: "100%", overflowY: "auto" }} wrap="wrap">
-              {[...(utilisateur.inscriptions || [])]
-                .sort((i1, i2) => (i2.debut || "").localeCompare(i1.debut || ""))
-                .map((i) => (
-                  <ScolariteListItem key={i["@id"]} inscription={i} titleClassName="" />
-                ))}
-            </Flex>
+            <InscriptionsDetail inscriptions={utilisateur.inscriptions} />
           </Descriptions.Item>
         </Descriptions>
       )}

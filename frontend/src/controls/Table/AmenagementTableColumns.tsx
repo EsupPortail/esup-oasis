@@ -15,7 +15,6 @@ import { Badge, Button, Flex, Space, Tag, Tooltip } from "antd";
 import { getLibellePeriode } from "@utils/dates";
 import { ChargesAccompagnementsItem } from "@controls/Items/ChargesAccompagnementsItem";
 import { EtudiantItem } from "@controls/Items/EtudiantItem";
-import { InscriptionItem } from "@controls/Items/InscriptionItem";
 import { SuiviAmenagementItem } from "@controls/Items/SuiviAmenagementItem";
 import { NavigateFunction } from "react-router";
 import Icon, { EditOutlined, EyeOutlined } from "@ant-design/icons";
@@ -27,6 +26,7 @@ import { FilterProps } from "@utils/table";
 import { FiltreAmenagement } from "@controls/Table/AmenagementTableLayout";
 import { ColumnsType } from "antd/lib/table";
 import { ColumnType } from "antd/es/table";
+import { InscriptionsGroupeesItem } from "@controls/Items/InscriptionsGroupeesItem";
 
 export function amenagementTableColumns(props: {
   filtre: FiltreAmenagement;
@@ -85,9 +85,10 @@ export function amenagementTableColumns(props: {
     {
       title: "Inscription",
       dataIndex: "inscription",
-      render: (_value: string, record: IAmenagement) => {
-        return <InscriptionItem utilisateurId={record.beneficiaire?.["@id"]} />;
-      },
+      width: 450,
+      render: (_value: string, record: IAmenagement) => (
+        <InscriptionsGroupeesItem inscriptions={record.beneficiaire?.inscriptions} />
+      ),
     },
     {
       title: "Domaine",
