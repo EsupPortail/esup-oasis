@@ -10,6 +10,7 @@
 namespace App\Tests;
 
 use App\Entity\Amenagement;
+use App\Entity\AvisEse;
 use App\Entity\DecisionAmenagementExamens;
 use App\Entity\Formation;
 use App\Entity\Inscription;
@@ -29,6 +30,7 @@ class SignatureDecisionTest extends ApiTestCaseCustom
 
     private ?int $inscription = null;
     private ?int $amenagement = null;
+    private ?int $avisEse = null;
     private ?int $decisionEnCours = null;
     /** @var array{int, bool}|null type d'aménagement inclus dans la décision par le test, et sa valeur d'origine */
     private ?array $typeDecision = null;
@@ -55,6 +57,11 @@ class SignatureDecisionTest extends ApiTestCaseCustom
         }
         if (null !== $this->amenagement) {
             $manager->remove($manager->find(Amenagement::class, $this->amenagement));
+        }
+        // supprimé par le test s'il n'a pas été refusé
+        $avis = null === $this->avisEse ? null : $manager->find(AvisEse::class, $this->avisEse);
+        if (null !== $avis) {
+            $manager->remove($avis);
         }
         if (null !== $this->typeDecision) {
             [$id, $decisionAvant] = $this->typeDecision;
@@ -213,6 +220,45 @@ class SignatureDecisionTest extends ApiTestCaseCustom
         $this->decisionEnCours(DecisionAmenagementExamens::ETAT_EN_SIGNATURE);
 
         $client->request('DELETE', '/utilisateurs/beneficiaire-decision/amenagements/' . $this->amenagementDecision());
+
+        $this->assertResponseStatusCodeSame(422);
+    }
+
+    public function testAvisEseCannotBeDeletedWhileDecisionEnSignature(): void
+    {
+        $client = $this->createClientWithCredentials('gestionnaire');
+        $this->decisionEnCours(DecisionAmenagementExamens::ETAT_EN_SIGNATURE);
+
+        $client->request('DELETE', '/utilisateurs/beneficiaire-decision/avis_ese/' . $this->avisEse());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertStringContainsString('en cours de signature électronique', $client->getResponse()->getContent(false));
+    }
+
+    public function testAmenagementOutsideDecisionStaysEditableWhileEnSignature(): void
+    {
+        $client = $this->createClientWithCredentials('gestionnaire');
+        $this->decisionEnCours(DecisionAmenagementExamens::ETAT_EN_SIGNATURE);
+        $id = $this->amenagementDecision();
+        // le type n'est plus repris dans la décision : le document signé ne le cite pas
+        $this->typeHorsDecision();
+
+        $client->request('PATCH', '/utilisateurs/beneficiaire-decision/amenagements/' . $id, [
+            'headers' => ['Content-Type' => 'application/merge-patch+json'],
+            'json' => ['commentaire' => 'hors décision'],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+    }
+
+    public function testAmenagementWithoutTypeIsRefusedByValidation(): void
+    {
+        $client = $this->createClientWithCredentials('gestionnaire');
+
+        // la contrainte du verrou ne doit pas masquer le NotNull du type
+        $client->request('POST', '/utilisateurs/beneficiaire-decision/amenagements', [
+            'json' => ['commentaire' => 'sans type', 'semestre1' => true],
+        ]);
 
         $this->assertResponseStatusCodeSame(422);
     }
@@ -400,5 +446,28 @@ class SignatureDecisionTest extends ApiTestCaseCustom
         $this->amenagement = $amenagement->getId();
 
         return $this->amenagement;
+    }
+
+    /** Retire de la décision le type de l'aménagement créé par amenagementDecision(). */
+    private function typeHorsDecision(): void
+    {
+        $manager = static::getContainer()->get('doctrine')->getManager();
+        $manager->find(TypeAmenagement::class, $this->typeDecision[0])->setDecision(false);
+        $manager->flush();
+    }
+
+    /** Un avis de santé du bénéficiaire, en cours. */
+    private function avisEse(): int
+    {
+        $manager = static::getContainer()->get('doctrine')->getManager();
+        $avis = new AvisEse();
+        $avis->setUtilisateur($manager->getRepository(Utilisateur::class)->findOneBy(['uid' => 'beneficiaire-decision']));
+        $avis->setLibelle('Avis de test');
+        $avis->setDebut(new DateTime('-1 month'));
+        $manager->persist($avis);
+        $manager->flush();
+        $this->avisEse = $avis->getId();
+
+        return $this->avisEse;
     }
 }

@@ -27,7 +27,6 @@ use ReflectionClass;
 use ReflectionProperty;
 use stdClass;
 use Symfony\Component\Clock\MockClock;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -189,41 +188,38 @@ final class DecisionAmenagementManagerTest extends TestCase
 
     public function testChangesAreRefusedWhileDecisionIsEnSignature(): void
     {
-        $this->expectException(UnprocessableEntityHttpException::class);
-        $this->expectExceptionMessage('en cours de signature');
-        $this->verrou()->interdireSiVerrouillee($this->beneficiaireAvecDecision(DecisionAmenagementExamens::ETAT_EN_SIGNATURE));
+        $motif = $this->verrou()->motifVerrou($this->beneficiaireAvecDecision(DecisionAmenagementExamens::ETAT_EN_SIGNATURE));
+
+        self::assertStringContainsString('en cours de signature', (string) $motif);
     }
 
     public function testChangesAreRefusedUntilRefusedDecisionIsResumed(): void
     {
-        $this->expectException(UnprocessableEntityHttpException::class);
-        $this->expectExceptionMessage('reprenez-la');
-        $this->verrou()->interdireSiVerrouillee($this->beneficiaireAvecDecision(DecisionAmenagementExamens::ETAT_REFUSEE));
+        $motif = $this->verrou()->motifVerrou($this->beneficiaireAvecDecision(DecisionAmenagementExamens::ETAT_REFUSEE));
+
+        self::assertStringContainsString('reprenez-la', (string) $motif);
     }
 
     public function testChangesAreAllowedOnceDecisionIsResumed(): void
     {
-        $this->expectNotToPerformAssertions();
-        $this->verrou()->interdireSiVerrouillee(
+        self::assertNull($this->verrou()->motifVerrou(
             $this->beneficiaireAvecDecision(DecisionAmenagementExamens::ETAT_ATTENTE_VALIDATION_CAS),
-        );
+        ));
     }
 
     public function testRefusedDecisionOfEndedYearDoesNotLockChanges(): void
     {
-        $this->expectNotToPerformAssertions();
         // refusée l'an dernier et jamais reprise : elle ne bloque pas l'année en cours
-        $this->verrou()->interdireSiVerrouillee(
+        self::assertNull($this->verrou()->motifVerrou(
             $this->beneficiaireAvecDecision(DecisionAmenagementExamens::ETAT_REFUSEE, '2024-09-01', '2025-08-31'),
-        );
+        ));
     }
 
     public function testDecisionOfComingYearStillLocksChanges(): void
     {
-        $this->expectException(UnprocessableEntityHttpException::class);
-        $this->verrou()->interdireSiVerrouillee(
+        self::assertNotNull($this->verrou()->motifVerrou(
             $this->beneficiaireAvecDecision(DecisionAmenagementExamens::ETAT_EN_SIGNATURE, '2026-09-01', '2027-08-31'),
-        );
+        ));
     }
 
     // le verrou ne lit que les décisions du bénéficiaire et la date du jour, ici au cours de l'année 2025-2026

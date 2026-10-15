@@ -164,8 +164,9 @@ injoignable ; les décisions concernées sont reprises au passage suivant. Un do
 plus passe la décision à l'état `REFUSEE`, avec l'état de signature `ERREUR`, et n'est plus interrogé.
 
 Tant que la décision est en signature, rien de ce qu'elle reprend ne se modifie : les aménagements des types
-inclus dans la décision et les avis de santé du bénéficiaire sont refusés en écriture (erreur 422), et la
-décision elle-même ne change plus d'état avant le retour du parapheur. Une décision refusée reste verrouillée de
+inclus dans la décision et les avis de santé du bénéficiaire sont refusés en écriture (erreur 422, contrainte
+`DecisionNonVerrouilleeConstraint`, suppression comprise), et la décision elle-même ne change plus d'état avant
+le retour du parapheur. Une décision refusée reste verrouillée de
 la même façon, jusqu'à sa reprise par un gestionnaire (bouton « Reprendre » sur la fiche du bénéficiaire, qui la
 repasse à l'état `ATTENTE_VALIDATION_CAS` par le Patch de la décision) : elle redevient alors modifiable, on
 corrige, puis on redemande l'édition, ce qui dépose un nouveau document. Une décision dont la période est terminée ne verrouille

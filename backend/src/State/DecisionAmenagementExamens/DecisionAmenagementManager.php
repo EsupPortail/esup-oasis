@@ -24,7 +24,6 @@ use App\Util\AnneeUniversitaireAwareTrait;
 use DateTime;
 use DateTimeInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class DecisionAmenagementManager
@@ -160,13 +159,11 @@ class DecisionAmenagementManager
     }
 
     /**
-     * Refuse une modification qui changerait une décision en signature ou refusée : aménagements repris
-     * dans la décision, avis de santé. En signature, le document signé ne dirait plus ce qu'affiche OASIS ;
-     * refusée, la décision attend d'être reprise par un gestionnaire.
-     *
-     * @throws UnprocessableEntityHttpException
+     * Pourquoi les aménagements repris dans la décision et les avis de santé du bénéficiaire ne peuvent pas
+     * être modifiés, null s'ils le peuvent. En signature, le document signé ne dirait plus ce qu'affiche
+     * OASIS ; refusée, la décision attend d'être reprise par un gestionnaire.
      */
-    public function interdireSiVerrouillee(Utilisateur $beneficiaire): void
+    public function motifVerrou(Utilisateur $beneficiaire): ?string
     {
         foreach ($beneficiaire->getDecisionsAmenagementExamens() as $decision) {
             // une décision d'une année terminée ne reprend plus rien de modifiable
@@ -174,17 +171,18 @@ class DecisionAmenagementManager
                 continue;
             }
 
-            match ($decision->getEtat()) {
-                DecisionAmenagementExamens::ETAT_EN_SIGNATURE => throw new UnprocessableEntityHttpException(
-                    'La décision d\'aménagements de ce bénéficiaire est en cours de signature électronique : '
+            $motif = match ($decision->getEtat()) {
+                DecisionAmenagementExamens::ETAT_EN_SIGNATURE => 'La décision d\'aménagements de ce bénéficiaire est en cours de signature électronique : '
                     . 'ses aménagements et ses avis de santé ne peuvent pas être modifiés avant la fin du circuit.',
-                ),
-                DecisionAmenagementExamens::ETAT_REFUSEE => throw new UnprocessableEntityHttpException(
-                    'La décision d\'aménagements de ce bénéficiaire a été refusée dans le circuit de signature : '
+                DecisionAmenagementExamens::ETAT_REFUSEE => 'La décision d\'aménagements de ce bénéficiaire a été refusée dans le circuit de signature : '
                     . 'reprenez-la avant de modifier ses aménagements et ses avis de santé.',
-                ),
                 default => null,
             };
+            if (null !== $motif) {
+                return $motif;
+            }
         }
+
+        return null;
     }
 }
