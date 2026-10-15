@@ -8,7 +8,7 @@
  */
 
 import React from "react";
-import { Col, Descriptions, Skeleton, Typography } from "antd";
+import { Descriptions, Skeleton, Typography } from "antd";
 import { MinusOutlined } from "@ant-design/icons";
 import { IUtilisateur } from "@api";
 import { InscriptionsDetail } from "@controls/Items/InscriptionsDetail";
@@ -20,14 +20,14 @@ interface ScolariteSectionProps {
 
 export const ScolariteSection: React.FC<ScolariteSectionProps> = ({ utilisateur, isFetching }) => {
   return (
-    <Col xs={24} xl={12}>
+    <>
       <h2>Scolarité</h2>
       {isFetching ? (
         <Skeleton active paragraph />
       ) : (
         <Descriptions bordered column={1} style={{ overflowX: "auto" }}>
           <Descriptions.Item label="Numéro étudiant">
-            <Typography.Text copyable={utilisateur.numeroEtudiant !== undefined}>
+            <Typography.Text copyable={!!utilisateur.numeroEtudiant}>
               {utilisateur.numeroEtudiant || <MinusOutlined />}
             </Typography.Text>
           </Descriptions.Item>
@@ -40,6 +40,6 @@ export const ScolariteSection: React.FC<ScolariteSectionProps> = ({ utilisateur,
           </Descriptions.Item>
         </Descriptions>
       )}
-    </Col>
+    </>
   );
 };

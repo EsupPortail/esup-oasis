@@ -8,17 +8,7 @@
  */
 
 import React from "react";
-import {
-  App,
-  Col,
-  Descriptions,
-  Flex,
-  Form,
-  FormInstance,
-  Skeleton,
-  Tooltip,
-  Typography,
-} from "antd";
+import { App, Descriptions, Flex, Form, FormInstance, Skeleton, Tooltip, Typography } from "antd";
 import { InfoCircleOutlined, LockOutlined, MinusOutlined } from "@ant-design/icons";
 import { IUtilisateur } from "@api";
 import { RoleValues, service } from "@lib";
@@ -40,7 +30,7 @@ export const SuiviSection: React.FC<SuiviSectionProps> = ({
   const { message } = App.useApp();
 
   return (
-    <Col xs={24} xl={12}>
+    <>
       <h2>Suivi {service.sigle}</h2>
       {isFetching ? (
         <Skeleton active paragraph />
@@ -66,8 +56,10 @@ export const SuiviSection: React.FC<SuiviSectionProps> = ({
                     ? false
                     : {
                         onChange: (value) => {
+                          if (!value) return;
+
                           // value doit être un nombre de 8 chiffres
-                          if (value && !/^\d{8}$/.test(value)) {
+                          if (!/^\d{8}$/.test(value)) {
                             message
                               .error("Le numéro d'anonymat doit être composé de 8 chiffres")
                               .then();
@@ -105,6 +97,6 @@ export const SuiviSection: React.FC<SuiviSectionProps> = ({
           </Descriptions.Item>
         </Descriptions>
       )}
-    </Col>
+    </>
   );
 };

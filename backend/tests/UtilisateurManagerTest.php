@@ -172,4 +172,38 @@ class UtilisateurManagerTest extends ApiTestCaseCustom
         $this->assertFalse($principaleByFormation['CODE_F_2']);
         $this->assertTrue($principaleByFormation['CODE_F_3']);
     }
+
+    public function testInfosComplementaires(): void
+    {
+        $container = static::getContainer();
+        $em = $container->get('doctrine')->getManager();
+        $user = $em->getRepository(Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
+
+        /** @var UtilisateurManager $manager */
+        $manager = $container->get(UtilisateurManager::class);
+
+        $infos = $manager->infosComplementaires($user);
+        $this->assertIsArray($infos);
+        $this->assertArrayHasKey('someKey', $infos);
+        $this->assertSame('someValue', $infos['someKey']);
+    }
+
+    public function testPrechargerInfosComplementaires(): void
+    {
+        $container = static::getContainer();
+        $em = $container->get('doctrine')->getManager();
+        $demandeur = $em->getRepository(Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
+        $demandeur2 = $em->getRepository(Utilisateur::class)->findOneBy(['uid' => 'demandeur2']);
+
+        /** @var UtilisateurManager $manager */
+        $manager = $container->get(UtilisateurManager::class);
+
+        $manager->prechargerInfosComplementaires([$demandeur, $demandeur2]);
+
+        $infos1 = $manager->infosComplementaires($demandeur);
+        $infos2 = $manager->infosComplementaires($demandeur2);
+
+        $this->assertSame(['someKey' => 'someValue'], $infos1);
+        $this->assertSame(['someKey' => 'someValue'], $infos2);
+    }
 }

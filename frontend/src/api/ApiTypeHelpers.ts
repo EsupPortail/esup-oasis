@@ -45,6 +45,8 @@ export type APIPathsReferentiel =
  * Types/interfaces des réponses des endpoints de l'API
  */
 export type IUtilisateur = ApiPathMethodResponse<"/utilisateurs/{uid}", "get">;
+export type IInfoComplementaire =
+  components["schemas"]["InfoComplementaire.jsonld-utilisateur.out"];
 export type IIntervenant = IUtilisateur;
 export type IBeneficiaire = IUtilisateur;
 export type IBeneficiaireProfil = ApiPathMethodResponse<"/utilisateurs/{uid}/profils/{id}", "get">;

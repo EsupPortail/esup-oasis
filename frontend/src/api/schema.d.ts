@@ -4212,6 +4212,14 @@ export interface components {
             "@id": string;
             "@type": string;
         };
+        "InfoComplementaire.html-utilisateur.out": {
+            libelle?: string;
+            valeur?: string;
+        };
+        "InfoComplementaire.jsonld-utilisateur.out": {
+            libelle?: string;
+            valeur?: string;
+        };
         "Inscription.html-amenagement.out": {
             formation?: components["schemas"]["Formation.html-amenagement.out"];
             /** Format: date-time */
@@ -5536,6 +5544,7 @@ export interface components {
             abonneRecapHebdo?: boolean;
             decisionAmenagementAnneeEnCours?: components["schemas"]["DecisionAmenagementExamens.html-utilisateur.out"] | null;
             numeroAnonyme?: number | null;
+            infosComplementaires?: components["schemas"]["InfoComplementaire.html-utilisateur.out"][];
         };
         "Utilisateur.jsonld-ActiviteBeneficiaire.out": components["schemas"]["HydraItemBaseSchema"] & {
             email?: string;
@@ -5610,6 +5619,7 @@ export interface components {
             abonneRecapHebdo?: boolean;
             decisionAmenagementAnneeEnCours?: components["schemas"]["DecisionAmenagementExamens.jsonld-utilisateur.out"] | null;
             numeroAnonyme?: number | null;
+            infosComplementaires?: components["schemas"]["InfoComplementaire.jsonld-utilisateur.out"][];
         };
         "ValeurParametre-valeur_param.in": {
             valeur?: string | null;
