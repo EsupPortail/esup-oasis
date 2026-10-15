@@ -60,15 +60,22 @@ readonly class DecisionAmenagementExamensProcessor implements ProcessorInterface
             return $this->decisionAmenagementManager->versRessource($entity);
         }
 
-        // composante reliée à un circuit : le circuit de signature remplace la validation par l'administrateur
-        if (\App\Entity\DecisionAmenagementExamens::ETAT_VALIDE === $data->etat
-            && null !== $this->signatureElectronique->circuitPour($entity)) {
-            $data->etat = \App\Entity\DecisionAmenagementExamens::ETAT_EDITION_DEMANDEE;
-        }
-
         $entity->setEtat($data->etat);
         $entity->setObservations($data->observations)->setDateAvisMedecin($data->dateAvisMedecin);
         $this->decisionAmenagementExamensRepository->save($entity, true);
+
+        // validée ou envoyée : SignatureElectronique la fait signer si sa composante a un circuit
+        if (in_array($data->etat, [
+            \App\Entity\DecisionAmenagementExamens::ETAT_VALIDE,
+            \App\Entity\DecisionAmenagementExamens::ETAT_EDITION_DEMANDEE,
+        ], true)) {
+            $user = $this->security->getUser();
+            assert($user instanceof Utilisateur);
+
+            if ($this->signatureElectronique->demanderSignature($entity, $user->getUid())) {
+                return $this->decisionAmenagementManager->versRessource($entity);
+            }
+        }
 
         //on envoie un message de MAJ pour traitement async
         if ($data->etat === \App\Entity\DecisionAmenagementExamens::ETAT_EDITION_DEMANDEE) {

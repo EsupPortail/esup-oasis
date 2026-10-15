@@ -130,6 +130,22 @@ describe("BoutonDecisionEtab", () => {
     await screen.findByRole("button", { name: /en cours d'envoi/ });
     expect(screen.queryByText("Date manquante")).not.toBeInTheDocument();
   });
+
+  it("annonce l'envoi tant que le document n'est pas déposé dans le parapheur", async () => {
+    rendreAvecDecision({ etat: "EN_SIGNATURE", etatSignature: null });
+
+    expect(
+      await screen.findByRole("button", { name: /Décision d'établissement en cours d'envoi/ }),
+    ).toBeInTheDocument();
+  });
+
+  it("annonce la signature une fois le document déposé", async () => {
+    rendreAvecDecision({ etat: "EN_SIGNATURE", etatSignature: "EN_SIGNATURE" });
+
+    expect(
+      await screen.findByRole("button", { name: /Décision d'établissement en signature/ }),
+    ).toBeInTheDocument();
+  });
 });
 
 describe("libellesSignature", () => {

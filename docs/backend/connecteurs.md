@@ -129,8 +129,12 @@ le connaît, se renseigne dans l'administration, sur l'écran des référents de
 décisions des bénéficiaires de la composante suivent le comportement historique, ce qui permet une activation
 progressive, composante par composante.
 
-Pour une composante reliée à un circuit, la demande d'édition du gestionnaire dépose la décision dans le
-parapheur : le circuit de signature remplace l'envoi par l'administrateur fonctionnel.
+Pour une composante reliée à un circuit, la décision validée par le gestionnaire, ou envoyée par
+l'administrateur, part en signature : le circuit remplace l'envoi par e-mail de l'administrateur fonctionnel.
+`SignatureElectronique` la passe aussitôt à l'état `EN_SIGNATURE`, ce qui la verrouille, puis le worker génère le
+PDF et le dépose (message `SignatureDecisionDemandeeMessage`). Tant que le parapheur n'a pas le document, elle est
+en cours de dépôt. Un dépôt en échec est rejoué une heure plus tard ; si la composante n'a plus de circuit au
+moment du dépôt, la décision repasse à l'état `VALIDE` et l'administrateur l'envoie par e-mail.
 
 * `PARAPHEUR` vide : aucune décision ne part en signature, même si des circuits sont renseignés (un avertissement
   est alors journalisé) ;
@@ -142,8 +146,8 @@ parapheur : le circuit de signature remplace l'envoi par l'administrateur foncti
 
 ### Suivi des signatures
 
-Une fois déposée, la décision passe à l'état `EN_SIGNATURE`. Le worker interroge ensuite le parapheur à
-intervalle régulier sur les décisions en signature, récupère les documents signés, les dépose au dossier du
+Une fois la décision déposée, le worker interroge le parapheur à intervalle régulier sur les décisions en
+signature, récupère les documents signés, les dépose au dossier du
 bénéficiaire et passe la décision à l'état `EDITE`. Un circuit terminé sans signature (refus d'un signataire,
 circuit interrompu, document inconnu du parapheur) passe la décision à l'état `REFUSEE`, et le document rendu
 par le parapheur est lui aussi déposé au dossier du bénéficiaire (« Décision d'aménagements refusée au … »),
@@ -171,7 +175,7 @@ le retour du parapheur. Une décision refusée reste verrouillée de
 la même façon, jusqu'à sa reprise par un gestionnaire (bouton « Reprendre » sur la fiche du bénéficiaire, qui la
 repasse à l'état `ATTENTE_VALIDATION_CAS` par le Patch de la décision) : elle redevient alors modifiable, on
 corrige, puis on redemande l'édition, ce qui dépose un nouveau document. Une décision dont la période est terminée ne verrouille
-plus rien, même restée refusée. L'interface désactive les actions verrouillées et en donne le motif, dès l'envoi
+plus rien, même restée refusée. L'interface désactive les actions verrouillées et en donne le motif, dès la demande
 et le temps du dépôt, dont elle affiche la fin sans recharger la page ; elle ne connaît que la décision de
 l'année en cours, le serveur refusant dans tous les cas.
 

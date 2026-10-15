@@ -26,7 +26,7 @@ import { EtatDecisionEtablissement } from "@controls/Avatars/DecisionEtablisseme
 import { ModalDecisionObservations } from "@controls/Modals/ModalDecisionObservations";
 import { queryClient } from "@/queryClient";
 import { env } from "@/env";
-import { decisionEtab, intervalleSuiviEnvoi } from "@lib";
+import { decisionEtab, depotEnCours, intervalleSuiviEnvoi } from "@lib";
 import dayjs from "dayjs";
 
 /** États de signature électronique, absents si la décision n'est pas passée par la signature. */
@@ -409,7 +409,7 @@ export function BoutonDecisionEtab(props: { utilisateurId: string }) {
             <Tooltip
               title={
                 utilisateur.decisionAmenagementAnneeEnCours.etat ===
-                EtatDecisionEtablissement.EN_SIGNATURE
+                  EtatDecisionEtablissement.EN_SIGNATURE && !depotEnCours(utilisateur)
                   ? "Vérifier auprès du parapheur"
                   : "Rafraîchir"
               }
@@ -422,9 +422,11 @@ export function BoutonDecisionEtab(props: { utilisateurId: string }) {
                 className="m-0"
                 loading={verification}
                 onClick={() => {
+                  // en cours de dépôt, le parapheur n'a pas encore le document : on relit la fiche
                   if (
                     utilisateur.decisionAmenagementAnneeEnCours?.etat ===
-                    EtatDecisionEtablissement.EN_SIGNATURE
+                      EtatDecisionEtablissement.EN_SIGNATURE &&
+                    !depotEnCours(utilisateur)
                   ) {
                     setVerification(true);
                     mutateVerification.mutate({

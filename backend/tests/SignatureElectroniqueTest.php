@@ -14,6 +14,7 @@ use App\Entity\DecisionAmenagementExamens;
 use App\Entity\Formation;
 use App\Entity\Inscription;
 use App\Entity\Utilisateur;
+use App\Message\SignatureDecisionDemandeeMessage;
 use App\Repository\DecisionAmenagementExamensRepository;
 use App\Service\Signature\AbstractParapheur;
 use App\Service\Signature\ParapheurDesactive;
@@ -22,7 +23,10 @@ use App\Service\Signature\SignatureElectronique;
 use DateTime;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
+use ReflectionProperty;
 use RuntimeException;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class SignatureElectroniqueTest extends TestCase
 {
@@ -159,6 +163,37 @@ class SignatureElectroniqueTest extends TestCase
         }
     }
 
+    public function testDecisionOfComposanteWithCircuitGoesToSignature(): void
+    {
+        $decision = $this->decision();
+        new ReflectionProperty(DecisionAmenagementExamens::class, 'id')->setValue($decision, 42);
+        $decision->setEtat(DecisionAmenagementExamens::ETAT_VALIDE)
+            ->setEtatSignature(DecisionAmenagementExamens::ETAT_SIGNATURE_REFUSEE);
+        $bus = $this->createMock(MessageBusInterface::class);
+        $bus->expects(self::once())->method('dispatch')
+            ->with(self::callback(fn(SignatureDecisionDemandeeMessage $message) => 42 === $message->getIdDecision()
+                && 'gestionnaire' === $message->getUidDemandeur()))
+            ->willReturnCallback(fn(object $message) => new Envelope($message));
+
+        $this->assertTrue($this->signature(new ParapheurFactice(), bus: $bus)->demanderSignature($decision, 'gestionnaire'));
+
+        // verrouillée dès la demande ; sans document ni état du parapheur, elle est en cours de dépôt
+        $this->assertSame(DecisionAmenagementExamens::ETAT_EN_SIGNATURE, $decision->getEtat());
+        $this->assertNull($decision->getEtatSignature());
+        $this->assertNull($decision->getIdDocumentParapheur());
+    }
+
+    public function testDecisionOfComposanteWithoutCircuitKeepsCurrentWorkflow(): void
+    {
+        $decision = $this->decision(['UFR2' => null])->setEtat(DecisionAmenagementExamens::ETAT_VALIDE);
+        $bus = $this->createMock(MessageBusInterface::class);
+        $bus->expects(self::never())->method('dispatch');
+
+        $this->assertFalse($this->signature(new ParapheurFactice(), bus: $bus)->demanderSignature($decision, 'gestionnaire'));
+
+        $this->assertSame(DecisionAmenagementExamens::ETAT_VALIDE, $decision->getEtat());
+    }
+
     public function testDepositedDecisionIsEnCours(): void
     {
         $signature = $this->signature(new ParapheurFactice());
@@ -173,11 +208,13 @@ class SignatureElectroniqueTest extends TestCase
         AbstractParapheur $parapheur,
         bool $parapheurEnvoieDocument = false,
         ?string $libelleDecision = null,
+        ?MessageBusInterface $bus = null,
     ): SignatureElectronique {
         return new SignatureElectronique(
             $parapheur,
             $this->createMock(DecisionAmenagementExamensRepository::class),
             new NullLogger(),
+            $bus ?? $this->createMock(MessageBusInterface::class),
             $parapheurEnvoieDocument,
             $libelleDecision,
         );

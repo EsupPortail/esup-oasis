@@ -16,8 +16,11 @@ use App\Entity\Formation;
 use App\Entity\Inscription;
 use App\Entity\TypeAmenagement;
 use App\Entity\Utilisateur;
+use App\Message\SignatureDecisionDemandeeMessage;
 use App\Service\Signature\ParapheurFactice;
 use DateTime;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 
 /**
  * Parcours de la décision avec un parapheur : la demande du gestionnaire part au parapheur, puis la
@@ -86,8 +89,28 @@ class SignatureDecisionTest extends ApiTestCaseCustom
         ]);
 
         $this->assertResponseIsSuccessful();
-        // le circuit remplace l'envoi par l'administrateur : le dépôt est demandé tout de suite
-        $this->assertSame(DecisionAmenagementExamens::ETAT_EDITION_DEMANDEE, $this->decision()->getEtat());
+        // le circuit remplace l'envoi par l'administrateur : verrouillée dès la demande, le dépôt suit en asynchrone
+        $this->assertJsonContains(['etat' => DecisionAmenagementExamens::ETAT_EN_SIGNATURE]);
+        $this->assertSame(DecisionAmenagementExamens::ETAT_EN_SIGNATURE, $this->decision()->getEtat());
+        $this->assertNull($this->decision()->getIdDocumentParapheur());
+        $this->assertDepotDemande();
+    }
+
+    public function testAdministrateurSendGoesToParapheurWhenComposanteHasCircuit(): void
+    {
+        $client = $this->createClientWithCredentials('admin');
+        $this->inscrireDansUneComposanteAvecCircuit();
+        $this->etatDecision(DecisionAmenagementExamens::ETAT_VALIDE);
+
+        $client->request('PATCH', self::DECISION, [
+            'headers' => ['Content-Type' => 'application/merge-patch+json'],
+            'json' => ['etat' => DecisionAmenagementExamens::ETAT_EDITION_DEMANDEE],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        // pas d'envoi par e-mail sans signature : la décision part au parapheur comme à la demande du gestionnaire
+        $this->assertSame(DecisionAmenagementExamens::ETAT_EN_SIGNATURE, $this->decision()->getEtat());
+        $this->assertDepotDemande();
     }
 
     public function testGestionnaireRequestAwaitsAdministrateurWithoutCircuit(): void
@@ -170,7 +193,7 @@ class SignatureDecisionTest extends ApiTestCaseCustom
         ]);
 
         $this->assertResponseIsSuccessful();
-        $this->assertSame(DecisionAmenagementExamens::ETAT_EDITION_DEMANDEE, $this->decision()->getEtat());
+        $this->assertSame(DecisionAmenagementExamens::ETAT_EN_SIGNATURE, $this->decision()->getEtat());
     }
 
     public function testResumeIsRefusedOutsideRefusal(): void
@@ -338,6 +361,19 @@ class SignatureDecisionTest extends ApiTestCaseCustom
         ]);
 
         $this->assertResponseStatusCodeSame(403);
+    }
+
+    /** Un seul message en file : le dépôt de la décision dans le parapheur, au nom du demandeur. */
+    private function assertDepotDemande(): void
+    {
+        /** @var InMemoryTransport $transport */
+        $transport = static::getContainer()->get('messenger.transport.async');
+        $depots = array_filter(
+            $transport->getSent(),
+            fn(Envelope $envelope) => $envelope->getMessage() instanceof SignatureDecisionDemandeeMessage,
+        );
+        $this->assertCount(1, $depots);
+        $this->assertSame($this->decision()->getId(), current($depots)->getMessage()->getIdDecision());
     }
 
     /** La décision 2025 visée par l'URI : le bénéficiaire en a aussi une pour l'année en cours. */

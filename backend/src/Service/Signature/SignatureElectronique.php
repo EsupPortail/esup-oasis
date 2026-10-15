@@ -10,13 +10,15 @@
 namespace App\Service\Signature;
 
 use App\Entity\DecisionAmenagementExamens;
+use App\Message\SignatureDecisionDemandeeMessage;
 use App\Repository\DecisionAmenagementExamensRepository;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Passage d'une décision d'aménagements par le parapheur : choix du circuit et dépôt à la demande d'édition.
+ * Passage d'une décision d'aménagements par le parapheur : choix du circuit, demande de signature et dépôt.
  */
 readonly class SignatureElectronique
 {
@@ -24,6 +26,7 @@ readonly class SignatureElectronique
         private AbstractParapheur $parapheur,
         private DecisionAmenagementExamensRepository $decisionAmenagementExamensRepository,
         private LoggerInterface $logger,
+        private MessageBusInterface $messageBus,
         // vrai : le parapheur envoie le document signé à l'étudiant ; faux : OASIS l'envoie par e-mail
         #[Autowire('%env(bool:default::PARAPHEUR_ENVOIE_DOCUMENT)%')]
         private bool $parapheurEnvoieDocument = false,
@@ -106,6 +109,29 @@ readonly class SignatureElectronique
         }
 
         return [array_values($composantes), $circuits];
+    }
+
+    /**
+     * Fait signer la décision validée ou envoyée quand la composante du bénéficiaire a un circuit : elle passe en
+     * signature, donc verrouillée dès la demande, et le dépôt se fait en asynchrone. Sans circuit, rien ne change.
+     *
+     * @return bool vrai si la décision part en signature
+     */
+    public function demanderSignature(DecisionAmenagementExamens $decision, string $uidDemandeur): bool
+    {
+        if (null === $this->circuitPour($decision)) {
+            return false;
+        }
+
+        // sans document dans le parapheur, la décision en signature est en cours de dépôt
+        $decision
+            ->setEtat(DecisionAmenagementExamens::ETAT_EN_SIGNATURE)
+            ->setEtatSignature(null)
+            ->setIdDocumentParapheur(null);
+        $this->decisionAmenagementExamensRepository->save($decision, true);
+        $this->messageBus->dispatch(new SignatureDecisionDemandeeMessage($decision->getId(), $uidDemandeur));
+
+        return true;
     }
 
     public function estEnCours(DecisionAmenagementExamens $decision): bool

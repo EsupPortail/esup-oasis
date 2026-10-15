@@ -23,10 +23,17 @@ vi.mock("./decisionEtab", () => ({
   },
 }));
 
-import { INTERVALLE_SUIVI_ENVOI, intervalleSuiviEnvoi, verrouSignature } from "./parapheur";
+import {
+  depotEnCours,
+  INTERVALLE_SUIVI_ENVOI,
+  intervalleSuiviEnvoi,
+  verrouSignature,
+} from "./parapheur";
 
-function beneficiaire(etat?: string): IUtilisateur {
-  return { decisionAmenagementAnneeEnCours: etat ? { etat } : null } as IUtilisateur;
+function beneficiaire(etat?: string, etatSignature: string | null = null): IUtilisateur {
+  return {
+    decisionAmenagementAnneeEnCours: etat ? { etat, etatSignature } : null,
+  } as IUtilisateur;
 }
 
 beforeEach(() => {
@@ -34,20 +41,15 @@ beforeEach(() => {
 });
 
 describe("verrouSignature", () => {
-  it("bloque les modifications le temps de l'envoi au parapheur", () => {
-    expect(verrouSignature(beneficiaire("EDITION_DEMANDEE"))).toBe(
-      "La décision d'établissement est en cours d'envoi : modification possible une fois l'envoi terminé.",
-    );
-  });
-
-  it("ne change rien à l'envoi par e-mail sans parapheur", () => {
-    mockEnv.REACT_APP_PARAPHEUR = "";
-
+  it("ne bloque pas l'envoi par e-mail, comme sans parapheur", () => {
     expect(verrouSignature(beneficiaire("EDITION_DEMANDEE"))).toBeUndefined();
   });
 
-  it("bloque les modifications tant que la décision est dans le circuit de signature", () => {
+  it("bloque les modifications dès la demande, dépôt compris, jusqu'à la fin du circuit", () => {
     expect(verrouSignature(beneficiaire("EN_SIGNATURE"))).toBe(
+      "La décision d'établissement est en cours de signature électronique : modification impossible jusqu'à la fin du circuit.",
+    );
+    expect(verrouSignature(beneficiaire("EN_SIGNATURE", "EN_SIGNATURE"))).toBe(
       "La décision d'établissement est en cours de signature électronique : modification impossible jusqu'à la fin du circuit.",
     );
   });
@@ -66,20 +68,27 @@ describe("verrouSignature", () => {
   });
 });
 
-describe("intervalleSuiviEnvoi", () => {
-  it("relit le bénéficiaire pendant l'envoi pour afficher la fin du dépôt", () => {
-    expect(intervalleSuiviEnvoi(beneficiaire("EDITION_DEMANDEE"))).toBe(INTERVALLE_SUIVI_ENVOI);
+describe("depotEnCours", () => {
+  it("vaut tant que la décision en signature n'a pas d'état rapporté par le parapheur", () => {
+    expect(depotEnCours(beneficiaire("EN_SIGNATURE"))).toBe(true);
   });
 
-  it("ne relit plus une fois la décision déposée ou hors envoi", () => {
-    expect(intervalleSuiviEnvoi(beneficiaire("EN_SIGNATURE"))).toBe(false);
+  it("ne vaut plus une fois le document déposé, ni hors signature", () => {
+    expect(depotEnCours(beneficiaire("EN_SIGNATURE", "EN_SIGNATURE"))).toBe(false);
+    expect(depotEnCours(beneficiaire("EDITION_DEMANDEE"))).toBe(false);
+    expect(depotEnCours(undefined)).toBe(false);
+  });
+});
+
+describe("intervalleSuiviEnvoi", () => {
+  it("relit le bénéficiaire pendant le dépôt pour afficher sa fin", () => {
+    expect(intervalleSuiviEnvoi(beneficiaire("EN_SIGNATURE"))).toBe(INTERVALLE_SUIVI_ENVOI);
+  });
+
+  it("ne relit plus une fois la décision déposée, ni pour l'envoi par e-mail", () => {
+    expect(intervalleSuiviEnvoi(beneficiaire("EN_SIGNATURE", "EN_SIGNATURE"))).toBe(false);
+    expect(intervalleSuiviEnvoi(beneficiaire("EDITION_DEMANDEE"))).toBe(false);
     expect(intervalleSuiviEnvoi(beneficiaire("ATTENTE_VALIDATION_CAS"))).toBe(false);
     expect(intervalleSuiviEnvoi(undefined)).toBe(false);
-  });
-
-  it("ne relit rien sans parapheur", () => {
-    mockEnv.REACT_APP_PARAPHEUR = "";
-
-    expect(intervalleSuiviEnvoi(beneficiaire("EDITION_DEMANDEE"))).toBe(false);
   });
 });

@@ -22,7 +22,6 @@ use App\Serializer\DecisionAmenagementEditionNormalizer;
 use App\Serializer\Encoder\PdfEncoder;
 use App\Service\Decision\ArchivageDecision;
 use App\Service\MailService;
-use App\Service\Signature\SignatureElectronique;
 use App\State\Utilisateur\UtilisateurManager;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -44,7 +43,6 @@ readonly class DecisionEditionDemandeeMessageHandler
         private LoggerInterface $logger,
         private MessageBusInterface $messageBus,
         private ArchivageDecision $archivageDecision,
-        private SignatureElectronique $signatureElectronique,
     ) {}
 
     public function __invoke(DecisionEditionDemandeeMessage $message): void
@@ -54,32 +52,9 @@ readonly class DecisionEditionDemandeeMessageHandler
             return;
         }
 
-        // message rejoué alors que le document est déjà dans le parapheur : ne pas le déposer deux fois
-        if ($this->signatureElectronique->estEnCours($decision)) {
-            return;
-        }
-
         $resource = new DecisionResource($decision);
 
         $normalized = $this->decisionAmenagementEditionNormalizer->normalize($resource);
-
-        // composante reliée à un circuit : la décision part en signature au lieu de l'e-mail,
-        // l'état EDITE et la copie au dossier viendront du suivi de signature
-        $circuit = $this->signatureElectronique->circuitPour($decision);
-        if (null !== $circuit) {
-            $normalized['signature_electronique'] = true;
-            try {
-                $pdf = $this->pdfEncoder->encode($normalized, 'pdf');
-                $this->signatureElectronique->deposer($decision, $pdf, $circuit, $message->getUidDemandeur());
-            } catch (RuntimeException $e) {
-                $this->logger->error($e->getMessage());
-                $this->logger->info($e->getTraceAsString());
-                // renvoyé dans sa file : un RedispatchMessage serait traité aussitôt, sans le délai
-                $this->messageBus->dispatch($message, [new DelayStamp(3600000)]); //on réessaye dans une heure
-            }
-            return;
-        }
-
         try {
             $pdf = $this->pdfEncoder->encode($normalized, 'pdf');
             $this->mailService->envoyerDecision($decision, $pdf);
