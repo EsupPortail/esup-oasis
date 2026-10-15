@@ -12,13 +12,12 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use App\Entity\Parametre;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 final class Version20260928100000 extends AbstractMigration
 {
-    private const string FREQUENCE_SUIVI_SIGNATURES = 'FREQUENCE_SUIVI_SIGNATURES';
-
     public function getDescription(): string
     {
         return "Signature électronique des décisions d'aménagements";
@@ -38,7 +37,7 @@ final class Version20260928100000 extends AbstractMigration
         $this->addSql('ALTER TABLE composante ADD circuit_signature VARCHAR(255) DEFAULT NULL');
 
         // fréquence du suivi des signatures, réglable dans l'administration ; idempotent
-        $cle = self::FREQUENCE_SUIVI_SIGNATURES;
+        $cle = Parametre::FREQUENCE_SUIVI_SIGNATURES;
         $this->addSql("insert into parametre(id, cle, fichier)
                             select nextval('parametre_id_seq'), '$cle', false
                             where not exists (select 1 from parametre where cle = '$cle')");
@@ -53,7 +52,7 @@ final class Version20260928100000 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $cle = self::FREQUENCE_SUIVI_SIGNATURES;
+        $cle = Parametre::FREQUENCE_SUIVI_SIGNATURES;
         $this->addSql("delete from valeur_parametre
                             where parametre_id in (select id from parametre where cle = '$cle')");
         $this->addSql("delete from parametre where cle = '$cle'");
