@@ -21,6 +21,7 @@ framework:
       'App\Message\CreationIntervenantMessage': async
       'App\Message\ErreurTechniqueMessage': async
       'App\Message\DecisionEditionDemandeeMessage': async
+      'App\Message\SignatureDecisionDemandeeMessage': async
       'App\Message\BilanActiviteDemandeMessage': async
       'Symfony\Component\Mailer\Messenger\SendEmailMessage': async
 

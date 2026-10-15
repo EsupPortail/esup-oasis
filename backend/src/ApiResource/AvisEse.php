@@ -27,6 +27,7 @@ use App\State\AvisEse\AvisEseDeleteProcessor;
 use App\State\AvisEse\AvisEsePatchProcessor;
 use App\State\AvisEse\AvisEsePostProcessor;
 use App\State\AvisEse\AvisEseProvider;
+use App\Validator\DecisionNonVerrouilleeConstraint;
 use DateTimeInterface;
 use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -76,6 +77,8 @@ use Symfony\Component\Serializer\Attribute\Groups;
             ],
             security: "is_granted('" . \App\Entity\Utilisateur::ROLE_GESTIONNAIRE . "')",
             read: true,
+            validationContext: ['groups' => [DecisionNonVerrouilleeConstraint::GROUPE_SUPPRESSION]],
+            validate: true,
             processor: AvisEseDeleteProcessor::class,
         ),
     ],
@@ -85,6 +88,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
     stateOptions: new Options(entityClass: \App\Entity\AvisEse::class),
 )]
 #[ApiFilter(OrderFilter::class, properties: ['debut'])]
+#[DecisionNonVerrouilleeConstraint(groups: ['Default', DecisionNonVerrouilleeConstraint::GROUPE_SUPPRESSION])]
 class AvisEse
 {
     public const string COLLECTION_URI = Utilisateur::ITEM_URI . '/avis_ese';

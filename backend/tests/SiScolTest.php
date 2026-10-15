@@ -69,4 +69,60 @@ class SiScolTest extends ApiTestCaseCustom
         $userData = $client->getResponse()->toArray();
         $this->assertNotContains('ROLE_REFERENT_COMPOSANTE', $userData['roles']);
     }
+
+    public function testAdminCanPatchComposanteCircuitSignature(): void
+    {
+        $client = $this->createClientWithCredentials('admin');
+        $client->request('GET', '/composantes/1');
+        $referents = $client->getResponse()->toArray()['referents'];
+
+        $client->request('PATCH', '/composantes/1', [
+            'headers' => ['Content-Type' => 'application/merge-patch+json'],
+            'json' => [
+                'circuitSignature' => 'circuit-composante-1',
+            ],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonContains([
+            '@id' => '/composantes/1',
+            'circuitSignature' => 'circuit-composante-1',
+            'referents' => $referents,
+        ]);
+
+        // les référents se modifient sans toucher au circuit
+        $client->request('PATCH', '/composantes/1', [
+            'headers' => ['Content-Type' => 'application/merge-patch+json'],
+            'json' => [
+                'referents' => ['/utilisateurs/admin'],
+            ],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonContains(['circuitSignature' => 'circuit-composante-1']);
+
+        // un circuit vide rend la composante à l'envoi par e-mail
+        $client->request('PATCH', '/composantes/1', [
+            'headers' => ['Content-Type' => 'application/merge-patch+json'],
+            'json' => [
+                'circuitSignature' => '   ',
+            ],
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertNull($client->getResponse()->toArray()['circuitSignature'] ?? null);
+    }
+
+    public function testCircuitSignatureLengthIsValidated(): void
+    {
+        $client = $this->createClientWithCredentials('admin');
+        $client->request('PATCH', '/composantes/1', [
+            'headers' => ['Content-Type' => 'application/merge-patch+json'],
+            'json' => [
+                'circuitSignature' => str_repeat('c', 256),
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(422);
+    }
 }

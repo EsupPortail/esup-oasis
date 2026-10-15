@@ -12,7 +12,9 @@ import { useApi } from "@context/api/ApiProvider";
 import { Space, Tooltip } from "antd";
 import {
   CheckCircleFilled,
+  CloseCircleFilled,
   FileDoneOutlined,
+  FormOutlined,
   HourglassOutlined,
   SendOutlined,
 } from "@ant-design/icons";
@@ -23,6 +25,8 @@ export enum EtatDecisionEtablissement {
   VALIDE = "VALIDE",
   ATTENTE_VALIDATION_CAS = "ATTENTE_VALIDATION_CAS",
   EDITION_DEMANDEE = "EDITION_DEMANDEE",
+  EN_SIGNATURE = "EN_SIGNATURE",
+  REFUSEE = "REFUSEE",
 }
 
 export function DecisionEtablissementAvatar(props: {
@@ -90,6 +94,34 @@ export function DecisionEtablissementAvatar(props: {
               className={`text-grey fs-09 ${props.className}`}
             />
             {props.showLabel && <span className="legende">En cours d'envoi</span>}
+          </Space>
+        </Tooltip>
+      );
+
+    case EtatDecisionEtablissement.EN_SIGNATURE:
+      return (
+        <Tooltip title="En signature électronique">
+          <Space size={2} orientation={props.direction}>
+            <FormOutlined
+              aria-hidden
+              aria-label="En signature électronique"
+              className={`text-grey fs-09 ${props.className}`}
+            />
+            {props.showLabel && <span className="legende">En signature</span>}
+          </Space>
+        </Tooltip>
+      );
+
+    case EtatDecisionEtablissement.REFUSEE:
+      return (
+        <Tooltip title="Signature refusée, à reprendre">
+          <Space size={2} orientation={props.direction}>
+            <CloseCircleFilled
+              aria-hidden
+              aria-label="Signature refusée, à reprendre"
+              className={`text-danger fs-09 ${props.className}`}
+            />
+            {props.showLabel && <span className="legende">Signature refusée</span>}
           </Space>
         </Tooltip>
       );

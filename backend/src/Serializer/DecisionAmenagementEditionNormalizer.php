@@ -76,6 +76,9 @@ readonly class DecisionAmenagementEditionNormalizer implements NormalizerInterfa
         $data['responsable_phase']['signature']['contents'] = $file ?? null;
         $data['responsable_phase']['signature']['mimeType'] = $fichier?->getTypeMime();
 
+        // mis à vrai par l'expéditeur quand le document part en signature électronique
+        $data['signature_electronique'] = false;
+
         return array_merge($data, $this->parametreService->getAppEnv());
     }
 
