@@ -36,7 +36,7 @@ readonly class SignatureElectronique
     ) {}
 
     /**
-     * Circuit de signature de la décision : celui de la composante des inscriptions en cours du
+     * Circuit de signature de la décision : celui de la composante des inscriptions principales en cours du
      * bénéficiaire. Null : la décision est envoyée par e-mail.
      */
     public function circuitPour(DecisionAmenagementExamens $decision): ?string
@@ -90,14 +90,18 @@ readonly class SignatureElectronique
     }
 
     /**
-     * @return array{0: list<string>, 1: array<string, string>} codes des composantes des inscriptions en cours,
-     *                                                           et circuit de celles qui en ont un
+     * @return array{0: list<string>, 1: array<string, string>} codes des composantes des inscriptions principales
+     *                                                           en cours, et circuit de celles qui en ont un
      */
     private function composantesEtCircuits(DecisionAmenagementExamens $decision): array
     {
         $composantes = [];
         $circuits = [];
         foreach ($decision->getBeneficiaire()->getInscriptionsEnCours() as $inscription) {
+            // une inscription secondaire ne désigne pas les signataires
+            if (false === $inscription->isPrincipale()) {
+                continue;
+            }
             $composante = $inscription->getFormation()?->getComposante();
             if (null === $composante) {
                 continue;

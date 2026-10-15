@@ -150,6 +150,9 @@ le connaît, se renseigne dans l'administration, sur l'écran des référents de
 décisions des bénéficiaires de la composante suivent le comportement historique, ce qui permet une activation
 progressive, composante par composante.
 
+La composante retenue est celle de l'inscription principale en cours du bénéficiaire : une inscription
+secondaire ne désigne pas les signataires (une inscription sans cette information est considérée principale).
+
 Pour une composante reliée à un circuit, la décision validée par le gestionnaire, ou envoyée par
 l'administrateur, part en signature : le circuit remplace l'envoi par e-mail de l'administrateur fonctionnel.
 `SignatureElectronique` la passe aussitôt à l'état `EN_SIGNATURE`, ce qui la verrouille, puis le worker génère le

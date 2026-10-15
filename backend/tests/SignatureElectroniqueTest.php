@@ -69,6 +69,26 @@ class SignatureElectroniqueTest extends TestCase
         $this->assertNull($signature->circuitPour($decision));
     }
 
+    public function testSecondaryInscriptionDoesNotChooseCircuit(): void
+    {
+        $signature = $this->signature(new ParapheurFactice());
+        // principale dans une composante sans circuit, secondaire dans une composante qui en a un
+        $decision = $this->decision(['UFR1' => null, 'UFR2' => 'circuit-ufr2'], secondaires: ['UFR2']);
+
+        $this->assertNull($signature->circuitPour($decision));
+        $this->assertNull($signature->motifSansCircuit($decision));
+    }
+
+    public function testCircuitIsThatOfPrincipalInscription(): void
+    {
+        $signature = $this->signature(new ParapheurFactice());
+        $decision = $this->decision(['UFR1' => 'circuit-ufr1', 'UFR2' => 'circuit-ufr2'], secondaires: ['UFR2']);
+
+        // une inscription secondaire à un autre circuit ne bloque plus l'envoi
+        $this->assertSame('circuit-ufr1', $signature->circuitPour($decision));
+        $this->assertNull($signature->motifSansCircuit($decision));
+    }
+
     public function testEndedInscriptionIsIgnored(): void
     {
         $signature = $this->signature(new ParapheurFactice());
@@ -222,11 +242,13 @@ class SignatureElectroniqueTest extends TestCase
 
     /**
      * @param array<string, ?string> $circuits circuit de signature par code composante
+     * @param list<string> $secondaires codes des composantes inscrites à titre secondaire
      */
     private function decision(
         array $circuits = ['UFR1' => 'circuit-ufr1'],
         bool $enCours = true,
         ?string $email = self::EMAIL,
+        array $secondaires = [],
     ): DecisionAmenagementExamens {
         $beneficiaire = new Utilisateur();
         $beneficiaire->setPrenom('Camille');
@@ -246,6 +268,7 @@ class SignatureElectroniqueTest extends TestCase
             $inscription->setFormation($formation);
             $inscription->setDebut(new DateTime($enCours ? '-1 month' : '-13 months'));
             $inscription->setFin(new DateTime($enCours ? '+1 month' : '-1 month'));
+            $inscription->setPrincipale(!in_array($code, $secondaires, true));
 
             $beneficiaire->addInscription($inscription);
         }
