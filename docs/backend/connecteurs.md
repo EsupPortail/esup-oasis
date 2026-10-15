@@ -157,7 +157,8 @@ paramètres), au format du Scheduler Symfony (`15 minutes`, `2 hours`…), une h
 à son redémarrage. Aucune interrogation n'est planifiée sans parapheur. La commande `app:signature:suivi`
 effectue le même traitement à la demande. Sur la fiche du bénéficiaire, le bouton de rafraîchissement d'une
 décision en signature interroge le parapheur pour cette seule décision, sans attendre le passage suivant
-(`PATCH /utilisateurs/{uid}/decisions/{annee}/verification_signature`, réservé aux gestionnaires).
+(Patch de la décision avec `{"verifierSignature": true}`, réservé aux gestionnaires ; le reste de la requête est
+ignoré).
 
 Si aucune décision du lot n'a pu être vérifiée, un message de niveau `critical` signale que le parapheur semble
 injoignable ; les décisions concernées sont reprises au passage suivant. Un document que le parapheur ne connaît

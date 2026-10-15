@@ -123,7 +123,7 @@ export function BoutonDecisionEtab(props: { utilisateurId: string }) {
 
   // décision en signature : le rafraîchissement interroge le parapheur sans attendre le suivi planifié
   const mutateVerification = useApi().usePatch({
-    path: "/utilisateurs/{uid}/decisions/{annee}/verification_signature",
+    path: "/utilisateurs/{uid}/decisions/{annee}",
     invalidationQueryKeys: [
       QK_BENEFICIAIRES,
       QK_UTILISATEURS_ITEM,
@@ -428,8 +428,8 @@ export function BoutonDecisionEtab(props: { utilisateurId: string }) {
                   ) {
                     setVerification(true);
                     mutateVerification.mutate({
-                      "@id": `${utilisateur.decisionAmenagementAnneeEnCours["@id"]}/verification_signature`,
-                      data: {},
+                      "@id": utilisateur.decisionAmenagementAnneeEnCours["@id"] as string,
+                      data: { verifierSignature: true },
                     });
                     return;
                   }

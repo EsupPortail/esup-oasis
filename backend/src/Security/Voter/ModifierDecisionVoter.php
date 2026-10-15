@@ -39,6 +39,12 @@ class ModifierDecisionVoter extends Voter
     ): bool {
         [$avant, $subject] = $subject;
 
+        // la vérification ne modifie rien : seule la réponse du parapheur peut faire avancer la décision
+        if ($subject->verifierSignature) {
+            return $avant->etat === \App\Entity\DecisionAmenagementExamens::ETAT_EN_SIGNATURE
+                && $subject->etat === $avant->etat;
+        }
+
         // état inchangé : saisie des observations, possible tant que la décision n'est pas envoyée
         if ($avant->etat === $subject->etat) {
             return in_array($avant->etat, [

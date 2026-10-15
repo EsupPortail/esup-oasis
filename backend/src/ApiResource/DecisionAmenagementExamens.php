@@ -18,7 +18,6 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use App\State\DecisionAmenagementExamens\DecisionAmenagementExamensProcessor;
 use App\State\DecisionAmenagementExamens\DecisionAmenagementExamensProvider;
-use App\State\DecisionAmenagementExamens\VerificationSignatureProcessor;
 use App\Validator\CircuitSignatureConstraint;
 use App\Validator\DateAvisMedecinRequiseConstraint;
 use App\Validator\EtatDecisionValideConstraint;
@@ -41,16 +40,6 @@ use Symfony\Component\Validator\Constraints as Assert;
             uriVariables: ['uid', 'annee'],
             securityPostDenormalize: "is_granted('" . self::MODIFIER_DECISION . "', [previous_object, object])",
         ),
-        // interroge le parapheur sans attendre le passage planifié ; le corps de la requête est ignoré
-        new Patch(
-            uriTemplate: self::VERIFICATION_SIGNATURE_URI,
-            uriVariables: ['uid', 'annee'],
-            security: "is_granted('" . \App\Entity\Utilisateur::ROLE_GESTIONNAIRE . "') and object.etat == '"
-                . \App\Entity\DecisionAmenagementExamens::ETAT_EN_SIGNATURE . "'",
-            denormalizationContext: ['groups' => [self::GROUP_VERIFICATION_IN]],
-            validationContext: ['groups' => [self::GROUP_VERIFICATION_IN]],
-            processor: VerificationSignatureProcessor::class,
-        ),
     ],
     normalizationContext: ['groups' => [self::GROUP_OUT]],
     denormalizationContext: ['groups' => [self::GROUP_IN]],
@@ -65,12 +54,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 class DecisionAmenagementExamens
 {
     public const string ITEM_URI = '/utilisateurs/{uid}/decisions/{annee}';
-    public const string VERIFICATION_SIGNATURE_URI = self::ITEM_URI . '/verification_signature';
     public const string MODIFIER_DECISION = 'MODIFIER_DECISION';
 
     public const string GROUP_IN = 'decision:in';
     public const string GROUP_OUT = 'decision:out';
-    public const string GROUP_VERIFICATION_IN = 'decision:verification_signature:in';
 
     #[Ignore]
     public ?int $id {
@@ -193,6 +180,10 @@ class DecisionAmenagementExamens
     // avec un parapheur, pourquoi la décision ne peut pas partir en signature ; renseigné par versRessource
     #[Groups([Utilisateur::GROUP_OUT, self::GROUP_OUT])]
     public ?string $motifSignatureImpossible = null;
+
+    // demande d'interroger le parapheur sur une décision en signature, sans attendre le suivi planifié ; non enregistré
+    #[Groups([self::GROUP_IN])]
+    public bool $verifierSignature = false;
 
     public function __construct(
         private readonly ?\App\Entity\DecisionAmenagementExamens $entity = null,

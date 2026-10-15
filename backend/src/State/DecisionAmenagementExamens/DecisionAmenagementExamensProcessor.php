@@ -20,7 +20,9 @@ use App\Message\DecisionEditionDemandeeMessage;
 use App\Message\RessourceModifieeMessage;
 use App\Repository\DecisionAmenagementExamensRepository;
 use App\Service\Signature\SignatureElectronique;
+use App\Service\Signature\SuiviSignatureService;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 readonly class DecisionAmenagementExamensProcessor implements ProcessorInterface
@@ -30,6 +32,8 @@ readonly class DecisionAmenagementExamensProcessor implements ProcessorInterface
         private Security $security,
         private MessageBusInterface $messageBus,
         private SignatureElectronique $signatureElectronique,
+        private SuiviSignatureService $suiviSignatureService,
+        private DecisionAmenagementManager $decisionAmenagementManager,
     ) {}
 
     /**
@@ -43,6 +47,18 @@ readonly class DecisionAmenagementExamensProcessor implements ProcessorInterface
     {
         //PATCH seulement
         $entity = $this->decisionAmenagementExamensRepository->find($data->id);
+
+        // interroge le parapheur comme le suivi planifié ; le reste de la requête est ignoré
+        if ($data->verifierSignature) {
+            if (!$this->suiviSignatureService->verifier($entity)) {
+                throw new ServiceUnavailableHttpException(
+                    null,
+                    'Le parapheur électronique n\'a pas pu être interrogé : l\'état sera mis à jour au prochain passage du suivi.',
+                );
+            }
+
+            return $this->decisionAmenagementManager->versRessource($entity);
+        }
 
         // composante reliée à un circuit : le circuit de signature remplace la validation par l'administrateur
         if (\App\Entity\DecisionAmenagementExamens::ETAT_VALIDE === $data->etat

@@ -26,7 +26,6 @@ use DateTime;
 class SignatureDecisionTest extends ApiTestCaseCustom
 {
     private const string DECISION = '/utilisateurs/beneficiaire-decision/decisions/2025';
-    private const string VERIFICATION = self::DECISION . '/verification_signature';
 
     private ?int $inscription = null;
     private ?int $amenagement = null;
@@ -284,9 +283,9 @@ class SignatureDecisionTest extends ApiTestCaseCustom
         $documentId = $this->enSignatureDansLeParapheur();
         static::getContainer()->get(ParapheurFactice::class)->marquerSignee($documentId);
 
-        $client->request('PATCH', self::VERIFICATION, [
+        $client->request('PATCH', self::DECISION, [
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
-            'json' => [],
+            'json' => ['verifierSignature' => true],
         ]);
 
         $this->assertResponseIsSuccessful();
@@ -302,9 +301,9 @@ class SignatureDecisionTest extends ApiTestCaseCustom
         $documentId = $this->enSignatureDansLeParapheur();
         static::getContainer()->get(ParapheurFactice::class)->marquerRefusee($documentId);
 
-        $client->request('PATCH', self::VERIFICATION, [
+        $client->request('PATCH', self::DECISION, [
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
-            'json' => [],
+            'json' => ['verifierSignature' => true],
         ]);
 
         $this->assertResponseIsSuccessful();
@@ -316,9 +315,9 @@ class SignatureDecisionTest extends ApiTestCaseCustom
         $client = $this->createClientWithCredentials('gestionnaire');
         $this->enSignatureDansLeParapheur();
 
-        $client->request('PATCH', self::VERIFICATION, [
+        $client->request('PATCH', self::DECISION, [
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
-            'json' => [],
+            'json' => ['verifierSignature' => true],
         ]);
 
         $this->assertResponseIsSuccessful();
@@ -333,9 +332,9 @@ class SignatureDecisionTest extends ApiTestCaseCustom
         $client = $this->createClientWithCredentials('gestionnaire');
         $this->etatDecision(DecisionAmenagementExamens::ETAT_VALIDE);
 
-        $client->request('PATCH', self::VERIFICATION, [
+        $client->request('PATCH', self::DECISION, [
             'headers' => ['Content-Type' => 'application/merge-patch+json'],
-            'json' => [],
+            'json' => ['verifierSignature' => true],
         ]);
 
         $this->assertResponseStatusCodeSame(403);
