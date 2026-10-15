@@ -363,6 +363,22 @@ class SignatureDecisionTest extends ApiTestCaseCustom
         $this->assertResponseStatusCodeSame(403);
     }
 
+    public function testCheckCannotChangeEtat(): void
+    {
+        $client = $this->createClientWithCredentials('gestionnaire');
+        $this->enSignatureDansLeParapheur();
+
+        $client->request('PATCH', self::DECISION, [
+            'headers' => ['Content-Type' => 'application/merge-patch+json'],
+            'json' => ['verifierSignature' => true, 'etat' => DecisionAmenagementExamens::ETAT_VALIDE],
+        ]);
+
+        // refusée avant toute interrogation du parapheur
+        $this->assertResponseStatusCodeSame(403);
+        $this->assertSame(DecisionAmenagementExamens::ETAT_EN_SIGNATURE, $this->decision()->getEtat());
+        $this->assertNull($this->decision()->getDerniereVerificationSignature());
+    }
+
     /** Un seul message en file : le dépôt de la décision dans le parapheur, au nom du demandeur. */
     private function assertDepotDemande(): void
     {

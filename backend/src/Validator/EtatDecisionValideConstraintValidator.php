@@ -27,9 +27,12 @@ class EtatDecisionValideConstraintValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, EtatDecisionValideConstraint::class);
         }
 
-        // la vérification auprès du parapheur laisse l'état tel quel (cf. ModifierDecisionVoter)
+        // la vérification auprès du parapheur ne vaut que pour une décision en signature, dont l'état ne change pas
         $decision = $this->context->getObject();
         if ($decision instanceof \App\ApiResource\DecisionAmenagementExamens && $decision->verifierSignature) {
+            if (DecisionAmenagementExamens::ETAT_EN_SIGNATURE !== $value) {
+                $this->context->buildViolation($constraint->message)->addViolation();
+            }
             return;
         }
 
