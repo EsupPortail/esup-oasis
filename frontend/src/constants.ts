@@ -51,6 +51,14 @@ export const PARAMETRE_COEF_COUT_CHARGE = "/parametres/COEFFICIENT_CHARGES";
 export const PARAMETRE_CONST_INFOS_COMPLEMENTAIRES = "/parametres/CONST_INFOS_COMPLEMENTAIRES";
 
 /**
+ * Id du paramètre "Fréquence du suivi des signatures électroniques"
+ *
+ * @example "/parametres/FREQUENCE_SUIVI_SIGNATURES"
+ * @constant {string}
+ */
+export const PARAMETRE_FREQUENCE_SUIVI_SIGNATURES = "/parametres/FREQUENCE_SUIVI_SIGNATURES";
+
+/**
  * Taille max des fichiers en upload, en Mo.
  * Configurable via la variable d'environnement REACT_APP_MAX_FILE_SIZE (10 Mo par défaut).
  *

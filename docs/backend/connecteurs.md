@@ -146,7 +146,9 @@ reflet côté frontend, `REACT_APP_PARAPHEUR`, fait apparaître les réglages de
 l'interface d'administration.
 
 Chaque composante porte le circuit de signature de ses décisions : l'identifiant du circuit, tel que le parapheur
-le connaît, se renseigne dans l'administration, sur l'écran des référents de composante. Sans circuit, les
+le connaît, se renseigne dans l'administration, sur l'écran « Signature électronique » de la catégorie
+Paramètres. Cet écran, visible seulement avec un parapheur, liste les composantes et leur circuit, et rappelle le
+parapheur utilisé et la fréquence du suivi. Sans circuit, les
 décisions des bénéficiaires de la composante suivent le comportement historique, ce qui permet une activation
 progressive, composante par composante.
 

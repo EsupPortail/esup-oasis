@@ -31,7 +31,7 @@ import React from "react";
 import MedalIcon from "@/assets/images/medal.svg?react";
 import ReferentIcon from "@/assets/images/referent.svg?react";
 import ArtIcon from "@/assets/images/art.svg?react";
-import { service } from "@lib";
+import { parapheurConfigure, service } from "@lib";
 
 /**
  * Represents a configuration object for referentiel.
@@ -108,6 +108,18 @@ const ADMIN_CONFIG: AdminConfig[] = [
     icon: UnorderedListOutlined,
     categorie: "parametres",
   },
+  // la signature électronique ne se paramètre qu'avec un parapheur configuré
+  ...(parapheurConfigure()
+    ? [
+        {
+          id: "signature-electronique",
+          title: "Signature électronique",
+          description: "Parapheur et circuit de signature des composantes",
+          icon: SignatureOutlined,
+          categorie: "parametres",
+        },
+      ]
+    : []),
   {
     id: "competences",
     title: "Compétences",
