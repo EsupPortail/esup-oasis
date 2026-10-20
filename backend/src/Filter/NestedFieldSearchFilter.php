@@ -26,8 +26,9 @@ use Override;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 use Symfony\Component\TypeInfo\TypeIdentifier;
+use Symfony\Contracts\Service\ResetInterface;
 
-class NestedFieldSearchFilter extends AbstractFilter
+class NestedFieldSearchFilter extends AbstractFilter implements ResetInterface
 {
     use PropertyHelperTrait;
 
@@ -188,5 +189,10 @@ class NestedFieldSearchFilter extends AbstractFilter
         $orX->addMultiple($exprs);
 
         $queryBuilder->andWhere($orX);
+    }
+
+    public function reset(): void
+    {
+        $this->joins = [];
     }
 }

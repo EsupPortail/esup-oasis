@@ -17,6 +17,7 @@ use App\State\EntityToResourceTransformer;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\ObjectMapper\Attribute\Map;
+use Symfony\Component\ObjectMapper\Condition\TargetClass;
 
 #[ORM\Entity(repositoryClass: SportifHautNiveauRepository::class)]
 #[UniqueEntity('identifiantExterne')]
@@ -33,19 +34,19 @@ class SportifHautNiveau
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Map(if: false)]
+    #[Map(if: new TargetClass(self::class))]
     private ?string $identifiantExterne = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Map(if: false)]
+    #[Map(if: new TargetClass(self::class))]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Map(if: false)]
+    #[Map(if: new TargetClass(self::class))]
     private ?string $prenom = null;
 
     #[ORM\Column(nullable: true)]
-    #[Map(if: false)]
+    #[Map(if: new TargetClass(self::class))]
     private ?int $anneeNaissance = null;
 
     public function getId(): ?int

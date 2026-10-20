@@ -18,4 +18,5 @@ return [
     Twig\Extra\TwigExtraBundle\TwigExtraBundle::class => ['all' => true],
     Sensiolabs\GotenbergBundle\SensiolabsGotenbergBundle::class => ['all' => true],
     ApiPlatform\Symfony\Bundle\ApiPlatformBundle::class => ['all' => true],
+    IgorPhp\IgorBundle\IgorPhpBundle::class => ['dev' => true, 'test' => true],
 ];

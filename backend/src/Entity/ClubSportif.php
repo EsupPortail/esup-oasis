@@ -18,6 +18,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\ObjectMapper\Attribute\Map;
+use Symfony\Component\ObjectMapper\Condition\TargetClass;
 
 #[ORM\Entity(repositoryClass: ClubSportifRepository::class)]
 #[Map(target: \App\ApiResource\ClubSportif::class, transform: [EntityToResourceTransformer::class, 'entityToResource'])]
@@ -30,15 +31,15 @@ class ClubSportif
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Map(if: false)]
+    #[Map(if: new TargetClass(self::class))]
     private ?string $libelle = null;
 
     #[ORM\Column(options: ['default' => false])]
-    #[Map(if: false)]
+    #[Map(if: new TargetClass(self::class))]
     private ?bool $centreFormation = false;
 
     #[ORM\Column(options: ['default' => false])]
-    #[Map(if: false)]
+    #[Map(if: new TargetClass(self::class))]
     private ?bool $professionnel = false;
 
     #[ORM\ManyToMany(targetEntity: Reponse::class, mappedBy: 'clubs')]
@@ -46,7 +47,7 @@ class ClubSportif
     private Collection $reponses;
 
     #[ORM\Column(options: ['default' => true])]
-    #[Map(if: false)]
+    #[Map(if: new TargetClass(self::class))]
     private ?bool $actif = true;
 
     public function __construct()

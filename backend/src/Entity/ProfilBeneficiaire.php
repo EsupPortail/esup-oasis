@@ -18,6 +18,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\ObjectMapper\Attribute\Map;
+use Symfony\Component\ObjectMapper\Condition\TargetClass;
 
 #[ORM\Entity(repositoryClass: ProfilBeneficiaireRepository::class)]
 #[Map(target: \App\ApiResource\ProfilBeneficiaire::class, transform: [
@@ -40,11 +41,11 @@ class ProfilBeneficiaire
     private(set) ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Map(if: false)]
+    #[Map(if: new TargetClass(self::class))]
     private(set) ?string $libelle = null;
 
     #[ORM\Column(options: ['default' => true])]
-    #[Map(if: false)]
+    #[Map(if: new TargetClass(self::class))]
     private(set) ?bool $actif = null;
 
     #[ORM\OneToMany(mappedBy: 'profil', targetEntity: Beneficiaire::class)]
@@ -52,7 +53,7 @@ class ProfilBeneficiaire
     private Collection $beneficiaires;
 
     #[ORM\Column(options: ['default' => false])]
-    #[Map(if: false)]
+    #[Map(if: new TargetClass(self::class))]
     private(set) ?bool $avecTypologie = false;
 
     /**
@@ -61,7 +62,7 @@ class ProfilBeneficiaire
      * profil sportif ou artiste, par exemple, n'est jamais concerné.
      */
     #[ORM\Column(options: ['default' => false])]
-    #[Map(if: false)]
+    #[Map(if: new TargetClass(self::class))]
     private(set) ?bool $avisMedicalRequis = false;
 
     #[ORM\ManyToMany(targetEntity: TypeDemande::class, mappedBy: 'profilsAssocies')]

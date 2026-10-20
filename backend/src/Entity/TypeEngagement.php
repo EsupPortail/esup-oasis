@@ -18,6 +18,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\ObjectMapper\Attribute\Map;
+use Symfony\Component\ObjectMapper\Condition\TargetClass;
 
 #[ORM\Entity(repositoryClass: TypeEngagementRepository::class)]
 #[Map(target: \App\ApiResource\TypeEngagement::class, transform: [
@@ -33,11 +34,11 @@ class TypeEngagement
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Map(if: false)]
+    #[Map(if: new TargetClass(self::class))]
     private ?string $libelle = null;
 
     #[ORM\Column(options: ['default' => true])]
-    #[Map(if: false)]
+    #[Map(if: new TargetClass(self::class))]
     private ?bool $actif = true;
 
     #[ORM\ManyToMany(targetEntity: Reponse::class, mappedBy: 'typesEngagement')]

@@ -1,0 +1,492 @@
+{
+  "files": {
+    "src/Doctrine/DoctrineConnectionListener.php": [
+      {
+        "message": "Mutation of state 'lastChecked' in DoctrineConnectionListener::onKernelRequest()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "src/Filter/BilanFinancierProfilBeneficiairesFilter.php": [
+      {
+        "message": "Mutation of state 'iriConverter' in BilanFinancierProfilBeneficiairesFilter::setIriConverter()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "src/Filter/PeriodeDansIntervalleFilter.php": [
+      {
+        "message": "Mutation of state 'periodeManager' in PeriodeDansIntervalleFilter::setPeriodeManager()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "src/Scheduler/Nettoyage/NettoyerFichiersNonUtilisesTask.php": [
+      {
+        "message": "Mutation detected on an injected dependency ($this-\u003efichierRepository). Risk of State Leak in a worker.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "src/Service/LdapService.php": [
+      {
+        "message": "Mutation of state 'ldap' in LdapService::connectAndBind()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'bind' in LdapService::connectAndBind()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "src/Service/OAuthService.php": [
+      {
+        "message": "Mutation of state 'options' in OAuthService::getAccessToken()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "src/Service/Photo/UnicampusProvider.php": [
+      {
+        "message": "Mutation of state 'db' in UnicampusProvider::doConnectOracle()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'db' in UnicampusProvider::doConnectPostgre()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "src/Service/SiScol/AbstractSiScolDataProvider.php": [
+      {
+        "message": "Potential Memory Leak: Injection of a closure capturing local state into a shared service.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Potential Memory Leak: Injection of a closure capturing local state into a shared service.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "src/State/Amenagement/AmenagementProcessor.php": [
+      {
+        "message": "Mutation detected on an injected dependency ($this-\u003eamenagementRepository). Risk of State Leak in a worker.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "src/State/AvisEse/AvisEseDeleteProcessor.php": [
+      {
+        "message": "Mutation detected on an injected dependency ($this-\u003eavisEseRepository). Risk of State Leak in a worker.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "src/State/BilanActivite/BilanActiviteProcessor.php": [
+      {
+        "message": "Mutation detected on an injected dependency ($this-\u003ebilanRepository). Risk of State Leak in a worker.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "src/State/Commission/MembreCommissionDeleteProcessor.php": [
+      {
+        "message": "Mutation detected on an injected dependency ($this-\u003emembreCommissionRepository). Risk of State Leak in a worker.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "src/State/DecisionAmenagementExamens/DecisionAmenagementManager.php": [
+      {
+        "message": "Mutation detected on an injected dependency ($this-\u003edecisionAmenagementExamensRepository). Risk of State Leak in a worker.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "src/State/Demande/DemandeManager.php": [
+      {
+        "message": "Mutation of state 'utilisateurManager' in DemandeManager::setUtilisateurManager()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "src/State/Entretien/EntretienProcessor.php": [
+      {
+        "message": "Mutation detected on an injected dependency ($this-\u003eentretienRepository). Risk of State Leak in a worker.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "src/State/Evenement/EvenementManager.php": [
+      {
+        "message": "Mutation detected on an injected dependency ($this-\u003eevenementRepository). Risk of State Leak in a worker.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "src/State/InterventionForfait/InterventionForfaitProcessor.php": [
+      {
+        "message": "Mutation detected on an injected dependency ($this-\u003erepository). Risk of State Leak in a worker.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "src/State/ParametreUI/ParametreUIProcessor.php": [
+      {
+        "message": "Mutation detected on an injected dependency ($this-\u003eparametreUIRepository). Risk of State Leak in a worker.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "src/State/PeriodeRH/ServicesFaitsProvider.php": [
+      {
+        "message": "Function 'bcscale' modifies the global BCMath default precision.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "src/State/PieceJointeBeneficiaire/PieceJointeBeneficiaireProcessor.php": [
+      {
+        "message": "Mutation detected on an injected dependency ($this-\u003erepository). Risk of State Leak in a worker.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "src/State/TauxHoraire/TauxHoraireProcessor.php": [
+      {
+        "message": "Mutation detected on an injected dependency ($this-\u003etauxHoraireRepository). Risk of State Leak in a worker.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/fakerphp/faker/src/Faker/Generator.php": [
+      {
+        "message": "Mutation of state 'formatters' in Generator::addProvider()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'uniqueGenerator' in Generator::unique()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'formatters' in Generator::getFormatter()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'formatters' in Generator::getFormatter()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'formatters' in Generator::getFormatter()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Usage of __destruct() magic method is dangerous in Worker mode.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'formatters' in Generator::__wakeup()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/fakerphp/faker/src/Faker/Provider/Base.php": [
+      {
+        "message": "Mutation of state 'unique' in Base::unique()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/hautelook/alice-bundle/src/Alice/Generator/Instantiator/Chainable/InstantiatedReferenceInstantiator.php": [
+      {
+        "message": "Mutation of state 'container' in InstantiatedReferenceInstantiator::setContainer()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/lexik/jwt-authentication-bundle/TokenExtractor/ChainTokenExtractor.php": [
+      {
+        "message": "Mutation of state 'map' in ChainTokenExtractor::addExtractor()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'map' in ChainTokenExtractor::clearMap()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/monolog/monolog/src/Monolog/Handler/AbstractHandler.php": [
+      {
+        "message": "Property 'level' of AbstractHandler is mutated but not reset in reset().",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Property 'bubble' of AbstractHandler is mutated but not reset in reset().",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/monolog/monolog/src/Monolog/Handler/FormattableHandlerTrait.php": [
+      {
+        "message": "Mutation of state 'formatter' in FormattableHandlerTrait::setFormatter()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'formatter' in FormattableHandlerTrait::getFormatter()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/monolog/monolog/src/Monolog/Handler/Handler.php": [
+      {
+        "message": "Usage of __destruct() magic method is dangerous in Worker mode.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php": [
+      {
+        "message": "Function 'set_error_handler' modifies global process error handlers.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Function 'set_error_handler' modifies global process error handlers.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Function 'set_error_handler' modifies global process error handlers.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Property 'errorMessage' of StreamHandler is mutated but not reset in reset().",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Property 'inodeUrl' of StreamHandler is mutated but not reset in reset().",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Property 'retrying' of StreamHandler is mutated but not reset in reset().",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Property 'stream' of StreamHandler is mutated but not reset in reset().",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Property 'dirCreated' of StreamHandler is mutated but not reset in reset().",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/monolog/monolog/src/Monolog/Logger.php": [
+      {
+        "message": "Property 'clock' of Logger is mutated but not reset in reset().",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Property 'detectCycles' of Logger is mutated but not reset in reset().",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Property 'exceptionHandler' of Logger is mutated but not reset in reset().",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Property 'timezone' of Logger is mutated but not reset in reset().",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Property 'handlers' of Logger is mutated but not reset in reset().",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Property 'microsecondTimestamps' of Logger is mutated but not reset in reset().",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Property 'fiberLogDepth' of Logger is mutated but not reset in reset().",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Property 'logDepth' of Logger is mutated but not reset in reset().",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/nelmio/alice/src/FixtureBuilder/ExpressionLanguage/Parser/TokenParser/Chainable/ArgumentEscaper.php": [
+      {
+        "message": "Mutation of state 'tokens' in ArgumentEscaper::escape()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/nelmio/alice/src/Generator/Resolver/UniqueValuesPool.php": [
+      {
+        "message": "Mutation of state 'pool' in UniqueValuesPool::add()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'pool' in UniqueValuesPool::add()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/nelmio/alice/src/Generator/Resolver/Value/Chainable/FixtureReferenceResolver.php": [
+      {
+        "message": "Mutation of state 'incompleteObjects' in FixtureReferenceResolver::resolveReferredFixture()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/nelmio/alice/src/Generator/Resolver/Value/Chainable/UniqueValueResolver.php": [
+      {
+        "message": "Mutation detected on an injected dependency ($this-\u003epool). Risk of State Leak in a worker.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/nelmio/alice/src/Parser/IncludeProcessor/DefaultIncludeProcessor.php": [
+      {
+        "message": "Mutation of state 'included' in DefaultIncludeProcessor::process()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'included' in DefaultIncludeProcessor::process()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'included' in DefaultIncludeProcessor::retrieveIncludeData()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/nelmio/alice/src/Parser/RuntimeCacheParser.php": [
+      {
+        "message": "Mutation of state 'cache' in RuntimeCacheParser::parse()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/sensiolabs/gotenberg-bundle/src/Builder/AbstractBuilder.php": [
+      {
+        "message": "Mutation of state 'headerDisposition' in AbstractBuilder::fileName()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation detected on an injected dependency ($this-\u003eheadersBag). Risk of State Leak in a worker.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'processor' in AbstractBuilder::processor()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/sensiolabs/gotenberg-bundle/src/Debug/Client/TraceableGotenbergClient.php": [
+      {
+        "message": "Mutation of state 'payload' in TraceableGotenbergClient::call()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/sensiolabs/gotenberg-bundle/src/Debug/TraceableGotenbergPdf.php": [
+      {
+        "message": "Mutation of state 'builders' in TraceableGotenbergPdf::get()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'builders' in TraceableGotenbergPdf::html()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'builders' in TraceableGotenbergPdf::url()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'builders' in TraceableGotenbergPdf::markdown()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'builders' in TraceableGotenbergPdf::office()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'builders' in TraceableGotenbergPdf::merge()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'builders' in TraceableGotenbergPdf::convert()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'builders' in TraceableGotenbergPdf::split()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'builders' in TraceableGotenbergPdf::flatten()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'builders' in TraceableGotenbergPdf::encrypt()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'builders' in TraceableGotenbergPdf::embed()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'builders' in TraceableGotenbergPdf::stamp()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'builders' in TraceableGotenbergPdf::watermark()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'builders' in TraceableGotenbergPdf::rotate()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/sensiolabs/gotenberg-bundle/src/Debug/TraceableGotenbergScreenshot.php": [
+      {
+        "message": "Mutation of state 'builders' in TraceableGotenbergScreenshot::get()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'builders' in TraceableGotenbergScreenshot::html()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'builders' in TraceableGotenbergScreenshot::url()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'builders' in TraceableGotenbergScreenshot::markdown()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/sensiolabs/gotenberg-bundle/src/Formatter/AssetBaseDirFormatter.php": [
+      {
+        "message": "Mutation of state 'resolvedPathsCache' in AssetBaseDirFormatter::resolve()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'resolvedPathsCache' in AssetBaseDirFormatter::resolve()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/sensiolabs/gotenberg-bundle/src/Twig/GotenbergRuntime.php": [
+      {
+        "message": "Mutation of state 'builder' in GotenbergRuntime::setBuilder()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation detected on an injected dependency ($this-\u003ebuilder). Risk of State Leak in a worker.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/sensiolabs/gotenberg-bundle/src/Webhook/WebhookConfigurationRegistry.php": [
+      {
+        "message": "Mutation of state 'configurations' in WebhookConfigurationRegistry::add()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ],
+    "vendor/theofidry/alice-data-fixtures/src/Bridge/Doctrine/Persister/ObjectManagerPersister.php": [
+      {
+        "message": "Mutation of state 'persistableClasses' in ObjectManagerPersister::persist()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation detected on a local reference to a shared service ($metadataFactory). Risk of State Leak in a worker.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'metadataToRestore' in ObjectManagerPersister::flush()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'objectChecked' in ObjectManagerPersister::flush()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'objectChecked' in ObjectManagerPersister::checkAssociationsMetadata()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'metadataToRestore' in ObjectManagerPersister::saveMetadataToRestore()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation detected on a local reference to a shared service ($metadataFactory). Risk of State Leak in a worker.",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      },
+      {
+        "message": "Mutation of state 'unitOfWorkPersistersReflection' in ObjectManagerPersister::getUnitOfWorkPersistersReflection()",
+        "reason": "TODO: Explain why this state mutation is a false positive or safe"
+      }
+    ]
+  }
+}

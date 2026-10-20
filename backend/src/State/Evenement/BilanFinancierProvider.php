@@ -31,8 +31,9 @@ use App\Entity\TypeEvenement as TypeEvenementEntity;
 use App\Entity\Utilisateur as UtilisateurEntity;
 use App\Repository\ParametreRepository;
 use Exception;
+use Symfony\Contracts\Service\ResetInterface;
 
-class BilanFinancierProvider implements ProviderInterface
+class BilanFinancierProvider implements ProviderInterface, ResetInterface
 {
     protected array $cachedResources;
 
@@ -199,5 +200,15 @@ class BilanFinancierProvider implements ProviderInterface
             $this->cachedResources[TauxHoraireEntity::class][$tauxHoraire->getId()] = new TauxHoraire($tauxHoraire);
         }
         return $this->cachedResources[TauxHoraireEntity::class][$tauxHoraire->getId()];
+    }
+
+    public function reset(): void
+    {
+        $this->cachedResources = [
+            TypeEvenementEntity::class => [],
+            UtilisateurEntity::class => [],
+            TauxHoraireEntity::class => [],
+            PeriodeRHEntity::class => [],
+        ];
     }
 }

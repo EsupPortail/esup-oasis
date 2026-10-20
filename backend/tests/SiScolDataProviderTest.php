@@ -185,7 +185,9 @@ class SiScolDataProviderTest extends TestCase
             new NullLogger(),
             'SELECT 1',
             'SELECT 1',
+            '',
             $cache,
+            3600,
         );
 
         $etudiant = new Utilisateur();
@@ -194,5 +196,20 @@ class SiScolDataProviderTest extends TestCase
 
         $infos = $apogeeProvider->getInfosComplementaires($etudiant);
         $this->assertSame([], $infos);
+        $this->assertSame([], $apogeeProvider->listeInfosComplementairesDisponibles());
+
+        $apogeeProviderCommentaires = new ApogeeProvider(
+            'user',
+            'pass',
+            'dbname',
+            new NullLogger(),
+            'SELECT 1',
+            'SELECT 1',
+            '/* select cod_etu from table */',
+            $cache,
+            3600,
+        );
+        $this->assertSame([], $apogeeProviderCommentaires->getInfosComplementaires($etudiant));
+        $this->assertSame([], $apogeeProviderCommentaires->listeInfosComplementairesDisponibles());
     }
 }
