@@ -39,12 +39,28 @@ class ModifierDecisionVoter extends Voter
     ): bool {
         [$avant, $subject] = $subject;
 
+        // la vérification ne modifie rien : seule la réponse du parapheur peut faire avancer la décision
+        if ($subject->verifierSignature) {
+            return $avant->etat === \App\Entity\DecisionAmenagementExamens::ETAT_EN_SIGNATURE
+                && $subject->etat === $avant->etat;
+        }
+
         // état inchangé : saisie des observations, possible tant que la décision n'est pas envoyée
         if ($avant->etat === $subject->etat) {
             return in_array($avant->etat, [
                 \App\Entity\DecisionAmenagementExamens::ETAT_ATTENTE_VALIDATION_CAS,
                 \App\Entity\DecisionAmenagementExamens::ETAT_VALIDE,
             ], true);
+        }
+
+        // en signature, seul le retour du parapheur fait avancer la décision
+        if ($avant->etat === \App\Entity\DecisionAmenagementExamens::ETAT_EN_SIGNATURE) {
+            return false;
+        }
+
+        // refusée par le parapheur, la décision est reprise en repassant en attente
+        if ($avant->etat === \App\Entity\DecisionAmenagementExamens::ETAT_REFUSEE) {
+            return $subject->etat === \App\Entity\DecisionAmenagementExamens::ETAT_ATTENTE_VALIDATION_CAS;
         }
 
         if (

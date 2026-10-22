@@ -125,6 +125,136 @@ Attention à respecter les formats de tableaux en prenant exemple sur l'impléme
 
 Voir [la section dédiée aux pièces justificatives](pieces_justificatives.md)
 
+## Signature électronique
+
+Oasis peut faire signer électroniquement la décision d'aménagements d'examens par un parapheur électronique : au
+lieu d'être envoyé par e-mail, le PDF est déposé dans un circuit de signature configuré dans le parapheur
+(signataires, ordre des étapes, relances), puis récupéré signé une fois le circuit terminé. OASIS en dépose une
+copie au dossier du bénéficiaire et l'envoie à l'étudiant par l'e-mail habituel, le document signé en pièce
+jointe.
+
+Si le parapheur envoie lui-même le document signé à l'étudiant, renseignez `PARAPHEUR_ENVOIE_DOCUMENT=true` :
+OASIS lui transmet alors l'adresse de l'étudiant au dépôt et n'envoie plus d'e-mail.
+
+Cette fonctionnalité est **totalement optionnelle** : si vous laissez la configuration par défaut, l'application
+conserve le comportement historique (génération du PDF et envoi par e-mail).
+
+### Activation
+
+Le parapheur est choisi par la variable d'environnement `PARAPHEUR`, vide par défaut (aucun parapheur). Son
+reflet côté frontend, `REACT_APP_PARAPHEUR`, fait apparaître les réglages de la signature électronique dans
+l'interface d'administration.
+
+Chaque composante porte le circuit de signature de ses décisions : l'identifiant du circuit, tel que le parapheur
+le connaît, se renseigne dans l'administration, sur l'écran « Signature électronique » de la catégorie
+Paramètres. Cet écran, visible seulement avec un parapheur, liste les composantes et leur circuit, et rappelle le
+parapheur utilisé et la fréquence du suivi. Sans circuit, les
+décisions des bénéficiaires de la composante suivent le comportement historique, ce qui permet une activation
+progressive, composante par composante.
+
+La composante retenue est celle de l'inscription principale en cours du bénéficiaire : une inscription
+secondaire ne désigne pas les signataires (une inscription sans cette information est considérée principale).
+
+Pour une composante reliée à un circuit, la décision validée par le gestionnaire, ou envoyée par
+l'administrateur, part en signature : le circuit remplace l'envoi par e-mail de l'administrateur fonctionnel.
+`SignatureElectronique` la passe aussitôt à l'état `EN_SIGNATURE`, ce qui la verrouille, puis le worker génère le
+PDF et le dépose (message `SignatureDecisionDemandeeMessage`). Tant que le parapheur n'a pas le document, elle est
+en cours de dépôt. Un dépôt en échec est rejoué une heure plus tard ; si la composante n'a plus de circuit au
+moment du dépôt, la décision repasse à l'état `VALIDE` et l'administrateur l'envoie par e-mail.
+
+* `PARAPHEUR` vide : aucune décision ne part en signature, même si des circuits sont renseignés (un avertissement
+  est alors journalisé) ;
+* avec un parapheur, une décision dont le circuit ne peut pas être déterminé n'est pas envoyée sans signature : la
+  demande d'édition et l'envoi sont refusés (erreur 422), et l'interface désactive l'action en donnant le motif.
+  C'est le cas d'un étudiant sans inscription en cours, dont la composante est inconnue, et d'un étudiant inscrit
+  dans plusieurs composantes aux circuits différents : l'application ne choisit pas de signataire à la place de
+  l'établissement.
+
+### Suivi des signatures
+
+Une fois la décision déposée, le worker interroge le parapheur à intervalle régulier sur les décisions en
+signature, récupère les documents signés, les dépose au dossier du
+bénéficiaire et passe la décision à l'état `EDITE`. Un circuit terminé sans signature (refus d'un signataire,
+circuit interrompu, document inconnu du parapheur) passe la décision à l'état `REFUSEE`, et le document rendu
+par le parapheur est lui aussi déposé au dossier du bénéficiaire (« Décision d'aménagements refusée au … »),
+pour l'historique, sans devenir le document de la décision ; seul un document inconnu du parapheur ne peut pas
+l'être. La fiche du bénéficiaire indique la cause du refus (refus, interruption, erreur), le détail restant
+consultable dans le parapheur, et les décisions refusées se retrouvent avec le filtre de la liste des
+bénéficiaires.
+
+La fréquence d'interrogation se règle par le paramètre `FREQUENCE_SUIVI_SIGNATURES` (administration, écran des
+paramètres), au format du Scheduler Symfony (`15 minutes`, `2 hours`…), une heure par défaut ; le worker le relit
+à son redémarrage. Aucune interrogation n'est planifiée sans parapheur. La commande `app:signature:suivi`
+effectue le même traitement à la demande. Sur la fiche du bénéficiaire, le bouton de rafraîchissement d'une
+décision en signature interroge le parapheur pour cette seule décision, sans attendre le passage suivant
+(Patch de la décision avec `{"verifierSignature": true}`, réservé aux gestionnaires ; le reste de la requête est
+ignoré).
+
+Si aucune décision du lot n'a pu être vérifiée, un message de niveau `critical` signale que le parapheur semble
+injoignable ; les décisions concernées sont reprises au passage suivant. Un document que le parapheur ne connaît
+plus passe la décision à l'état `REFUSEE`, avec l'état de signature `ERREUR`, et n'est plus interrogé.
+
+Tant que la décision est en signature, rien de ce qu'elle reprend ne se modifie : les aménagements des types
+inclus dans la décision et les avis de santé du bénéficiaire sont refusés en écriture (erreur 422, contrainte
+`DecisionNonVerrouilleeConstraint`, suppression comprise), et la décision elle-même ne change plus d'état avant
+le retour du parapheur. Une décision refusée reste verrouillée de
+la même façon, jusqu'à sa reprise par un gestionnaire (bouton « Reprendre » sur la fiche du bénéficiaire, qui la
+repasse à l'état `ATTENTE_VALIDATION_CAS` par le Patch de la décision) : elle redevient alors modifiable, on
+corrige, puis on redemande l'édition, ce qui dépose un nouveau document. Une décision dont la période est terminée ne verrouille
+plus rien, même restée refusée. L'interface désactive les actions verrouillées et en donne le motif, dès la demande
+et le temps du dépôt, dont elle affiche la fin sans recharger la page ; elle ne connaît que la décision de
+l'année en cours, le serveur refusant dans tous les cas.
+
+### Date de signature et gabarit du document
+
+Le document est déposé avant d'être signé : il ne peut donc pas imprimer la date de sa propre signature. Cette
+date, fournie par le parapheur, est enregistrée sur la décision et affichée sur la fiche du bénéficiaire.
+
+Les signataires voient le document sous le libellé « Décision d'aménagements - Prénom Nom », ou sous le nom
+choisi par l'établissement dans `APP_DECISION_ETAB_LIB` (« PAEH - Prénom Nom »), comme dans l'interface.
+
+Le gabarit de la décision reçoit la variable `data.signature_electronique`, vraie quand le document part en
+signature électronique. Un établissement peut s'en servir pour adapter son modèle, par exemple ne pas y insérer
+l'image de signature scannée :
+
+```twig
+{% if not data.signature_electronique %}
+    {# signature scannée… #}
+{% endif %}
+```
+
+### Ajouter un parapheur
+
+Un parapheur s'ajoute en étendant la classe abstraite
+[`App\Service\Signature\AbstractParapheur`](../../backend/src/Service/Signature/AbstractParapheur.php) : `deposer`
+dépose le PDF dans un circuit, avec l'adresse à laquelle transmettre le document signé quand
+`PARAPHEUR_ENVOIE_DOCUMENT` est vrai (`null` sinon), et retourne l'identifiant du document, `suivre` retourne son état et, une fois
+signé, la date de signature, `telecharger` retourne le PDF signé. L'état retourné par `suivre` est l'une des constantes `ETAT_SIGNATURE_*` de la décision :
+`EN_SIGNATURE`, `SIGNEE`, `REFUSEE`, `EXPIREE` (circuit interrompu), `REMPLACEE` (document remplacé dans le
+parapheur) ou `ERREUR` ; tout état autre que `EN_SIGNATURE` et `SIGNEE` passe la décision à l'état `REFUSEE`. Les
+erreurs d'appel sont levées en `App\Service\Signature\ParapheurException` (`DocumentInconnuException` pour un
+document inconnu) : un dépôt en échec est rejoué une heure plus tard.
+
+La méthode `getProviderId()` doit retourner un identifiant unique parmi les implémentations disponibles : c'est
+cette valeur qui renseigne la variable `PARAPHEUR`.
+
+Une implémentation propre à l'établissement, dans l'espace de noms `App\Service\Signature`, se dépose dans
+`installation/backend/personnalisation/Signature` : elle est copiée dans les images du backend et du worker à leur
+construction, comme celles du SI de scolarité.
+
+Deux implémentations sont livrées : `aucun`, le comportement par défaut, et `factice`, disponible uniquement en
+développement et en test (`PARAPHEUR=factice`). Le parapheur factice garde ses documents dans
+`var/parapheur-factice`, partagé par l'API et le worker ; la commande `app:signature:factice` joue le rôle des
+signataires :
+
+```bash
+php bin/console app:signature:factice lister
+php bin/console app:signature:factice signer <document>
+php bin/console app:signature:factice refuser <document>
+```
+
+Le suivi planifié, ou `app:signature:suivi`, reporte ensuite l'état sur la décision.
+
 ## Photos
 
 Oasis peut récupérer et afficher les photos des étudiants (aux utilisateurs ayant un rôle gestionnaire ou

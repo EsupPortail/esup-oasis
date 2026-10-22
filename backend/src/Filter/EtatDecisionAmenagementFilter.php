@@ -39,6 +39,8 @@ class EtatDecisionAmenagementFilter extends AbstractFilter
             DecisionAmenagementExamens::ETAT_EDITION_DEMANDEE,
             DecisionAmenagementExamens::ETAT_VALIDE,
             DecisionAmenagementExamens::ETAT_ATTENTE_VALIDATION_CAS,
+            DecisionAmenagementExamens::ETAT_EN_SIGNATURE,
+            DecisionAmenagementExamens::ETAT_REFUSEE,
         ];
 
         if ($property !== self::PROPERTY) {

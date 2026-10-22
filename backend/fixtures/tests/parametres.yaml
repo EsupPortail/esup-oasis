@@ -8,6 +8,9 @@ App\Entity\Parametre:
   frequence_rappel_envoi_rh:
     cle: 'FREQUENCE_RAPPEL_ENVOI_RH'
     fichier: false
+  frequence_suivi_signatures:
+    cle: 'FREQUENCE_SUIVI_SIGNATURES'
+    fichier: false
   coefficient_charges:
     cle: 'COEFFICIENT_CHARGES'
     fichier: false

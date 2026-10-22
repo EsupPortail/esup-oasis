@@ -11,3 +11,4 @@ COPY ./personnalisation/templates/ServicesFaits/* /application/templates/Service
 COPY ./personnalisation/public/css/* /application/public/css/
 COPY ./personnalisation/public/images/* /application/public/images/
 COPY ./personnalisation/SiScol/* /application/src/Service/SiScol/
+COPY ./personnalisation/Signature/* /application/src/Service/Signature/
