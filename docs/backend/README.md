@@ -76,6 +76,15 @@ disponibles dans le fichier
 * **OAUTH_URLAUTHORIZE** : l'uri de l'endpoint "authorize" du serveur oauth
 * **OAUTH_URLACCESSTOKEN** : l'uri de l'endpoint permettant d'obtenir un accesstoken oauth
 * **OAUTH_URLRESOURCEOWNERDETAILS** : l'uri de l'endpoint permettant d'obtenir le profil de l'utilisateur connecté
+* **OAUTH_PKCE** : `true` (défaut) pour activer PKCE (RFC 7636 / flux Authorization Code) ou `false` pour l'ancien flux
+  implicit de CAS
+* **OAUTH_ALLOWED_REDIRECT_URIS** : liste optionnelle (séparée par des virgules) des URI de redirection autorisées
+  (dérivée automatiquement de `FRONT_URL/callback` si non définie)
+* **OAUTH_RESOURCE_OWNER_ID** : nom de l'attribut contenant l'identifiant utilisateur dans le profil (`id` par défaut
+  pour CAS, `sub` pour OIDC/LemonLDAP/Shibboleth)
+* **OAUTH_STRIP_USER_REALM** : `true` pour supprimer le suffixe de domaine dans les identifiants scoped de type
+  `login@domaine.fr` (utile pour Shibboleth/EduGAIN afin de matcher le login LDAP local)
+* **OAUTH_SCOPES** : scopes demandés par le backend (`profile` par défaut)
 * **LDAP_HOST** : serveur ldap
 * **LDAP_PORT** : port du serveur ldap
 * **LDAP_SSL** : true ou false suivant le mode d'accès à votre serveur d'accès
