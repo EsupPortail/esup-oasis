@@ -469,4 +469,21 @@ class SecurityAuditTest extends ApiTestCaseCustom
         $this->assertStringNotContainsString(';+1234', $csv);
         $this->assertStringNotContainsString(';@alert', $csv);
     }
+
+    /**
+     * Vérifie que la route /connect/oauth/logout efface le cookie d'authentification.
+     */
+    public function testOAuthLogoutClearsCookie(): void
+    {
+        $client = static::createClient();
+        $client->request('POST', '/connect/oauth/logout');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseHeaderSame('content-type', 'application/json');
+
+        $headers = $client->getResponse()->getHeaders();
+        $this->assertArrayHasKey('set-cookie', $headers);
+        $setCookieHeaders = implode(';;', $headers['set-cookie']);
+        $this->assertStringContainsString('deleted', $setCookieHeaders);
+    }
 }
