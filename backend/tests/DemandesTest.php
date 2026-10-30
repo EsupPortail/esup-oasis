@@ -18,11 +18,20 @@ class DemandesTest extends ApiTestCaseCustom
 {
     use ClockAwareTrait;
 
-    private function getDemandeIdForDemandeur(): string
+    private function getDemandeIdForDemandeur(bool $enCours = false): string
     {
         $em = static::getContainer()->get('doctrine')->getManager();
         $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
         $demande = $em->getRepository(\App\Entity\Demande::class)->findOneBy(['demandeur' => $demandeur]);
+        $targetEtatId = $enCours ? \App\Entity\EtatDemande::EN_COURS : \App\Entity\EtatDemande::RECEPTIONNEE;
+        if ($demande->getEtat()->getId() !== $targetEtatId) {
+            $demande->setEtat($em->getRepository(\App\Entity\EtatDemande::class)->find($targetEtatId));
+            $em->flush();
+            if ($em->getConnection()->isTransactionActive()) {
+                $em->getConnection()->commit();
+                $em->getConnection()->beginTransaction();
+            }
+        }
         return '/demandes/' . $demande->getId();
     }
 
@@ -565,7 +574,7 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testDemandeurCanAnswerQuestion(): void
     {
-        $demandeId = $this->getDemandeIdForDemandeur();
+        $demandeId = $this->getDemandeIdForDemandeur(true);
         $client = $this->createClientWithCredentials('demandeur');
         $client->request('PUT', $demandeId . '/questions/3/reponse', [
             'json' => [
@@ -664,7 +673,7 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testDemandeurCannotAnswerWithOptionsFromOtherQuestion(): void
     {
-        $demandeId = $this->getDemandeIdForDemandeur();
+        $demandeId = $this->getDemandeIdForDemandeur(true);
         $client = $this->createClientWithCredentials('demandeur');
         $client->request('PUT', $demandeId . '/questions/1/reponse', [
             'json' => [
@@ -677,7 +686,7 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testDemandeurCannotAnswerCommentOnlyWhenOptionsRequired(): void
     {
-        $demandeId = $this->getDemandeIdForDemandeur();
+        $demandeId = $this->getDemandeIdForDemandeur(true);
         $client = $this->createClientWithCredentials('demandeur');
         $client->request('PUT', $demandeId . '/questions/1/reponse', [
             'json' => [
@@ -704,7 +713,7 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testAnswerWithReferenceTableOption(): void
     {
-        $demandeId = $this->getDemandeIdForDemandeur();
+        $demandeId = $this->getDemandeIdForDemandeur(true);
         $client = $this->createClientWithCredentials('demandeur');
         $client->request('PUT', $demandeId . '/questions/5/reponse', [
             'json' => [
@@ -773,7 +782,7 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testSHNValidator(): void
     {
-        $demandeId = $this->getDemandeIdForDemandeur();
+        $demandeId = $this->getDemandeIdForDemandeur(true);
         $client = $this->createClientWithCredentials('demandeur');
 
         // OK case

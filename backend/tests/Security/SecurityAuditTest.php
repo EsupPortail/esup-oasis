@@ -225,6 +225,21 @@ class SecurityAuditTest extends ApiTestCaseCustom
         $demande = $em->getRepository(\App\Entity\Demande::class)->findOneBy(['demandeur' => $demandeur]);
         $demandeIri = '/demandes/' . $demande->getId();
 
+        // Tant que la demande est RECEPTIONNEE, le demandeur ne peut pas modifier ses réponses (403)
+        $client->request('PUT', $demandeIri . '/questions/3/reponse', [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenDemandeur],
+            'json' => [
+                'optionsChoisies' => ['/questions/3/options/3'],
+            ],
+        ]);
+        $this->assertResponseStatusCodeSame(403);
+
+        // Passage de la demande à EN_COURS pour tester la validation de PJ par le demandeur
+        $em = static::getContainer()->get('doctrine')->getManager();
+        $demande = $em->getRepository(\App\Entity\Demande::class)->find($demande->getId());
+        $demande->setEtat($em->getRepository(\App\Entity\EtatDemande::class)->find(\App\Entity\EtatDemande::EN_COURS));
+        $em->flush();
+
         $client->request('PUT', $demandeIri . '/questions/3/reponse', [
             'headers' => ['Authorization' => 'Bearer ' . $tokenDemandeur],
             'json' => [
@@ -289,6 +304,11 @@ class SecurityAuditTest extends ApiTestCaseCustom
         ]);
         $this->assertResponseStatusCodeSame(422);
         $this->assertJsonContains(['hydra:description' => 'fichier: Ce fichier est déjà associé à une autre ressource.']);
+
+        $em = static::getContainer()->get('doctrine')->getManager();
+        $demande = $em->getRepository(\App\Entity\Demande::class)->find($demande->getId());
+        $demande->setEtat($em->getRepository(\App\Entity\EtatDemande::class)->find(\App\Entity\EtatDemande::RECEPTIONNEE));
+        $em->flush();
     }
 
     /**
