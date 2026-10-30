@@ -977,4 +977,60 @@ class DemandesTest extends ApiTestCaseCustom
             'etat' => '/etats_demandes/5',
         ]);
     }
+
+    /**
+     * Vérifie qu'un membre de commission ou un renfort ne peut pas contourner le filtrage
+     * des demandes en passant une campagne ou un type de demande non autorisé
+     */
+    public function testDemandeFilterBypassPrevention(): void
+    {
+        $client = $this->createClientWithCredentials('membrecommission');
+
+        // Campagne 2 (type_demande 2) n'est pas rattachée à la commission de membrecommission
+        $client->request('GET', '/demandes?campagne=/types_demandes/2/campagnes/2');
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonContains(['hydra:totalItems' => 0]);
+
+        // Un renfort qui filtre sur un type de demande inexistant/interdit doit obtenir 0 résultat
+        $tokenRenfort = $this->getTokenForUser('renfort');
+        $client->request('GET', '/demandes?campagne.typeDemande=/types_demandes/999', [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenRenfort],
+        ]);
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonContains(['hydra:totalItems' => 0]);
+    }
+
+    /**
+     * Vérifie qu'on ne peut pas répondre à une question qui n'appartient pas au type de demande.
+     */
+    public function testQuestionAttenduePourDemandeValidation(): void
+    {
+        $em = static::getContainer()->get('doctrine')->getManager();
+
+        $orphanQuestion = new \App\Entity\Question();
+        $orphanQuestion->setLibelle('Question hors type demande');
+        $orphanQuestion->setTypeReponse(\App\Entity\Question::TYPE_TEXT);
+        $em->persist($orphanQuestion);
+
+        $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
+        $demande = $em->getRepository(\App\Entity\Demande::class)->findOneBy(['demandeur' => $demandeur]);
+        $demande->setEtat($em->getRepository(\App\Entity\EtatDemande::class)->find(\App\Entity\EtatDemande::EN_COURS));
+        $em->flush();
+        if ($em->getConnection()->isTransactionActive()) {
+            $em->getConnection()->commit();
+            $em->getConnection()->beginTransaction();
+        }
+
+        $demandeId = $demande->getId();
+
+        $client = $this->createClientWithCredentials('demandeur');
+        $token = $this->getTokenForUser('demandeur');
+
+        $client->request('PUT', '/demandes/' . $demandeId . '/questions/' . $orphanQuestion->getId() . '/reponse', [
+            'headers' => ['Authorization' => 'Bearer ' . $token],
+            'json' => ['commentaire' => 'invalide'],
+        ]);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertJsonContains(['hydra:description' => 'La question n\'est pas attendue pour ce type de demande']);
+    }
 }

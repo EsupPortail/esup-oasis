@@ -12,6 +12,8 @@
 
 namespace App\Tests;
 
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+
 class PiecesJointesTest extends ApiTestCaseCustom
 {
     public function testGestionnaireCanListPiecesJointes(): void
@@ -147,5 +149,141 @@ class PiecesJointesTest extends ApiTestCaseCustom
         // 4. Verify it's gone
         $client->request('GET', $pjIri);
         $this->assertResponseStatusCodeSame(404);
+    }
+
+    /**
+     * Vérifie qu'un demandeur ne peut pas voler la propriété d'un fichier appartenant à un tiers
+     * ni réutiliser un fichier déjà rattaché à une autre ressource
+     */
+    public function testCannotStealOrReuseFileViaPieceJustificative(): void
+    {
+        $client = $this->createClientWithCredentials('gestionnaire');
+        $tokenGestionnaire = $this->getTokenForUser('gestionnaire');
+        $tokenDemandeur = $this->getTokenForUser('demandeur');
+
+        // 1. Le gestionnaire téléverse un fichier confidentiel
+        $tempVictimFile = tempnam(sys_get_temp_dir(), 'test_victim');
+        file_put_contents($tempVictimFile, 'document confidentiel');
+        $uploadedVictimFile = new UploadedFile($tempVictimFile, 'confidentiel.txt', 'text/plain', null, true);
+
+        $client->request('POST', '/telechargements', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $tokenGestionnaire,
+                'Content-Type' => 'multipart/form-data',
+            ],
+            'extra' => [
+                'files' => ['file' => $uploadedVictimFile],
+            ],
+        ]);
+        $this->assertResponseStatusCodeSame(201);
+        $victimData = $client->getResponse()->toArray();
+        $victimFileIri = $victimData['@id'];
+        $victimDownloadUrl = $victimData['urlContenu'];
+
+        // 2. Un demandeur tente de rattacher ce fichier tiers à sa propre demande
+        $em = static::getContainer()->get('doctrine')->getManager();
+        $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
+        $demande = $em->getRepository(\App\Entity\Demande::class)->findOneBy(['demandeur' => $demandeur]);
+        $demandeIri = '/demandes/' . $demande->getId();
+
+        // Tant que la demande est RECEPTIONNEE, le demandeur ne peut pas modifier ses réponses (403)
+        $demande->setEtat($em->getRepository(\App\Entity\EtatDemande::class)->find(\App\Entity\EtatDemande::RECEPTIONNEE));
+        $em->flush();
+        if ($em->getConnection()->isTransactionActive()) {
+            $em->getConnection()->commit();
+            $em->getConnection()->beginTransaction();
+        }
+
+        $client->request('PUT', $demandeIri . '/questions/3/reponse', [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenDemandeur],
+            'json' => [
+                'optionsChoisies' => ['/questions/3/options/3'],
+            ],
+        ]);
+        $this->assertResponseStatusCodeSame(403);
+
+        // Passage de la demande à EN_COURS pour tester la validation de PJ par le demandeur
+        $em = static::getContainer()->get('doctrine')->getManager();
+        $demande = $em->getRepository(\App\Entity\Demande::class)->find($demande->getId());
+        $demande->setEtat($em->getRepository(\App\Entity\EtatDemande::class)->find(\App\Entity\EtatDemande::EN_COURS));
+        $em->flush();
+        if ($em->getConnection()->isTransactionActive()) {
+            $em->getConnection()->commit();
+            $em->getConnection()->beginTransaction();
+        }
+
+        $client->request('PUT', $demandeIri . '/questions/3/reponse', [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenDemandeur],
+            'json' => [
+                'optionsChoisies' => ['/questions/3/options/3'],
+                'piecesJustificatives' => [$victimFileIri],
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertJsonContains(['hydra:description' => 'piecesJustificatives: Vous ne pouvez pas associer ce fichier.']);
+
+        // 3. Le demandeur ne doit toujours pas pouvoir télécharger le fichier confidentiel
+        $client->request('GET', $victimDownloadUrl, [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenDemandeur],
+        ]);
+        $this->assertResponseStatusCodeSame(403);
+
+        // 4. Le demandeur peut en revanche téléverser et attacher son propre fichier
+        $tempOwnFile = tempnam(sys_get_temp_dir(), 'test_own');
+        file_put_contents($tempOwnFile, 'ma piece justificative');
+        $uploadedOwnFile = new UploadedFile($tempOwnFile, 'ma_pj.txt', 'text/plain', null, true);
+
+        $client->request('POST', '/telechargements', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $tokenDemandeur,
+                'Content-Type' => 'multipart/form-data',
+            ],
+            'extra' => [
+                'files' => ['file' => $uploadedOwnFile],
+            ],
+        ]);
+        $this->assertResponseStatusCodeSame(201);
+        $ownFileIri = $client->getResponse()->toArray()['@id'];
+
+        $client->request('PUT', $demandeIri . '/questions/3/reponse', [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenDemandeur],
+            'json' => [
+                'optionsChoisies' => ['/questions/3/options/3'],
+                'piecesJustificatives' => [$ownFileIri],
+            ],
+        ]);
+        $this->assertResponseIsSuccessful();
+
+        // 5. Une mise à jour de la même réponse conservant ce fichier reste autorisée
+        $client->request('PUT', $demandeIri . '/questions/3/reponse', [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenDemandeur],
+            'json' => [
+                'optionsChoisies' => ['/questions/3/options/3'],
+                'commentaire' => 'mise à jour',
+                'piecesJustificatives' => [$ownFileIri],
+            ],
+        ]);
+        $this->assertResponseIsSuccessful();
+
+        // 6. Un fichier déjà rattaché à une ressource ne peut pas être rattaché à une autre ressource
+        $client->request('POST', '/beneficiaires/beneficiaire/pieces_jointes', [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenGestionnaire],
+            'json' => [
+                'libelle' => 'Tentative de réutilisation',
+                'fichier' => $ownFileIri,
+            ],
+        ]);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertJsonContains(['hydra:description' => 'fichier: Ce fichier est déjà associé à une autre ressource.']);
+
+        $em = static::getContainer()->get('doctrine')->getManager();
+        $demande = $em->getRepository(\App\Entity\Demande::class)->find($demande->getId());
+        $demande->setEtat($em->getRepository(\App\Entity\EtatDemande::class)->find(\App\Entity\EtatDemande::RECEPTIONNEE));
+        $em->flush();
+        if ($em->getConnection()->isTransactionActive()) {
+            $em->getConnection()->commit();
+            $em->getConnection()->beginTransaction();
+        }
     }
 }
