@@ -313,4 +313,26 @@ class SecurityAuditTest extends ApiTestCaseCustom
         $client->request('GET', '/beneficiaires?preloadAssociations[hack][sourceEntity]=root&preloadAssociations[hack][relationName]=inscriptions%20WITH%201=1--');
         $this->assertResponseIsSuccessful();
     }
+
+    /**
+     * Vérifie qu'un membre de commission ou un renfort ne peut pas contourner le filtrage
+     * des demandes en passant une campagne ou un type de demande non autorisé
+     */
+    public function testDemandeFilterBypassPrevention(): void
+    {
+        $client = $this->createClientWithCredentials('membrecommission');
+
+        // Campagne 2 (type_demande 2) n'est pas rattachée à la commission de membrecommission
+        $client->request('GET', '/demandes?campagne=/types_demandes/2/campagnes/2');
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonContains(['hydra:totalItems' => 0]);
+
+        // Un renfort qui filtre sur un type de demande inexistant/interdit doit obtenir 0 résultat
+        $tokenRenfort = $this->getTokenForUser('renfort');
+        $client->request('GET', '/demandes?campagne.typeDemande=/types_demandes/999', [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenRenfort],
+        ]);
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonContains(['hydra:totalItems' => 0]);
+    }
 }
