@@ -23,6 +23,7 @@ use ApiPlatform\OpenApi\Model\Operation;
 use App\Filter\PieceJointeBeneficiaireUidFilter;
 use App\State\PieceJointeBeneficiaire\PieceJointeBeneficiaireProcessor;
 use App\State\PieceJointeBeneficiaire\PieceJointeBeneficiaireProvider;
+use App\Validator\PieceJustificativeValideConstraint;
 use DateTimeInterface;
 use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -112,6 +113,7 @@ class PieceJointeBeneficiaire
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
+    #[PieceJustificativeValideConstraint]
     public Telechargement $fichier {
         get {
             $prop = new ReflectionProperty(self::class, 'fichier');

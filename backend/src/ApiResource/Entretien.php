@@ -24,6 +24,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\State\Entretien\EntretienProcessor;
 use App\State\Entretien\EntretienProvider;
+use App\Validator\PieceJustificativeValideConstraint;
 use DateTimeInterface;
 use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -118,6 +119,7 @@ class Entretien
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
+    #[PieceJustificativeValideConstraint]
     public ?Telechargement $fichier {
         get {
             $prop = new ReflectionProperty(self::class, 'fichier');

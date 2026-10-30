@@ -59,6 +59,10 @@ class VoirFichierVoter extends Voter
             $subject = $this->fichierRepository->find($subject->id);
         }
 
+        if (null === $subject) {
+            return false;
+        }
+
         if ($this->security->isGranted(Utilisateur::ROLE_GESTIONNAIRE)) {
             return true;
         }
@@ -66,9 +70,8 @@ class VoirFichierVoter extends Voter
         if ($this->security->isGranted(Utilisateur::ROLE_MEMBRE_COMMISSION) && $subject->getReponses()->count() > 0) {
             // On va voir si c'est lié à une réponse pour une demande
             // qui est gérée par une des commissions de l'utilisateur
-            $demande = new Demande($subject->getReponses()->current()->getDemande());
-
-            if ($this->peutVoirDemande($token, $demande)) {
+            $demandeEntity = $subject->getReponses()->current()->getDemande();
+            if (null !== $demandeEntity && $this->peutVoirDemande($token, new Demande($demandeEntity))) {
                 return true;
             }
         }
@@ -76,15 +79,29 @@ class VoirFichierVoter extends Voter
         if ($this->security->isGranted(Utilisateur::ROLE_RENFORT)) {
             //On les autorise à voir les réponses aux questions pour les types de demandes non restreints
             $reponses = $subject->getReponses();
+            $demandeEntity = $reponses->count() === 1 ? $reponses->current()->getDemande() : null;
             if (
-                $reponses->count() === 1
-                && !$reponses->current()->getDemande()->getCampagne()->getTypeDemande()->isVisibiliteLimitee()
+                null !== $demandeEntity
+                && !$demandeEntity->getCampagne()->getTypeDemande()->isVisibiliteLimitee()
             ) {
                 //visible!
                 return true;
             }
         }
 
-        return $token->getUser()->getUserIdentifier() == $subject->getProprietaire()->getUserIdentifier();
+        $userIdentifier = $token->getUser()?->getUserIdentifier();
+        if (null === $userIdentifier) {
+            return false;
+        }
+
+        if ($subject->getPieceJointeBeneficiaire()?->getBeneficiaire()?->getUserIdentifier() === $userIdentifier) {
+            return true;
+        }
+
+        if ($subject->getEntretien()?->getUtilisateur()?->getUserIdentifier() === $userIdentifier) {
+            return true;
+        }
+
+        return $userIdentifier === $subject->getProprietaire()?->getUserIdentifier();
     }
 }

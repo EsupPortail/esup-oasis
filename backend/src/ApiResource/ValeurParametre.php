@@ -21,6 +21,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model\Operation;
 use App\State\Parametre\ValeurParametreProcessor;
 use App\State\Parametre\ValeurParametreProvider;
+use App\Validator\PieceJustificativeValideConstraint;
 use DateTimeInterface;
 use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -94,6 +95,7 @@ class ValeurParametre
     }
 
     #[Groups([self::GROUP_OUT, self::GROUP_IN, Parametre::GROUP_OUT])]
+    #[PieceJustificativeValideConstraint]
     public ?Telechargement $fichier {
         get {
             $prop = new ReflectionProperty(self::class, 'fichier');
