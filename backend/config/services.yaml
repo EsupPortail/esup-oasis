@@ -5,6 +5,12 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
   .container.dumper.inline_factories: true
+  env(OAUTH_PKCE): 'true'
+  env(OAUTH_ALLOWED_REDIRECT_URIS): ''
+  env(OAUTH_RESOURCE_OWNER_ID): 'id'
+  env(OAUTH_STRIP_USER_REALM): 'false'
+  env(OAUTH_SCOPES): ''
+  env(FRONT_URL): ''
 
 services:
   # default configuration for services in *this* file
@@ -37,6 +43,12 @@ services:
       $urlAccessToken: '%env(resolve:OAUTH_URLACCESSTOKEN)%'
       $urlResourceOwnerDetails: '%env(resolve:OAUTH_URLRESOURCEOWNERDETAILS)%'
       $urlGenerator: '@router'
+      $enablePkce: '%env(bool:OAUTH_PKCE)%'
+      $allowedRedirectUris: '%env(string:OAUTH_ALLOWED_REDIRECT_URIS)%'
+      $frontUrl: '%env(string:FRONT_URL)%'
+      $resourceOwnerId: '%env(string:OAUTH_RESOURCE_OWNER_ID)%'
+      $stripUserRealm: '%env(bool:OAUTH_STRIP_USER_REALM)%'
+      $scopes: '%env(string:OAUTH_SCOPES)%'
 
   #LDAP
   App\Service\LdapService:
