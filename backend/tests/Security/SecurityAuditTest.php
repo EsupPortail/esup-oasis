@@ -121,6 +121,25 @@ class SecurityAuditTest extends ApiTestCaseCustom
 
         $this->assertResponseStatusCodeSame(422);
         $this->assertJsonContains(['hydra:description' => 'Type de fichier non autorisé : json.']);
+
+        // 3. Tentative de Path Traversal dans le nom du fichier
+        $tempFile3 = tempnam(sys_get_temp_dir(), 'test_sec3');
+        file_put_contents($tempFile3, 'contenu texte inoffensif');
+        $uploadedFile3 = new UploadedFile($tempFile3, '../../../var/log/traversal.txt', 'text/plain', null, true);
+
+        $client->request('POST', '/telechargements', [
+            'headers' => ['Content-Type' => 'multipart/form-data'],
+            'extra' => [
+                'files' => ['file' => $uploadedFile3],
+            ],
+        ]);
+        $this->assertResponseStatusCodeSame(201);
+        $createdId = basename($client->getResponse()->toArray()['@id']);
+        $em = static::getContainer()->get('doctrine')->getManager();
+        $fichier = $em->getRepository(\App\Entity\Fichier::class)->find($createdId);
+        $metadata = $fichier->getMetadata();
+        self::assertStringNotContainsString('..', $metadata['nom']);
+        self::assertSame(realpath($metadata['base']), dirname(realpath($metadata['cheminComplet'])));
     }
 
     /**
