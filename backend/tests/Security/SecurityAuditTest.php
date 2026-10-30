@@ -271,4 +271,27 @@ class SecurityAuditTest extends ApiTestCaseCustom
         $this->assertResponseStatusCodeSame(422);
         $this->assertJsonContains(['hydra:description' => 'fichier: Ce fichier est déjà associé à une autre ressource.']);
     }
+
+    /**
+     * Vérifie que les filtres Doctrine personnalisés résistent aux tentatives d'injection DQL
+     */
+    public function testDoctrineFiltersDqlInjectionResistance(): void
+    {
+        $client = $this->createClientWithCredentials('admin');
+
+        // 1. CaseInsensitiveOrderFilter : propriété non autorisée / injection dans la clé ou la direction
+        $client->request('GET', '/campus?order[libelle))=asc,%20o_1.id--]=asc');
+        $this->assertResponseIsSuccessful();
+
+        $client->request('GET', '/campus?order[libelle]=ASC,%201=1');
+        $this->assertResponseIsSuccessful();
+
+        // 2. InterventionForfaitNomIntervenantOrderFilter : direction malicieuse
+        $client->request('GET', '/interventions_forfait?order[intervenant.utilisateur.nom]=ASC,%201=1');
+        $this->assertResponseIsSuccessful();
+
+        // 3. PreloadAssociationsFilter : tentative d'injection via query string
+        $client->request('GET', '/beneficiaires?preloadAssociations[hack][sourceEntity]=root&preloadAssociations[hack][relationName]=inscriptions%20WITH%201=1--');
+        $this->assertResponseIsSuccessful();
+    }
 }

@@ -178,10 +178,14 @@ class NestedFieldSearchFilter extends AbstractFilter implements ResetInterface
                     $exprs[] = $queryBuilder->expr()->eq(':' . $uidParam, $additionalJoinAlias . '.uid');
                     $queryBuilder->setParameter($uidParam, $val->uid);
                 } else {
-                    $exprs[] = $queryBuilder->expr()->eq($val->id, $alias . '.' . $targetField);
+                    $valParam = $queryNameGenerator->generateParameterName($targetField);
+                    $exprs[] = $queryBuilder->expr()->eq(':' . $valParam, $alias . '.' . $targetField);
+                    $queryBuilder->setParameter($valParam, $val->id);
                 }
             } catch (Exception) {
-                $exprs[] = $queryBuilder->expr()->eq($alias . '.' . $targetField, $val);
+                $valParam = $queryNameGenerator->generateParameterName($targetField);
+                $exprs[] = $queryBuilder->expr()->eq($alias . '.' . $targetField, ':' . $valParam);
+                $queryBuilder->setParameter($valParam, $val);
             }
         }
 
