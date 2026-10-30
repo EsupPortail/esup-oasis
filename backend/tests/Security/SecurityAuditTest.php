@@ -335,4 +335,41 @@ class SecurityAuditTest extends ApiTestCaseCustom
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains(['hydra:totalItems' => 0]);
     }
+
+    /**
+     * Vérifie les restrictions de droits dans les Voters de modification :
+     * - Un renfort ne peut pas créer d'aménagement d'examen
+     * - Un intervenant ne peut pas modifier ses dates de contrat ou compétences
+     */
+    public function testVoterModificationRestrictions(): void
+    {
+        $client = $this->createClientWithCredentials('renfort');
+        $tokenRenfort = $this->getTokenForUser('renfort');
+        $tokenIntervenant = $this->getTokenForUser('intervenant');
+
+        // 1. Un renfort tente de créer un aménagement d'examen (type_amenagement 1 : examens=true, aideHumaine=false)
+        $client->request('POST', '/utilisateurs/beneficiaire/amenagements', [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenRenfort],
+            'json' => [
+                'typeAmenagement' => '/types_amenagements/1',
+                'semestre1' => true,
+                'semestre2' => true,
+                'debut' => '2025-09-01',
+                'fin' => '2026-06-30',
+            ],
+        ]);
+        $this->assertResponseStatusCodeSame(403);
+
+        // 2. Un intervenant tente de modifier ses compétences ou sa date de fin de contrat
+        $client->request('PATCH', '/utilisateurs/intervenant', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $tokenIntervenant,
+                'Content-Type' => 'application/merge-patch+json',
+            ],
+            'json' => [
+                'intervenantFin' => '2099-12-31',
+            ],
+        ]);
+        $this->assertResponseStatusCodeSame(403);
+    }
 }
