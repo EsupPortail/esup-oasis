@@ -451,4 +451,22 @@ class SecurityAuditTest extends ApiTestCaseCustom
         $headersPng = $client->getResponse()->getHeaders();
         $this->assertStringStartsWith('inline;', $headersPng['content-disposition'][0]);
     }
+
+    /**
+     * Vérifie que CustomCsvEncoder échappe les formules pour prévenir l'injection CSV.
+     */
+    public function testCustomCsvEncoderEscapesFormulas(): void
+    {
+        $encoder = new \App\Serializer\Encoder\CustomCsvEncoder();
+        $data = [
+            ['nom' => '=cmd|"/C calc"!A0', 'prenom' => '+1234', 'valeur' => '@alert()'],
+        ];
+
+        $csv = $encoder->encode($data, 'customcsv');
+
+        // Les valeurs commençant par =, +, -, @ doivent être préfixées d'un apostrophe ou échappées
+        $this->assertStringNotContainsString(';=cmd', $csv);
+        $this->assertStringNotContainsString(';+1234', $csv);
+        $this->assertStringNotContainsString(';@alert', $csv);
+    }
 }
