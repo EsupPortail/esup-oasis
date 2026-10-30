@@ -36,7 +36,8 @@ class SecurityAuditTest extends ApiTestCaseCustom
     }
 
     /**
-     * Vérifie qu'un bénéficiaire ne peut pas créer d'aménagement pour lui-même ou autrui
+     * Vérifie qu'un bénéficiaire ne peut pas créer d'aménagement pour lui-même ou autrui,
+     * ni lire l'aménagement d'un autre bénéficiaire en mettant son propre uid dans l'URL (IDOR)
      */
     public function testBeneficiaireCannotCreateAmenagement(): void
     {
@@ -52,6 +53,10 @@ class SecurityAuditTest extends ApiTestCaseCustom
         ]);
 
         $this->assertResponseStatusCodeSame(403);
+
+        // Amenagement 1 appartient à beneficiaire_decision : tentative d'accès via /utilisateurs/beneficiaire/amenagements/1
+        $client->request('GET', '/utilisateurs/beneficiaire/amenagements/1');
+        $this->assertResponseStatusCodeSame(404);
     }
 
     /**

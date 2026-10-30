@@ -43,6 +43,66 @@ class PiecesJointesTest extends ApiTestCaseCustom
         $this->assertResponseStatusCodeSame(403);
     }
 
+    public function testBeneficiaireCannotBypassUidOrMutatePieceJointe(): void
+    {
+        $tokenGestionnaire = $this->getTokenForUser('gestionnaire');
+        $tokenBeneficiaire2 = $this->getTokenForUser('beneficiaire2');
+        $client = $this->createClientWithCredentials('gestionnaire');
+
+        // 1. Le gestionnaire crée une PJ pour "beneficiaire"
+        $tempFile = tempnam(sys_get_temp_dir(), 'test_pj_idor');
+        file_put_contents($tempFile, 'contenu pj beneficiaire 1');
+        $uploadedFile = new \Symfony\Component\HttpFoundation\File\UploadedFile($tempFile, 'pj1.txt', 'text/plain', null, true);
+
+        $client->request('POST', '/telechargements', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $tokenGestionnaire,
+                'Content-Type' => 'multipart/form-data',
+            ],
+            'extra' => ['files' => ['file' => $uploadedFile]],
+        ]);
+        $this->assertResponseStatusCodeSame(201);
+        $fileIri = $client->getResponse()->toArray()['@id'];
+
+        $client->request('POST', '/beneficiaires/beneficiaire/pieces_jointes', [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenGestionnaire],
+            'json' => [
+                'libelle' => 'PJ confidentielle beneficiaire 1',
+                'fichier' => $fileIri,
+            ],
+        ]);
+        $this->assertResponseStatusCodeSame(201);
+        $pjIri = $client->getResponse()->toArray()['@id'];
+        $pjId = basename($pjIri);
+
+        // 2. beneficiaire2 tente d'y accéder en mettant son propre uid dans l'URL (IDOR)
+        $client->request('GET', '/beneficiaires/beneficiaire2/pieces_jointes/' . $pjId, [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenBeneficiaire2],
+        ]);
+        $this->assertResponseStatusCodeSame(404);
+
+        // 3. Un gestionnaire ne peut pas supprimer la PJ via le mauvais uid dans l'URL
+        $client->request('DELETE', '/beneficiaires/beneficiaire2/pieces_jointes/' . $pjId, [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenGestionnaire],
+        ]);
+        $this->assertResponseStatusCodeSame(404);
+
+        // 4. beneficiaire2 ne peut ni supprimer ni créer de PJ (403)
+        $client->request('DELETE', '/beneficiaires/beneficiaire/pieces_jointes/' . $pjId, [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenBeneficiaire2],
+        ]);
+        $this->assertResponseStatusCodeSame(403);
+
+        $client->request('POST', '/beneficiaires/beneficiaire2/pieces_jointes', [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenBeneficiaire2],
+            'json' => [
+                'libelle' => 'Tentative création par bénéficiaire',
+                'fichier' => $fileIri,
+            ],
+        ]);
+        $this->assertResponseStatusCodeSame(403);
+    }
+
     public function testGestionnaireCanUploadAndDeletePieceJointe(): void
     {
         $client = $this->createClientWithCredentials('gestionnaire');
