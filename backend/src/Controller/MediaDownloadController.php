@@ -42,13 +42,24 @@ class MediaDownloadController extends AbstractController
             $file = $file->getContent();
         }
         $response = new Response($file);
+        $mimeType = $fichier->getTypeMime();
+        $isInlineAllowed = in_array($mimeType, [
+            'application/pdf',
+            'image/jpeg',
+            'image/png',
+            'image/webp',
+            'image/gif',
+        ], true);
+
         $disposition = HeaderUtils::makeDisposition(
-            disposition: HeaderUtils::DISPOSITION_INLINE,
+            disposition: $isInlineAllowed ? HeaderUtils::DISPOSITION_INLINE : HeaderUtils::DISPOSITION_ATTACHMENT,
             filename: $fichier->getNom(),
             filenameFallback: $fichier->getId(),
         );
         $response->headers->set('Content-Disposition', $disposition);
-        $response->headers->set('Content-Type', $fichier->getTypeMime());
+        $response->headers->set('Content-Type', $mimeType);
+        $response->headers->set('X-Content-Type-Options', 'nosniff');
+        $response->headers->set('Content-Security-Policy', "default-src 'none'; sandbox");
         return $response;
     }
 }
