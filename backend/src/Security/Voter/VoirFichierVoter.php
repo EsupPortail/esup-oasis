@@ -98,10 +98,6 @@ class VoirFichierVoter extends Voter
             return true;
         }
 
-        if ($subject->getEntretien()?->getUtilisateur()?->getUserIdentifier() === $userIdentifier) {
-            return true;
-        }
-
         return $userIdentifier === $subject->getProprietaire()?->getUserIdentifier();
     }
 }
