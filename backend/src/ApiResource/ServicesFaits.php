@@ -40,7 +40,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
             uriTemplate: '/periodes/{id}/services_faits',
             formats: ['jsonld', 'customcsv' => 'text/csv', 'pdf' => 'application/pdf'],
             uriVariables: ['id'],
-            security: 'object.periode.envoyee == true',
+            security: "is_granted('ROLE_GESTIONNAIRE') and object.periode.envoyee == true",
             provider: ServicesFaitsProvider::class,
         ),
     ],

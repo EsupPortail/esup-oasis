@@ -38,8 +38,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     operations: [
-        new Get(uriTemplate: self::ITEM_URI, uriVariables: ['id']),
-        new GetCollection(uriTemplate: self::COLLECTION_URI),
+        new Get(
+            uriTemplate: self::ITEM_URI,
+            uriVariables: ['id'],
+            security: "is_granted('ROLE_PLANIFICATEUR') or object.intervenant.uid == user.getUid()",
+        ),
+        new GetCollection(
+            uriTemplate: self::COLLECTION_URI,
+            security: "is_granted('ROLE_PLANIFICATEUR') or is_granted('ROLE_INTERVENANT')",
+        ),
         new Post(
             uriTemplate: self::COLLECTION_URI,
             securityPostDenormalize: "is_granted('" . self::AJOUTER_INTERVENTION . "', object)",
