@@ -401,20 +401,20 @@ class SecurityAuditTest extends ApiTestCaseCustom
         $client = $this->createClientWithCredentials('gestionnaire');
         $token = $this->getTokenForUser('gestionnaire');
 
-        // Upload d'un fichier texte (doit être en attachment)
-        $tempFileTxt = tempnam(sys_get_temp_dir(), 'test_dl_txt');
-        file_put_contents($tempFileTxt, 'Hello secure world');
-        $uploadedTxt = new UploadedFile($tempFileTxt, 'note.txt', 'text/plain', null, true);
+        // Upload d'un fichier TIFF (autorisé à l'upload mais servi en attachment car non supporté inline dans les navigateurs)
+        $tempFileTif = tempnam(sys_get_temp_dir(), 'test_dl_tif') . '.tif';
+        file_put_contents($tempFileTif, "II*\x00\x08\x00\x00\x00\x00\x00");
+        $uploadedTif = new UploadedFile($tempFileTif, 'image.tif', 'image/tiff', null, true);
 
         $client->request('POST', '/telechargements', [
             'headers' => [
                 'Authorization' => 'Bearer ' . $token,
                 'Content-Type' => 'multipart/form-data',
             ],
-            'extra' => ['files' => ['file' => $uploadedTxt]],
+            'extra' => ['files' => ['file' => $uploadedTif]],
         ]);
         $this->assertResponseStatusCodeSame(201);
-        $fileTxtId = basename($client->getResponse()->toArray()['@id']);
+        $fileTifId = basename($client->getResponse()->toArray()['@id']);
 
         // Upload d'un fichier image png (doit être en inline)
         $tempFilePng = tempnam(sys_get_temp_dir(), 'test_dl_png');
@@ -431,15 +431,15 @@ class SecurityAuditTest extends ApiTestCaseCustom
         $this->assertResponseStatusCodeSame(201);
         $filePngId = basename($client->getResponse()->toArray()['@id']);
 
-        // Téléchargement du fichier TXT
-        $client->request('GET', '/fichiers/' . $fileTxtId, [
+        // Téléchargement du fichier TIFF
+        $client->request('GET', '/fichiers/' . $fileTifId, [
             'headers' => ['Authorization' => 'Bearer ' . $token],
         ]);
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('x-content-type-options', 'nosniff');
         $this->assertResponseHeaderSame('content-security-policy', "default-src 'none'; sandbox");
-        $headersTxt = $client->getResponse()->getHeaders();
-        $this->assertStringStartsWith('attachment;', $headersTxt['content-disposition'][0]);
+        $headersTif = $client->getResponse()->getHeaders();
+        $this->assertStringStartsWith('attachment;', $headersTif['content-disposition'][0]);
 
         // Téléchargement du fichier PNG
         $client->request('GET', '/fichiers/' . $filePngId, [

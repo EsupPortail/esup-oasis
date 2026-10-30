@@ -49,6 +49,7 @@ class MediaDownloadController extends AbstractController
             'image/png',
             'image/webp',
             'image/gif',
+            'text/plain',
         ], true);
 
         $disposition = HeaderUtils::makeDisposition(

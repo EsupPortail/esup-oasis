@@ -32,7 +32,6 @@ use App\State\InterventionForfait\InterventionForfaitProcessor;
 use App\State\InterventionForfait\InterventionForfaitProvider;
 use DateTimeInterface;
 use ReflectionProperty;
-use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -45,7 +44,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new GetCollection(
             uriTemplate: self::COLLECTION_URI,
-            security: "is_granted('ROLE_PLANIFICATEUR') or is_granted('ROLE_INTERVENANT')",
+            //pas de security : géré dans le provider
         ),
         new Post(
             uriTemplate: self::COLLECTION_URI,
