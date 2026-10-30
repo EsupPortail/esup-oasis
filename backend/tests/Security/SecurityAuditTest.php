@@ -486,4 +486,62 @@ class SecurityAuditTest extends ApiTestCaseCustom
         $setCookieHeaders = implode(';;', $headers['set-cookie']);
         $this->assertStringContainsString('deleted', $setCookieHeaders);
     }
+
+    /**
+     * Vérifie que seul ROLE_ADMIN peut créer ou modifier une TypologieHandicap.
+     */
+    public function testTypologieHandicapAdminOnly(): void
+    {
+        $client = $this->createClientWithCredentials('gestionnaire');
+        $tokenGestionnaire = $this->getTokenForUser('gestionnaire');
+        $tokenAdmin = $this->getTokenForUser('admin');
+
+        // Tentative de création par un gestionnaire -> 403
+        $client->request('POST', '/typologies', [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenGestionnaire],
+            'json' => ['libelle' => 'Test Sécurité Typologie'],
+        ]);
+        $this->assertResponseStatusCodeSame(403);
+
+        // Création par un admin -> 201
+        $client->request('POST', '/typologies', [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenAdmin],
+            'json' => ['libelle' => 'Test Sécurité Typologie Admin'],
+        ]);
+        $this->assertResponseStatusCodeSame(201);
+    }
+
+    /**
+     * Vérifie qu'on ne peut pas répondre à une question qui n'appartient pas au type de demande.
+     */
+    public function testQuestionAttenduePourDemandeValidation(): void
+    {
+        $em = static::getContainer()->get('doctrine')->getManager();
+
+        $orphanQuestion = new \App\Entity\Question();
+        $orphanQuestion->setLibelle('Question hors type demande');
+        $orphanQuestion->setTypeReponse(\App\Entity\Question::TYPE_TEXT);
+        $em->persist($orphanQuestion);
+
+        $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
+        $demande = $em->getRepository(\App\Entity\Demande::class)->findOneBy(['demandeur' => $demandeur]);
+        $demande->setEtat($em->getRepository(\App\Entity\EtatDemande::class)->find(\App\Entity\EtatDemande::EN_COURS));
+        $em->flush();
+        if ($em->getConnection()->isTransactionActive()) {
+            $em->getConnection()->commit();
+            $em->getConnection()->beginTransaction();
+        }
+
+        $demandeId = $demande->getId();
+
+        $client = $this->createClientWithCredentials('demandeur');
+        $token = $this->getTokenForUser('demandeur');
+
+        $client->request('PUT', '/demandes/' . $demandeId . '/questions/' . $orphanQuestion->getId() . '/reponse', [
+            'headers' => ['Authorization' => 'Bearer ' . $token],
+            'json' => ['commentaire' => 'invalide'],
+        ]);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertJsonContains(['hydra:description' => 'La question n\'est pas attendue pour ce type de demande']);
+    }
 }

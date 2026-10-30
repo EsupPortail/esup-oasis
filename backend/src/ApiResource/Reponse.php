@@ -21,6 +21,7 @@ use App\State\Reponse\ReponseProcessor;
 use App\State\Reponse\ReponseProvider;
 use App\Validator\IdentifiantSportifHautNiveauValideConstraint;
 use App\Validator\PieceJustificativeValideConstraint;
+use App\Validator\QuestionAttenduePourDemandeConstraint;
 use App\Validator\ValidationDemandePossibleConstraint;
 use DateTimeInterface;
 use ReflectionProperty;
@@ -59,7 +60,7 @@ use Symfony\Component\Validator\Constraints as Assert;
                         and this.question.typeReponse != "checkbox") ',
     message: 'Cette question attend une option de la liste prédéfinie',
 )]
-//#[QuestionAttenduePourDemandeConstraint]//todo
+#[QuestionAttenduePourDemandeConstraint]
 #[ValidationDemandePossibleConstraint]
 #[IdentifiantSportifHautNiveauValideConstraint]
 class Reponse
