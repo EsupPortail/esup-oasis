@@ -105,7 +105,14 @@ class DecisionAmenagementManager
             $decision->setDateModification($this->now());
         }
 
-        $decision->setEtat(DecisionAmenagementExamens::ETAT_ATTENTE_VALIDATION_CAS);
+        // le prochain envoi peut se faire sans parapheur : la signature du document précédent ne doit plus s'afficher
+        $decision
+            ->setEtat(DecisionAmenagementExamens::ETAT_ATTENTE_VALIDATION_CAS)
+            ->setEtatSignature(null)
+            ->setIdDocumentParapheur(null)
+            ->setUidDemandeurSignature(null)
+            ->setDerniereVerificationSignature(null)
+            ->setDateSignature(null);
         $this->decisionAmenagementExamensRepository->save($decision, true);
 
         //ici on veut aussi rafraichir le cache de l'utilisateur et de la decision elle-même

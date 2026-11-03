@@ -186,6 +186,35 @@ final class DecisionAmenagementManagerTest extends TestCase
         self::assertSame($etat, $decision->getEtat());
     }
 
+    public function testSignedDecisionBackToValidationForgetsPreviousSignature(): void
+    {
+        // le prochain envoi peut se faire sans parapheur : rien ne doit rester du document signé précédent
+        $decision = new DecisionAmenagementExamens()
+            ->setEtat(DecisionAmenagementExamens::ETAT_EDITE)
+            ->setEtatSignature(DecisionAmenagementExamens::ETAT_SIGNATURE_SIGNEE)
+            ->setIdDocumentParapheur('document-signe')
+            ->setUidDemandeurSignature('gestionnaire')
+            ->setDerniereVerificationSignature(new DateTimeImmutable('2026-03-01 09:00:00'))
+            ->setDateSignature(new DateTimeImmutable('2026-03-01 08:00:00'));
+
+        $repository = $this->createMock(DecisionAmenagementExamensRepository::class);
+        $repository->expects(self::once())->method('save');
+
+        $now = '2026-03-02 10:00:00';
+        $this->manager($now, $repository)->majEtatDecision(
+            $this->beneficiaire([$this->amenagementDecision($now)], $decision),
+            new DateTimeImmutable(self::START),
+            new DateTimeImmutable(self::END),
+        );
+
+        self::assertSame(DecisionAmenagementExamens::ETAT_ATTENTE_VALIDATION_CAS, $decision->getEtat());
+        self::assertNull($decision->getEtatSignature());
+        self::assertNull($decision->getIdDocumentParapheur());
+        self::assertNull($decision->getUidDemandeurSignature());
+        self::assertNull($decision->getDerniereVerificationSignature());
+        self::assertNull($decision->getDateSignature());
+    }
+
     public function testChangesAreRefusedWhileDecisionIsEnSignature(): void
     {
         $motif = $this->verrou()->motifVerrou($this->beneficiaireAvecDecision(DecisionAmenagementExamens::ETAT_EN_SIGNATURE));
