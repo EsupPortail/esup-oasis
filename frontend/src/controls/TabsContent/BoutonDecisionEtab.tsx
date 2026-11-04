@@ -113,6 +113,12 @@ export function BoutonDecisionEtab(props: { utilisateurId: string }) {
         message.success(`Demande d'édition ${decisionEtab.de} envoyée`).then();
       } else if (data.etat === EtatDecisionEtablissement.ATTENTE_VALIDATION_CAS) {
         message.success(`${decisionEtab.Denomination} repris${decisionEtab.accordE}`).then();
+      } else if (data.etat === EtatDecisionEtablissement.EN_SIGNATURE) {
+        message
+          .success(
+            `${decisionEtab.Denomination} envoyé${decisionEtab.accordE} en signature électronique`,
+          )
+          .then();
       }
     },
     onError: () => {

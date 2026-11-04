@@ -6,7 +6,7 @@
  */
 
 import { useApi } from "@context/api/ApiProvider";
-import { intervalleSuiviEnvoi, verrouSignature } from "@lib";
+import { verrouSignature } from "@lib";
 
 /** Motif du verrou de signature pour un bénéficiaire, `undefined` s'il peut être modifié. */
 export function useVerrouSignature(utilisateurId?: string): string | undefined {
@@ -14,7 +14,6 @@ export function useVerrouSignature(utilisateurId?: string): string | undefined {
     path: "/utilisateurs/{uid}",
     url: utilisateurId,
     enabled: !!utilisateurId,
-    refetchInterval: intervalleSuiviEnvoi,
   });
 
   return verrouSignature(utilisateur);
