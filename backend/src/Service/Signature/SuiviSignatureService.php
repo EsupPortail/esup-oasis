@@ -14,9 +14,9 @@ use App\Entity\DecisionAmenagementExamens;
 use App\Repository\DecisionAmenagementExamensRepository;
 use App\Service\Decision\ArchivageDecision;
 use App\Service\MailService;
+use App\State\DecisionAmenagementExamens\DecisionAmenagementManager;
 use App\State\Utilisateur\UtilisateurManager;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Clock\ClockAwareTrait;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Throwable;
 
@@ -27,10 +27,9 @@ use Throwable;
  */
 readonly class SuiviSignatureService
 {
-    use ClockAwareTrait;
-
     public function __construct(
         private DecisionAmenagementExamensRepository $decisionAmenagementExamensRepository,
+        private DecisionAmenagementManager $decisionAmenagementManager,
         private AbstractParapheur $parapheur,
         private ArchivageDecision $archivageDecision,
         private UtilisateurManager $utilisateurManager,
@@ -100,9 +99,10 @@ readonly class SuiviSignatureService
             $suivi = $this->parapheur->suivre($decision->getIdDocumentParapheur());
         } catch (DocumentInconnuException) {
             // le parapheur ne connaît plus le document : le réinterroger ne servirait à rien
-            $decision->setEtat(DecisionAmenagementExamens::ETAT_REFUSEE);
-            $decision->setEtatSignature(DecisionAmenagementExamens::ETAT_SIGNATURE_ERREUR);
-            $this->decisionAmenagementExamensRepository->save($decision, true);
+            $this->decisionAmenagementManager->noterRetourSansSignature(
+                $decision,
+                DecisionAmenagementExamens::ETAT_SIGNATURE_ERREUR,
+            );
             $this->logger->error(
                 'Décision {id} : document {document} inconnu du parapheur, suivi arrêté.',
                 ['id' => $decision->getId(), 'document' => $decision->getIdDocumentParapheur()],
@@ -119,10 +119,8 @@ readonly class SuiviSignatureService
             return ['erreurs' => 1];
         }
 
-        $decision->setDerniereVerificationSignature($this->now());
-
         if (DecisionAmenagementExamens::ETAT_SIGNATURE_EN_SIGNATURE === $suivi->etat) {
-            $this->decisionAmenagementExamensRepository->save($decision, true);
+            $this->decisionAmenagementManager->noterVerificationSignature($decision);
 
             return [];
         }
@@ -136,9 +134,7 @@ readonly class SuiviSignatureService
             return ['erreurs' => 1];
         }
 
-        $decision->setEtat(DecisionAmenagementExamens::ETAT_REFUSEE);
-        $decision->setEtatSignature($suivi->etat);
-        $this->decisionAmenagementExamensRepository->save($decision, true);
+        $this->decisionAmenagementManager->noterRetourSansSignature($decision, $suivi->etat);
         $this->logger->warning(
             'Décision {id} : circuit de signature terminé sans signature ({etat}).',
             ['id' => $decision->getId(), 'etat' => $suivi->etat],
@@ -171,10 +167,7 @@ readonly class SuiviSignatureService
             );
         }
 
-        $decision->setDateSignature($suivi->dateSignature);
-        $decision->setEtatSignature(DecisionAmenagementExamens::ETAT_SIGNATURE_SIGNEE);
-        $decision->setEtat(DecisionAmenagementExamens::ETAT_EDITE);
-        $this->decisionAmenagementExamensRepository->save($decision, true);
+        $this->decisionAmenagementManager->noterSignature($decision, $suivi->dateSignature);
 
         if (!$this->parapheurEnvoieDocument) {
             try {
@@ -206,7 +199,7 @@ readonly class SuiviSignatureService
                 'Décision {id} rendue par le parapheur ({etat}) mais sans demandeur mémorisé : archivage impossible.',
                 ['id' => $decision->getId(), 'etat' => $etatSignature],
             );
-            $this->decisionAmenagementExamensRepository->save($decision, true);
+            $this->decisionAmenagementManager->noterVerificationSignature($decision);
 
             return null;
         }
@@ -224,7 +217,7 @@ readonly class SuiviSignatureService
                 'Décision {id} rendue par le parapheur ({etat}) mais récupération du PDF impossible : {erreur}',
                 ['id' => $decision->getId(), 'etat' => $etatSignature, 'erreur' => $e->getMessage()],
             );
-            $this->decisionAmenagementExamensRepository->save($decision, true);
+            $this->decisionAmenagementManager->noterVerificationSignature($decision);
 
             return null;
         }

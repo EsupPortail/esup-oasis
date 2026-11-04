@@ -157,7 +157,7 @@ secondaire ne désigne pas les signataires (une inscription sans cette informati
 
 Pour une composante reliée à un circuit, la décision validée par le gestionnaire, ou envoyée par
 l'administrateur, part en signature : le circuit remplace l'envoi par e-mail de l'administrateur fonctionnel.
-`SignatureElectronique` la passe aussitôt à l'état `EN_SIGNATURE`, ce qui la verrouille, puis le worker génère le
+`DecisionAmenagementManager` la passe aussitôt à l'état `EN_SIGNATURE`, ce qui la verrouille, puis le worker génère le
 PDF et le dépose (message `SignatureDecisionDemandeeMessage`). Tant que le parapheur n'a pas le document, elle est
 en cours de dépôt. Un dépôt en échec est rejoué une heure plus tard ; si la composante n'a plus de circuit au
 moment du dépôt, la décision repasse à l'état `VALIDE` et l'administrateur l'envoie par e-mail.

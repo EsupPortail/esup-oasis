@@ -10,23 +10,19 @@
 namespace App\Service\Signature;
 
 use App\Entity\DecisionAmenagementExamens;
-use App\Message\SignatureDecisionDemandeeMessage;
-use App\Repository\DecisionAmenagementExamensRepository;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
- * Passage d'une décision d'aménagements par le parapheur : choix du circuit, demande de signature et dépôt.
+ * Passage d'une décision d'aménagements par le parapheur : choix du circuit et dépôt. Les décisions elles-mêmes
+ * ne sont modifiées que par DecisionAmenagementManager.
  */
 readonly class SignatureElectronique
 {
     public function __construct(
         private AbstractParapheur $parapheur,
-        private DecisionAmenagementExamensRepository $decisionAmenagementExamensRepository,
         private LoggerInterface $logger,
-        private MessageBusInterface $messageBus,
         // vrai : le parapheur envoie le document signé à l'étudiant ; faux : OASIS l'envoie par e-mail
         #[Autowire('%env(bool:default::PARAPHEUR_ENVOIE_DOCUMENT)%')]
         private bool $parapheurEnvoieDocument = false,
@@ -115,29 +111,6 @@ readonly class SignatureElectronique
         return [array_values($composantes), $circuits];
     }
 
-    /**
-     * Fait signer la décision validée ou envoyée quand la composante du bénéficiaire a un circuit : elle passe en
-     * signature, donc verrouillée dès la demande, et le dépôt se fait en asynchrone. Sans circuit, rien ne change.
-     *
-     * @return bool vrai si la décision part en signature
-     */
-    public function demanderSignature(DecisionAmenagementExamens $decision, string $uidDemandeur): bool
-    {
-        if (null === $this->circuitPour($decision)) {
-            return false;
-        }
-
-        // sans document dans le parapheur, la décision en signature est en cours de dépôt
-        $decision
-            ->setEtat(DecisionAmenagementExamens::ETAT_EN_SIGNATURE)
-            ->setEtatSignature(null)
-            ->setIdDocumentParapheur(null);
-        $this->decisionAmenagementExamensRepository->save($decision, true);
-        $this->messageBus->dispatch(new SignatureDecisionDemandeeMessage($decision->getId(), $uidDemandeur));
-
-        return true;
-    }
-
     public function estEnCours(DecisionAmenagementExamens $decision): bool
     {
         return DecisionAmenagementExamens::ETAT_EN_SIGNATURE === $decision->getEtat()
@@ -145,22 +118,18 @@ readonly class SignatureElectronique
     }
 
     /**
-     * @param string $uidDemandeur auteur de la pièce jointe au retour de signature
+     * @return string identifiant du document dans le parapheur
      *
      * @throws ParapheurException
      * @throws RuntimeException si le bénéficiaire n'a pas d'adresse e-mail
      */
-    public function deposer(
-        DecisionAmenagementExamens $decision,
-        string $pdf,
-        string $circuit,
-        string $uidDemandeur,
-    ): void {
+    public function deposer(DecisionAmenagementExamens $decision, string $pdf, string $circuit): string
+    {
         // le document signé part à l'adresse de l'e-mail habituel, par le parapheur ou par OASIS
         $destinataire = $decision->getBeneficiaire()->getEmail()
             ?? throw new RuntimeException(sprintf('Bénéficiaire de la décision %d sans adresse e-mail.', $decision->getId()));
 
-        $documentId = $this->parapheur->deposer(
+        return $this->parapheur->deposer(
             pdf: $pdf,
             circuit: $circuit,
             libelle: sprintf(
@@ -171,15 +140,5 @@ readonly class SignatureElectronique
             ),
             destinataire: $this->parapheurEnvoieDocument ? $destinataire : null,
         );
-
-        $decision->setEtat(DecisionAmenagementExamens::ETAT_EN_SIGNATURE);
-        $decision
-            ->setEtatSignature(DecisionAmenagementExamens::ETAT_SIGNATURE_EN_SIGNATURE)
-            ->setIdDocumentParapheur($documentId)
-            ->setUidDemandeurSignature($uidDemandeur)
-            // une signature précédente ne concerne pas ce nouveau document
-            ->setDateSignature(null)
-            ->setDerniereVerificationSignature(null);
-        $this->decisionAmenagementExamensRepository->save($decision, true);
     }
 }

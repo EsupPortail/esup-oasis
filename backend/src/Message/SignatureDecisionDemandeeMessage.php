@@ -10,7 +10,7 @@
 namespace App\Message;
 
 /**
- * Décision à déposer dans le parapheur : envoyé par SignatureElectronique::demanderSignature, une fois la
+ * Décision à déposer dans le parapheur : envoyé par DecisionAmenagementManager::demanderSignature, une fois la
  * décision passée en signature.
  */
 class SignatureDecisionDemandeeMessage

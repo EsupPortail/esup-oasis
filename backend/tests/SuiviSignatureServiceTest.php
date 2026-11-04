@@ -16,6 +16,7 @@ use App\Service\Decision\ArchivageDecision;
 use App\Service\MailService;
 use App\Service\Signature\ParapheurFactice;
 use App\Service\Signature\SuiviSignatureService;
+use App\State\DecisionAmenagementExamens\DecisionAmenagementManager;
 use App\State\Utilisateur\UtilisateurManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\NullLogger;
@@ -71,6 +72,7 @@ class SuiviSignatureServiceTest extends KernelTestCase
         $container = self::getContainer();
         $suivi = new SuiviSignatureService(
             $container->get(DecisionAmenagementExamensRepository::class),
+            $container->get(DecisionAmenagementManager::class),
             $this->parapheur,
             $container->get(ArchivageDecision::class),
             $container->get(UtilisateurManager::class),
@@ -92,6 +94,7 @@ class SuiviSignatureServiceTest extends KernelTestCase
         $container = self::getContainer();
         $suivi = new SuiviSignatureService(
             $container->get(DecisionAmenagementExamensRepository::class),
+            $container->get(DecisionAmenagementManager::class),
             $this->parapheur,
             $container->get(ArchivageDecision::class),
             $container->get(UtilisateurManager::class),
