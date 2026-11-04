@@ -22,6 +22,7 @@ use App\Service\Signature\ParapheurException;
 use App\Service\Signature\ParapheurFactice;
 use App\Service\Signature\SignatureElectronique;
 use App\Service\Signature\SuiviSignature;
+use App\State\DecisionAmenagementExamens\DecisionAmenagementManager;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\NullLogger;
@@ -140,7 +141,8 @@ class SignatureDecisionDemandeeMessageHandlerTest extends KernelTestCase
             $container->get(DecisionAmenagementExamensRepository::class),
             $container->get(DecisionAmenagementEditionNormalizer::class),
             $container->get(PdfEncoder::class),
-            new SignatureElectronique($parapheur, $container->get(DecisionAmenagementExamensRepository::class), new NullLogger(), $bus),
+            new SignatureElectronique($parapheur, new NullLogger()),
+            $container->get(DecisionAmenagementManager::class),
             new NullLogger(),
             $bus,
         );

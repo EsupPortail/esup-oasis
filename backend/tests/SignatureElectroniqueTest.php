@@ -14,8 +14,6 @@ use App\Entity\DecisionAmenagementExamens;
 use App\Entity\Formation;
 use App\Entity\Inscription;
 use App\Entity\Utilisateur;
-use App\Message\SignatureDecisionDemandeeMessage;
-use App\Repository\DecisionAmenagementExamensRepository;
 use App\Service\Signature\AbstractParapheur;
 use App\Service\Signature\ParapheurDesactive;
 use App\Service\Signature\ParapheurFactice;
@@ -23,10 +21,7 @@ use App\Service\Signature\SignatureElectronique;
 use DateTime;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
-use ReflectionProperty;
 use RuntimeException;
-use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 class SignatureElectroniqueTest extends TestCase
 {
@@ -126,48 +121,36 @@ class SignatureElectroniqueTest extends TestCase
         $this->assertNull($signature->motifSansCircuit($this->decision(enCours: false)));
     }
 
-    public function testDeposerStartsSignatureAndClearsPreviousSignature(): void
+    public function testDeposerHandsPdfToParapheurAndReturnsItsDocument(): void
     {
         $parapheur = new ParapheurFactice();
-        $decision = $this->decision()
-            ->setEtatSignature(DecisionAmenagementExamens::ETAT_SIGNATURE_SIGNEE)
-            ->setDateSignature(new DateTime('2026-01-15'))
-            ->setDerniereVerificationSignature(new DateTime('2026-01-15'));
 
-        $this->signature($parapheur)->deposer($decision, '%PDF-test', 'circuit-ufr1', 'gestionnaire');
+        $documentId = $this->signature($parapheur)->deposer($this->decision(), '%PDF-test', 'circuit-ufr1');
 
-        $this->assertSame(DecisionAmenagementExamens::ETAT_EN_SIGNATURE, $decision->getEtat());
-        $this->assertSame(DecisionAmenagementExamens::ETAT_SIGNATURE_EN_SIGNATURE, $decision->getEtatSignature());
-        $this->assertSame('gestionnaire', $decision->getUidDemandeurSignature());
-        $this->assertNull($decision->getDateSignature());
-        $this->assertNull($decision->getDerniereVerificationSignature());
-        $this->assertSame('%PDF-test', $parapheur->telecharger($decision->getIdDocumentParapheur()));
+        $this->assertSame('%PDF-test', $parapheur->telecharger($documentId));
+        $this->assertSame('circuit-ufr1', $parapheur->documents()[$documentId]['circuit']);
     }
 
     public function testParapheurReceivesAddressOnlyWhenItSendsTheDocument(): void
     {
         $parapheur = new ParapheurFactice();
-        $parOasis = $this->decision();
-        $parLeParapheur = $this->decision();
 
-        $this->signature($parapheur)->deposer($parOasis, '%PDF-test', 'circuit-ufr1', 'gestionnaire');
-        $this->signature($parapheur, parapheurEnvoieDocument: true)->deposer($parLeParapheur, '%PDF-test', 'circuit-ufr1', 'gestionnaire');
+        $parOasis = $this->signature($parapheur)->deposer($this->decision(), '%PDF-test', 'circuit-ufr1');
+        $parLeParapheur = $this->signature($parapheur, parapheurEnvoieDocument: true)->deposer($this->decision(), '%PDF-test', 'circuit-ufr1');
 
-        $this->assertNull($parapheur->documents()[$parOasis->getIdDocumentParapheur()]['destinataire']);
-        $this->assertSame(self::EMAIL, $parapheur->documents()[$parLeParapheur->getIdDocumentParapheur()]['destinataire']);
+        $this->assertNull($parapheur->documents()[$parOasis]['destinataire']);
+        $this->assertSame(self::EMAIL, $parapheur->documents()[$parLeParapheur]['destinataire']);
     }
 
     public function testParapheurReceivesLibelleOfEtablissement(): void
     {
         $parapheur = new ParapheurFactice();
-        $parDefaut = $this->decision();
-        $personnalisee = $this->decision();
 
-        $this->signature($parapheur)->deposer($parDefaut, '%PDF-test', 'circuit-ufr1', 'gestionnaire');
-        $this->signature($parapheur, libelleDecision: "plan d'accompagnement")->deposer($personnalisee, '%PDF-test', 'circuit-ufr1', 'gestionnaire');
+        $parDefaut = $this->signature($parapheur)->deposer($this->decision(), '%PDF-test', 'circuit-ufr1');
+        $personnalisee = $this->signature($parapheur, libelleDecision: "plan d'accompagnement")->deposer($this->decision(), '%PDF-test', 'circuit-ufr1');
 
-        $this->assertSame("Décision d'aménagements - Camille Aubert", $parapheur->documents()[$parDefaut->getIdDocumentParapheur()]['libelle']);
-        $this->assertSame("Plan d'accompagnement - Camille Aubert", $parapheur->documents()[$personnalisee->getIdDocumentParapheur()]['libelle']);
+        $this->assertSame("Décision d'aménagements - Camille Aubert", $parapheur->documents()[$parDefaut]['libelle']);
+        $this->assertSame("Plan d'accompagnement - Camille Aubert", $parapheur->documents()[$personnalisee]['libelle']);
     }
 
     public function testDeposerRequiresBeneficiaireEmail(): void
@@ -175,7 +158,7 @@ class SignatureElectroniqueTest extends TestCase
         $parapheur = new ParapheurFactice();
 
         try {
-            $this->signature($parapheur)->deposer($this->decision(email: null), '%PDF-test', 'circuit-ufr1', 'gestionnaire');
+            $this->signature($parapheur)->deposer($this->decision(email: null), '%PDF-test', 'circuit-ufr1');
             $this->fail('Dépôt accepté sans adresse e-mail');
         } catch (RuntimeException) {
             // sans adresse, l'étudiant ne recevrait jamais le document signé : rien n'est déposé
@@ -183,44 +166,14 @@ class SignatureElectroniqueTest extends TestCase
         }
     }
 
-    public function testDecisionOfComposanteWithCircuitGoesToSignature(): void
-    {
-        $decision = $this->decision();
-        new ReflectionProperty(DecisionAmenagementExamens::class, 'id')->setValue($decision, 42);
-        $decision->setEtat(DecisionAmenagementExamens::ETAT_VALIDE)
-            ->setEtatSignature(DecisionAmenagementExamens::ETAT_SIGNATURE_REFUSEE);
-        $bus = $this->createMock(MessageBusInterface::class);
-        $bus->expects(self::once())->method('dispatch')
-            ->with(self::callback(fn(SignatureDecisionDemandeeMessage $message) => 42 === $message->getIdDecision()
-                && 'gestionnaire' === $message->getUidDemandeur()))
-            ->willReturnCallback(fn(object $message) => new Envelope($message));
-
-        $this->assertTrue($this->signature(new ParapheurFactice(), bus: $bus)->demanderSignature($decision, 'gestionnaire'));
-
-        // verrouillée dès la demande ; sans document ni état du parapheur, elle est en cours de dépôt
-        $this->assertSame(DecisionAmenagementExamens::ETAT_EN_SIGNATURE, $decision->getEtat());
-        $this->assertNull($decision->getEtatSignature());
-        $this->assertNull($decision->getIdDocumentParapheur());
-    }
-
-    public function testDecisionOfComposanteWithoutCircuitKeepsCurrentWorkflow(): void
-    {
-        $decision = $this->decision(['UFR2' => null])->setEtat(DecisionAmenagementExamens::ETAT_VALIDE);
-        $bus = $this->createMock(MessageBusInterface::class);
-        $bus->expects(self::never())->method('dispatch');
-
-        $this->assertFalse($this->signature(new ParapheurFactice(), bus: $bus)->demanderSignature($decision, 'gestionnaire'));
-
-        $this->assertSame(DecisionAmenagementExamens::ETAT_VALIDE, $decision->getEtat());
-    }
-
     public function testDepositedDecisionIsEnCours(): void
     {
         $signature = $this->signature(new ParapheurFactice());
-        $decision = $this->decision();
+        $decision = $this->decision()->setEtat(DecisionAmenagementExamens::ETAT_EN_SIGNATURE);
 
+        // en signature mais sans document : le dépôt n'est pas encore fait
         $this->assertFalse($signature->estEnCours($decision));
-        $signature->deposer($decision, '%PDF-test', 'circuit-ufr1', 'gestionnaire');
+        $decision->setIdDocumentParapheur('document-depose');
         $this->assertTrue($signature->estEnCours($decision));
     }
 
@@ -228,16 +181,8 @@ class SignatureElectroniqueTest extends TestCase
         AbstractParapheur $parapheur,
         bool $parapheurEnvoieDocument = false,
         ?string $libelleDecision = null,
-        ?MessageBusInterface $bus = null,
     ): SignatureElectronique {
-        return new SignatureElectronique(
-            $parapheur,
-            $this->createMock(DecisionAmenagementExamensRepository::class),
-            new NullLogger(),
-            $bus ?? $this->createMock(MessageBusInterface::class),
-            $parapheurEnvoieDocument,
-            $libelleDecision,
-        );
+        return new SignatureElectronique($parapheur, new NullLogger(), $parapheurEnvoieDocument, $libelleDecision);
     }
 
     /**

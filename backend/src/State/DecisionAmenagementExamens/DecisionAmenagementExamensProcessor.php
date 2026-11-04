@@ -17,9 +17,7 @@ use ApiPlatform\State\ProcessorInterface;
 use App\ApiResource\DecisionAmenagementExamens;
 use App\Entity\Utilisateur;
 use App\Message\DecisionEditionDemandeeMessage;
-use App\Message\RessourceModifieeMessage;
 use App\Repository\DecisionAmenagementExamensRepository;
-use App\Service\Signature\SignatureElectronique;
 use App\Service\Signature\SuiviSignatureService;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
@@ -31,7 +29,6 @@ readonly class DecisionAmenagementExamensProcessor implements ProcessorInterface
         private DecisionAmenagementExamensRepository $decisionAmenagementExamensRepository,
         private Security $security,
         private MessageBusInterface $messageBus,
-        private SignatureElectronique $signatureElectronique,
         private SuiviSignatureService $suiviSignatureService,
         private DecisionAmenagementManager $decisionAmenagementManager,
     ) {}
@@ -60,11 +57,9 @@ readonly class DecisionAmenagementExamensProcessor implements ProcessorInterface
             return $this->decisionAmenagementManager->versRessource($entity);
         }
 
-        $entity->setEtat($data->etat);
-        $entity->setObservations($data->observations)->setDateAvisMedecin($data->dateAvisMedecin);
-        $this->decisionAmenagementExamensRepository->save($entity, true);
+        $this->decisionAmenagementManager->modifier($entity, $data->etat, $data->observations, $data->dateAvisMedecin);
 
-        // validée ou envoyée : SignatureElectronique la fait signer si sa composante a un circuit
+        // validée ou envoyée : le manager la fait signer si sa composante a un circuit
         if (in_array($data->etat, [
             \App\Entity\DecisionAmenagementExamens::ETAT_VALIDE,
             \App\Entity\DecisionAmenagementExamens::ETAT_EDITION_DEMANDEE,
@@ -72,7 +67,7 @@ readonly class DecisionAmenagementExamensProcessor implements ProcessorInterface
             $user = $this->security->getUser();
             assert($user instanceof Utilisateur);
 
-            if ($this->signatureElectronique->demanderSignature($entity, $user->getUid())) {
+            if ($this->decisionAmenagementManager->demanderSignature($entity, $user->getUid())) {
                 return $this->decisionAmenagementManager->versRessource($entity);
             }
         }
@@ -83,7 +78,6 @@ readonly class DecisionAmenagementExamensProcessor implements ProcessorInterface
             assert($user instanceof Utilisateur);
 
             $this->messageBus->dispatch(new DecisionEditionDemandeeMessage($entity->getId(), $user->getUid()));
-            $this->messageBus->dispatch(new RessourceModifieeMessage(new \App\ApiResource\Utilisateur($entity->getBeneficiaire())));
         }
 
         return $data;

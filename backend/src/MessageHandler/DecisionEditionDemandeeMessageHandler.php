@@ -13,15 +13,13 @@
 namespace App\MessageHandler;
 
 use App\ApiResource\DecisionAmenagementExamens as DecisionResource;
-use App\ApiResource\Utilisateur;
-use App\Entity\DecisionAmenagementExamens;
 use App\Message\DecisionEditionDemandeeMessage;
-use App\Message\RessourceModifieeMessage;
 use App\Repository\DecisionAmenagementExamensRepository;
 use App\Serializer\DecisionAmenagementEditionNormalizer;
 use App\Serializer\Encoder\PdfEncoder;
 use App\Service\Decision\ArchivageDecision;
 use App\Service\MailService;
+use App\State\DecisionAmenagementExamens\DecisionAmenagementManager;
 use App\State\Utilisateur\UtilisateurManager;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -43,6 +41,7 @@ readonly class DecisionEditionDemandeeMessageHandler
         private LoggerInterface $logger,
         private MessageBusInterface $messageBus,
         private ArchivageDecision $archivageDecision,
+        private DecisionAmenagementManager $decisionAmenagementManager,
     ) {}
 
     public function __invoke(DecisionEditionDemandeeMessage $message): void
@@ -58,8 +57,6 @@ readonly class DecisionEditionDemandeeMessageHandler
         try {
             $pdf = $this->pdfEncoder->encode($normalized, 'pdf');
             $this->mailService->envoyerDecision($decision, $pdf);
-            $decision->setEtat(DecisionAmenagementExamens::ETAT_EDITE);
-            $this->messageBus->dispatch(new RessourceModifieeMessage(new Utilisateur($decision->getBeneficiaire())));
         } catch (RuntimeException $e) {
             $this->logger->error($e->getMessage());
             $this->logger->info($e->getTraceAsString());
@@ -79,6 +76,7 @@ readonly class DecisionEditionDemandeeMessageHandler
             $this->logger->error('Erreur d\'enregistrement de la copie pdf de la décision');
         }
 
-        $this->decisionAmenagementExamensRepository->save($decision, true);
+        // après l'archivage, qui rattache la copie à la décision
+        $this->decisionAmenagementManager->noterEdition($decision);
     }
 }

@@ -15,14 +15,22 @@ namespace App\Tests\State\DecisionAmenagementExamens;
 use App\Entity\Amenagement;
 use App\Entity\AvisEse;
 use App\Entity\Beneficiaire;
+use App\Entity\Composante;
 use App\Entity\DecisionAmenagementExamens;
+use App\Entity\Formation;
+use App\Entity\Inscription;
 use App\Entity\TypeAmenagement;
 use App\Entity\Utilisateur;
+use App\Message\RessourceModifieeMessage;
+use App\Message\SignatureDecisionDemandeeMessage;
 use App\Repository\DecisionAmenagementExamensRepository;
+use App\Service\Signature\ParapheurFactice;
+use App\Service\Signature\SignatureElectronique;
 use App\State\DecisionAmenagementExamens\DecisionAmenagementManager;
 use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 use ReflectionClass;
 use ReflectionProperty;
 use stdClass;
@@ -213,6 +221,117 @@ final class DecisionAmenagementManagerTest extends TestCase
         self::assertNull($decision->getUidDemandeurSignature());
         self::assertNull($decision->getDerniereVerificationSignature());
         self::assertNull($decision->getDateSignature());
+    }
+
+    public function testDecisionOfComposanteWithCircuitGoesToSignature(): void
+    {
+        $decision = $this->decisionAvecCircuit('circuit-ufr1')
+            ->setEtat(DecisionAmenagementExamens::ETAT_VALIDE)
+            ->setEtatSignature(DecisionAmenagementExamens::ETAT_SIGNATURE_REFUSEE);
+        new ReflectionProperty(DecisionAmenagementExamens::class, 'id')->setValue($decision, 42);
+        $messages = [];
+
+        self::assertTrue($this->managerDeSignature($messages)->demanderSignature($decision, 'gestionnaire'));
+
+        // verrouillée dès la demande ; sans document ni état du parapheur, elle est en cours de dépôt
+        self::assertSame(DecisionAmenagementExamens::ETAT_EN_SIGNATURE, $decision->getEtat());
+        self::assertNull($decision->getEtatSignature());
+        self::assertNull($decision->getIdDocumentParapheur());
+        $depots = array_values(array_filter($messages, fn(object $m) => $m instanceof SignatureDecisionDemandeeMessage));
+        self::assertCount(1, $depots);
+        self::assertSame(42, $depots[0]->getIdDecision());
+        self::assertSame('gestionnaire', $depots[0]->getUidDemandeur());
+    }
+
+    public function testDecisionOfComposanteWithoutCircuitKeepsCurrentWorkflow(): void
+    {
+        $decision = $this->decisionAvecCircuit(null)->setEtat(DecisionAmenagementExamens::ETAT_VALIDE);
+        $messages = [];
+
+        self::assertFalse($this->managerDeSignature($messages)->demanderSignature($decision, 'gestionnaire'));
+
+        self::assertSame(DecisionAmenagementExamens::ETAT_VALIDE, $decision->getEtat());
+        self::assertSame([], $messages);
+    }
+
+    public function testDepositStartsSignatureAndForgetsPreviousOne(): void
+    {
+        $decision = $this->decisionAvecCircuit('circuit-ufr1')
+            ->setEtat(DecisionAmenagementExamens::ETAT_EN_SIGNATURE)
+            ->setDateSignature(new DateTimeImmutable('2026-01-15'))
+            ->setDerniereVerificationSignature(new DateTimeImmutable('2026-01-15'));
+        $messages = [];
+
+        $this->managerDeSignature($messages)->noterDepot($decision, 'document-depose', 'gestionnaire');
+
+        self::assertSame(DecisionAmenagementExamens::ETAT_EN_SIGNATURE, $decision->getEtat());
+        self::assertSame(DecisionAmenagementExamens::ETAT_SIGNATURE_EN_SIGNATURE, $decision->getEtatSignature());
+        self::assertSame('document-depose', $decision->getIdDocumentParapheur());
+        self::assertSame('gestionnaire', $decision->getUidDemandeurSignature());
+        self::assertNull($decision->getDateSignature());
+        self::assertNull($decision->getDerniereVerificationSignature());
+    }
+
+    public function testSignatureProgressRefreshesBeneficiaire(): void
+    {
+        // la décision en cours fait partie de la ressource Utilisateur : la fiche doit suivre le circuit
+        $decision = $this->decisionAvecCircuit('circuit-ufr1')->setEtat(DecisionAmenagementExamens::ETAT_EN_SIGNATURE);
+        $messages = [];
+
+        $this->managerDeSignature($messages)->noterSignature($decision, new DateTimeImmutable('2026-03-01'));
+
+        $utilisateurs = array_filter(
+            $messages,
+            fn(object $m) => $m instanceof RessourceModifieeMessage && $m->getResource() instanceof \App\ApiResource\Utilisateur,
+        );
+        self::assertCount(1, $utilisateurs);
+        self::assertSame(DecisionAmenagementExamens::ETAT_EDITE, $decision->getEtat());
+        self::assertSame(DecisionAmenagementExamens::ETAT_SIGNATURE_SIGNEE, $decision->getEtatSignature());
+    }
+
+    /**
+     * @param list<object> $messages reçoit les messages envoyés sur le bus
+     */
+    private function managerDeSignature(array &$messages): DecisionAmenagementManager
+    {
+        $bus = $this->createMock(MessageBusInterface::class);
+        $bus->method('dispatch')->willReturnCallback(function (object $message) use (&$messages) {
+            $messages[] = $message;
+
+            return new Envelope($message);
+        });
+
+        $reflection = new ReflectionClass(DecisionAmenagementManager::class);
+        /** @var DecisionAmenagementManager $manager */
+        $manager = $reflection->newInstanceWithoutConstructor();
+        $reflection->getProperty('decisionAmenagementExamensRepository')
+            ->setValue($manager, $this->createMock(DecisionAmenagementExamensRepository::class));
+        $reflection->getProperty('messageBus')->setValue($manager, $bus);
+        $reflection->getProperty('signatureElectronique')
+            ->setValue($manager, new SignatureElectronique(new ParapheurFactice(), new NullLogger()));
+        $manager->setClock(new MockClock(new DateTimeImmutable('2026-03-02 10:00:00')));
+
+        return $manager;
+    }
+
+    // décision d'un bénéficiaire inscrit à titre principal dans une composante, avec ou sans circuit de signature
+    private function decisionAvecCircuit(?string $circuit): DecisionAmenagementExamens
+    {
+        $beneficiaire = new Utilisateur();
+        $beneficiaire->setEmail('camille.aubert@univ.example');
+        $beneficiaire->addInscription(new Inscription()
+            ->setFormation(new Formation()->setComposante(new Composante()->setCodeExterne('UFR1')->setCircuitSignature($circuit)))
+            ->setDebut(new DateTimeImmutable('-1 month'))
+            ->setFin(new DateTimeImmutable('+1 month'))
+            ->setPrincipale(true));
+
+        $decision = new DecisionAmenagementExamens()
+            ->setBeneficiaire($beneficiaire)
+            ->setDebut(new DateTimeImmutable('-1 month'))
+            ->setFin(new DateTimeImmutable('+11 months'));
+        $beneficiaire->addDecisionsAmenagementExamen($decision);
+
+        return $decision;
     }
 
     public function testChangesAreRefusedWhileDecisionIsEnSignature(): void

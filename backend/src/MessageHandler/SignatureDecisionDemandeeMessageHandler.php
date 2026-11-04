@@ -16,6 +16,7 @@ use App\Repository\DecisionAmenagementExamensRepository;
 use App\Serializer\DecisionAmenagementEditionNormalizer;
 use App\Serializer\Encoder\PdfEncoder;
 use App\Service\Signature\SignatureElectronique;
+use App\State\DecisionAmenagementExamens\DecisionAmenagementManager;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -34,6 +35,7 @@ readonly class SignatureDecisionDemandeeMessageHandler
         private DecisionAmenagementEditionNormalizer $decisionAmenagementEditionNormalizer,
         private PdfEncoder $pdfEncoder,
         private SignatureElectronique $signatureElectronique,
+        private DecisionAmenagementManager $decisionAmenagementManager,
         private LoggerInterface $logger,
         private MessageBusInterface $messageBus,
     ) {}
@@ -56,8 +58,7 @@ readonly class SignatureDecisionDemandeeMessageHandler
                 'Décision {id} : plus de circuit de signature au moment du dépôt, elle repasse à l\'état validé.',
                 ['id' => $decision->getId()],
             );
-            $decision->setEtat(DecisionAmenagementExamens::ETAT_VALIDE);
-            $this->decisionAmenagementExamensRepository->save($decision, true);
+            $this->decisionAmenagementManager->renoncerSignature($decision);
 
             return;
         }
@@ -68,7 +69,8 @@ readonly class SignatureDecisionDemandeeMessageHandler
 
         try {
             $pdf = $this->pdfEncoder->encode($normalized, 'pdf');
-            $this->signatureElectronique->deposer($decision, $pdf, $circuit, $message->getUidDemandeur());
+            $documentId = $this->signatureElectronique->deposer($decision, $pdf, $circuit);
+            $this->decisionAmenagementManager->noterDepot($decision, $documentId, $message->getUidDemandeur());
         } catch (RuntimeException $e) {
             $this->logger->error($e->getMessage());
             $this->logger->info($e->getTraceAsString());
