@@ -6,7 +6,8 @@ RUN apt-get update &&  \
 
 
 ENV TZ="Europe/Paris"
-RUN echo 'date.timezone = "Europe/Paris"'> /usr/local/etc/php/conf.d/timezone.ini
+RUN echo 'date.timezone = "Europe/Paris"' > /usr/local/etc/php/conf.d/timezone.ini \
+    && echo 'memory_limit = 512M' > /usr/local/etc/php/conf.d/memory-limit.ini
 
 # extensions php
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
@@ -25,7 +26,7 @@ WORKDIR /application/
 ENV COMPOSER_ALLOW_SUPERUSER=1
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 RUN chmod +x /usr/bin/composer \
-    && /usr/bin/composer install --ignore-platform-reqs --optimize-autoloader
+    && /usr/bin/composer install --no-interaction --no-progress --ignore-platform-reqs --optimize-autoloader --no-scripts
 
 # droits du dossier var de symfony
 RUN chmod -R a+rw ./var/
