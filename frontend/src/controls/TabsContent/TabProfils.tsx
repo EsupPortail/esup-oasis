@@ -8,7 +8,7 @@
  */
 
 import React, { ReactElement } from "react";
-import { Button, Form, Popconfirm } from "antd";
+import { Button, Flex, Form, Popconfirm, theme } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import BeneficiaireProfilCardItem from "@controls/Forms/BeneficiaireProfilCardItem";
 import { useApi } from "@context/api/ApiProvider";
@@ -29,6 +29,7 @@ interface ITabProfilsProps {
  * @returns The rendered component.
  */
 export function TabProfils({ utilisateur, title }: ITabProfilsProps): ReactElement {
+  const { token } = theme.useToken();
   const mutationDeleteProfil = useApi().useDelete({
     path: "/utilisateurs/{uid}/profils/{id}",
     invalidationQueryKeys: [QK_BENEFICIAIRES, QK_STATISTIQUES_EVENEMENTS],
@@ -42,56 +43,58 @@ export function TabProfils({ utilisateur, title }: ITabProfilsProps): ReactEleme
       <Form.List name="profils">
         {(fields, { add, remove }, { errors }) => (
           <>
-            {fields.map(({ key, ...field }) => (
-              <Form.Item className="mb-2" required key={key}>
-                <Form.Item
-                  {...field}
-                  validateTrigger={["onChange", "onBlur"]}
-                  rules={[
-                    {
-                      required: true,
-                      whitespace: true,
-                      message: "Un profil est requis ou supprimez ce champ.",
-                    },
-                  ]}
-                  noStyle
-                >
-                  <BeneficiaireProfilCardItem
-                    style={{ width: "calc(100% - 35px)" }}
-                    className="mt-1 mb-1"
-                    utilisateur={utilisateur}
-                    extra={
-                      fields.length > 1 ? (
-                        <Popconfirm
-                          title="Supprimer le profil ?"
-                          okText="Oui"
-                          okButtonProps={{ danger: true }}
-                          cancelText="Non"
-                          onConfirm={() => {
-                            mutationDeleteProfil.mutate({
-                              "@id": utilisateur.profils?.at(key) as string,
-                            });
-                          }}
-                        >
-                          <Button
-                            type="text"
-                            icon={<DeleteOutlined />}
-                            className="dynamic-delete-button text-danger"
-                          />
-                        </Popconfirm>
-                      ) : null
-                    }
-                    onCancel={() => remove(field.name)}
-                  />
+            <Flex vertical gap={token.marginSM}>
+              {fields.map(({ key, ...field }) => (
+                <Form.Item style={{ marginBottom: 0 }} required key={key}>
+                  <Form.Item
+                    {...field}
+                    validateTrigger={["onChange", "onBlur"]}
+                    rules={[
+                      {
+                        required: true,
+                        whitespace: true,
+                        message: "Un profil est requis ou supprimez ce champ.",
+                      },
+                    ]}
+                    noStyle
+                  >
+                    <BeneficiaireProfilCardItem
+                      utilisateur={utilisateur}
+                      extra={
+                        fields.length > 1 ? (
+                          <Popconfirm
+                            title="Supprimer le profil ?"
+                            okText="Oui"
+                            okButtonProps={{ danger: true }}
+                            cancelText="Non"
+                            onConfirm={() => {
+                              mutationDeleteProfil.mutate({
+                                "@id": utilisateur.profils?.at(key) as string,
+                              });
+                            }}
+                          >
+                            <Button
+                              type="text"
+                              size="small"
+                              icon={<DeleteOutlined />}
+                              aria-label="Supprimer le profil"
+                              className="dynamic-delete-button text-danger"
+                            />
+                          </Popconfirm>
+                        ) : null
+                      }
+                      onCancel={() => remove(field.name)}
+                    />
+                  </Form.Item>
                 </Form.Item>
-              </Form.Item>
-            ))}
-            <Form.Item className="mb-1">
+              ))}
+            </Flex>
+            <Form.Item style={{ marginBottom: 0, marginTop: token.marginSM }}>
               <Button
                 type="primary"
                 onClick={() => add()}
                 icon={<PlusOutlined />}
-                className="mt-1 mb-0 w-100"
+                className="w-100"
               >
                 Ajouter un profil
               </Button>

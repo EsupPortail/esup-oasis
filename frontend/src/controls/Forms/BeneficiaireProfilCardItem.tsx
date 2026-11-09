@@ -8,29 +8,22 @@
  */
 
 import React, { useState } from "react";
-import { Avatar, Button, Card, Space, Tooltip } from "antd";
+import { Button, Card, Flex, theme, Tooltip, Typography } from "antd";
 import { useApi } from "@context/api/ApiProvider";
 import { IBeneficiaireProfil, IUtilisateur, PREFETCH_PROFILS } from "@api";
 import Spinner from "@controls/Spinner/Spinner";
 import { getLibellePeriode, isEnCoursSurPeriode } from "@utils/dates";
-import { CheckOutlined, EditOutlined, InfoCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { CheckCircleFilled, EditOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { GestionnaireItem } from "@controls/Items/GestionnaireItem";
 import { AccompagnementAvatar } from "@controls/Avatars/AccompagnementAvatar";
 import { BeneficiaireProfilFormItemEdit } from "@controls/Forms/BeneficiaireProfilFormItemEdit";
 
 interface IBeneficiaireProfilFormItemProps {
   value?: string;
-  onChange?: (v: string | undefined) => void;
-  style?: React.CSSProperties;
-  className?: string;
   cardClassName?: string;
-  cardSize?: "small" | "medium";
-  placeholder?: string;
   extra?: React.ReactNode;
   utilisateur: IUtilisateur;
   onCancel?: () => void;
-  selected?: boolean;
-  onSelect?: (profil: string) => void;
   editable?: boolean;
 }
 
@@ -40,26 +33,23 @@ function BeneficiaireProfilCardItem({
   extra,
   utilisateur,
   onCancel,
-  selected,
-  onSelect,
   editable = true,
-  cardSize = "medium",
 }: IBeneficiaireProfilFormItemProps) {
+  const { token } = theme.useToken();
   const [profilEdited, setProfilEdited] = useState<IBeneficiaireProfil>();
-  const { data: profils, isFetching: isFetchingProfils } =
+  const { data: profils, isLoading: isLoadingProfils } =
     useApi().useGetFullCollection(PREFETCH_PROFILS);
-  const { data, isFetching } = useApi().useGetItem({
+  const { data, isLoading } = useApi().useGetItem({
     path: "/utilisateurs/{uid}/profils/{id}",
     url: value as string,
     enabled: !!value,
   });
-  const { data: typologiesData, isFetching: isFetchingTypologiesData } =
+  const { data: typologiesData, isLoading: isLoadingTypologiesData } =
     useApi().useGetFullCollection({
       path: "/typologies",
     });
 
-  if (isFetching || isFetchingProfils || isFetchingTypologiesData) return <Spinner />;
-
+  // Le formulaire passe avant le chargement : un rafraîchissement en arrière-plan effacerait la saisie
   if (value === undefined || profilEdited)
     return (
       <BeneficiaireProfilFormItemEdit
@@ -73,45 +63,27 @@ function BeneficiaireProfilCardItem({
       />
     );
 
+  if (isLoading || isLoadingProfils || isLoadingTypologiesData) return <Spinner />;
+
   const profil = profils?.items.find((p) => p["@id"] === data?.profil);
+  const enCours = isEnCoursSurPeriode(data?.debut, data?.fin);
+  const paddingCarte = { paddingBlock: token.paddingSM, paddingInline: token.paddingMD };
 
   return (
     <Card
-      size={cardSize}
-      className={`${cardClassName}${
-        selected ? " bg-beneficiaire-light" : ""
-      }${onSelect ? " pointer" : ""}`}
-      onClick={() => {
-        if (onSelect) onSelect(value);
-      }}
+      size="small"
+      className={cardClassName}
+      style={{ overflow: "hidden" }}
+      styles={{ body: { padding: 0 } }}
     >
-      <Card.Meta
-        avatar={
-          isEnCoursSurPeriode(data?.debut, data?.fin) ? (
-            <Tooltip title="En cours" placement="left">
-              <Avatar
-                className="bg-success"
-                size="small"
-                icon={<CheckOutlined className="fs-08" aria-hidden />}
-              />
-            </Tooltip>
-          ) : (
-            <Tooltip title="Terminé" placement="left">
-              <Avatar
-                size="small"
-                icon={<PlusOutlined rotate={45} className="fs-08 text-text" aria-hidden />}
-              />
-            </Tooltip>
-          )
-        }
-        title={
-          <div style={{ whiteSpace: "normal", lineHeight: 1.25 }}>
-            <Space className="float-right" size="small">
-              {extra}
-              {editable && (
-                <Button type="text" icon={<EditOutlined />} onClick={() => setProfilEdited(data)} />
-              )}
-            </Space>
+      {/* Identité du profil : mise en avant quand il est en cours, comme l'inscription principale. */}
+      <Flex
+        vertical
+        gap={token.marginXXS}
+        style={{ background: enCours ? token.colorWarningBg : undefined, ...paddingCarte }}
+      >
+        <Flex justify="space-between" align="start" gap={token.marginXS}>
+          <Typography.Text strong={enCours}>
             {profil?.libelle}
             {profil?.avecTypologie && (
               <Tooltip
@@ -125,25 +97,47 @@ function BeneficiaireProfilCardItem({
                 <InfoCircleOutlined className="ml-1 pointer" />
               </Tooltip>
             )}
-          </div>
-        }
-        description={
-          <Space orientation="vertical">
-            {getLibellePeriode(data?.debut, data?.fin)}
-            <Space wrap className="text-text">
-              <span>Suivi par :</span>
-              <span>
-                <GestionnaireItem gestionnaireId={data?.gestionnaire} />
-              </span>
-            </Space>
-            <Space wrap className="text-text">
-              <span>
-                <AccompagnementAvatar avecAccompagnement={data?.avecAccompagnement} libelle />
-              </span>
-            </Space>
-          </Space>
-        }
-      />
+          </Typography.Text>
+          <Flex flex="none" align="center" gap={token.marginXXS}>
+            {extra}
+            {editable && (
+              <Button
+                type="text"
+                size="small"
+                icon={<EditOutlined />}
+                aria-label="Modifier le profil"
+                onClick={() => setProfilEdited(data)}
+              />
+            )}
+          </Flex>
+        </Flex>
+        <Flex wrap gap={token.marginXS} align="baseline">
+          {enCours ? (
+            <Typography.Text style={{ fontSize: token.fontSizeSM, fontWeight: 600 }}>
+              <CheckCircleFilled aria-hidden style={{ color: token.colorSuccessText }} /> En cours
+            </Typography.Text>
+          ) : (
+            <Typography.Text type="secondary" style={{ fontSize: token.fontSizeSM }}>
+              Terminé
+            </Typography.Text>
+          )}
+          <Typography.Text type="secondary" style={{ fontSize: token.fontSizeSM }}>
+            {getLibellePeriode(data?.debut, data?.fin, "MMM")}
+          </Typography.Text>
+        </Flex>
+      </Flex>
+      {/* Suivi : séparé de l'identité par un filet, comme les lignes d'une carte d'inscriptions. */}
+      <Flex
+        vertical
+        gap={token.marginXS}
+        style={{ borderTop: `1px solid ${token.colorSplit}`, ...paddingCarte }}
+      >
+        <Flex wrap align="center" gap={token.marginXS}>
+          <Typography.Text type="secondary">Suivi par :</Typography.Text>
+          <GestionnaireItem gestionnaireId={data?.gestionnaire} />
+        </Flex>
+        <AccompagnementAvatar avecAccompagnement={data?.avecAccompagnement} libelle />
+      </Flex>
     </Card>
   );
 }

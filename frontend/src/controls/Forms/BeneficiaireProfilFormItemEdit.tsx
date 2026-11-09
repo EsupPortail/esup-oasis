@@ -42,7 +42,6 @@ export function BeneficiaireProfilFormItemEdit({
   const user = useAuth().user;
   const [profil, setProfil] = useState<string | null | undefined>(profilBeneficiaire?.profil);
   const [typologies, setTypologies] = useState<string[]>(profilBeneficiaire?.typologies || []);
-  const [submitting, setSubmitting] = React.useState<boolean>(false);
   const [dateDebut, setDateDebut] = useState<Dayjs | null>(
     profilBeneficiaire?.debut ? dayjs(profilBeneficiaire.debut) : null,
   );
@@ -65,7 +64,6 @@ export function BeneficiaireProfilFormItemEdit({
       QK_STATISTIQUES_EVENEMENTS,
     ],
     onSuccess: () => {
-      setSubmitting(false);
       if (onEdited) onEdited();
     },
   });
@@ -78,24 +76,25 @@ export function BeneficiaireProfilFormItemEdit({
       QK_STATISTIQUES_EVENEMENTS,
     ],
     onSuccess: () => {
-      setSubmitting(false);
       if (onEdited) onEdited();
     },
     url: `${utilisateur["@id"]}/profils` as string,
   });
 
-  const { data: profils, isFetching: isFetchingProfils } = useApi().useGetFullCollection({
+  const { data: profils, isLoading: isLoadingProfils } = useApi().useGetFullCollection({
     path: "/profils",
   });
-  const { data: typologiesData, isFetching: isFetchingTypologiesData } =
+  const { data: typologiesData, isLoading: isLoadingTypologiesData } =
     useApi().useGetFullCollection({
       path: "/typologies",
     });
 
-  const { data: gestionnaires, isFetching } = useApi().useGetFullCollection({
+  const { data: gestionnaires, isLoading: isLoadingGestionnaires } = useApi().useGetFullCollection({
     path: "/roles/{roleId}/utilisateurs",
     parameters: { roleId: "/roles/ROLE_GESTIONNAIRE" },
   });
+
+  const profilAvecTypologie = !!profils?.items.find((p) => p["@id"] === profil)?.avecTypologie;
 
   function createOrUpdateProfil() {
     // Validate data
@@ -103,31 +102,35 @@ export function BeneficiaireProfilFormItemEdit({
       message.error("Veuillez renseigner tous les champs obligatoires").then();
       return;
     }
+    if (profilAvecTypologie && typologies.length === 0) {
+      message.error("Veuillez sélectionner au moins une typologie de handicap").then();
+      return;
+    }
 
-    setSubmitting(true);
     const data = {
       profil: profil as string,
       debut: createDateAsUTC(dateDebut.toDate()).toISOString(),
       fin: dateFin ? createDateAsUTC(dateFin.toDate()).toISOString() : null,
       gestionnaire: gestionnaire as string,
-      typologies: typologies,
+      // Le backend refuse des typologies sur un profil qui n'en a pas
+      typologies: profilAvecTypologie ? typologies : [],
       avecAccompagnement,
     };
     if (profilBeneficiaire) {
       // update
-      mutationPatch?.mutate({
+      mutationPatch.mutate({
         "@id": profilBeneficiaire["@id"] as string,
         data,
       });
     } else {
       // create
-      mutationPost?.mutate({
+      mutationPost.mutate({
         data,
       });
     }
   }
 
-  if (isFetchingProfils || isFetching || isFetchingTypologiesData) return <Spinner />;
+  if (isLoadingProfils || isLoadingGestionnaires || isLoadingTypologiesData) return <Spinner />;
 
   return (
     <Card>
@@ -144,17 +147,19 @@ export function BeneficiaireProfilFormItemEdit({
             <Space orientation="vertical" className="w-100">
               <Select
                 placeholder="Sélectionnez un profil"
-                options={profils?.items.map((p) => ({
-                  value: p["@id"],
-                  label: p.libelle,
-                }))}
+                options={profils?.items
+                  .filter((p) => p.actif || p["@id"] === profilBeneficiaire?.profil)
+                  .map((p) => ({
+                    value: p["@id"],
+                    label: p.libelle,
+                  }))}
                 value={profil}
                 onChange={(v) => setProfil(v)}
                 aria-required
                 status={profil ? "" : "error"}
               />
 
-              {profils?.items.find((p) => p["@id"] === profil)?.avecTypologie && (
+              {profilAvecTypologie && (
                 <Select
                   placeholder="Sélectionnez une typologie de handicap"
                   options={typologiesData?.items.map((t) => ({
@@ -163,7 +168,7 @@ export function BeneficiaireProfilFormItemEdit({
                   }))}
                   value={typologies}
                   onChange={(v) => setTypologies(v)}
-                  mode="tags"
+                  mode="multiple"
                   aria-required
                   status={typologies.length > 0 ? "" : "error"}
                 />
@@ -218,7 +223,7 @@ export function BeneficiaireProfilFormItemEdit({
               <Space className="mt-3">
                 <Button onClick={onCancel}>Annuler</Button>
                 <Button
-                  loading={submitting}
+                  loading={mutationPost.isPending || mutationPatch.isPending}
                   type="primary"
                   icon={<SaveOutlined />}
                   onClick={() => createOrUpdateProfil()}

@@ -11,6 +11,7 @@ import React from "react";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Form } from "antd";
+import { axe } from "vitest-axe";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { IUtilisateur } from "@api";
 import { RoleValues } from "@lib";
@@ -126,6 +127,11 @@ describe("SuiviSection", () => {
     );
   });
 
+  it("expose les profils sous un titre accessible", () => {
+    rendre(beneficiaire);
+    expect(screen.getByRole("heading", { name: "Profils", level: 3 })).toBeInTheDocument();
+  });
+
   it("indique l'absence de profil", () => {
     rendre(beneficiaire);
     expect(screen.getByText("Aucun profil actuellement")).toBeInTheDocument();
@@ -143,5 +149,16 @@ describe("SuiviSection", () => {
   it("affiche un skeleton pendant le chargement", () => {
     rendre(beneficiaire, true);
     expect(screen.queryByTestId("tab-profils")).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Profils" })).not.toBeInTheDocument();
+  });
+
+  it("ne présente pas de violation d'accessibilité", async () => {
+    const { container } = renderWithProviders(
+      <Harness
+        utilisateur={{ ...beneficiaire, numeroAnonyme: 20254800 }}
+        mutateUtilisateur={vi.fn()}
+      />,
+    );
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

@@ -8,7 +8,18 @@
  */
 
 import React from "react";
-import { App, Descriptions, Flex, Form, FormInstance, Skeleton, Tooltip, Typography } from "antd";
+import {
+  App,
+  Descriptions,
+  Empty,
+  Flex,
+  Form,
+  FormInstance,
+  Skeleton,
+  theme,
+  Tooltip,
+  Typography,
+} from "antd";
 import { InfoCircleOutlined, LockOutlined, MinusOutlined } from "@ant-design/icons";
 import { IUtilisateur } from "@api";
 import { RoleValues, service } from "@lib";
@@ -28,6 +39,7 @@ export const SuiviSection: React.FC<SuiviSectionProps> = ({
   form,
 }) => {
   const { message } = App.useApp();
+  const { token } = theme.useToken();
 
   return (
     <>
@@ -45,7 +57,7 @@ export const SuiviSection: React.FC<SuiviSectionProps> = ({
                     <span>Numéro d'anonymat</span>
                   </div>
                   <Tooltip title="Utilisé pour les rapports ministériels, il ne peut pas être modifié une fois saisi">
-                    <InfoCircleOutlined className="text-legende" />
+                    <InfoCircleOutlined aria-hidden style={{ color: token.colorTextDescription }} />
                   </Tooltip>
                 </Flex>
               }
@@ -88,10 +100,11 @@ export const SuiviSection: React.FC<SuiviSectionProps> = ({
             </Descriptions.Item>
           )}
           <Descriptions.Item label="Profils">
+            <h3 className="sr-only">Profils</h3>
             {(utilisateur?.profils || []).length === 0 && (
-              <div className="mb-1">Aucun profil actuellement</div>
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Aucun profil actuellement" />
             )}
-            <Form form={form} initialValues={utilisateur} className="mt-1">
+            <Form form={form} initialValues={utilisateur}>
               <TabProfils utilisateur={utilisateur} />
             </Form>
           </Descriptions.Item>
