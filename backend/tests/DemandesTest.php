@@ -715,6 +715,62 @@ class DemandesTest extends ApiTestCaseCustom
         $this->assertResponseStatusCodeSame(201);
     }
 
+    public function testAnswerWithReferenceTableOptionNonObligatoireSansOption(): void
+    {
+        $demandeId = $this->getDemandeIdForDemandeur();
+        $client = $this->createClientWithCredentials('demandeur');
+        $client->request('PUT', $demandeId . '/questions/5/reponse', [
+            'json' => [
+                'optionsChoisies' => [],
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(201);
+
+        $client->request('PUT', $demandeId . '/questions/5/reponse', [
+            'json' => [
+                'commentaire' => 'Sans club',
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(201);
+    }
+
+    public function testAnswerWithReferenceTableOptionSupprimerChoixOption(): void
+    {
+        $demandeId = $this->getDemandeIdForDemandeur();
+        $client = $this->createClientWithCredentials('demandeur');
+
+        // 1. On choisit une option
+        $client->request('PUT', $demandeId . '/questions/5/reponse', [
+            'json' => [
+                'optionsChoisies' => ['/questions/5/options/1'],
+            ],
+        ]);
+        $this->assertResponseStatusCodeSame(201);
+
+        // On vérifie que l'option a bien été enregistrée
+        $client->request('GET', $demandeId . '/questions/5/reponse');
+        $this->assertResponseIsSuccessful();
+        $data = $client->getResponse()->toArray();
+        $this->assertCount(1, $data['optionsChoisies']);
+        $this->assertSame('/questions/5/options/1', $data['optionsChoisies'][0]['@id']);
+
+        // 2. On modifie la réponse en passant un tableau vide pour supprimer le choix
+        $client->request('PUT', $demandeId . '/questions/5/reponse', [
+            'json' => [
+                'optionsChoisies' => [],
+            ],
+        ]);
+        $this->assertResponseIsSuccessful();
+
+        // 3. On vérifie que le choix a bien été supprimé
+        $client->request('GET', $demandeId . '/questions/5/reponse');
+        $this->assertResponseIsSuccessful();
+        $dataAfter = $client->getResponse()->toArray();
+        $this->assertEmpty($dataAfter['optionsChoisies']);
+    }
+
     public function testSHNValidator(): void
     {
         $demandeId = $this->getDemandeIdForDemandeur();
