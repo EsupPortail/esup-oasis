@@ -33,9 +33,9 @@ readonly class ReponseProvider implements ProviderInterface
 
         $reponses = array_filter(
             $demande->getDemandeur()->getReponses()->toArray(),
-            fn(Reponse $reponse) => (
+            static fn(\App\Entity\Reponse $reponse) => (
                 $reponse->getCampagne() === $demande->getCampagne()
-                && $reponse->getQuestion()->getId() === $uriVariables['questionId']
+                && $reponse->getQuestion()->getId() === (int) $uriVariables['questionId']
             ),
         );
 

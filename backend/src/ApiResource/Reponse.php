@@ -54,8 +54,8 @@ use Symfony\Component\Validator\Constraints as Assert;
     message: 'Option invalide pour cette question',
 )]
 #[Assert\Expression(
-    expression: 'this.countOptionsChoisies() != 0 or (this.question.typeReponse != "select"
-                        and this.question.typeReponse != "checkbox")',
+    expression: 'this.countOptionsChoisies() != 0 or this.question.obligatoire == false or (this.question.typeReponse != "select"
+                        and this.question.typeReponse != "checkbox") ',
     message: 'Cette question attend une option de la liste prédéfinie',
 )]
 //#[QuestionAttenduePourDemandeConstraint]//todo
