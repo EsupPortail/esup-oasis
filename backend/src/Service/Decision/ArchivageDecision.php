@@ -14,9 +14,11 @@ use App\Entity\DecisionAmenagementExamens;
 use App\Entity\Fichier;
 use App\Entity\PieceJointeBeneficiaire;
 use App\Entity\Utilisateur;
+use App\Message\RessourceCollectionModifieeMessage;
 use App\Repository\PieceJointeBeneficiaireRepository;
 use App\Service\FileStorage\StorageProviderInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * Dépose une copie du PDF de la décision au dossier du bénéficiaire, après envoi par e-mail
@@ -29,6 +31,7 @@ readonly class ArchivageDecision
     public function __construct(
         private PieceJointeBeneficiaireRepository $pieceJointeBeneficiaireRepository,
         private StorageProviderInterface $storageProvider,
+        private MessageBusInterface $messageBus,
     ) {}
 
     /**
@@ -80,5 +83,10 @@ readonly class ArchivageDecision
         $pieceJointe->setLibelle($description);
 
         $this->pieceJointeBeneficiaireRepository->save($pieceJointe, true);
+
+        // la liste des documents du bénéficiaire est en cache : sans purge, la copie n'y apparaîtrait pas
+        $this->messageBus->dispatch(new RessourceCollectionModifieeMessage(
+            new \App\ApiResource\PieceJointeBeneficiaire($pieceJointe),
+        ));
     }
 }
