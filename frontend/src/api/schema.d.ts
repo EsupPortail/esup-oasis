@@ -3283,16 +3283,22 @@ export interface components {
             actif?: boolean;
         };
         "Composante-composante.in.jsonMergePatch": {
+            /** @description Circuit du parapheur qui signe les décisions d'aménagements ; vide, elles partent par e-mail. */
+            circuitSignature?: string | null;
             referents?: string[];
         };
         "Composante.html-composante.out": {
             id?: number;
             libelle?: string;
+            /** @description Circuit du parapheur qui signe les décisions d'aménagements ; vide, elles partent par e-mail. */
+            circuitSignature?: string | null;
             referents?: string[];
         };
         "Composante.jsonld-composante.out": components["schemas"]["HydraItemBaseSchema"] & {
             id?: number;
             libelle?: string;
+            /** @description Circuit du parapheur qui signe les décisions d'aménagements ; vide, elles partent par e-mail. */
+            circuitSignature?: string | null;
             referents?: string[];
         };
         /** @description Unprocessable entity */
@@ -3347,47 +3353,113 @@ export interface components {
             observations?: string | null;
             /** Format: date-time */
             dateAvisMedecin?: string | null;
+            verifierSignature?: boolean;
         };
         "DecisionAmenagementExamens.html-decision.out": {
             etat?: string;
+            /** @description ETAT_SIGNATURE_* de l'entité, null si la décision n'est pas passée par la signature électronique. */
+            etatSignature?: string | null;
+            /**
+             * Format: date-time
+             * @description Date de la dernière signature du circuit.
+             */
+            dateSignature?: string | null;
+            /**
+             * Format: date-time
+             * @description Dernière interrogation du parapheur, pour situer la fraîcheur de l'état affiché.
+             */
+            derniereVerificationSignature?: string | null;
             urlContenu?: string | null;
             observations?: string | null;
             /** Format: date-time */
             dateAvisMedecin?: string | null;
             /** @default false */
             dateAvisMedecinRequise: boolean;
+            motifSignatureImpossible?: string | null;
         };
         "DecisionAmenagementExamens.html-utilisateur.out": {
             etat?: string;
+            /** @description ETAT_SIGNATURE_* de l'entité, null si la décision n'est pas passée par la signature électronique. */
+            etatSignature?: string | null;
+            /**
+             * Format: date-time
+             * @description Date de la dernière signature du circuit.
+             */
+            dateSignature?: string | null;
+            /**
+             * Format: date-time
+             * @description Dernière interrogation du parapheur, pour situer la fraîcheur de l'état affiché.
+             */
+            derniereVerificationSignature?: string | null;
             /** Format: date-time */
             dateAvisMedecin?: string | null;
             /** @default false */
             dateAvisMedecinRequise: boolean;
+            motifSignatureImpossible?: string | null;
         };
         "DecisionAmenagementExamens.jsonld-decision.out": components["schemas"]["HydraItemBaseSchema"] & {
             etat?: string;
+            /** @description ETAT_SIGNATURE_* de l'entité, null si la décision n'est pas passée par la signature électronique. */
+            etatSignature?: string | null;
+            /**
+             * Format: date-time
+             * @description Date de la dernière signature du circuit.
+             */
+            dateSignature?: string | null;
+            /**
+             * Format: date-time
+             * @description Dernière interrogation du parapheur, pour situer la fraîcheur de l'état affiché.
+             */
+            derniereVerificationSignature?: string | null;
             urlContenu?: string | null;
             observations?: string | null;
             /** Format: date-time */
             dateAvisMedecin?: string | null;
             /** @default false */
             dateAvisMedecinRequise: boolean;
+            motifSignatureImpossible?: string | null;
         };
         "DecisionAmenagementExamens.jsonld-utilisateur.out": components["schemas"]["HydraItemBaseSchema"] & {
             etat?: string;
+            /** @description ETAT_SIGNATURE_* de l'entité, null si la décision n'est pas passée par la signature électronique. */
+            etatSignature?: string | null;
+            /**
+             * Format: date-time
+             * @description Date de la dernière signature du circuit.
+             */
+            dateSignature?: string | null;
+            /**
+             * Format: date-time
+             * @description Dernière interrogation du parapheur, pour situer la fraîcheur de l'état affiché.
+             */
+            derniereVerificationSignature?: string | null;
             /** Format: date-time */
             dateAvisMedecin?: string | null;
             /** @default false */
             dateAvisMedecinRequise: boolean;
+            motifSignatureImpossible?: string | null;
         };
         "DecisionAmenagementExamens.pdf-decision.out": {
             etat?: string;
+            /** @description ETAT_SIGNATURE_* de l'entité, null si la décision n'est pas passée par la signature électronique. */
+            etatSignature?: string | null;
+            /**
+             * Format: date-time
+             * @description Date de la dernière signature du circuit.
+             */
+            dateSignature?: string | null;
+            /**
+             * Format: date-time
+             * @description Dernière interrogation du parapheur, pour situer la fraîcheur de l'état affiché.
+             */
+            derniereVerificationSignature?: string | null;
             urlContenu?: string | null;
             observations?: string | null;
             /** Format: date-time */
             dateAvisMedecin?: string | null;
             /** @default false */
             dateAvisMedecinRequise: boolean;
+            motifSignatureImpossible?: string | null;
         };
         "Demande-demande.in": {
             /**

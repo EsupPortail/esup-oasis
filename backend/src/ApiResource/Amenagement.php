@@ -35,6 +35,7 @@ use App\State\Amenagement\AmenagementProcessor;
 use App\State\Amenagement\AmenagementProvider;
 use App\State\Amenagement\AmenagementSansFiltreProvider;
 use App\Validator\AmenagementDatesConstraint;
+use App\Validator\DecisionNonVerrouilleeConstraint;
 use App\Validator\UtilisateurBeneficiaireAmenagementConstraint;
 use DateTimeInterface;
 use ReflectionProperty;
@@ -79,6 +80,8 @@ use Symfony\Component\Validator\Constraints as Assert;
             uriTemplate: self::ITEM_URI,
             uriVariables: ['uid', 'id'],
             security: "is_granted('" . self::MODIFIER_AMENAGEMENTS_UTILISATEUR . "', request.attributes.get('uid'))",
+            validationContext: ['groups' => [DecisionNonVerrouilleeConstraint::GROUPE_SUPPRESSION]],
+            validate: true,
             map: false,
         ),
     ],
@@ -125,6 +128,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 ])]
 #[ApiFilter(PreloadAssociationsFilter::class)]
 #[AmenagementDatesConstraint]
+#[DecisionNonVerrouilleeConstraint(groups: ['Default', DecisionNonVerrouilleeConstraint::GROUPE_SUPPRESSION])]
 class Amenagement
 {
     public const string COLLECTION_URI = '/utilisateurs/{uid}/amenagements';

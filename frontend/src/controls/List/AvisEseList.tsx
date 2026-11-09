@@ -8,7 +8,7 @@
  */
 
 import { IAvisEse, QK_BENEFICIAIRES, QK_UTILISATEURS_AVIS_ESE } from "@api";
-import { App, Button, Card, Col, Empty, Popconfirm, Row, Space } from "antd";
+import { App, Button, Card, Col, Empty, Popconfirm, Row, Space, Tooltip } from "antd";
 import { useApi } from "@context/api/ApiProvider";
 import { CommentOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { AvisEseAvatar } from "@controls/Avatars/AvisEseAvatar";
@@ -22,6 +22,8 @@ export function AvisEseList(props: {
   avis: IAvisEse[];
   utilisateurId: string;
   setEditedItem: (a: IAvisEse) => void;
+  // motif du verrou de signature : édition et suppression désactivées
+  verrou?: string;
 }) {
   const { message } = App.useApp();
   const mutateDeleteAvis = useApi().useDelete({
@@ -53,28 +55,39 @@ export function AvisEseList(props: {
               className={isEnCoursSurPeriode(a.debut, a.fin) ? "" : "avisese-non-en-cours"}
               styles={{ body: { minHeight: 200 } }}
               actions={[
-                <Button
-                  key="edit"
-                  type="link"
-                  icon={<EditOutlined />}
-                  onClick={() => {
-                    props.setEditedItem(a);
-                  }}
-                >
-                  Éditer
-                </Button>,
+                <Tooltip key="edit" title={props.verrou}>
+                  <Button
+                    type="link"
+                    icon={<EditOutlined />}
+                    disabled={!!props.verrou}
+                    onClick={() => {
+                      props.setEditedItem(a);
+                    }}
+                  >
+                    Éditer
+                  </Button>
+                </Tooltip>,
                 <Popconfirm
                   key="delete"
                   title="Supprimer l'avis ESE ?"
+                  disabled={!!props.verrou}
                   onConfirm={() => {
                     mutateDeleteAvis.mutate({
                       "@id": a["@id"] as string,
                     });
                   }}
                 >
-                  <Button key="delete" type="link" danger icon={<DeleteOutlined />}>
-                    Supprimer
-                  </Button>
+                  <Tooltip title={props.verrou}>
+                    <Button
+                      key="delete"
+                      type="link"
+                      danger
+                      icon={<DeleteOutlined />}
+                      disabled={!!props.verrou}
+                    >
+                      Supprimer
+                    </Button>
+                  </Tooltip>
                 </Popconfirm>,
               ]}
             >

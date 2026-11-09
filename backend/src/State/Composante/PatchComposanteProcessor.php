@@ -76,6 +76,9 @@ readonly class PatchComposanteProcessor implements ProcessorInterface
             $this->messageBus->dispatch(new RessourceModifieeMessage($utilisateurResource));
         });
 
+        // un circuit vide rend les décisions de la composante à l'envoi par e-mail
+        $entity->setCircuitSignature(trim((string) $data->circuitSignature) ?: null);
+
         $this->composanteRepository->save($entity, true);
 
         $resource = new Composante($entity);

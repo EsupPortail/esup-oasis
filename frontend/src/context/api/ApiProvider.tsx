@@ -129,6 +129,7 @@ export function ApiProvider({
         url?: string;
         enabled?: boolean;
         onError?: (error: IErreurNotification) => void;
+        refetchInterval?: (data: ApiPathMethodResponse<P, "get"> | undefined) => number | false;
       }): UseQueryResult<ApiPathMethodResponse<P, "get">> => {
         return useGetItem(baseUrl, fetchOptions, options);
       },

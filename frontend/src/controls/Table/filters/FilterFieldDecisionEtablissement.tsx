@@ -11,7 +11,7 @@ import React from "react";
 import { Col, Select } from "antd";
 import { FiltreBeneficiaire } from "@controls/Table/BeneficiaireTable";
 import { EtatDecisionEtablissement } from "@controls/Avatars/DecisionEtablissementAvatar";
-import { decisionEtab } from "@lib";
+import { decisionEtab, parapheurConfigure } from "@lib";
 
 interface FilterFieldDecisionEtablissementProps {
   filtreBeneficiaire: FiltreBeneficiaire;
@@ -53,6 +53,19 @@ export function FilterFieldDecisionEtablissement({
               label: "Validée, à éditer",
               value: EtatDecisionEtablissement.VALIDE,
             },
+            // états de la signature électronique, pour reprendre les refus
+            ...(parapheurConfigure()
+              ? [
+                  {
+                    label: "En signature électronique",
+                    value: EtatDecisionEtablissement.EN_SIGNATURE,
+                  },
+                  {
+                    label: "Signature refusée, à reprendre",
+                    value: EtatDecisionEtablissement.REFUSEE,
+                  },
+                ]
+              : []),
             {
               label: "Éditée",
               value: EtatDecisionEtablissement.EDITE,

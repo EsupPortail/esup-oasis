@@ -38,6 +38,11 @@ class Composante
     #[Map(if: false)]
     private ?string $codeExterne = null;
 
+    /** Circuit du parapheur qui signe les décisions d'aménagements de la composante ; null : envoi par e-mail. */
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Map(if: false)]
+    private ?string $circuitSignature = null;
+
     #[ORM\OneToMany(targetEntity: Formation::class, mappedBy: 'composante', orphanRemoval: true)]
     #[Map(if: false)]
     private Collection $formations;
@@ -68,6 +73,18 @@ class Composante
     public function setLibelle(string $libelle): self
     {
         $this->libelle = $libelle;
+
+        return $this;
+    }
+
+    public function getCircuitSignature(): ?string
+    {
+        return $this->circuitSignature;
+    }
+
+    public function setCircuitSignature(?string $circuitSignature): self
+    {
+        $this->circuitSignature = $circuitSignature;
 
         return $this;
     }

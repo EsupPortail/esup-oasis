@@ -110,6 +110,13 @@ export const ADMIN_ROUTES: IRoute[] = [
     roles: [RoleValues.ROLE_ADMIN],
   },
   {
+    path: "/administration/referentiels/signature-electronique",
+    element: lazy(
+      () => import("@routes/administration/SignatureElectronique/SignatureElectronique"),
+    ),
+    roles: [RoleValues.ROLE_ADMIN],
+  },
+  {
     path: "/administration/referentiels/:referentielId",
     element: lazy(() => import("@routes/administration/Referentiel/Referentiel")),
     roles: [RoleValues.ROLE_ADMIN],

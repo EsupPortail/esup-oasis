@@ -27,6 +27,7 @@ use Symfony\Component\ObjectMapper\Attribute\Map;
 #[ORM\Index(name: 'IDX_DECISION_BENEFICIAIRE_ETAT', columns: ['beneficiaire_id', 'etat'])]
 #[ORM\Index(name: 'IDX_DECISION_AMENAGEMENT_EXAMENS_DEBUT', columns: ['debut'])]
 #[ORM\Index(name: 'IDX_DECISION_AMENAGEMENT_EXAMENS_DEBUT_FIN', columns: ['debut', 'fin'])]
+#[ORM\UniqueConstraint(name: 'UNIQ_DECISION_DOCUMENT_PARAPHEUR', columns: ['id_document_parapheur'])]
 #[Map(target: \App\ApiResource\DecisionAmenagementExamens::class, transform: [
     EntityToResourceTransformer::class,
     'entityToResource',
@@ -38,6 +39,18 @@ class DecisionAmenagementExamens
     public const string ETAT_EDITE = 'EDITE';
 
     public const string ETAT_EDITION_DEMANDEE = 'EDITION_DEMANDEE';
+    // dans le circuit du parapheur : ni la décision ni ce qu'elle reprend ne changent
+    public const string ETAT_EN_SIGNATURE = 'EN_SIGNATURE';
+    // rendue sans signature par le parapheur ; la demande d'édition peut être refaite
+    public const string ETAT_REFUSEE = 'REFUSEE';
+
+    // dernier état rapporté par le parapheur, null tant que la décision n'y est pas passée
+    public const string ETAT_SIGNATURE_EN_SIGNATURE = 'EN_SIGNATURE';
+    public const string ETAT_SIGNATURE_SIGNEE = 'SIGNEE';
+    public const string ETAT_SIGNATURE_REFUSEE = 'REFUSEE';
+    public const string ETAT_SIGNATURE_EXPIREE = 'EXPIREE';
+    public const string ETAT_SIGNATURE_ERREUR = 'ERREUR';
+    public const string ETAT_SIGNATURE_REMPLACEE = 'REMPLACEE';
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
@@ -79,6 +92,28 @@ class DecisionAmenagementExamens
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     #[Map(if: false)]
     private ?DateTimeInterface $dateAvisMedecin = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Map(if: false)]
+    private ?string $etatSignature = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Map(if: false)]
+    private ?string $idDocumentParapheur = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Map(if: false)]
+    private ?DateTimeInterface $derniereVerificationSignature = null;
+
+    /** Auteur de la pièce jointe au retour de signature : le suivi tourne sans utilisateur connecté. */
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Map(if: false)]
+    private ?string $uidDemandeurSignature = null;
+
+    /** Fournie par le parapheur : le PDF, généré avant d'être signé, ne peut pas la porter. */
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Map(if: false)]
+    private ?DateTimeInterface $dateSignature = null;
 
     public function getId(): ?int
     {
@@ -153,6 +188,72 @@ class DecisionAmenagementExamens
     public function setFichier(?Fichier $fichier): static
     {
         $this->fichier = $fichier;
+
+        return $this;
+    }
+
+    public function getEtatSignature(): ?string
+    {
+        return $this->etatSignature;
+    }
+
+    public function setEtatSignature(?string $etatSignature): static
+    {
+        $this->etatSignature = $etatSignature;
+
+        return $this;
+    }
+
+    public function getIdDocumentParapheur(): ?string
+    {
+        return $this->idDocumentParapheur;
+    }
+
+    public function setIdDocumentParapheur(?string $idDocumentParapheur): static
+    {
+        $this->idDocumentParapheur = $idDocumentParapheur;
+
+        return $this;
+    }
+
+    public function getDerniereVerificationSignature(): ?DateTimeInterface
+    {
+        return $this->derniereVerificationSignature;
+    }
+
+    public function setDerniereVerificationSignature(?DateTimeInterface $derniereVerificationSignature): static
+    {
+        $this->derniereVerificationSignature = match ($derniereVerificationSignature) {
+            null => null,
+            default => DateTime::createFromInterface($derniereVerificationSignature),
+        };
+
+        return $this;
+    }
+
+    public function getUidDemandeurSignature(): ?string
+    {
+        return $this->uidDemandeurSignature;
+    }
+
+    public function setUidDemandeurSignature(?string $uidDemandeurSignature): static
+    {
+        $this->uidDemandeurSignature = $uidDemandeurSignature;
+
+        return $this;
+    }
+
+    public function getDateSignature(): ?DateTimeInterface
+    {
+        return $this->dateSignature;
+    }
+
+    public function setDateSignature(?DateTimeInterface $dateSignature): static
+    {
+        $this->dateSignature = match ($dateSignature) {
+            null => null,
+            default => DateTime::createFromInterface($dateSignature),
+        };
 
         return $this;
     }

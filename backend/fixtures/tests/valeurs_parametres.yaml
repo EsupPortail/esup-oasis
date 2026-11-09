@@ -11,6 +11,10 @@ App\Entity\ValeurParametre:
     valeur: '1 day'
     debut: <date_create('2020-01-01 08:00')>
     parametre: '@frequence_rappel_envoi_rh'
+  valeur_suivi_signatures:
+    valeur: '1 hour'
+    debut: <date_create('2020-01-01 08:00')>
+    parametre: '@frequence_suivi_signatures'
   valeur_coeff_charges:
     valeur: '1.5'
     debut: <date_create('2020-01-01 08:00')>

@@ -57,6 +57,10 @@ Si vous utilisez un autre SI de scolarité sans implémentation fournie, vous po
 implémentation dans le dossier [backend/personnalisation/SiScol](../../installation/backend/personnalisation/SiScol) -
 cf [documentation dédiée au connecteur vers le SI de scolarité](/docs/backend/connecteurs.md#si-scolarité)
 
+De même, pour faire signer la décision d'aménagements par un parapheur sans implémentation fournie, ajoutez la
+vôtre dans le dossier [backend/personnalisation/Signature](../../installation/backend/personnalisation/Signature) -
+cf [documentation de la signature électronique](/docs/backend/connecteurs.md#ajouter-un-parapheur)
+
 ### Démarrer l'application
 
 * Pour de la production :

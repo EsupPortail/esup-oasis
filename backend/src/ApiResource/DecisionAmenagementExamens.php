@@ -18,6 +18,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
 use App\State\DecisionAmenagementExamens\DecisionAmenagementExamensProcessor;
 use App\State\DecisionAmenagementExamens\DecisionAmenagementExamensProvider;
+use App\Validator\CircuitSignatureConstraint;
 use App\Validator\DateAvisMedecinRequiseConstraint;
 use App\Validator\EtatDecisionValideConstraint;
 use DateTimeInterface;
@@ -48,6 +49,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     stateOptions: new Options(entityClass: \App\Entity\DecisionAmenagementExamens::class),
 )]
 #[DateAvisMedecinRequiseConstraint]
+#[CircuitSignatureConstraint]
 #[Map(target: \App\Entity\DecisionAmenagementExamens::class)]
 class DecisionAmenagementExamens
 {
@@ -100,6 +102,42 @@ class DecisionAmenagementExamens
         }
     }
 
+    /** ETAT_SIGNATURE_* de l'entité, null si la décision n'est pas passée par la signature électronique. */
+    #[Groups([Utilisateur::GROUP_OUT, self::GROUP_OUT])]
+    public ?string $etatSignature {
+        get {
+            $prop = new ReflectionProperty(self::class, 'etatSignature');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->etatSignature = $this->entity->getEtatSignature();
+            }
+            return $this->etatSignature ?? null;
+        }
+    }
+
+    /** Date de la dernière signature du circuit. */
+    #[Groups([Utilisateur::GROUP_OUT, self::GROUP_OUT])]
+    public ?DateTimeInterface $dateSignature {
+        get {
+            $prop = new ReflectionProperty(self::class, 'dateSignature');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->dateSignature = $this->entity->getDateSignature();
+            }
+            return $this->dateSignature ?? null;
+        }
+    }
+
+    /** Dernière interrogation du parapheur, pour situer la fraîcheur de l'état affiché. */
+    #[Groups([Utilisateur::GROUP_OUT, self::GROUP_OUT])]
+    public ?DateTimeInterface $derniereVerificationSignature {
+        get {
+            $prop = new ReflectionProperty(self::class, 'derniereVerificationSignature');
+            if (!$prop->isInitialized($this) && $this->entity !== null) {
+                $this->derniereVerificationSignature = $this->entity->getDerniereVerificationSignature();
+            }
+            return $this->derniereVerificationSignature ?? null;
+        }
+    }
+
     #[Groups([self::GROUP_OUT])]
     public ?string $urlContenu {
         get {
@@ -138,6 +176,14 @@ class DecisionAmenagementExamens
     // renseignée par DecisionAmenagementManager::versRessource : l'interface applique la même règle que le serveur
     #[Groups([Utilisateur::GROUP_OUT, self::GROUP_OUT])]
     public bool $dateAvisMedecinRequise = false;
+
+    // avec un parapheur, pourquoi la décision ne peut pas partir en signature ; renseigné par versRessource
+    #[Groups([Utilisateur::GROUP_OUT, self::GROUP_OUT])]
+    public ?string $motifSignatureImpossible = null;
+
+    // demande d'interroger le parapheur sur une décision en signature, sans attendre le suivi planifié ; non enregistré
+    #[Groups([self::GROUP_IN])]
+    public bool $verifierSignature = false;
 
     public function __construct(
         private readonly ?\App\Entity\DecisionAmenagementExamens $entity = null,

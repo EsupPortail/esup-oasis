@@ -29,6 +29,7 @@ import { useAuth } from "@/auth/AuthProvider";
  * @param {boolean} [options.enabled] - Determines if the hook is enabled or not.
  * @param {ApiPathMethodParameters<P, "get">} [options.parameters] - The parameters to be included in the API request.
  * @param {ApiPathMethodQuery<P, "get">} [options.query] - The query parameters to be included in the API request.
+ * @param {Function} [options.refetchInterval] - Refetch interval in ms computed from the last data, or false.
  * @returns {UseQueryResult<ApiPathMethodResponse<P, "get">>} - The result of the useQuery hook.
  */
 export type UseGetItemHook = <P extends Path>(options: {
@@ -38,6 +39,7 @@ export type UseGetItemHook = <P extends Path>(options: {
   parameters?: ApiPathMethodParameters<P, "get">;
   query?: ApiPathMethodQuery<P, "get">;
   onError?: (error: IErreurNotification) => void;
+  refetchInterval?: (data: ApiPathMethodResponse<P, "get"> | undefined) => number | false;
 }) => UseQueryResult<ApiPathMethodResponse<P, "get">>;
 
 export function useGetItem<P extends Path>(
@@ -50,6 +52,7 @@ export function useGetItem<P extends Path>(
     parameters?: ApiPathMethodParameters<P, "get">;
     query?: ApiPathMethodQuery<P, "get">;
     onError?: (error: IErreurNotification) => void;
+    refetchInterval?: (data: ApiPathMethodResponse<P, "get"> | undefined) => number | false;
   },
 ): UseQueryResult<ApiPathMethodResponse<P, "get">> {
   // URL : useQuery.enabled prévient les URL non valides
@@ -82,5 +85,8 @@ export function useGetItem<P extends Path>(
     queryKey: [options.url, url, auth.user?.uid, options.path],
     queryFn,
     enabled: Boolean(url) && (options.enabled !== undefined ? options.enabled : true),
+    refetchInterval: options.refetchInterval
+      ? (query) => options.refetchInterval!(query.state.data)
+      : undefined,
   });
 }

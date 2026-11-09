@@ -112,6 +112,9 @@ services:
       $espace: '%env(resolve:NUXEO_ESPACE)%'
   App\Service\Photo\PhotoProviderInterface:
     alias: App\Service\Photo\UnicampusProvider
+  App\Service\Signature\AbstractParapheur:
+    factory: [ '@App\Service\Signature\ParapheurFactory', 'create' ]
+    autoconfigure: false
   App\Service\ParametreService:
     arguments:
       $appEnv:
@@ -148,6 +151,14 @@ when@test:
       class: App\Test\FakeLdapService
     App\Service\Photo\PhotoProviderInterface:
       alias: App\Test\FakePhotoProvider
+    App\Service\Signature\AbstractParapheur:
+      alias: App\Service\Signature\ParapheurFactice
+    # en mémoire : chaque test repart d'un parapheur vide
+    App\Service\Signature\ParapheurFactice:
+      autowire: true
+      autoconfigure: true
+      arguments:
+        $repertoire: null
     App\Service\SiScol\SiScolDataProviderFactory:
       public: true
       autowire: true

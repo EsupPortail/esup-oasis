@@ -32,6 +32,8 @@ export function CardAmenagement(props: {
   amenagement: IAmenagement;
   onClickEdit?: (amenagement: IAmenagement) => void;
   showCategorie?: boolean;
+  // motif du verrou de signature : l'édition reste visible mais désactivée
+  verrou?: string;
 }) {
   const screens = useBreakpoint();
   const [searchParams] = useSearchParams();
@@ -68,12 +70,15 @@ export function CardAmenagement(props: {
                   </span>
                 </div>
                 {props.onClickEdit && (
-                  <Button
-                    className="mr-0 pr-0"
-                    type="text"
-                    icon={<EditOutlined aria-label="Menu" />}
-                    onClick={() => props.onClickEdit?.(props.amenagement)}
-                  />
+                  <Tooltip title={props.verrou}>
+                    <Button
+                      className="mr-0 pr-0"
+                      type="text"
+                      icon={<EditOutlined aria-label="Menu" />}
+                      disabled={!!props.verrou}
+                      onClick={() => props.onClickEdit?.(props.amenagement)}
+                    />
+                  </Tooltip>
                 )}
               </Flex>
             }

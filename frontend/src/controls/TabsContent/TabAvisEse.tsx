@@ -8,7 +8,7 @@
  */
 
 import { useApi } from "@context/api/ApiProvider";
-import { Button, Flex, Typography } from "antd";
+import { Button, Flex, Tooltip, Typography } from "antd";
 import React from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { IAvisEse } from "@api";
@@ -16,10 +16,12 @@ import { ModalAvisEse } from "@controls/Modals/ModalAvisEse";
 import { AvisEseList } from "@controls/List/AvisEseList";
 import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
 import { env } from "@/env";
+import { useVerrouSignature } from "@controls/TabsContent/useVerrouSignature";
 
 export function TabAvisEse(props: { utilisateurId: string }) {
   const screens = useBreakpoint();
   const [editedItem, setEditedItem] = React.useState<IAvisEse>();
+  const verrou = useVerrouSignature(props.utilisateurId);
   const { data: avis } = useApi().useGetFullCollection({
     path: "/utilisateurs/{uid}/avis_ese",
     parameters: {
@@ -49,13 +51,16 @@ export function TabAvisEse(props: { utilisateurId: string }) {
               setEditedItem={setEditedItem}
             />
           )}
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => setEditedItem({} as IAvisEse)}
-          >
-            Ajouter un avis {env.REACT_APP_ESPACE_SANTE_ABV || "santé"}
-          </Button>
+          <Tooltip title={verrou}>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              disabled={!!verrou}
+              onClick={() => setEditedItem({} as IAvisEse)}
+            >
+              Ajouter un avis {env.REACT_APP_ESPACE_SANTE_ABV || "santé"}
+            </Button>
+          </Tooltip>
         </div>
       </Flex>
 
@@ -63,6 +68,7 @@ export function TabAvisEse(props: { utilisateurId: string }) {
         utilisateurId={props.utilisateurId}
         avis={avis?.items || []}
         setEditedItem={setEditedItem}
+        verrou={verrou}
       />
     </>
   );

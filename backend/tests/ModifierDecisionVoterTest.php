@@ -33,6 +33,9 @@ class ModifierDecisionVoterTest extends TestCase
             'demande d\'édition du gestionnaire' => [Utilisateur::ROLE_GESTIONNAIRE, Decision::ETAT_ATTENTE_VALIDATION_CAS, Decision::ETAT_VALIDE, VoterInterface::ACCESS_GRANTED],
             'envoi par le gestionnaire' => [Utilisateur::ROLE_GESTIONNAIRE, Decision::ETAT_VALIDE, Decision::ETAT_EDITION_DEMANDEE, VoterInterface::ACCESS_DENIED],
             'envoi par l\'administrateur' => [Utilisateur::ROLE_ADMIN, Decision::ETAT_VALIDE, Decision::ETAT_EDITION_DEMANDEE, VoterInterface::ACCESS_GRANTED],
+            'décision en signature, par l\'administrateur' => [Utilisateur::ROLE_ADMIN, Decision::ETAT_EN_SIGNATURE, Decision::ETAT_EDITION_DEMANDEE, VoterInterface::ACCESS_DENIED],
+            'reprise d\'une décision refusée' => [Utilisateur::ROLE_GESTIONNAIRE, Decision::ETAT_REFUSEE, Decision::ETAT_ATTENTE_VALIDATION_CAS, VoterInterface::ACCESS_GRANTED],
+            'nouvelle demande sans reprise' => [Utilisateur::ROLE_GESTIONNAIRE, Decision::ETAT_REFUSEE, Decision::ETAT_VALIDE, VoterInterface::ACCESS_DENIED],
         ];
     }
 

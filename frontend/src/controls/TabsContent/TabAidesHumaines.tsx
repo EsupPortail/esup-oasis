@@ -7,7 +7,7 @@
  * @author Julien Lemonnier <julien.lemonnier@u-bordeaux.fr>
  */
 
-import { Button, Empty, List, Tag, Typography } from "antd";
+import { Button, Empty, List, Tag, Tooltip, Typography } from "antd";
 import React, { ReactElement, useState } from "react";
 import { IAmenagement, IUtilisateur, PREFETCH_TYPES_AMENAGEMENTS } from "@api";
 import { getLibellePeriode } from "@utils/dates";
@@ -16,6 +16,7 @@ import Spinner from "@controls/Spinner/Spinner";
 import { SuiviAmenagementItem } from "@controls/Items/SuiviAmenagementItem";
 import { EditOutlined } from "@ant-design/icons";
 import { ModalAmenagement } from "@controls/Modals/ModalAmenagement";
+import { verrouSignature } from "@lib";
 
 interface ITabAidesHumainesProps {
   utilisateur: IUtilisateur;
@@ -25,6 +26,8 @@ interface ITabAidesHumainesItemProps {
   aide: IAmenagement;
   titleClassName?: string;
   setEditedItem?: (id: string) => void;
+  // motif du verrou de signature, appliqué aux types repris dans la décision
+  verrou?: string;
 }
 
 /**
@@ -39,8 +42,11 @@ export function AideHumaineListItem({
   aide,
   titleClassName = "text-primary",
   setEditedItem,
+  verrou,
 }: ITabAidesHumainesItemProps): ReactElement {
   const { data: types } = useApi().useGetFullCollection(PREFETCH_TYPES_AMENAGEMENTS);
+  const type = types?.items.find((ta) => ta["@id"] === aide.typeAmenagement);
+  const motifVerrou = type?.decision ? verrou : undefined;
 
   return (
     <List.Item>
@@ -49,7 +55,7 @@ export function AideHumaineListItem({
           <span className={titleClassName}>
             <div className="mb-2">
               {aide.suivi && <SuiviAmenagementItem className="float-right" suiviId={aide.suivi} />}
-              {types?.items.find((ta) => ta["@id"] === aide.typeAmenagement)?.libelle}
+              {type?.libelle}
             </div>
           </span>
         }
@@ -67,13 +73,16 @@ export function AideHumaineListItem({
                 <Typography.Text type="secondary">{aide.commentaire}</Typography.Text>
               </div>
             )}
-            <Button
-              className="mt-2"
-              icon={<EditOutlined />}
-              onClick={() => setEditedItem?.(aide["@id"] as string)}
-            >
-              Éditer
-            </Button>
+            <Tooltip title={motifVerrou}>
+              <Button
+                className="mt-2"
+                icon={<EditOutlined />}
+                disabled={!!motifVerrou}
+                onClick={() => setEditedItem?.(aide["@id"] as string)}
+              >
+                Éditer
+              </Button>
+            </Tooltip>
           </>
         }
       />
@@ -120,7 +129,12 @@ export function TabAidesHumaines({ utilisateur }: ITabAidesHumainesProps): React
           )}
           <List className="ant-list-radius">
             {amenagements.items?.map((aide) => (
-              <AideHumaineListItem key={aide["@id"]} aide={aide} setEditedItem={setEditedItem} />
+              <AideHumaineListItem
+                key={aide["@id"]}
+                aide={aide}
+                setEditedItem={setEditedItem}
+                verrou={verrouSignature(utilisateur)}
+              />
             ))}
           </List>
         </>

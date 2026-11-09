@@ -17,7 +17,9 @@ use App\Entity\Beneficiaire;
 use App\Entity\DecisionAmenagementExamens;
 use App\Entity\Utilisateur;
 use App\Message\RessourceModifieeMessage;
+use App\Message\SignatureDecisionDemandeeMessage;
 use App\Repository\DecisionAmenagementExamensRepository;
+use App\Service\Signature\SignatureElectronique;
 use App\State\Utilisateur\UtilisateurManager;
 use App\Util\AnneeUniversitaireAwareTrait;
 use DateTime;
@@ -34,6 +36,7 @@ class DecisionAmenagementManager
         private readonly DecisionAmenagementExamensRepository $decisionAmenagementExamensRepository,
         private readonly UtilisateurManager $utilisateurManager,
         private readonly MessageBusInterface $messageBus,
+        private readonly SignatureElectronique $signatureElectronique,
     ) {}
 
     public function parUidEtAnnee(string $uid, int $annee): ?DecisionAmenagementExamens
@@ -64,6 +67,11 @@ class DecisionAmenagementManager
          */
 
         $decision = $beneficiaire->getDecisionAmenagementExamens($debutPeriode, $finPeriode);
+
+        // en signature, le parapheur rendra la décision signée ou refusée ; refusée, le gestionnaire la reprendra
+        if (in_array($decision?->getEtat(), [DecisionAmenagementExamens::ETAT_EN_SIGNATURE, DecisionAmenagementExamens::ETAT_REFUSEE], true)) {
+            return;
+        }
 
         $now = $this->now();
         $dateConsideree = match (true) {
@@ -98,15 +106,118 @@ class DecisionAmenagementManager
             $decision->setDateModification($this->now());
         }
 
-        $decision->setEtat(DecisionAmenagementExamens::ETAT_ATTENTE_VALIDATION_CAS);
-        $this->decisionAmenagementExamensRepository->save($decision, true);
-
-        //ici on veut aussi rafraichir le cache de l'utilisateur et de la decision elle-même
-        $utilisateurResource = new \App\ApiResource\Utilisateur($beneficiaire);
-        $this->messageBus->dispatch(new RessourceModifieeMessage($utilisateurResource));
+        // le prochain envoi peut se faire sans parapheur : la signature du document précédent ne doit plus s'afficher
+        $decision
+            ->setEtat(DecisionAmenagementExamens::ETAT_ATTENTE_VALIDATION_CAS)
+            ->setEtatSignature(null)
+            ->setIdDocumentParapheur(null)
+            ->setUidDemandeurSignature(null)
+            ->setDerniereVerificationSignature(null)
+            ->setDateSignature(null);
         //si l'état n'a pas changé, le contenu du document a changé quand même !
-        $decisionResource = new \App\ApiResource\DecisionAmenagementExamens($decision);
-        $this->messageBus->dispatch(new RessourceModifieeMessage($decisionResource));
+        $this->enregistrer($decision);
+    }
+
+    // modification par le gestionnaire ou l'administrateur (Patch de la décision)
+    public function modifier(
+        DecisionAmenagementExamens $decision,
+        string $etat,
+        ?string $observations,
+        ?DateTimeInterface $dateAvisMedecin,
+    ): void {
+        $decision
+            ->setEtat($etat)
+            ->setObservations($observations)
+            ->setDateAvisMedecin($dateAvisMedecin);
+        $this->enregistrer($decision);
+    }
+
+    /**
+     * Fait signer la décision validée ou envoyée quand la composante du bénéficiaire a un circuit : elle passe en
+     * signature, donc verrouillée dès la demande, et le dépôt se fait en asynchrone. Sans circuit, rien ne change.
+     *
+     * @return bool vrai si la décision part en signature
+     */
+    public function demanderSignature(DecisionAmenagementExamens $decision, string $uidDemandeur): bool
+    {
+        if (null === $this->signatureElectronique->circuitPour($decision)) {
+            return false;
+        }
+
+        // sans document dans le parapheur, la décision en signature est en cours de dépôt
+        $decision
+            ->setEtat(DecisionAmenagementExamens::ETAT_EN_SIGNATURE)
+            ->setEtatSignature(null)
+            ->setIdDocumentParapheur(null);
+        $this->enregistrer($decision);
+        $this->messageBus->dispatch(new SignatureDecisionDemandeeMessage($decision->getId(), $uidDemandeur));
+
+        return true;
+    }
+
+    /**
+     * @param string $uidDemandeur auteur de la pièce jointe au retour de signature
+     */
+    public function noterDepot(DecisionAmenagementExamens $decision, string $documentId, string $uidDemandeur): void
+    {
+        $decision
+            ->setEtat(DecisionAmenagementExamens::ETAT_EN_SIGNATURE)
+            ->setEtatSignature(DecisionAmenagementExamens::ETAT_SIGNATURE_EN_SIGNATURE)
+            ->setIdDocumentParapheur($documentId)
+            ->setUidDemandeurSignature($uidDemandeur)
+            // une signature précédente ne concerne pas ce nouveau document
+            ->setDateSignature(null)
+            ->setDerniereVerificationSignature(null);
+        $this->enregistrer($decision);
+    }
+
+    // envoyée par e-mail, sans parapheur
+    public function noterEdition(DecisionAmenagementExamens $decision): void
+    {
+        $decision->setEtat(DecisionAmenagementExamens::ETAT_EDITE);
+        $this->enregistrer($decision);
+    }
+
+    // circuit retiré de la composante, ou parapheur désactivé, depuis la demande : l'administrateur l'enverra
+    public function renoncerSignature(DecisionAmenagementExamens $decision): void
+    {
+        $decision->setEtat(DecisionAmenagementExamens::ETAT_VALIDE);
+        $this->enregistrer($decision);
+    }
+
+    // parapheur interrogé, circuit toujours en cours ou document pas encore récupéré
+    public function noterVerificationSignature(DecisionAmenagementExamens $decision): void
+    {
+        $decision->setDerniereVerificationSignature($this->now());
+        $this->enregistrer($decision);
+    }
+
+    public function noterSignature(DecisionAmenagementExamens $decision, ?DateTimeInterface $dateSignature): void
+    {
+        $decision
+            ->setEtat(DecisionAmenagementExamens::ETAT_EDITE)
+            ->setEtatSignature(DecisionAmenagementExamens::ETAT_SIGNATURE_SIGNEE)
+            ->setDateSignature($dateSignature)
+            ->setDerniereVerificationSignature($this->now());
+        $this->enregistrer($decision);
+    }
+
+    // rendue sans signature (refusée, expirée, document perdu) : le gestionnaire la reprendra
+    public function noterRetourSansSignature(DecisionAmenagementExamens $decision, string $etatSignature): void
+    {
+        $decision
+            ->setEtat(DecisionAmenagementExamens::ETAT_REFUSEE)
+            ->setEtatSignature($etatSignature)
+            ->setDerniereVerificationSignature($this->now());
+        $this->enregistrer($decision);
+    }
+
+    // la décision en cours fait partie de la ressource Utilisateur : les deux sont à rafraîchir
+    private function enregistrer(DecisionAmenagementExamens $decision): void
+    {
+        $this->decisionAmenagementExamensRepository->save($decision, true);
+        $this->messageBus->dispatch(new RessourceModifieeMessage(new \App\ApiResource\Utilisateur($decision->getBeneficiaire())));
+        $this->messageBus->dispatch(new RessourceModifieeMessage(new \App\ApiResource\DecisionAmenagementExamens($decision)));
     }
 
     public function getDecisionCourante(Utilisateur $utilisateur): ?DecisionAmenagementExamens
@@ -120,6 +231,7 @@ class DecisionAmenagementManager
     {
         $ressource = new \App\ApiResource\DecisionAmenagementExamens($decision);
         $ressource->dateAvisMedecinRequise = $this->dateAvisMedecinRequise($decision);
+        $ressource->motifSignatureImpossible = $this->signatureElectronique->motifSansCircuit($decision);
 
         return $ressource;
     }
@@ -148,5 +260,33 @@ class DecisionAmenagementManager
             fn(Beneficiaire $profil) => true === $profil->getProfil()?->isAvecTypologie()
                 && true === $profil->getProfil()->isAvisMedicalRequis(),
         );
+    }
+
+    /**
+     * Pourquoi les aménagements repris dans la décision et les avis de santé du bénéficiaire ne peuvent pas
+     * être modifiés, null s'ils le peuvent. En signature, le document signé ne dirait plus ce qu'affiche
+     * OASIS ; refusée, la décision attend d'être reprise par un gestionnaire.
+     */
+    public function motifVerrou(Utilisateur $beneficiaire): ?string
+    {
+        foreach ($beneficiaire->getDecisionsAmenagementExamens() as $decision) {
+            // une décision d'une année terminée ne reprend plus rien de modifiable
+            if ($decision->getFin() < $this->now()) {
+                continue;
+            }
+
+            $motif = match ($decision->getEtat()) {
+                DecisionAmenagementExamens::ETAT_EN_SIGNATURE => 'La décision d\'aménagements de ce bénéficiaire est en cours de signature électronique : '
+                    . 'ses aménagements et ses avis de santé ne peuvent pas être modifiés avant la fin du circuit.',
+                DecisionAmenagementExamens::ETAT_REFUSEE => 'La décision d\'aménagements de ce bénéficiaire a été refusée dans le circuit de signature : '
+                    . 'reprenez-la avant de modifier ses aménagements et ses avis de santé.',
+                default => null,
+            };
+            if (null !== $motif) {
+                return $motif;
+            }
+        }
+
+        return null;
     }
 }

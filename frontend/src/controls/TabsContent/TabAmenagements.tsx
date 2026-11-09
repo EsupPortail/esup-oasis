@@ -17,6 +17,7 @@ import { useApi } from "@context/api/ApiProvider";
 import { ModalAmenagement } from "@controls/Modals/ModalAmenagement";
 import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
 import { ButtonAddAmenagement } from "@controls/TabsContent/ButtonAddAmenagement";
+import { useVerrouSignature } from "@controls/TabsContent/useVerrouSignature";
 
 export function TabAmenagements(props: {
   utilisateurId: string;
@@ -24,6 +25,7 @@ export function TabAmenagements(props: {
 }) {
   const screens = useBreakpoint();
   const [editedAmenagement, setEditedAmenagement] = React.useState<IAmenagement>();
+  const verrou = useVerrouSignature(props.utilisateurId);
   const { data: typesAmenagements } = useApi().useGetFullCollection(PREFETCH_TYPES_AMENAGEMENTS);
   const { data: categoriesAmenagements } = useApi().useGetFullCollection(
     PREFETCH_CATEGORIES_AMENAGEMENTS,
@@ -90,6 +92,7 @@ export function TabAmenagements(props: {
                         amenagement={a}
                         type={ta}
                         onClickEdit={setEditedAmenagement}
+                        verrou={ta.decision ? verrou : undefined}
                       ></CardAmenagement>
                     ))}
                   </span>
