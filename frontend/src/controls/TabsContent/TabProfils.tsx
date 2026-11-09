@@ -57,8 +57,6 @@ export function TabProfils({ utilisateur, title }: ITabProfilsProps): ReactEleme
                   noStyle
                 >
                   <BeneficiaireProfilCardItem
-                    style={{ width: "calc(100% - 35px)" }}
-                    className="mt-1 mb-1"
                     utilisateur={utilisateur}
                     extra={
                       fields.length > 1 ? (

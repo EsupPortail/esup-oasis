@@ -20,17 +20,11 @@ import { BeneficiaireProfilFormItemEdit } from "@controls/Forms/BeneficiaireProf
 
 interface IBeneficiaireProfilFormItemProps {
   value?: string;
-  onChange?: (v: string | undefined) => void;
-  style?: React.CSSProperties;
-  className?: string;
   cardClassName?: string;
   cardSize?: "small" | "medium";
-  placeholder?: string;
   extra?: React.ReactNode;
   utilisateur: IUtilisateur;
   onCancel?: () => void;
-  selected?: boolean;
-  onSelect?: (profil: string) => void;
   editable?: boolean;
 }
 
@@ -40,26 +34,23 @@ function BeneficiaireProfilCardItem({
   extra,
   utilisateur,
   onCancel,
-  selected,
-  onSelect,
   editable = true,
   cardSize = "medium",
 }: IBeneficiaireProfilFormItemProps) {
   const [profilEdited, setProfilEdited] = useState<IBeneficiaireProfil>();
-  const { data: profils, isFetching: isFetchingProfils } =
+  const { data: profils, isLoading: isLoadingProfils } =
     useApi().useGetFullCollection(PREFETCH_PROFILS);
-  const { data, isFetching } = useApi().useGetItem({
+  const { data, isLoading } = useApi().useGetItem({
     path: "/utilisateurs/{uid}/profils/{id}",
     url: value as string,
     enabled: !!value,
   });
-  const { data: typologiesData, isFetching: isFetchingTypologiesData } =
+  const { data: typologiesData, isLoading: isLoadingTypologiesData } =
     useApi().useGetFullCollection({
       path: "/typologies",
     });
 
-  if (isFetching || isFetchingProfils || isFetchingTypologiesData) return <Spinner />;
-
+  // Le formulaire passe avant le chargement : un rafraîchissement en arrière-plan effacerait la saisie
   if (value === undefined || profilEdited)
     return (
       <BeneficiaireProfilFormItemEdit
@@ -73,18 +64,12 @@ function BeneficiaireProfilCardItem({
       />
     );
 
+  if (isLoading || isLoadingProfils || isLoadingTypologiesData) return <Spinner />;
+
   const profil = profils?.items.find((p) => p["@id"] === data?.profil);
 
   return (
-    <Card
-      size={cardSize}
-      className={`${cardClassName}${
-        selected ? " bg-beneficiaire-light" : ""
-      }${onSelect ? " pointer" : ""}`}
-      onClick={() => {
-        if (onSelect) onSelect(value);
-      }}
-    >
+    <Card size={cardSize} className={cardClassName}>
       <Card.Meta
         avatar={
           isEnCoursSurPeriode(data?.debut, data?.fin) ? (
