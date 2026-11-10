@@ -12,6 +12,14 @@
 
 namespace App\Tests;
 
+use App\Entity\CampagneDemande;
+use App\Entity\Demande;
+use App\Entity\EtapeDemande;
+use App\Entity\EtatDemande;
+use App\Entity\Question;
+use App\Entity\TypeDemande;
+use App\Entity\Utilisateur;
+use DateTime;
 use Symfony\Component\Clock\ClockAwareTrait;
 
 class DemandesTest extends ApiTestCaseCustom
@@ -21,11 +29,11 @@ class DemandesTest extends ApiTestCaseCustom
     private function getDemandeIdForDemandeur(bool $enCours = false): string
     {
         $em = static::getContainer()->get('doctrine')->getManager();
-        $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
-        $demande = $em->getRepository(\App\Entity\Demande::class)->findOneBy(['demandeur' => $demandeur]);
-        $targetEtatId = $enCours ? \App\Entity\EtatDemande::EN_COURS : \App\Entity\EtatDemande::RECEPTIONNEE;
+        $demandeur = $em->getRepository(Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
+        $demande = $em->getRepository(Demande::class)->findOneBy(['demandeur' => $demandeur]);
+        $targetEtatId = $enCours ? EtatDemande::EN_COURS : EtatDemande::RECEPTIONNEE;
         if ($demande->getEtat()->getId() !== $targetEtatId) {
-            $demande->setEtat($em->getRepository(\App\Entity\EtatDemande::class)->find($targetEtatId));
+            $demande->setEtat($em->getRepository(EtatDemande::class)->find($targetEtatId));
             $em->flush();
             if ($em->getConnection()->isTransactionActive()) {
                 $em->getConnection()->commit();
@@ -51,7 +59,7 @@ class DemandesTest extends ApiTestCaseCustom
     {
         $em = static::getContainer()->get('doctrine')->getManager();
 
-        $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
+        $demandeur = $em->getRepository(Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
         $countDemandeur = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d WHERE d.demandeur = :user')
             ->setParameter('user', $demandeur)
@@ -66,7 +74,7 @@ class DemandesTest extends ApiTestCaseCustom
             'hydra:totalItems' => $countDemandeur,
         ]);
 
-        $demandeur3 = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur3']);
+        $demandeur3 = $em->getRepository(Utilisateur::class)->findOneBy(['uid' => 'demandeur3']);
         $countDemandeur3 = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d WHERE d.demandeur = :user')
             ->setParameter('user', $demandeur3)
@@ -85,8 +93,8 @@ class DemandesTest extends ApiTestCaseCustom
     public function testDemandeurCannotBypassVisibilityFilter(): void
     {
         $em = static::getContainer()->get('doctrine')->getManager();
-        $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
-        $demande = $em->getRepository(\App\Entity\Demande::class)->findOneBy(['demandeur' => $demandeur]);
+        $demandeur = $em->getRepository(Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
+        $demande = $em->getRepository(Demande::class)->findOneBy(['demandeur' => $demandeur]);
         $expectedId = '/demandes/' . $demande->getId();
 
         $countDemandeur = (int) $em
@@ -190,18 +198,18 @@ class DemandesTest extends ApiTestCaseCustom
         } finally {
             // Clean up
             $em = static::getContainer()->get('doctrine')->getManager();
-            $demandeEntity = $em->find(\App\Entity\Demande::class, $dbId);
+            $demandeEntity = $em->find(Demande::class, $dbId);
             if ($demandeEntity) {
                 $em->remove($demandeEntity);
                 $em->flush();
             }
             // Clean up campaign and type
-            $campEntity = $em->find(\App\Entity\CampagneDemande::class, $campData['id']);
+            $campEntity = $em->find(CampagneDemande::class, $campData['id']);
             if ($campEntity) {
                 $em->remove($campEntity);
                 $em->flush();
             }
-            $typeEntity = $em->find(\App\Entity\TypeDemande::class, $typeData['id']);
+            $typeEntity = $em->find(TypeDemande::class, $typeData['id']);
             if ($typeEntity) {
                 $em->remove($typeEntity);
                 $em->flush();
@@ -238,7 +246,7 @@ class DemandesTest extends ApiTestCaseCustom
         $client = $this->createClientWithCredentials('renfort');
 
         // 2. Update typeDemande 1 to have visibiliteLimitee = true
-        $typeDemande = $em->find(\App\Entity\TypeDemande::class, 1);
+        $typeDemande = $em->find(TypeDemande::class, 1);
 
         try {
             $typeDemande->setVisibiliteLimitee(true);
@@ -256,7 +264,7 @@ class DemandesTest extends ApiTestCaseCustom
             $this->assertJsonContains(['hydra:totalItems' => $initialAdminTotalCount]);
         } finally {
             $currentEm = static::getContainer()->get('doctrine')->getManager();
-            $typeDemande = $currentEm->find(\App\Entity\TypeDemande::class, 1);
+            $typeDemande = $currentEm->find(TypeDemande::class, 1);
             if ($typeDemande) {
                 $typeDemande->setVisibiliteLimitee(false);
                 $currentEm->flush();
@@ -267,7 +275,7 @@ class DemandesTest extends ApiTestCaseCustom
     public function testDemandeurCanReprendreDemande(): void
     {
         $em = static::getContainer()->get('doctrine')->getManager();
-        $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
+        $demandeur = $em->getRepository(Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
         $count = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d 
              JOIN d.campagne c
@@ -306,7 +314,7 @@ class DemandesTest extends ApiTestCaseCustom
              AND (c.dateArchivage IS NULL OR c.dateArchivage >= :now)')
             ->setParameters([
                 'typeId' => 1,
-                'now' => new \DateTime(),
+                'now' => new DateTime(),
             ])
             ->getSingleScalarResult();
 
@@ -326,7 +334,7 @@ class DemandesTest extends ApiTestCaseCustom
         $client = $this->createClientWithCredentials('gestionnaire');
         $em = static::getContainer()->get('doctrine')->getManager();
 
-        $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur3']);
+        $demandeur = $em->getRepository(Utilisateur::class)->findOneBy(['uid' => 'demandeur3']);
 
         $totalExpected = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d 
@@ -341,7 +349,7 @@ class DemandesTest extends ApiTestCaseCustom
              AND (c.dateArchivage IS NULL OR c.dateArchivage >= :now)')
             ->setParameters([
                 'demandeur' => $demandeur,
-                'now' => new \DateTime(),
+                'now' => new DateTime(),
             ])
             ->getSingleScalarResult();
 
@@ -476,7 +484,7 @@ class DemandesTest extends ApiTestCaseCustom
     public function testAdminCanUpdateCampagne(): void
     {
         $em = static::getContainer()->get('doctrine')->getManager();
-        $campagne = $em->getRepository(\App\Entity\CampagneDemande::class)->findOneBy([
+        $campagne = $em->getRepository(CampagneDemande::class)->findOneBy([
             'libelle' => 'Campagne sportifs 2030',
         ]);
         $campagneId = $campagne->getId();
@@ -920,7 +928,7 @@ class DemandesTest extends ApiTestCaseCustom
 
         $em = static::getContainer()->get('doctrine')->getManager();
         $etape = $em
-            ->getRepository(\App\Entity\EtapeDemande::class)
+            ->getRepository(EtapeDemande::class)
             ->createQueryBuilder('e')
             ->setMaxResults(1)
             ->getQuery()
@@ -1007,14 +1015,14 @@ class DemandesTest extends ApiTestCaseCustom
     {
         $em = static::getContainer()->get('doctrine')->getManager();
 
-        $orphanQuestion = new \App\Entity\Question();
+        $orphanQuestion = new Question();
         $orphanQuestion->setLibelle('Question hors type demande');
-        $orphanQuestion->setTypeReponse(\App\Entity\Question::TYPE_TEXT);
+        $orphanQuestion->setTypeReponse(Question::TYPE_TEXT);
         $em->persist($orphanQuestion);
 
-        $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
-        $demande = $em->getRepository(\App\Entity\Demande::class)->findOneBy(['demandeur' => $demandeur]);
-        $demande->setEtat($em->getRepository(\App\Entity\EtatDemande::class)->find(\App\Entity\EtatDemande::EN_COURS));
+        $demandeur = $em->getRepository(Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
+        $demande = $em->getRepository(Demande::class)->findOneBy(['demandeur' => $demandeur]);
+        $demande->setEtat($em->getRepository(EtatDemande::class)->find(EtatDemande::EN_COURS));
         $em->flush();
         if ($em->getConnection()->isTransactionActive()) {
             $em->getConnection()->commit();
