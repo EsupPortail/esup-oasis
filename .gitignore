@@ -9,3 +9,6 @@ backend/supervisor*
 installation/frontend/.env
 installation/backend/.env
 installation/.env
+# secrets locaux montés en volume : le dossier est gardé, son contenu jamais commité
+installation/secrets/*
+!installation/secrets/.gitkeep
