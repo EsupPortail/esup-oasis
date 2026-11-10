@@ -305,10 +305,9 @@ dans les journaux, et la décision concernée est reprise au passage suivant.
 
    Ajoutez `-legacy` aux deux premières commandes si openssl refuse le fichier. Sans `-nodes`, la clé reste
    chiffrée et son mot de passe se renseigne dans `FAST_CERTIFICAT_MOT_DE_PASSE`.
-2. Déposez `client.pem` dans `installation/secrets/parapheur/`, exclu du dépôt, et décommentez le montage de ce
-   dossier dans [compose.yaml](../../installation/compose.yaml), pour le backend **et** le worker : c'est le worker qui
-   dépose et suit les décisions.
-3. Dans `.env`, renseignez `PARAPHEUR=fast`, `FAST_URL`, `FAST_SIREN` et `FAST_CERTIFICAT=/run/secrets/parapheur/client.pem`,
+2. Déposez `client.pem` dans `installation/secrets/` : ce dossier est monté dans le backend et le worker par
+   [compose.yaml](../../installation/compose.yaml), et son contenu est exclu du dépôt.
+3. Dans `.env`, renseignez `PARAPHEUR=fast`, `FAST_URL`, `FAST_SIREN` et `FAST_CERTIFICAT=/run/secrets/client.pem`,
    et `PARAPHEUR_ENVOIE_DOCUMENT=true` si les circuits FAST envoient eux-mêmes le document signé à l'étudiant.
 4. Après le démarrage, vérifiez la connexion et listez les circuits que FAST autorise :
 
