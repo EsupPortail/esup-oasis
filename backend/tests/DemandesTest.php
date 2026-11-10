@@ -52,7 +52,7 @@ class DemandesTest extends ApiTestCaseCustom
         $em = static::getContainer()->get('doctrine')->getManager();
 
         $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
-        $countDemandeur = (int)$em
+        $countDemandeur = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d WHERE d.demandeur = :user')
             ->setParameter('user', $demandeur)
             ->getSingleScalarResult();
@@ -67,7 +67,7 @@ class DemandesTest extends ApiTestCaseCustom
         ]);
 
         $demandeur3 = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur3']);
-        $countDemandeur3 = (int)$em
+        $countDemandeur3 = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d WHERE d.demandeur = :user')
             ->setParameter('user', $demandeur3)
             ->getSingleScalarResult();
@@ -89,7 +89,7 @@ class DemandesTest extends ApiTestCaseCustom
         $demande = $em->getRepository(\App\Entity\Demande::class)->findOneBy(['demandeur' => $demandeur]);
         $expectedId = '/demandes/' . $demande->getId();
 
-        $countDemandeur = (int)$em
+        $countDemandeur = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d WHERE d.demandeur = :user')
             ->setParameter('user', $demandeur)
             ->getSingleScalarResult();
@@ -217,21 +217,21 @@ class DemandesTest extends ApiTestCaseCustom
         $em = static::getContainer()->get('doctrine')->getManager();
 
         // 1. Initially, count demands visible to renfort and admin using DB query
-        $initialTotalCount = (int)$em->createQuery(
+        $initialTotalCount = (int) $em->createQuery(
             'SELECT COUNT(d) FROM App\Entity\Demande d 
              JOIN d.campagne c
              JOIN c.typeDemande t
              WHERE t.visibiliteLimitee = false',
         )->getSingleScalarResult();
 
-        $initialType1Count = (int)$em
+        $initialType1Count = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d 
              JOIN d.campagne c
              WHERE c.typeDemande = :typeId')
             ->setParameter('typeId', 1)
             ->getSingleScalarResult();
 
-        $initialAdminTotalCount = (int)$em->createQuery(
+        $initialAdminTotalCount = (int) $em->createQuery(
             'SELECT COUNT(d) FROM App\Entity\Demande d',
         )->getSingleScalarResult();
 
@@ -268,7 +268,7 @@ class DemandesTest extends ApiTestCaseCustom
     {
         $em = static::getContainer()->get('doctrine')->getManager();
         $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
-        $count = (int)$em
+        $count = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d 
              JOIN d.campagne c
              WHERE d.demandeur = :user AND c.typeDemande = :typeId')
@@ -292,14 +292,14 @@ class DemandesTest extends ApiTestCaseCustom
         $client = $this->createClientWithCredentials('gestionnaire');
         $em = static::getContainer()->get('doctrine')->getManager();
 
-        $totalExpected = (int)$em
+        $totalExpected = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d 
              JOIN d.campagne c
              WHERE c.typeDemande = :typeId')
             ->setParameter('typeId', 1)
             ->getSingleScalarResult();
 
-        $activeExpected = (int)$em
+        $activeExpected = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d 
              JOIN d.campagne c
              WHERE c.typeDemande = :typeId
@@ -328,13 +328,13 @@ class DemandesTest extends ApiTestCaseCustom
 
         $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur3']);
 
-        $totalExpected = (int)$em
+        $totalExpected = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d 
              WHERE d.demandeur = :demandeur')
             ->setParameter('demandeur', $demandeur)
             ->getSingleScalarResult();
 
-        $activeExpected = (int)$em
+        $activeExpected = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d 
              JOIN d.campagne c
              WHERE d.demandeur = :demandeur
@@ -408,12 +408,12 @@ class DemandesTest extends ApiTestCaseCustom
         $client = $this->createClientWithCredentials('admin');
         $em = static::getContainer()->get('doctrine')->getManager();
 
-        $countType1 = (int)$em
+        $countType1 = (int) $em
             ->createQuery('SELECT COUNT(c) FROM App\Entity\CampagneDemande c WHERE c.typeDemande = :typeId')
             ->setParameter('typeId', 1)
             ->getSingleScalarResult();
 
-        $countType2 = (int)$em
+        $countType2 = (int) $em
             ->createQuery('SELECT COUNT(c) FROM App\Entity\CampagneDemande c WHERE c.typeDemande = :typeId')
             ->setParameter('typeId', 2)
             ->getSingleScalarResult();
@@ -726,7 +726,7 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testAnswerWithReferenceTableOptionNonObligatoireSansOption(): void
     {
-        $demandeId = $this->getDemandeIdForDemandeur();
+        $demandeId = $this->getDemandeIdForDemandeur(true);
         $client = $this->createClientWithCredentials('demandeur');
         $client->request('PUT', $demandeId . '/questions/5/reponse', [
             'json' => [
@@ -747,7 +747,7 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testAnswerWithReferenceTableOptionSupprimerChoixOption(): void
     {
-        $demandeId = $this->getDemandeIdForDemandeur();
+        $demandeId = $this->getDemandeIdForDemandeur(true);
         $client = $this->createClientWithCredentials('demandeur');
 
         // 1. On choisit une option
