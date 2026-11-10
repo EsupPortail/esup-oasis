@@ -147,6 +147,11 @@ par le backend :
 * **APP_LOGO_FOOTER_MAILS** : chemin relatif de l'image contenant le logo à ajouter au footer des courriels sur le
   serveur backend (par rapport au dossier "public" - ex: "/images/logo_footer.svg")
 
+Les dénominations de l'établissement et du service suivent les mêmes règles que dans le frontend (choix de l'article,
+formes contractées « du / de la / de l' », majuscule en début de phrase) : se reporter aux sections
+[Dénomination de l'établissement](../frontend/configuration.md#dénomination-de-létablissement) et
+[Dénomination du service](../frontend/configuration.md#dénomination-du-service) de la configuration du frontend.
+
 ### Exécution
 
 Une fois l'image (ou les images) docker et la configuration prêtes, vous pouvez démarrer le conteneur de manière
