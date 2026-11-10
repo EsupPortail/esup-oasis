@@ -153,7 +153,8 @@
                 vous est accordé sous réserve des évolutions matérielles ou techniques ou de la
                 particularité de certains examens.</p>
             <p>La reconduction de cette décision au-delà de l'année universitaire {{ data.annee }}/{{ data.annee + 1 }}
-                est soumise à la condition que vous subissiez un entretien avec le service PHASE dont vous dépendez
+                est soumise à la condition que vous subissiez un entretien
+                avec {{ data.service_denomination|articleDefini(data.service_article) }} dont vous dépendez
                 géographiquement au début de chaque année universitaire.</p>
             <p>Je vous prie de croire à l'expression de ma considération toute particulière.</p>
             <p>{{ data.president.qualite }}, {{ data.president.nom }},<br>
