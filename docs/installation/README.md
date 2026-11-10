@@ -61,34 +61,8 @@ De même, pour faire signer la décision d'aménagements par un parapheur sans i
 vôtre dans le dossier [backend/personnalisation/Signature](../../installation/backend/personnalisation/Signature) -
 cf [documentation de la signature électronique](/docs/backend/connecteurs.md#ajouter-un-parapheur)
 
-### Signature électronique (facultatif)
-
-Pour faire signer la décision d'aménagements par FAST-Parapheur (cf.
-[documentation du connecteur](/docs/backend/connecteurs.md#fast-parapheur)) :
-
-1. Convertissez le certificat client fourni par FAST (`.p12`) en un seul fichier PEM, clé et certificat concaténés :
-
-   ```
-   openssl pkcs12 -in certificat.p12 -clcerts -nokeys -out client-cert.pem
-   openssl pkcs12 -in certificat.p12 -nocerts -nodes -out client-cle.pem
-   cat client-cert.pem client-cle.pem > client.pem
-   ```
-
-   Ajoutez `-legacy` aux deux premières commandes si openssl refuse le fichier. Sans `-nodes`, la clé reste
-   chiffrée et son mot de passe se renseigne dans `FAST_CERTIFICAT_MOT_DE_PASSE`.
-2. Déposez `client.pem` dans `installation/secrets/parapheur/`, exclu du dépôt, et décommentez le montage de ce
-   dossier dans [compose.yaml](../../installation/compose.yaml), pour le backend **et** le worker : c'est le worker qui
-   dépose et suit les décisions.
-3. Dans `.env`, renseignez `PARAPHEUR=fast`, `FAST_URL`, `FAST_SIREN` et `FAST_CERTIFICAT=/run/secrets/parapheur/client.pem`,
-   et `PARAPHEUR_ENVOIE_DOCUMENT=true` si les circuits FAST envoient eux-mêmes le document signé à l'étudiant.
-4. Après le démarrage, vérifiez la connexion et listez les circuits que FAST autorise :
-
-   ```
-   docker compose exec backend php bin/console app:signature:fast:circuits
-   ```
-
-5. Renseignez le circuit de chaque composante dans l'administration, sur l'écran « Signature électronique » de la
-   catégorie Paramètres. Les composantes sont créées par l'import des inscriptions : lancez-le avant cette étape.
+Pour faire signer la décision par FAST-Parapheur, implémentation fournie, cf
+[mise en place de FAST-Parapheur](/docs/backend/connecteurs.md#mise-en-place-de-fast-parapheur)
 
 ### Démarrer l'application
 
