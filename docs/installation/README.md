@@ -61,6 +61,9 @@ De même, pour faire signer la décision d'aménagements par un parapheur sans i
 vôtre dans le dossier [backend/personnalisation/Signature](../../installation/backend/personnalisation/Signature) -
 cf [documentation de la signature électronique](/docs/backend/connecteurs.md#ajouter-un-parapheur)
 
+Pour faire signer la décision par FAST-Parapheur, implémentation fournie, cf
+[mise en place de FAST-Parapheur](/docs/backend/connecteurs.md#mise-en-place-de-fast-parapheur)
+
 ### Démarrer l'application
 
 * Pour de la production :

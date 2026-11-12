@@ -59,6 +59,8 @@ readonly class DecisionAmenagementEditionNormalizer implements NormalizerInterfa
         $data['president']['nom'] = $this->parametreService->valeur(Parametre::PRESIDENT_NOM);
         $data['responsable_phase']['qualite'] = $this->parametreService->valeur(Parametre::RESPONSABLE_PHASE_QUALITE);
         $data['responsable_phase']['nom'] = $this->parametreService->valeur(Parametre::RESPONSABLE_PHASE_NOM);
+        $data['service_denomination'] = $this->parametreService->valeur(Parametre::APP_SERVICE_DENOMINATION);
+        $data['service_article'] = $this->parametreService->valeur(Parametre::APP_SERVICE_ARTICLE);
 
         /**
          * Signature stockée en paramètre

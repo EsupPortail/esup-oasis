@@ -255,6 +255,70 @@ php bin/console app:signature:factice refuser <document>
 
 Le suivi planifié, ou `app:signature:suivi`, reporte ensuite l'état sur la décision.
 
+### FAST-Parapheur
+
+`PARAPHEUR=fast` fait signer les décisions par FAST-Parapheur (Docaposte), en dépôt standard : le document est
+déposé dans le circuit renseigné sur la composante, FAST notifie et relance les signataires. Le document signé
+est envoyé à l'étudiant par OASIS, ou par FAST avec `PARAPHEUR_ENVOIE_DOCUMENT=true`. Le fichier déposé est nommé d'après le libellé de la décision et la date du dépôt,
+ce qui distingue les versions successives d'une même décision.
+
+L'état est déduit de l'historique du document, FAST n'exposant pas d'état courant : « Visa désapprouvé »,
+« Refusé » ou « Signature rejetée » rendent la décision refusée, « Classé (interrompu) » interrompue, et le
+circuit est terminé sur un état de fin, tant qu'aucune nouvelle étape (« Envoyé pour … ») n'a suivi. Les états de
+fin sont « Signé », « Classé » et « Archivé » par défaut. Chaque établissement les choisit avec `FAST_ETATS_FIN`,
+séparés par des virgules, selon le paramétrage de ses circuits : « Archivé » seul pour attendre l'archivage,
+« Visa approuvé » pour un circuit qui se termine par un visa. Un circuit à plusieurs signatures écrit « Signé » à
+chacune : FAST inscrivant l'étape suivante dans la même seconde, il n'est pas tenu pour terminé à la première
+signature, sauf à être interrogé précisément entre les deux ; choisir le classement ou l'archivage automatique
+comme état de fin lève ce doute.
+
+Paramétrage attendu des circuits, dans FAST :
+
+* avec `PARAPHEUR_ENVOIE_DOCUMENT=true`, l'adresse de l'étudiant est transmise au dépôt (`email_destinataire`) ;
+  le circuit doit alors envoyer le document signé à ce destinataire (« notification externe »), sinon FAST refuse
+  le dépôt avec le message « Vous ne pouvez pas renseigner la propriété email_destinataire sur ce circuit » ;
+* le motif d'un refus reste consultable dans FAST : OASIS indique seulement que la décision a été refusée.
+
+Réglages, dans `.env` :
+
+* `FAST_URL` : adresse du service SOAP, par exemple `https://parapheur.example/parapheur-soap/soap/v1/Documents` ;
+* `FAST_SIREN` : numéro d'abonné de l'établissement ;
+* `FAST_CERTIFICAT` : chemin du certificat client (PEM, clé et certificat concaténés), qui authentifie
+  l'établissement auprès de FAST ; à monter en volume dans le backend et le worker, jamais dans l'image
+  (cf. [mise en place](#mise-en-place-de-fast-parapheur)) ;
+* `FAST_CERTIFICAT_MOT_DE_PASSE` : mot de passe de la clé, s'il y en a un ;
+* `FAST_AUTORITE` : certificat de l'autorité de FAST, si le système ne la connaît pas ;
+* `FAST_ETATS_FIN` : états de l'historique qui terminent un circuit, « Signé, Classé, Archivé » par défaut.
+
+La connexion à FAST n'est établie qu'au premier appel : une configuration incomplète est signalée à ce moment,
+dans les journaux, et la décision concernée est reprise au passage suivant.
+
+#### Mise en place de FAST-Parapheur
+
+1. Convertissez le certificat client fourni par FAST (`.p12`) en un seul fichier PEM, clé et certificat concaténés :
+
+   ```bash
+   openssl pkcs12 -in certificat.p12 -clcerts -nokeys -out client-cert.pem
+   openssl pkcs12 -in certificat.p12 -nocerts -nodes -out client-cle.pem
+   cat client-cert.pem client-cle.pem > client.pem
+   ```
+
+   Ajoutez `-legacy` aux deux premières commandes si openssl refuse le fichier. Sans `-nodes`, la clé reste
+   chiffrée et son mot de passe se renseigne dans `FAST_CERTIFICAT_MOT_DE_PASSE`.
+2. Déposez `client.pem` dans `installation/secrets/` : ce dossier est monté dans le backend et le worker par
+   [compose.yaml](../../installation/compose.yaml), et son contenu est exclu du dépôt.
+3. Dans `.env`, renseignez `PARAPHEUR=fast`, `FAST_URL`, `FAST_SIREN` et `FAST_CERTIFICAT=/run/secrets/client.pem`,
+   et `PARAPHEUR_ENVOIE_DOCUMENT=true` si les circuits FAST envoient eux-mêmes le document signé à l'étudiant.
+4. Après le démarrage, vérifiez la connexion et listez les circuits que FAST autorise :
+
+   ```bash
+   docker compose exec backend php bin/console app:signature:fast:circuits
+   ```
+
+5. Renseignez le circuit de chaque composante dans l'administration, sur l'écran « Signature électronique » de la
+   catégorie Paramètres : c'est l'identifiant du circuit tel que FAST le nomme, donné par la commande précédente.
+   Les composantes sont créées par l'import des inscriptions : lancez-le avant cette étape.
+
 ## Photos
 
 Oasis peut récupérer et afficher les photos des étudiants (aux utilisateurs ayant un rôle gestionnaire ou

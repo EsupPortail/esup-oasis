@@ -12,6 +12,7 @@
     "ext-oci8": "*",
     "ext-pcntl": "*",
     "ext-pgsql": "*",
+    "ext-soap": "*",
     "api-platform/doctrine-orm": "^4.3",
     "api-platform/symfony": "^4.3",
     "doctrine/doctrine-bundle": "^3.2",

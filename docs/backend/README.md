@@ -109,6 +109,10 @@ disponibles dans le fichier
   électronique est désactivée — cf. [Connecteurs](connecteurs.md#signature-électronique)
 * [OPTIONNEL] **PARAPHEUR_ENVOIE_DOCUMENT** : `true` si le parapheur envoie lui-même le document signé à
   l'étudiant ; `false` par défaut, OASIS l'envoie par e-mail
+* [OPTIONNEL] **FAST_URL**, **FAST_SIREN**, **FAST_CERTIFICAT**, **FAST_CERTIFICAT_MOT_DE_PASSE**, **FAST_AUTORITE** :
+  réglages de FAST-Parapheur (`PARAPHEUR=fast`) — cf. [Connecteurs](connecteurs.md#fast-parapheur)
+* [OPTIONNEL] **FAST_ETATS_FIN** : états de l'historique FAST qui terminent un circuit, « Signé, Classé, Archivé »
+  par défaut
 
 Les valeurs renseignées dans le fichier .env peuvent être surchargées par des variables d'environnement au niveau
 système (https://symfony.com/doc/current/configuration.html#overriding-environment-variables-defined-by-the-system), ou
