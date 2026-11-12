@@ -114,6 +114,9 @@ class AvisEse
     public function setFichier(?Fichier $fichier): static
     {
         $this->fichier = $fichier;
+        if (null !== $fichier && $fichier->getAvisEse() !== $this) {
+            $fichier->setAvisEse($this);
+        }
 
         return $this;
     }

@@ -344,4 +344,54 @@ class ReferentielTest extends ApiTestCaseCustom
      * ]);
      * }
      */
+
+    /**
+     * Vérifie que la création ou modification non autorisée de référentiels est rejetée
+     */
+    public function testUnauthorizedReferentielModification(): void
+    {
+        $client = $this->createClientWithCredentials('beneficiaire');
+
+        // Chartes
+        $client->request('POST', '/chartes', [
+            'json' => ['libelle' => 'Test', 'contenu' => 'Test'],
+        ]);
+        $this->assertResponseStatusCodeSame(403);
+
+        // Tags
+        $client->request('POST', '/tags', [
+            'json' => ['libelle' => 'Test', 'categorie' => '/categories_tags/1'],
+        ]);
+        $this->assertResponseStatusCodeSame(403);
+
+        // Valeurs Paramètres
+        $client->request('POST', '/parametres/QUELCONQUE/valeurs', [
+            'json' => ['valeur' => 'Test', 'debut' => '2025-01-01'],
+        ]);
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    /**
+     * Vérifie que seul ROLE_ADMIN peut créer ou modifier une TypologieHandicap.
+     */
+    public function testTypologieHandicapAdminOnly(): void
+    {
+        $client = $this->createClientWithCredentials('gestionnaire');
+        $tokenGestionnaire = $this->getTokenForUser('gestionnaire');
+        $tokenAdmin = $this->getTokenForUser('admin');
+
+        // Tentative de création par un gestionnaire -> 403
+        $client->request('POST', '/typologies', [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenGestionnaire],
+            'json' => ['libelle' => 'Test Sécurité Typologie'],
+        ]);
+        $this->assertResponseStatusCodeSame(403);
+
+        // Création par un admin -> 201
+        $client->request('POST', '/typologies', [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenAdmin],
+            'json' => ['libelle' => 'Test Sécurité Typologie Admin'],
+        ]);
+        $this->assertResponseStatusCodeSame(201);
+    }
 }

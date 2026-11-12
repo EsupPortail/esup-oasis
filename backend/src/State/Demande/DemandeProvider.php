@@ -154,12 +154,15 @@ class DemandeProvider implements ResetInterface, ProviderInterface
                     if (!is_array($context['filters']['campagne'])) {
                         $context['filters']['campagne'] = [$context['filters']['campagne']];
                     }
-                    $context['filters']['campagne'] = array_filter($context['filters']['campagne'], fn($campagneIri) => in_array(
-                        $campagneIri,
-                        $campagnesAccessibles,
+                    $context['filters']['campagne'] = array_values(array_filter(
+                        $context['filters']['campagne'],
+                        fn($campagneIri) => in_array($campagneIri, $campagnesAccessibles),
                     ));
                 } else {
                     $context['filters']['campagne'] = $campagnesAccessibles;
+                }
+                if (empty($context['filters']['campagne'])) {
+                    $context['filters']['campagne'] = ['-1'];
                 }
             }
 
@@ -183,12 +186,15 @@ class DemandeProvider implements ResetInterface, ProviderInterface
                     if (!is_array($context['filters']['campagne.typeDemande'])) {
                         $context['filters']['campagne.typeDemande'] = [$context['filters']['campagne.typeDemande']];
                     }
-                    $context['filters']['campagne.typeDemande'] = array_filter($context['filters']['campagne.typeDemande'], fn($type) => in_array(
-                        $type,
-                        $iriTypesValides,
+                    $context['filters']['campagne.typeDemande'] = array_values(array_filter(
+                        $context['filters']['campagne.typeDemande'],
+                        fn($type) => in_array($type, $iriTypesValides),
                     ));
                 } else {
                     $context['filters']['campagne.typeDemande'] = $iriTypesValides;
+                }
+                if (empty($context['filters']['campagne.typeDemande'])) {
+                    $context['filters']['campagne.typeDemande'] = ['-1'];
                 }
             }
 

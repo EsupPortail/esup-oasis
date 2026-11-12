@@ -58,6 +58,9 @@ readonly class CharteUtilisateurProvider implements ProviderInterface
             uriVariables: $relevantVariables,
             context: $context,
         );
+        if ($entity?->getDemande()?->getDemandeur()?->getUid() !== $uriVariables['uid']) {
+            return null;
+        }
         return match ($entity) {
             null => null,
             default => new CharteUtilisateur($entity),

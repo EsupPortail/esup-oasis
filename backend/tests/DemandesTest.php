@@ -12,17 +12,34 @@
 
 namespace App\Tests;
 
+use App\Entity\CampagneDemande;
+use App\Entity\Demande;
+use App\Entity\EtapeDemande;
+use App\Entity\EtatDemande;
+use App\Entity\Question;
+use App\Entity\TypeDemande;
+use App\Entity\Utilisateur;
+use DateTime;
 use Symfony\Component\Clock\ClockAwareTrait;
 
 class DemandesTest extends ApiTestCaseCustom
 {
     use ClockAwareTrait;
 
-    private function getDemandeIdForDemandeur(): string
+    private function getDemandeIdForDemandeur(bool $enCours = false): string
     {
         $em = static::getContainer()->get('doctrine')->getManager();
-        $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
-        $demande = $em->getRepository(\App\Entity\Demande::class)->findOneBy(['demandeur' => $demandeur]);
+        $demandeur = $em->getRepository(Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
+        $demande = $em->getRepository(Demande::class)->findOneBy(['demandeur' => $demandeur]);
+        $targetEtatId = $enCours ? EtatDemande::EN_COURS : EtatDemande::RECEPTIONNEE;
+        if ($demande->getEtat()->getId() !== $targetEtatId) {
+            $demande->setEtat($em->getRepository(EtatDemande::class)->find($targetEtatId));
+            $em->flush();
+            if ($em->getConnection()->isTransactionActive()) {
+                $em->getConnection()->commit();
+                $em->getConnection()->beginTransaction();
+            }
+        }
         return '/demandes/' . $demande->getId();
     }
 
@@ -42,8 +59,8 @@ class DemandesTest extends ApiTestCaseCustom
     {
         $em = static::getContainer()->get('doctrine')->getManager();
 
-        $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
-        $countDemandeur = (int)$em
+        $demandeur = $em->getRepository(Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
+        $countDemandeur = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d WHERE d.demandeur = :user')
             ->setParameter('user', $demandeur)
             ->getSingleScalarResult();
@@ -57,8 +74,8 @@ class DemandesTest extends ApiTestCaseCustom
             'hydra:totalItems' => $countDemandeur,
         ]);
 
-        $demandeur3 = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur3']);
-        $countDemandeur3 = (int)$em
+        $demandeur3 = $em->getRepository(Utilisateur::class)->findOneBy(['uid' => 'demandeur3']);
+        $countDemandeur3 = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d WHERE d.demandeur = :user')
             ->setParameter('user', $demandeur3)
             ->getSingleScalarResult();
@@ -76,11 +93,11 @@ class DemandesTest extends ApiTestCaseCustom
     public function testDemandeurCannotBypassVisibilityFilter(): void
     {
         $em = static::getContainer()->get('doctrine')->getManager();
-        $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
-        $demande = $em->getRepository(\App\Entity\Demande::class)->findOneBy(['demandeur' => $demandeur]);
+        $demandeur = $em->getRepository(Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
+        $demande = $em->getRepository(Demande::class)->findOneBy(['demandeur' => $demandeur]);
         $expectedId = '/demandes/' . $demande->getId();
 
-        $countDemandeur = (int)$em
+        $countDemandeur = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d WHERE d.demandeur = :user')
             ->setParameter('user', $demandeur)
             ->getSingleScalarResult();
@@ -181,18 +198,18 @@ class DemandesTest extends ApiTestCaseCustom
         } finally {
             // Clean up
             $em = static::getContainer()->get('doctrine')->getManager();
-            $demandeEntity = $em->find(\App\Entity\Demande::class, $dbId);
+            $demandeEntity = $em->find(Demande::class, $dbId);
             if ($demandeEntity) {
                 $em->remove($demandeEntity);
                 $em->flush();
             }
             // Clean up campaign and type
-            $campEntity = $em->find(\App\Entity\CampagneDemande::class, $campData['id']);
+            $campEntity = $em->find(CampagneDemande::class, $campData['id']);
             if ($campEntity) {
                 $em->remove($campEntity);
                 $em->flush();
             }
-            $typeEntity = $em->find(\App\Entity\TypeDemande::class, $typeData['id']);
+            $typeEntity = $em->find(TypeDemande::class, $typeData['id']);
             if ($typeEntity) {
                 $em->remove($typeEntity);
                 $em->flush();
@@ -208,28 +225,28 @@ class DemandesTest extends ApiTestCaseCustom
         $em = static::getContainer()->get('doctrine')->getManager();
 
         // 1. Initially, count demands visible to renfort and admin using DB query
-        $initialTotalCount = (int)$em->createQuery(
+        $initialTotalCount = (int) $em->createQuery(
             'SELECT COUNT(d) FROM App\Entity\Demande d 
              JOIN d.campagne c
              JOIN c.typeDemande t
              WHERE t.visibiliteLimitee = false',
         )->getSingleScalarResult();
 
-        $initialType1Count = (int)$em
+        $initialType1Count = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d 
              JOIN d.campagne c
              WHERE c.typeDemande = :typeId')
             ->setParameter('typeId', 1)
             ->getSingleScalarResult();
 
-        $initialAdminTotalCount = (int)$em->createQuery(
+        $initialAdminTotalCount = (int) $em->createQuery(
             'SELECT COUNT(d) FROM App\Entity\Demande d',
         )->getSingleScalarResult();
 
         $client = $this->createClientWithCredentials('renfort');
 
         // 2. Update typeDemande 1 to have visibiliteLimitee = true
-        $typeDemande = $em->find(\App\Entity\TypeDemande::class, 1);
+        $typeDemande = $em->find(TypeDemande::class, 1);
 
         try {
             $typeDemande->setVisibiliteLimitee(true);
@@ -247,7 +264,7 @@ class DemandesTest extends ApiTestCaseCustom
             $this->assertJsonContains(['hydra:totalItems' => $initialAdminTotalCount]);
         } finally {
             $currentEm = static::getContainer()->get('doctrine')->getManager();
-            $typeDemande = $currentEm->find(\App\Entity\TypeDemande::class, 1);
+            $typeDemande = $currentEm->find(TypeDemande::class, 1);
             if ($typeDemande) {
                 $typeDemande->setVisibiliteLimitee(false);
                 $currentEm->flush();
@@ -258,8 +275,8 @@ class DemandesTest extends ApiTestCaseCustom
     public function testDemandeurCanReprendreDemande(): void
     {
         $em = static::getContainer()->get('doctrine')->getManager();
-        $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
-        $count = (int)$em
+        $demandeur = $em->getRepository(Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
+        $count = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d 
              JOIN d.campagne c
              WHERE d.demandeur = :user AND c.typeDemande = :typeId')
@@ -283,21 +300,21 @@ class DemandesTest extends ApiTestCaseCustom
         $client = $this->createClientWithCredentials('gestionnaire');
         $em = static::getContainer()->get('doctrine')->getManager();
 
-        $totalExpected = (int)$em
+        $totalExpected = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d 
              JOIN d.campagne c
              WHERE c.typeDemande = :typeId')
             ->setParameter('typeId', 1)
             ->getSingleScalarResult();
 
-        $activeExpected = (int)$em
+        $activeExpected = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d 
              JOIN d.campagne c
              WHERE c.typeDemande = :typeId
              AND (c.dateArchivage IS NULL OR c.dateArchivage >= :now)')
             ->setParameters([
                 'typeId' => 1,
-                'now' => new \DateTime(),
+                'now' => new DateTime(),
             ])
             ->getSingleScalarResult();
 
@@ -317,22 +334,22 @@ class DemandesTest extends ApiTestCaseCustom
         $client = $this->createClientWithCredentials('gestionnaire');
         $em = static::getContainer()->get('doctrine')->getManager();
 
-        $demandeur = $em->getRepository(\App\Entity\Utilisateur::class)->findOneBy(['uid' => 'demandeur3']);
+        $demandeur = $em->getRepository(Utilisateur::class)->findOneBy(['uid' => 'demandeur3']);
 
-        $totalExpected = (int)$em
+        $totalExpected = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d 
              WHERE d.demandeur = :demandeur')
             ->setParameter('demandeur', $demandeur)
             ->getSingleScalarResult();
 
-        $activeExpected = (int)$em
+        $activeExpected = (int) $em
             ->createQuery('SELECT COUNT(d) FROM App\Entity\Demande d 
              JOIN d.campagne c
              WHERE d.demandeur = :demandeur
              AND (c.dateArchivage IS NULL OR c.dateArchivage >= :now)')
             ->setParameters([
                 'demandeur' => $demandeur,
-                'now' => new \DateTime(),
+                'now' => new DateTime(),
             ])
             ->getSingleScalarResult();
 
@@ -399,12 +416,12 @@ class DemandesTest extends ApiTestCaseCustom
         $client = $this->createClientWithCredentials('admin');
         $em = static::getContainer()->get('doctrine')->getManager();
 
-        $countType1 = (int)$em
+        $countType1 = (int) $em
             ->createQuery('SELECT COUNT(c) FROM App\Entity\CampagneDemande c WHERE c.typeDemande = :typeId')
             ->setParameter('typeId', 1)
             ->getSingleScalarResult();
 
-        $countType2 = (int)$em
+        $countType2 = (int) $em
             ->createQuery('SELECT COUNT(c) FROM App\Entity\CampagneDemande c WHERE c.typeDemande = :typeId')
             ->setParameter('typeId', 2)
             ->getSingleScalarResult();
@@ -467,7 +484,7 @@ class DemandesTest extends ApiTestCaseCustom
     public function testAdminCanUpdateCampagne(): void
     {
         $em = static::getContainer()->get('doctrine')->getManager();
-        $campagne = $em->getRepository(\App\Entity\CampagneDemande::class)->findOneBy([
+        $campagne = $em->getRepository(CampagneDemande::class)->findOneBy([
             'libelle' => 'Campagne sportifs 2030',
         ]);
         $campagneId = $campagne->getId();
@@ -565,7 +582,7 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testDemandeurCanAnswerQuestion(): void
     {
-        $demandeId = $this->getDemandeIdForDemandeur();
+        $demandeId = $this->getDemandeIdForDemandeur(true);
         $client = $this->createClientWithCredentials('demandeur');
         $client->request('PUT', $demandeId . '/questions/3/reponse', [
             'json' => [
@@ -664,7 +681,7 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testDemandeurCannotAnswerWithOptionsFromOtherQuestion(): void
     {
-        $demandeId = $this->getDemandeIdForDemandeur();
+        $demandeId = $this->getDemandeIdForDemandeur(true);
         $client = $this->createClientWithCredentials('demandeur');
         $client->request('PUT', $demandeId . '/questions/1/reponse', [
             'json' => [
@@ -677,7 +694,7 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testDemandeurCannotAnswerCommentOnlyWhenOptionsRequired(): void
     {
-        $demandeId = $this->getDemandeIdForDemandeur();
+        $demandeId = $this->getDemandeIdForDemandeur(true);
         $client = $this->createClientWithCredentials('demandeur');
         $client->request('PUT', $demandeId . '/questions/1/reponse', [
             'json' => [
@@ -704,7 +721,7 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testAnswerWithReferenceTableOption(): void
     {
-        $demandeId = $this->getDemandeIdForDemandeur();
+        $demandeId = $this->getDemandeIdForDemandeur(true);
         $client = $this->createClientWithCredentials('demandeur');
         $client->request('PUT', $demandeId . '/questions/5/reponse', [
             'json' => [
@@ -717,7 +734,7 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testAnswerWithReferenceTableOptionNonObligatoireSansOption(): void
     {
-        $demandeId = $this->getDemandeIdForDemandeur();
+        $demandeId = $this->getDemandeIdForDemandeur(true);
         $client = $this->createClientWithCredentials('demandeur');
         $client->request('PUT', $demandeId . '/questions/5/reponse', [
             'json' => [
@@ -738,7 +755,7 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testAnswerWithReferenceTableOptionSupprimerChoixOption(): void
     {
-        $demandeId = $this->getDemandeIdForDemandeur();
+        $demandeId = $this->getDemandeIdForDemandeur(true);
         $client = $this->createClientWithCredentials('demandeur');
 
         // 1. On choisit une option
@@ -773,7 +790,7 @@ class DemandesTest extends ApiTestCaseCustom
 
     public function testSHNValidator(): void
     {
-        $demandeId = $this->getDemandeIdForDemandeur();
+        $demandeId = $this->getDemandeIdForDemandeur(true);
         $client = $this->createClientWithCredentials('demandeur');
 
         // OK case
@@ -911,7 +928,7 @@ class DemandesTest extends ApiTestCaseCustom
 
         $em = static::getContainer()->get('doctrine')->getManager();
         $etape = $em
-            ->getRepository(\App\Entity\EtapeDemande::class)
+            ->getRepository(EtapeDemande::class)
             ->createQueryBuilder('e')
             ->setMaxResults(1)
             ->getQuery()
@@ -967,5 +984,61 @@ class DemandesTest extends ApiTestCaseCustom
             '@id' => $modId,
             'etat' => '/etats_demandes/5',
         ]);
+    }
+
+    /**
+     * Vérifie qu'un membre de commission ou un renfort ne peut pas contourner le filtrage
+     * des demandes en passant une campagne ou un type de demande non autorisé
+     */
+    public function testDemandeFilterBypassPrevention(): void
+    {
+        $client = $this->createClientWithCredentials('membrecommission');
+
+        // Campagne 2 (type_demande 2) n'est pas rattachée à la commission de membrecommission
+        $client->request('GET', '/demandes?campagne=/types_demandes/2/campagnes/2');
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonContains(['hydra:totalItems' => 0]);
+
+        // Un renfort qui filtre sur un type de demande inexistant/interdit doit obtenir 0 résultat
+        $tokenRenfort = $this->getTokenForUser('renfort');
+        $client->request('GET', '/demandes?campagne.typeDemande=/types_demandes/999', [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenRenfort],
+        ]);
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonContains(['hydra:totalItems' => 0]);
+    }
+
+    /**
+     * Vérifie qu'on ne peut pas répondre à une question qui n'appartient pas au type de demande.
+     */
+    public function testQuestionAttenduePourDemandeValidation(): void
+    {
+        $em = static::getContainer()->get('doctrine')->getManager();
+
+        $orphanQuestion = new Question();
+        $orphanQuestion->setLibelle('Question hors type demande');
+        $orphanQuestion->setTypeReponse(Question::TYPE_TEXT);
+        $em->persist($orphanQuestion);
+
+        $demandeur = $em->getRepository(Utilisateur::class)->findOneBy(['uid' => 'demandeur']);
+        $demande = $em->getRepository(Demande::class)->findOneBy(['demandeur' => $demandeur]);
+        $demande->setEtat($em->getRepository(EtatDemande::class)->find(EtatDemande::EN_COURS));
+        $em->flush();
+        if ($em->getConnection()->isTransactionActive()) {
+            $em->getConnection()->commit();
+            $em->getConnection()->beginTransaction();
+        }
+
+        $demandeId = $demande->getId();
+
+        $client = $this->createClientWithCredentials('demandeur');
+        $token = $this->getTokenForUser('demandeur');
+
+        $client->request('PUT', '/demandes/' . $demandeId . '/questions/' . $orphanQuestion->getId() . '/reponse', [
+            'headers' => ['Authorization' => 'Bearer ' . $token],
+            'json' => ['commentaire' => 'invalide'],
+        ]);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertJsonContains(['hydra:description' => 'La question n\'est pas attendue pour ce type de demande']);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\ApiResource\Reponse;
+use App\Entity\EtatDemande;
 use App\Entity\Utilisateur;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
@@ -23,14 +24,17 @@ class ModifierReponseVoter extends Voter
     ): bool {
         assert($subject instanceof Reponse);
 
-        if ($subject->demande->demandeur->uid === $token->getUserIdentifier()) {
-            return true;
-        }
-
         if (in_array(Utilisateur::ROLE_GESTIONNAIRE, $token->getRoleNames())) {
             return true;
         }
-        // todo: planificateurs non gestionnaires ?
+
+        if ($subject->demande->demandeur->uid === $token->getUserIdentifier()) {
+            return in_array(
+                $subject->demande->etat?->id,
+                [EtatDemande::EN_COURS, EtatDemande::NON_CONFORME],
+                true,
+            );
+        }
 
         return false;
     }

@@ -24,6 +24,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\State\Entretien\EntretienProcessor;
 use App\State\Entretien\EntretienProvider;
+use App\Validator\PieceJustificativeValideConstraint;
 use DateTimeInterface;
 use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -35,7 +36,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
             uriVariables: [
                 'uid' => new Link(fromProperty: 'uid', toProperty: 'utilisateur', fromClass: Utilisateur::class),
             ],
-            security: "is_granted('ROLE_GESTIONNAIRE') or request.attributes.get('uid') == user.getUid()",
+            security: "is_granted('ROLE_GESTIONNAIRE')",
             map: false,
         ),
         new Post(
@@ -47,18 +48,30 @@ use Symfony\Component\Serializer\Attribute\Groups;
             read: false,
             map: false,
         ),
-        new Get(uriTemplate: self::ITEM_URI, uriVariables: [
-            'uid' => new Link(fromProperty: 'uid', toProperty: 'utilisateur', fromClass: Utilisateur::class),
-            'id',
-        ]),
-        new Patch(uriTemplate: self::ITEM_URI, uriVariables: [
-            'uid' => new Link(fromProperty: 'uid', toProperty: 'utilisateur', fromClass: Utilisateur::class),
-            'id',
-        ]),
-        new Delete(uriTemplate: self::ITEM_URI, uriVariables: [
-            'uid' => new Link(fromProperty: 'uid', toProperty: 'utilisateur', fromClass: Utilisateur::class),
-            'id',
-        ]),
+        new Get(
+            uriTemplate: self::ITEM_URI,
+            uriVariables: [
+                'uid' => new Link(fromProperty: 'uid', toProperty: 'utilisateur', fromClass: Utilisateur::class),
+                'id',
+            ],
+            security: "is_granted('ROLE_GESTIONNAIRE')",
+        ),
+        new Patch(
+            uriTemplate: self::ITEM_URI,
+            uriVariables: [
+                'uid' => new Link(fromProperty: 'uid', toProperty: 'utilisateur', fromClass: Utilisateur::class),
+                'id',
+            ],
+            security: "is_granted('ROLE_GESTIONNAIRE')",
+        ),
+        new Delete(
+            uriTemplate: self::ITEM_URI,
+            uriVariables: [
+                'uid' => new Link(fromProperty: 'uid', toProperty: 'utilisateur', fromClass: Utilisateur::class),
+                'id',
+            ],
+            security: "is_granted('ROLE_GESTIONNAIRE')",
+        ),
     ],
     normalizationContext: ['groups' => [self::GROUP_OUT]],
     denormalizationContext: ['groups' => [self::GROUP_IN]],
@@ -118,6 +131,7 @@ class Entretien
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
+    #[PieceJustificativeValideConstraint]
     public ?Telechargement $fichier {
         get {
             $prop = new ReflectionProperty(self::class, 'fichier');

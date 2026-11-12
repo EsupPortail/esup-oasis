@@ -35,6 +35,7 @@ use Symfony\Component\Serializer\Attribute\Ignore;
             uriVariables: [
                 'commissionId' => new Link(fromProperty: 'id', toProperty: 'commission', fromClass: Commission::class),
             ],
+            security: "is_granted('ROLE_GESTIONNAIRE') or is_granted('ROLE_MEMBRE_COMMISSION')",
             map: false,
         ),
         new Get(
@@ -43,6 +44,7 @@ use Symfony\Component\Serializer\Attribute\Ignore;
                 'commissionId' => new Link(fromProperty: 'id', toProperty: 'commission', fromClass: Commission::class),
                 'uid' => new Link(fromProperty: 'uid', toProperty: 'utilisateur', fromClass: Utilisateur::class),
             ],
+            security: "is_granted('ROLE_GESTIONNAIRE') or is_granted('ROLE_MEMBRE_COMMISSION')",
             map: false,
         ),
         new Put(

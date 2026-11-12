@@ -71,6 +71,20 @@ export function AuthProvider({
 
   // -- Déconnexion
   const signOut = (callback?: VoidFunction) => {
+    // Appel au backend pour effacer le cookie HttpOnly
+    if (env.REACT_APP_API) {
+      fetch(
+        new URL(`${env.REACT_APP_API_PREFIX}/connect/oauth/logout`, env.REACT_APP_API),
+        {
+          method: "POST",
+          credentials: "include",
+          keepalive: true,
+        },
+      ).catch(() => {
+        // En cas d'erreur réseau, continuer le nettoyage local
+      });
+    }
+
     setToken(undefined);
     setUser(undefined);
     setImpersonate(undefined);

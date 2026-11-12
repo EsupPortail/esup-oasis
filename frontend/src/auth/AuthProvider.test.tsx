@@ -25,6 +25,7 @@ vi.mock("@/queryClient", () => ({
 vi.mock("@utils/logger", () => ({ logger: { error: vi.fn() } }));
 
 const USER_URL = "http://api.test/utilisateurs/:uid";
+const LOGOUT_URL = "http://api.test/connect/oauth/logout";
 
 function makeUser(overrides: Record<string, unknown> = {}) {
   return makeUtilisateur({
@@ -152,11 +153,18 @@ describe("AuthProvider", () => {
   });
 
   describe("signOut — nettoyage de session", () => {
-    it("efface user, marqueurs localStorage et filtres de session, puis appelle le callback", async () => {
+    it("appelle l'API de déconnexion, efface user, marqueurs localStorage et filtres de session, puis appelle le callback", async () => {
       sessionStorage.setItem("oasis:filter:demandes", "x");
       sessionStorage.setItem("oasis:autre", "garder");
       setupStorage({ login: "user@test.fr" });
-      server.use(http.get(USER_URL, () => HttpResponse.json(makeUser())));
+      let logoutCalled = false;
+      server.use(
+        http.get(USER_URL, () => HttpResponse.json(makeUser())),
+        http.post(LOGOUT_URL, () => {
+          logoutCalled = true;
+          return HttpResponse.json({ status: "ok" });
+        }),
+      );
 
       const { result } = renderHookWithProviders(() => useAuth(), makeOptions());
       await waitFor(() => expect(result.current.user).toBeDefined(), { timeout: 2000 });
@@ -167,6 +175,7 @@ describe("AuthProvider", () => {
       await waitFor(() => expect(result.current.user).toBeUndefined());
       expect(storageMocks.removeLogin).toHaveBeenCalled();
       expect(storageMocks.removeImpersonate).toHaveBeenCalled();
+      expect(logoutCalled).toBe(true);
       // Seules les clés de filtres sont purgées, pas les autres entrées de session.
       expect(sessionStorage.getItem("oasis:filter:demandes")).toBeNull();
       expect(sessionStorage.getItem("oasis:autre")).toBe("garder");

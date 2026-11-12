@@ -46,12 +46,17 @@ class InterventionForfaitNomIntervenantOrderFilter extends AbstractFilter
         ?Operation $operation = null,
         array $context = [],
     ): void {
-        if ($property !== $this->orderParameterName) {
+        if ($property !== $this->orderParameterName || !is_array($value)) {
             return;
         }
 
         $supportedProperties = array_filter(array_keys($value), fn($prop) => $prop === 'intervenant.utilisateur.nom');
         if (empty($supportedProperties)) {
+            return;
+        }
+
+        $direction = strtoupper((string) ($value['intervenant.utilisateur.nom'] ?: 'ASC'));
+        if (!in_array($direction, ['ASC', 'DESC'], true)) {
             return;
         }
 
@@ -64,6 +69,6 @@ class InterventionForfaitNomIntervenantOrderFilter extends AbstractFilter
         $queryBuilder->join(sprintf('%s.intervenant', $alias), $intervenantAlias);
         $queryBuilder->join(sprintf('%s.utilisateur', $intervenantAlias), $utilisateurAlias);
         $queryBuilder->addSelect($hiddenSelect . ' as hidden ' . $fieldAlias);
-        $queryBuilder->addOrderBy($fieldAlias, $value['intervenant.utilisateur.nom']);
+        $queryBuilder->addOrderBy($fieldAlias, $direction);
     }
 }

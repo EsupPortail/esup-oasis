@@ -46,14 +46,7 @@ class OAuthController extends AbstractController
         Request $request,
         #[Autowire('%env(JWT_COOKIE_DOMAIN)%')] string $cookieDomain,
     ): Response {
-        $cookieDomainNorm = empty($cookieDomain) ? null : $cookieDomain;
-        if ($cookieDomainNorm !== null) {
-            $host = $request->getHost();
-            $cleanDomain = ltrim($cookieDomainNorm, '.');
-            if ($host !== $cleanDomain && !str_ends_with($host, '.' . $cleanDomain)) {
-                $cookieDomainNorm = null;
-            }
-        }
+        $cookieDomainNorm = $this->normalizeCookieDomain($cookieDomain, $request);
         try {
             $token = $this->oauthService->getAccessToken($request, $this->generateUrl(
                 'connect_oauth_accesstoken',
@@ -89,14 +82,7 @@ class OAuthController extends AbstractController
          * https://oauth2-client.thephpleague.com/usage/
          * https://apereo.github.io/cas/6.0.x/installation/OAuth-OpenId-Authentication.html#authorization-code
          */
-        $cookieDomainNorm = empty($cookieDomain) ? null : $cookieDomain;
-        if ($cookieDomainNorm !== null) {
-            $host = $request->getHost();
-            $cleanDomain = ltrim($cookieDomainNorm, '.');
-            if ($host !== $cleanDomain && !str_ends_with($host, '.' . $cleanDomain)) {
-                $cookieDomainNorm = null;
-            }
-        }
+        $cookieDomainNorm = $this->normalizeCookieDomain($cookieDomain, $request);
         try {
             $token = $this->oauthService->getAccessToken($request, $this->generateUrl(
                 'connect_oauth_login',
@@ -150,7 +136,7 @@ class OAuthController extends AbstractController
      * @return Response
      * @throws ErreurLdapException
      */
-    #[Route(path: '/token', name: 'user_token')]
+    #[Route(path: '/token', name: 'user_token', methods: ['POST', 'GET'])]
     public function getApiJwtFromCasAccessToken(
         Request $request,
         UtilisateurManager $utilisateurManager,
@@ -158,6 +144,7 @@ class OAuthController extends AbstractController
         #[Autowire('%env(JWT_COOKIE_NAME)%')] string $cookieName,
         #[Autowire('%env(JWT_COOKIE_DOMAIN)%')] string $cookieDomain,
     ): Response {
+        $cookieDomainNorm = $this->normalizeCookieDomain($cookieDomain, $request);
         $isJson = null !== $request->query->get('json');
         if (!$isJson) {
             $accessToken = $request->attributes->get('accessToken');
@@ -183,12 +170,44 @@ class OAuthController extends AbstractController
             $token,
             new DateTime()->modify(sprintf('+ %s seconds', $ttl)),
             '/',
-            $cookieDomain,
+            $cookieDomainNorm,
             true,
             true,
             false,
             Cookie::SAMESITE_STRICT,
         ));
         return $jsonResponse;
+    }
+
+    #[Route(path: '/logout', name: 'user_logout', methods: ['POST', 'GET'])]
+    public function logout(
+        Request $request,
+        #[Autowire('%env(JWT_COOKIE_NAME)%')] string $cookieName,
+        #[Autowire('%env(JWT_COOKIE_DOMAIN)%')] string $cookieDomain,
+    ): Response {
+        $cookieDomainNorm = $this->normalizeCookieDomain($cookieDomain, $request);
+        $response = new JsonResponse(['status' => 'ok']);
+        $response->headers->clearCookie(
+            $cookieName,
+            '/',
+            $cookieDomainNorm,
+            $request->isSecure(),
+            true,
+            Cookie::SAMESITE_STRICT,
+        );
+        return $response;
+    }
+
+    private function normalizeCookieDomain(?string $cookieDomain, Request $request): ?string
+    {
+        $cookieDomainNorm = empty($cookieDomain) ? null : $cookieDomain;
+        if ($cookieDomainNorm !== null) {
+            $host = $request->getHost();
+            $cleanDomain = ltrim($cookieDomainNorm, '.');
+            if ($host !== $cleanDomain && !str_ends_with($host, '.' . $cleanDomain)) {
+                $cookieDomainNorm = null;
+            }
+        }
+        return $cookieDomainNorm;
     }
 }

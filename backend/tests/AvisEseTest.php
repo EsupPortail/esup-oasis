@@ -70,6 +70,16 @@ class AvisEseTest extends ApiTestCaseCustom
         $this->assertResponseStatusCodeSame(403);
     }
 
+    public function testNonGestionnaireCannotReadAvisEse(): void
+    {
+        $client = $this->createClientWithCredentials('beneficiaire');
+        $client->request('GET', '/utilisateurs/beneficiaire/avis_ese');
+        $this->assertResponseStatusCodeSame(403);
+
+        $client->request('GET', '/utilisateurs/beneficiaire2/avis_ese/1');
+        $this->assertResponseStatusCodeSame(403);
+    }
+
     public function testAdminCanUpdateAvisEse(): void
     {
         $container = static::getContainer();
