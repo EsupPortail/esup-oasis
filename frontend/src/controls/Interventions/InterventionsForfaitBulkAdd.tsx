@@ -105,7 +105,7 @@ export default function InterventionsForfaitBulkAdd({
     () =>
       periodes?.items
         .filter((p) => !p.envoyee)
-        .filter((p) => user?.isAdmin || dayjs(p.butoir).isAfter(dayjs()))
+        .filter((p) => user?.isAdmin || dayjs(p.butoir).endOf("day").isAfter(dayjs()))
         .map((item) => ({
           key: item["@id"] as string,
           value: item["@id"] as string,
