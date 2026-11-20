@@ -40,9 +40,8 @@ lors du redémarrage du conteneur, évitant ainsi les problèmes de cache.
 | `REACT_APP_GERER_DEMANDES`  | Activer la gestion des demandes dans l'application   | true                                                | Non             |
 | `REACT_APP_MAX_FILE_SIZE`   | Taille max des fichiers en upload (en Mo)            | 10                                                  | Non             |
 
-> **\* REACT_APP_DARKMODE :** en version beta, le dark-mode est désactivé par défaut, mais peut être activé en modifiant
-> la variable
-> d'environnement `REACT_APP_DARKMODE` à `true`.
+> **\* REACT_APP_DARKMODE :** le dark-mode est désactivé par défaut, mais peut être proposé aux utilisateurs en passant
+> la variable d'environnement `REACT_APP_DARKMODE` à `true`.
 > L'activation du mode Contraste (menu Accessibilité) désactive automatiquement le dark-mode.
 > Les préférences de mode, comme celles d'accessibilité, sont stockées en backend pour être récupérées lors de la
 > connexion de l'utilisateur.

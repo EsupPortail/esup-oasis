@@ -7,7 +7,7 @@
  * @author Julien Lemonnier <julien.lemonnier@u-bordeaux.fr>
  */
 
-import { RoleValues, service } from "@lib";
+import { decisionEtab, RoleValues, service } from "@lib";
 
 /**
  * Version de l'application.
@@ -39,13 +39,64 @@ export interface IVersion {
  */
 export const VERSIONS: IVersion[] = [
   {
-    version: "2.4.1",
-    description: "Personnalisation du menu",
+    version: "2.5.0",
+    description: "Signature électronique et inscriptions multiples",
     changes: [
       {
-        description:
-          "L'administrateur peut personnaliser les libellés du menu principal de l'application",
+        description: `Signature électronique ${decisionEtab.de} par un parapheur, selon le circuit de signature de la composante`,
+        roles: [RoleValues.ROLE_ADMIN, RoleValues.ROLE_GESTIONNAIRE],
         type: "add",
+      },
+      {
+        description: `${decisionEtab.Defini} n'est plus limité${decisionEtab.accordE} aux aménagements d'examens : choix des types d'aménagements qui y figurent`,
+        roles: [RoleValues.ROLE_ADMIN],
+        type: "add",
+      },
+      {
+        description: `Onglet dédié à ${decisionEtab.defini} dans la fiche du bénéficiaire`,
+        roles: [RoleValues.ROLE_GESTIONNAIRE],
+        type: "add",
+      },
+      {
+        description: `Saisie d'observations et de la date de l'avis médical sur ${decisionEtab.defini}`,
+        roles: [RoleValues.ROLE_GESTIONNAIRE],
+        type: "add",
+      },
+      {
+        description:
+          "Date de l'avis médical pouvant être rendue obligatoire selon le profil du bénéficiaire",
+        roles: [RoleValues.ROLE_ADMIN],
+        type: "add",
+      },
+      {
+        description:
+          "Prise en compte des inscriptions multiples d'un étudiant (inscription principale et secondaires)",
+        roles: [RoleValues.ROLE_GESTIONNAIRE],
+        type: "add",
+      },
+      {
+        description:
+          "Informations de scolarité complémentaires dans la fiche et la liste des bénéficiaires, avec choix des colonnes affichées et exportées",
+        roles: [RoleValues.ROLE_GESTIONNAIRE],
+        type: "add",
+      },
+      {
+        description: "Personnalisation des libellés du menu principal de l'application",
+        roles: [RoleValues.ROLE_ADMIN],
+        type: "add",
+      },
+      {
+        description: "Mode sombre, s'il est proposé par l'établissement",
+        type: "add",
+      },
+      {
+        description:
+          "Les e-mails et les documents reprennent le nom de l'établissement et du service",
+        type: "change",
+      },
+      {
+        description: "Un aménagement reste actif jusqu'à la fin de son dernier jour",
+        type: "fix",
       },
     ],
   },
