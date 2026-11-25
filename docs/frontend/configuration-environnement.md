@@ -34,6 +34,8 @@ lors du redémarrage du conteneur, évitant ainsi les problèmes de cache.
 | `REACT_APP_FRONTEND`        | URL de l'application (frontend)                      | https://oasis.esup-portail.org                      | Oui             |
 | `REACT_APP_OAUTH_CLIENT_ID` | Identifiant du client OAuth                          | oasis                                               | Oui             |
 | `REACT_APP_OAUTH_PROVIDER`  | URL du fournisseur OAuth                             | https://cas.esup-portail.org/cas/oauth2.0/authorize | Oui             |
+| `REACT_APP_OAUTH_PKCE`      | Activer le flux Authorization Code + PKCE (RFC 7636) | true                                                | Non             |
+| `REACT_APP_OAUTH_SCOPE`     | Scopes OAuth / OIDC demandés                         | profile ou openid profile                           | Non             |
 | `REACT_APP_PHOTO`  ¬        | Afficher les photos des étudiants dans l'application | true                                                | Non             |
 | `REACT_APP_PHOTO_DEMO`      | Remplacer les photos par un avatar                   | false                                               | Non             |
 | `REACT_APP_DARKMODE`        | Activer le dark mode pour les utilisateurs *         | false                                               | Non             |
