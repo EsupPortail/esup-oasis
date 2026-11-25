@@ -34,8 +34,12 @@ class ModifierReponseVoterTest extends TestCase
         $demandeur = new Utilisateur();
         $demandeur->uid = 'demandeur123';
 
+        $etat = new \App\ApiResource\EtatDemande();
+        $etat->id = \App\Entity\EtatDemande::EN_COURS;
+
         $demande = new Demande();
         $demande->demandeur = $demandeur;
+        $demande->etat = $etat;
 
         $reponse = new Reponse();
         $reponse->demande = $demande;
@@ -44,6 +48,31 @@ class ModifierReponseVoterTest extends TestCase
         $token->method('getUserIdentifier')->willReturn('demandeur123');
 
         $this->assertSame(VoterInterface::ACCESS_GRANTED, $this->voter->vote(
+            $token,
+            $reponse,
+            [Reponse::MODIFIER_REPONSE],
+        ));
+    }
+
+    public function testDemandeurCannotModifyResponseWhenDemandeReceptionnee(): void
+    {
+        $demandeur = new Utilisateur();
+        $demandeur->uid = 'demandeur123';
+
+        $etat = new \App\ApiResource\EtatDemande();
+        $etat->id = \App\Entity\EtatDemande::RECEPTIONNEE;
+
+        $demande = new Demande();
+        $demande->demandeur = $demandeur;
+        $demande->etat = $etat;
+
+        $reponse = new Reponse();
+        $reponse->demande = $demande;
+
+        $token = $this->createMock(TokenInterface::class);
+        $token->method('getUserIdentifier')->willReturn('demandeur123');
+
+        $this->assertSame(VoterInterface::ACCESS_DENIED, $this->voter->vote(
             $token,
             $reponse,
             [Reponse::MODIFIER_REPONSE],

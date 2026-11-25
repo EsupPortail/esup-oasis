@@ -18,6 +18,7 @@ use App\State\Utilisateur\UtilisateurManager;
 use DateTime;
 use JsonException;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
+use Lexik\Bundle\JWTAuthenticationBundle\Exception\ExpiredTokenException;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -44,31 +45,55 @@ class OAuthController extends AbstractController
     #[Route(path: '/accessToken', name: 'accesstoken')]
     public function getAccessToken(
         Request $request,
-        #[Autowire('%env(JWT_COOKIE_DOMAIN)%')] string $cookieDomain,
+        #[Autowire('%env(JWT_COOKIE_DOMAIN)%')]
+        string $cookieDomain,
     ): Response {
-        $cookieDomainNorm = empty($cookieDomain) ? null : $cookieDomain;
-        if ($cookieDomainNorm !== null) {
-            $host = $request->getHost();
-            $cleanDomain = ltrim($cookieDomainNorm, '.');
-            if ($host !== $cleanDomain && !str_ends_with($host, '.' . $cleanDomain)) {
-                $cookieDomainNorm = null;
-            }
-        }
+        $cookieDomainNorm = $this->normalizeCookieDomain($cookieDomain, $request);
         try {
-            $token = $this->oauthService->getAccessToken($request, $this->generateUrl(
-                'connect_oauth_accesstoken',
-                [],
-                UrlGeneratorInterface::ABSOLUTE_URL,
-            ), $cookieDomainNorm);
+            $token = $this->oauthService->getAccessToken(
+                $request,
+                $this->generateUrl('connect_oauth_accesstoken', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                $cookieDomainNorm,
+            );
             if ($token instanceof Response) {
                 return $token;
             }
             $response = new JsonResponse(['token' => $token]);
-            $response->headers->clearCookie('oauth_state', '/', $cookieDomainNorm, $request->isSecure(), true, Cookie::SAMESITE_LAX);
+            $response->headers->clearCookie(
+                'oauth_state',
+                '/',
+                $cookieDomainNorm,
+                $request->isSecure(),
+                true,
+                Cookie::SAMESITE_LAX,
+            );
+            $response->headers->clearCookie(
+                'oauth_code_verifier',
+                '/',
+                $cookieDomainNorm,
+                $request->isSecure(),
+                true,
+                Cookie::SAMESITE_LAX,
+            );
             return $response;
         } catch (IdentityProviderException|UnexpectedValueException $exception) {
             $response = new Response($exception->getMessage(), 500);
-            $response->headers->clearCookie('oauth_state', '/', $cookieDomainNorm, $request->isSecure(), true, Cookie::SAMESITE_LAX);
+            $response->headers->clearCookie(
+                'oauth_state',
+                '/',
+                $cookieDomainNorm,
+                $request->isSecure(),
+                true,
+                Cookie::SAMESITE_LAX,
+            );
+            $response->headers->clearCookie(
+                'oauth_code_verifier',
+                '/',
+                $cookieDomainNorm,
+                $request->isSecure(),
+                true,
+                Cookie::SAMESITE_LAX,
+            );
             return $response;
         }
     }
@@ -81,37 +106,34 @@ class OAuthController extends AbstractController
     public function fullAuthentication(
         Request $request,
         UtilisateurManager $utilisateurManager,
-        #[Autowire('%env(JWT_TOKEN_TTL)%')] int $ttl,
-        #[Autowire('%env(JWT_COOKIE_NAME)%')] string $cookieName,
-        #[Autowire('%env(JWT_COOKIE_DOMAIN)%')] string $cookieDomain,
+        #[Autowire('%env(JWT_TOKEN_TTL)%')]
+        int $ttl,
+        #[Autowire('%env(JWT_COOKIE_NAME)%')]
+        string $cookieName,
+        #[Autowire('%env(JWT_COOKIE_DOMAIN)%')]
+        string $cookieDomain,
     ): Response {
         /**
          * https://oauth2-client.thephpleague.com/usage/
          * https://apereo.github.io/cas/6.0.x/installation/OAuth-OpenId-Authentication.html#authorization-code
          */
-        $cookieDomainNorm = empty($cookieDomain) ? null : $cookieDomain;
-        if ($cookieDomainNorm !== null) {
-            $host = $request->getHost();
-            $cleanDomain = ltrim($cookieDomainNorm, '.');
-            if ($host !== $cleanDomain && !str_ends_with($host, '.' . $cleanDomain)) {
-                $cookieDomainNorm = null;
-            }
-        }
+        $cookieDomainNorm = $this->normalizeCookieDomain($cookieDomain, $request);
         try {
-            $token = $this->oauthService->getAccessToken($request, $this->generateUrl(
-                'connect_oauth_login',
-                [],
-                UrlGeneratorInterface::ABSOLUTE_URL,
-            ), $cookieDomainNorm);
+            $token = $this->oauthService->getAccessToken(
+                $request,
+                $this->generateUrl('connect_oauth_login', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                $cookieDomainNorm,
+            );
 
             if ($token instanceof Response) {
                 return $token;
             }
 
             $resourceOwner = $this->oauthService->getResourceOwnerFromToken($token);
-            $uid = $resourceOwner->getId();
+            $uid = $this->oauthService->extractResourceOwnerUid($resourceOwner);
             $user = $utilisateurManager->parUid($uid, true);
             $infos = $resourceOwner->toArray();
+            $infos['id'] = $uid;
 
             $infos['tokenApi'] = $this->jwtTokenManager->create($user);
 
@@ -129,18 +151,48 @@ class OAuthController extends AbstractController
                 Cookie::SAMESITE_STRICT,
             ));
 
-            $jsonResponse->headers->clearCookie('oauth_state', '/', $cookieDomainNorm, $request->isSecure(), true, Cookie::SAMESITE_LAX);
+            $jsonResponse->headers->clearCookie(
+                'oauth_state',
+                '/',
+                $cookieDomainNorm,
+                $request->isSecure(),
+                true,
+                Cookie::SAMESITE_LAX,
+            );
+            $jsonResponse->headers->clearCookie(
+                'oauth_code_verifier',
+                '/',
+                $cookieDomainNorm,
+                $request->isSecure(),
+                true,
+                Cookie::SAMESITE_LAX,
+            );
 
             return $jsonResponse;
         } catch (IdentityProviderException|UnexpectedValueException $exception) {
             $response = new Response($exception->getMessage(), 500);
-            $response->headers->clearCookie('oauth_state', '/', $cookieDomainNorm, $request->isSecure(), true, Cookie::SAMESITE_LAX);
+            $response->headers->clearCookie(
+                'oauth_state',
+                '/',
+                $cookieDomainNorm,
+                $request->isSecure(),
+                true,
+                Cookie::SAMESITE_LAX,
+            );
+            $response->headers->clearCookie(
+                'oauth_code_verifier',
+                '/',
+                $cookieDomainNorm,
+                $request->isSecure(),
+                true,
+                Cookie::SAMESITE_LAX,
+            );
             return $response;
         }
     }
 
     /**
-     * Point d'entrée "normal" pour le front : prend en entrée un accessToken OAuth et retourne un JWT api
+     * Point d'entrée "normal" pour le front : prend en entrée un accessToken OAuth ou un code (PKCE) et retourne un JWT api
      *
      * @param Request $request
      * @param UtilisateurManager $utilisateurManager
@@ -150,14 +202,18 @@ class OAuthController extends AbstractController
      * @return Response
      * @throws ErreurLdapException
      */
-    #[Route(path: '/token', name: 'user_token')]
+    #[Route(path: '/token', name: 'user_token', methods: ['POST', 'GET'])]
     public function getApiJwtFromCasAccessToken(
         Request $request,
         UtilisateurManager $utilisateurManager,
-        #[Autowire('%env(JWT_TOKEN_TTL)%')] int $ttl,
-        #[Autowire('%env(JWT_COOKIE_NAME)%')] string $cookieName,
-        #[Autowire('%env(JWT_COOKIE_DOMAIN)%')] string $cookieDomain,
+        #[Autowire('%env(JWT_TOKEN_TTL)%')]
+        int $ttl,
+        #[Autowire('%env(JWT_COOKIE_NAME)%')]
+        string $cookieName,
+        #[Autowire('%env(JWT_COOKIE_DOMAIN)%')]
+        string $cookieDomain,
     ): Response {
+        $cookieDomainNorm = $this->normalizeCookieDomain($cookieDomain, $request);
         $isJson = null !== $request->query->get('json');
         if (!$isJson) {
             $accessToken = $request->attributes->get('accessToken');
@@ -167,13 +223,39 @@ class OAuthController extends AbstractController
         } else {
             //todo: utiliser json_validate
             try {
-                $accessToken = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR)['accessToken'];
+                $payload = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
             } catch (JsonException) {
                 return new JsonResponse(['error' => 'json mal formé en entrée'], 400);
             }
+
+            if (isset($payload['code'])) {
+                try {
+                    $codeVerifier = $payload['codeVerifier'] ?? $payload['code_verifier'] ?? null;
+                    $redirectUri = $payload['redirectUri'] ?? $payload['redirect_uri'] ?? null;
+                    $accessToken = $this->oauthService->exchangeCodeForToken(
+                        $payload['code'],
+                        $codeVerifier,
+                        $redirectUri,
+                    );
+                } catch (IdentityProviderException|UnexpectedValueException $e) {
+                    return new JsonResponse(['error' => $e->getMessage()], 400);
+                }
+            } elseif (isset($payload['accessToken'])) {
+                $accessToken = $payload['accessToken'];
+            } else {
+                return new JsonResponse(['error' => 'parametre code ou accessToken manquant'], 400);
+            }
         }
-        $resourceOwner = $this->oauthService->getResourceOwnerFromToken($accessToken);
-        $user = $utilisateurManager->parUid($resourceOwner->getId(), true);
+
+        try {
+            $resourceOwner = $this->oauthService->getResourceOwnerFromToken($accessToken);
+            $uid = $this->oauthService->extractResourceOwnerUid($resourceOwner);
+            $user = $utilisateurManager->parUid($uid, true);
+        } catch (ExpiredTokenException $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 401);
+        } catch (UnexpectedValueException $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 400);
+        }
 
         $token = $this->jwtTokenManager->create($user);
         $jsonResponse = new JsonResponse(['token' => $token]);
@@ -183,12 +265,44 @@ class OAuthController extends AbstractController
             $token,
             new DateTime()->modify(sprintf('+ %s seconds', $ttl)),
             '/',
-            $cookieDomain,
+            $cookieDomainNorm,
             true,
             true,
             false,
             Cookie::SAMESITE_STRICT,
         ));
         return $jsonResponse;
+    }
+
+    #[Route(path: '/logout', name: 'user_logout', methods: ['POST', 'GET'])]
+    public function logout(
+        Request $request,
+        #[Autowire('%env(JWT_COOKIE_NAME)%')] string $cookieName,
+        #[Autowire('%env(JWT_COOKIE_DOMAIN)%')] string $cookieDomain,
+    ): Response {
+        $cookieDomainNorm = $this->normalizeCookieDomain($cookieDomain, $request);
+        $response = new JsonResponse(['status' => 'ok']);
+        $response->headers->clearCookie(
+            $cookieName,
+            '/',
+            $cookieDomainNorm,
+            $request->isSecure(),
+            true,
+            Cookie::SAMESITE_STRICT,
+        );
+        return $response;
+    }
+
+    private function normalizeCookieDomain(?string $cookieDomain, Request $request): ?string
+    {
+        $cookieDomainNorm = empty($cookieDomain) ? null : $cookieDomain;
+        if ($cookieDomainNorm !== null) {
+            $host = $request->getHost();
+            $cleanDomain = ltrim($cookieDomainNorm, '.');
+            if ($host !== $cleanDomain && !str_ends_with($host, '.' . $cleanDomain)) {
+                $cookieDomainNorm = null;
+            }
+        }
+        return $cookieDomainNorm;
     }
 }

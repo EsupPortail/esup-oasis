@@ -44,12 +44,12 @@ class EntretiensTest extends ApiTestCaseCustom
         ]);
     }
 
-    public function testBeneficiaireCanSeeOwnEntretiens(): void
+    public function testBeneficiaireCannotSeeOwnEntretiens(): void
     {
         $client = $this->createClientWithCredentials('beneficiaire');
         $client->request('GET', '/utilisateurs/beneficiaire/entretiens');
 
-        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(403);
     }
 
     public function testBeneficiaireCannotSeeOtherEntretiens(): void
@@ -60,10 +60,44 @@ class EntretiensTest extends ApiTestCaseCustom
         $this->assertResponseStatusCodeSame(403);
     }
 
-    public function testBeneficiaireCannotCreateOwnEntretien(): void
+    public function testBeneficiaireCannotCreateUpdateOrDeleteEntretien(): void
     {
+        $tokenGestionnaire = $this->getTokenForUser('gestionnaire');
+        $tokenBeneficiaire = $this->getTokenForUser('beneficiaire');
         $client = $this->createClientWithCredentials('beneficiaire');
+
+        // Création d'un entretien par le gestionnaire pour tester GET/PATCH/DELETE unitaire
         $client->request('POST', '/utilisateurs/beneficiaire/entretiens', [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenGestionnaire],
+            'json' => [
+                'commentaire' => 'Entretien confidentiel',
+                'date' => '2026-03-11T10:00:00+00:00',
+            ],
+        ]);
+        $this->assertResponseStatusCodeSame(201);
+        $entretienIri = $client->getResponse()->toArray()['@id'];
+
+        $client->request('GET', $entretienIri, [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenBeneficiaire],
+        ]);
+        $this->assertResponseStatusCodeSame(403);
+
+        $client->request('PATCH', $entretienIri, [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $tokenBeneficiaire,
+                'Content-Type' => 'application/merge-patch+json',
+            ],
+            'json' => ['commentaire' => 'Piraté'],
+        ]);
+        $this->assertResponseStatusCodeSame(403);
+
+        $client->request('DELETE', $entretienIri, [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenBeneficiaire],
+        ]);
+        $this->assertResponseStatusCodeSame(403);
+
+        $client->request('POST', '/utilisateurs/beneficiaire/entretiens', [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenBeneficiaire],
             'json' => [
                 'commentaire' => 'Mon propre entretien',
                 'date' => '2026-03-11T10:00:00+00:00',

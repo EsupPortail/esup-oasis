@@ -72,6 +72,8 @@ class ModifierDemandeVoter extends Voter
             if (
                 $previous->typeDemande->id !== $new->typeDemande->id
                 || $previous->demandeur->uid !== $new->demandeur->uid
+                || null !== $new->profilAttribue
+                || $previous->commentaire !== $new->commentaire
             ) {
                 return false;
             }
@@ -107,6 +109,12 @@ class ModifierDemandeVoter extends Voter
             );
             if (!empty($membreCommission)) {
                 $membreCommission = current($membreCommission);
+                if (
+                    null !== $new->profilAttribue
+                    && !in_array(Utilisateur::ROLE_ATTRIBUER_PROFIL, $membreCommission->getRoles())
+                ) {
+                    return false;
+                }
                 //Quelles sont les modifs?
                 if ($previous->etat->id !== $new->etat->id) {
                     //attribuer le profil

@@ -42,6 +42,7 @@ use Symfony\Component\Serializer\Attribute\Ignore;
         ]),
     ],
     openapi: new Operation(tags: ['Demandes']),
+    security: "is_granted('ROLE_GESTIONNAIRE')",
     provider: ModificationEtatDemandeProvider::class,
     stateOptions: new Options(entityClass: \App\Entity\ModificationEtatDemande::class),
 )]

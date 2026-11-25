@@ -60,7 +60,8 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Post(
             uriTemplate: self::COLLECTION_URI,
             uriVariables: ['uid'],
-            security: "is_granted('" . self::MODIFIER_AMENAGEMENTS_UTILISATEUR . "', request.attributes.get('uid'))",
+            security: "is_granted('ROLE_PLANIFICATEUR')",
+            securityPostDenormalize: "is_granted('" . self::MODIFIER_AMENAGEMENTS_UTILISATEUR . "', object)",
             read: false,
             map: false,
         ),
@@ -73,7 +74,8 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Patch(
             uriTemplate: self::ITEM_URI,
             uriVariables: ['uid', 'id'],
-            security: "is_granted('" . self::MODIFIER_AMENAGEMENTS_UTILISATEUR . "', request.attributes.get('uid'))",
+            security: "is_granted('ROLE_PLANIFICATEUR')",
+            securityPostDenormalize: "is_granted('" . self::MODIFIER_AMENAGEMENTS_UTILISATEUR . "', [previous_object, object])",
             map: false,
         ),
         new Delete(

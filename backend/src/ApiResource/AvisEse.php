@@ -27,6 +27,7 @@ use App\State\AvisEse\AvisEseDeleteProcessor;
 use App\State\AvisEse\AvisEsePatchProcessor;
 use App\State\AvisEse\AvisEsePostProcessor;
 use App\State\AvisEse\AvisEseProvider;
+use App\Validator\PieceJustificativeValideConstraint;
 use App\Validator\DecisionNonVerrouilleeConstraint;
 use DateTimeInterface;
 use ReflectionProperty;
@@ -39,6 +40,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
             uriVariables: [
                 'uid' => new Link(fromProperty: 'uid', toProperty: 'utilisateur', fromClass: Utilisateur::class),
             ],
+            security: "is_granted('" . \App\Entity\Utilisateur::ROLE_GESTIONNAIRE . "')",
             map: false,
         ),
         new Post(
@@ -57,6 +59,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
                 'uid' => new Link(fromProperty: 'uid', toProperty: 'utilisateur', fromClass: Utilisateur::class),
                 'id',
             ],
+            security: "is_granted('" . \App\Entity\Utilisateur::ROLE_GESTIONNAIRE . "')",
             map: false,
         ),
         new Patch(
@@ -161,6 +164,7 @@ class AvisEse
         }
     }
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
+    #[PieceJustificativeValideConstraint]
     public ?Telechargement $fichier {
         get {
             $prop = new ReflectionProperty(self::class, 'fichier');

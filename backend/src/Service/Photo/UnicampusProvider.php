@@ -22,6 +22,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 class UnicampusProvider implements PhotoProviderInterface
 {
     private $db;
+    private readonly array $cleanSuffixes;
 
     public function __construct(
         #[Autowire('%env(UNICAMPUS_SGBD)%')]
@@ -34,9 +35,14 @@ class UnicampusProvider implements PhotoProviderInterface
         #[Autowire('%env(UNICAMPUS_SID)%')]
         private readonly string $sid,
         #[Autowire('%env(json:UNICAMPUS_SUFFIXES)%')]
-        private readonly array $suffixes,
+        array $suffixes,
         private readonly LoggerInterface $logger,
-    ) {}
+    ) {
+        $this->cleanSuffixes = array_map(
+            fn($suffix) => preg_replace('/[^a-zA-Z0-9]/', '', (string) $suffix),
+            $suffixes,
+        );
+    }
 
     #[Override]
     public function getPhotoUtilisateur(Utilisateur $utilisateur): string
@@ -47,13 +53,14 @@ class UnicampusProvider implements PhotoProviderInterface
             throw new PhotoIndisponibleException($e->getMessage());
         }
 
-        if (null == $utilisateur->getNumeroEtudiant()) {
+        $numEtudiant = preg_replace('/[^a-zA-Z0-9]/', '', (string) $utilisateur->getNumeroEtudiant());
+        if ($numEtudiant === '') {
             throw new PhotoIndisponibleException('Photo disponible uniquement pour les étudiants');
         }
 
         $identifiants = [];
-        foreach ($this->suffixes as $suffix) {
-            $identifiants[] = $utilisateur->getNumeroEtudiant() . $suffix;
+        foreach ($this->cleanSuffixes as $suffix) {
+            $identifiants[] = $numEtudiant . $suffix;
         }
 
         $listeIdentifiants = implode("','", $identifiants);

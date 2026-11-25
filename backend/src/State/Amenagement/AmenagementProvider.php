@@ -41,6 +41,17 @@ class AmenagementProvider extends AmenagementSansFiltreProvider
             ->withStateOptions($operation->getStateOptions())
             ->withUriVariables([$link]);
 
-        return parent::provide(operation: $relevantOperation, uriVariables: $relevantVariables, context: $context);
+        $amenagement = parent::provide(
+            operation: $relevantOperation,
+            uriVariables: $relevantVariables,
+            context: $context,
+        );
+        assert($amenagement instanceof Amenagement || null === $amenagement);
+
+        if ($amenagement?->uid !== $uriVariables['uid']) {
+            return null;
+        }
+
+        return $amenagement;
     }
 }

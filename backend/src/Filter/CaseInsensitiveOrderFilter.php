@@ -56,17 +56,25 @@ class CaseInsensitiveOrderFilter extends AbstractFilter
         ?Operation $operation = null,
         array $context = [],
     ): void {
-        if ($property !== $this->orderParameterName) {
+        if ($property !== $this->orderParameterName || !is_array($value)) {
             return;
         }
 
+        $entityClass = $operation?->getStateOptions()?->getEntityClass() ?? $operation?->getClass() ?? $resourceClass;
         $alias = $queryBuilder->getRootAliases()[0];
 
         foreach ($value as $prop => $direction) {
+            $direction = strtoupper((string) ($direction ?: 'ASC'));
+            if (!in_array($direction, ['ASC', 'DESC'], true)) {
+                continue;
+            }
+            if (!$this->isPropertyEnabled($prop, $resourceClass) || !$this->isPropertyMapped($prop, $entityClass)) {
+                continue;
+            }
             $join = sprintf('upper(unaccent(%s.%s))', $alias, $prop);
             $fieldAlias = $queryNameGenerator->generateParameterName('order');
             $queryBuilder->addSelect($join . ' as hidden ' . $fieldAlias);
-            $queryBuilder->addOrderBy($fieldAlias, $direction ?? 'asc');
+            $queryBuilder->addOrderBy($fieldAlias, $direction);
         }
     }
 }

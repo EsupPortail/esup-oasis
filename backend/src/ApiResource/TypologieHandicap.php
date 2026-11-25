@@ -32,8 +32,15 @@ use Symfony\Component\Serializer\Attribute\Groups;
     operations: [
         new GetCollection(uriTemplate: self::COLLECTION_URI),
         new Get(uriTemplate: self::ITEM_URI, uriVariables: ['id']),
-        new Patch(uriTemplate: self::ITEM_URI, uriVariables: ['id']),
-        new Post(uriTemplate: self::COLLECTION_URI),
+        new Patch(
+            uriTemplate: self::ITEM_URI,
+            uriVariables: ['id'],
+            security: "is_granted('" . \App\Entity\Utilisateur::ROLE_ADMIN . "')",
+        ),
+        new Post(
+            uriTemplate: self::COLLECTION_URI,
+            security: "is_granted('" . \App\Entity\Utilisateur::ROLE_ADMIN . "')",
+        ),
     ],
     normalizationContext: ['groups' => [self::GROUP_OUT]],
     denormalizationContext: ['groups' => [self::GROUP_IN]],

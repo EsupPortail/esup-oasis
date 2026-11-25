@@ -201,13 +201,18 @@ class ApogeeProvider extends AbstractSiScolDataProvider
         }
 
         //par défaut pas d'infos complémentaires à afficher
-        $codEtus = array_map(
-            fn(Utilisateur $etudiant) => $etudiant->getNumeroEtudiant(),
-            array_filter(
+        $codEtus = array_values(array_filter(
+            array_map(
+                fn(Utilisateur $etudiant) => preg_replace('/[^a-zA-Z0-9]/', '', (string) $etudiant->getNumeroEtudiant()),
                 iterator_to_array($etudiants),
-                fn(Utilisateur $etudiant) => $etudiant->getNumeroEtudiant() !== null,
             ),
-        );
+            fn(?string $num) => !empty($num),
+        ));
+
+        if (empty($codEtus)) {
+            return [];
+        }
+
         $codEtus = implode(',', $codEtus);
 
         $sql = str_replace(':codesEtudiants', $codEtus, $this->requeteInfosComp);

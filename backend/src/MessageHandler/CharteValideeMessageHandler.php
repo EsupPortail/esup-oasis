@@ -30,6 +30,9 @@ readonly class CharteValideeMessageHandler
          * On vérifie si toutes les chartes sont validées, si oui, on passe à l'état ATTENTE_VALIDATION_ACCOMPAGNEMENT
          */
         $demande = $message->getCharte()->getDemande();
+        if ($demande->getEtat()?->getId() !== EtatDemande::ATTENTE_VALIDATION_CHARTE) {
+            return;
+        }
         foreach ($demande->getChartes() as $charte) {
             if (!$charte->estValidee()) {
                 return;

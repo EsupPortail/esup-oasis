@@ -31,6 +31,23 @@ class ModifierAmenagementsVoter extends Voter
         TokenInterface $token,
         ?Vote $vote = null,
     ): bool {
-        return in_array(Utilisateur::ROLE_PLANIFICATEUR, $token->getRoleNames());
+        if (in_array(Utilisateur::ROLE_GESTIONNAIRE, $token->getRoleNames())) {
+            return true;
+        }
+
+        if (in_array(Utilisateur::ROLE_RENFORT, $token->getRoleNames())) {
+            if ($subject instanceof Amenagement) {
+                return ($subject->typeAmenagement ?? null)?->aideHumaine === true;
+            }
+            if (is_array($subject)) {
+                [$previous, $new] = $subject;
+                return (
+                    ($previous?->typeAmenagement ?? null)?->aideHumaine === true
+                    && ($new?->typeAmenagement ?? null)?->aideHumaine === true
+                );
+            }
+        }
+
+        return false;
     }
 }

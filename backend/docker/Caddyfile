@@ -43,5 +43,8 @@
 
     {$CADDY_SERVER_EXTRA_DIRECTIVES}
 
+    # Sonde de santé Kubernetes (liveness / readiness)
+    respond /healthz "OK" 200
+    
     php_server
 }

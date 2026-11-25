@@ -48,7 +48,6 @@ use Symfony\Component\Serializer\Attribute\Groups;
                     ],
                 ],
             ]))),
-            security: "is_granted('ROLE_GESTIONNAIRE') or is_granted('ROLE_RENFORT_DEMANDES') or is_granted('ROLE_DEMANDEUR')",
             deserialize: false,
             validate: true,
             map: false,

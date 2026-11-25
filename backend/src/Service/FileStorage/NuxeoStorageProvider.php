@@ -57,8 +57,8 @@ class NuxeoStorageProvider implements StorageProviderInterface
     {
         return $this->store(
             fopen($file->getPathname(), 'r'),
-            $file->getClientOriginalName(),
-            $file->getClientMimeType(),
+            basename($file->getClientOriginalName()),
+            $file->getMimeType() ?? $file->getClientMimeType(),
         );
     }
 

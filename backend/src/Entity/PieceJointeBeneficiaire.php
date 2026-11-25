@@ -81,6 +81,9 @@ class PieceJointeBeneficiaire
     public function setFichier(Fichier $fichier): static
     {
         $this->fichier = $fichier;
+        if ($fichier->getPieceJointeBeneficiaire() !== $this) {
+            $fichier->setPieceJointeBeneficiaire($this);
+        }
 
         return $this;
     }

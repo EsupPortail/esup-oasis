@@ -515,4 +515,41 @@ class UtilisateursTest extends ApiTestCaseCustom
         $this->assertArrayHasKey('infosComplementaires', $item);
         $this->assertArraySubset([['libelle' => 'someKey', 'valeur' => 'someValue']], $item['infosComplementaires']);
     }
+
+    /**
+     * Vérifie que la recherche LDAP résiste aux caractères spéciaux et injections
+     */
+    public function testLdapInjectionResistance(): void
+    {
+        $client = $this->createClientWithCredentials('admin');
+
+        // Tentative d'injection pour bypasser le filtre (ex: fermer le filtre uid et en ouvrir un autre)
+        $client->request('GET', '/utilisateurs?term=*)(uid=*');
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonContains(['hydra:totalItems' => 0]);
+
+        // Autre tentative avec parenthèses
+        $client->request('GET', '/utilisateurs?term=nom(prenom');
+        $this->assertResponseIsSuccessful();
+    }
+
+    /**
+     * Vérifie qu'un intervenant ne peut pas modifier ses compétences ou sa date de fin de contrat
+     */
+    public function testIntervenantCannotModifySensitiveProfileData(): void
+    {
+        $client = $this->createClientWithCredentials('intervenant');
+        $tokenIntervenant = $this->getTokenForUser('intervenant');
+
+        $client->request('PATCH', '/utilisateurs/intervenant', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $tokenIntervenant,
+                'Content-Type' => 'application/merge-patch+json',
+            ],
+            'json' => [
+                'intervenantFin' => '2099-12-31',
+            ],
+        ]);
+        $this->assertResponseStatusCodeSame(403);
+    }
 }

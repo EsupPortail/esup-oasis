@@ -165,4 +165,50 @@ class AmenagementsTest extends ApiTestCaseCustom
 
         $this->assertResponseStatusCodeSame(204);
     }
+
+    /**
+     * Vérifie qu'un bénéficiaire ne peut pas créer d'aménagement pour lui-même
+     * ni lire l'aménagement d'un autre bénéficiaire en mettant son propre uid dans l'URL (IDOR)
+     */
+    public function testBeneficiaireCannotCreateAmenagement(): void
+    {
+        $client = $this->createClientWithCredentials('beneficiaire');
+        $client->request('POST', '/utilisateurs/beneficiaire/amenagements', [
+            'json' => [
+                'typeAmenagement' => '/types_amenagements/1',
+                'semestre1' => true,
+                'semestre2' => true,
+                'debut' => '2025-09-01',
+                'fin' => '2026-06-30',
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(403);
+
+        // Amenagement 1 appartient à beneficiaire_decision : tentative d'accès via /utilisateurs/beneficiaire/amenagements/1
+        $client->request('GET', '/utilisateurs/beneficiaire/amenagements/1');
+        $this->assertResponseStatusCodeSame(404);
+    }
+
+    /**
+     * Vérifie qu'un renfort ne peut pas créer d'aménagement d'examen (réservé aux aides humaines)
+     */
+    public function testRenfortCannotCreateExamenAmenagement(): void
+    {
+        $client = $this->createClientWithCredentials('renfort');
+        $tokenRenfort = $this->getTokenForUser('renfort');
+
+        // Type_amenagement 1 : examens=true, aideHumaine=false
+        $client->request('POST', '/utilisateurs/beneficiaire/amenagements', [
+            'headers' => ['Authorization' => 'Bearer ' . $tokenRenfort],
+            'json' => [
+                'typeAmenagement' => '/types_amenagements/1',
+                'semestre1' => true,
+                'semestre2' => true,
+                'debut' => '2025-09-01',
+                'fin' => '2026-06-30',
+            ],
+        ]);
+        $this->assertResponseStatusCodeSame(403);
+    }
 }

@@ -144,6 +144,11 @@ class ComposanteFormationFilter extends AbstractFilter
             $queryBuilder->setParameter($idParam, $entity->id);
         }
 
+        if ($exprs === []) {
+            $queryBuilder->andWhere('1 = 0');
+            return;
+        }
+
         $orX = $queryBuilder->expr()->orX();
         $orX->addMultiple($exprs);
         $queryBuilder->andWhere($orX)->setParameter($nowParam, $this->now());

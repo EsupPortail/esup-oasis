@@ -23,6 +23,7 @@ use ApiPlatform\OpenApi\Model\Operation;
 use App\Filter\PieceJointeBeneficiaireUidFilter;
 use App\State\PieceJointeBeneficiaire\PieceJointeBeneficiaireProcessor;
 use App\State\PieceJointeBeneficiaire\PieceJointeBeneficiaireProvider;
+use App\Validator\PieceJustificativeValideConstraint;
 use DateTimeInterface;
 use ReflectionProperty;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -30,15 +31,32 @@ use Symfony\Component\Serializer\Attribute\Ignore;
 
 #[ApiResource(
     operations: [
-        new GetCollection(uriTemplate: self::COLLECTION_URI, uriVariables: ['uid']),
-        new Get(uriTemplate: self::ITEM_URI, uriVariables: ['uid', 'id']),
-        new Post(uriTemplate: self::COLLECTION_URI, uriVariables: ['uid'], read: false, map: false),
-        new Delete(uriTemplate: self::ITEM_URI, uriVariables: ['uid', 'id']),
+        new GetCollection(
+            uriTemplate: self::COLLECTION_URI,
+            uriVariables: ['uid'],
+            security: "is_granted('ROLE_GESTIONNAIRE') or request.attributes.get('uid') == user.getUid()",
+        ),
+        new Get(
+            uriTemplate: self::ITEM_URI,
+            uriVariables: ['uid', 'id'],
+            security: "is_granted('ROLE_GESTIONNAIRE') or object.uid == user.getUid()",
+        ),
+        new Post(
+            uriTemplate: self::COLLECTION_URI,
+            uriVariables: ['uid'],
+            security: "is_granted('ROLE_GESTIONNAIRE')",
+            read: false,
+            map: false,
+        ),
+        new Delete(
+            uriTemplate: self::ITEM_URI,
+            uriVariables: ['uid', 'id'],
+            security: "is_granted('ROLE_GESTIONNAIRE')",
+        ),
     ],
     normalizationContext: ['groups' => [self::GROUP_OUT]],
     denormalizationContext: ['groups' => [self::GROUP_IN]],
     openapi: new Operation(tags: ['Utilisateurs']),
-    security: "is_granted('ROLE_GESTIONNAIRE') or request.attributes.get('uid') == user.getUid()",
     provider: PieceJointeBeneficiaireProvider::class,
     processor: PieceJointeBeneficiaireProcessor::class,
     stateOptions: new Options(entityClass: \App\Entity\PieceJointeBeneficiaire::class),
@@ -112,6 +130,7 @@ class PieceJointeBeneficiaire
     }
 
     #[Groups([self::GROUP_IN, self::GROUP_OUT])]
+    #[PieceJustificativeValideConstraint]
     public Telechargement $fichier {
         get {
             $prop = new ReflectionProperty(self::class, 'fichier');

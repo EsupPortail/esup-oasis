@@ -62,7 +62,8 @@ readonly class FileSystemStorageProvider implements StorageProviderInterface
         string $mimeType,
         string $description = 'pj envoyée par oasis',
     ): array {
-        $uniqId = uniqid($filename);
+        $safeFilename = preg_replace('/[^a-zA-Z0-9._-]/', '_', basename($filename));
+        $uniqId = uniqid($safeFilename . '_', true);
         $filepath = $this->basePath . '/' . $uniqId;
 
         if (!file_put_contents(filename: $filepath, data: $contents)) {

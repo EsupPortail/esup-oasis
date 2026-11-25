@@ -56,7 +56,7 @@ export function PeriodesRhEdition({
       ...periode,
       debut: createDateAsUTC(dayjs(periode.debut).startOf("day").toDate()).toISOString(),
       fin: createDateAsUTC(dayjs(periode.fin).endOf("day").toDate()).toISOString(),
-      butoir: createDateAsUTC(dayjs(periode.butoir).endOf("day").toDate()).toISOString(),
+      butoir: createDateAsUTC(dayjs(periode.butoir).toDate()).toISOString(),
     };
 
     if (periode["@id"] === undefined) {

@@ -106,7 +106,36 @@ final class ModifierUtilisateurVoter extends Voter
         }
 
         assert($user instanceof UtilisateurEntity);
-        return $this->security->isGranted(UtilisateurEntity::ROLE_PLANIFICATEUR) || $user->getUid() === $new->uid;
+        if ($this->security->isGranted(UtilisateurEntity::ROLE_PLANIFICATEUR)) {
+            return true;
+        }
+
+        if ($user->getUid() !== $new->uid) {
+            return false;
+        }
+
+        // Un utilisateur non-planificateur qui modifie son propre profil ne peut pas altérer ses données d'intervenant
+        if (
+            $previous->intervenantDebut != $new->intervenantDebut
+            || $previous->intervenantFin != $new->intervenantFin
+            || !$this->hasSameIds($previous->campus ?? [], $new->campus ?? [])
+            || !$this->hasSameIds($previous->competences ?? [], $new->competences ?? [])
+            || !$this->hasSameIds($previous->typesEvenements ?? [], $new->typesEvenements ?? [])
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function hasSameIds(array $a, array $b): bool
+    {
+        $idsA = array_map(fn($item) => $item->id, $a);
+        $idsB = array_map(fn($item) => $item->id, $b);
+        sort($idsA);
+        sort($idsB);
+
+        return $idsA === $idsB;
     }
 
     private function canChange(string $role): bool

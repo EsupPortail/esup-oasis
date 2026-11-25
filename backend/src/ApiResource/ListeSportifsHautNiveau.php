@@ -17,6 +17,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\OpenApi\Model\Operation;
 use App\State\SportifHautNiveau\SportifHautNiveauUploadProcessor;
+use App\Validator\PieceJustificativeValideConstraint;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -53,5 +54,6 @@ class ListeSportifsHautNiveau
 
     #[Groups([self::GROUP_IN])]
     #[Assert\NotNull]
+    #[PieceJustificativeValideConstraint]
     public ?Telechargement $telechargement = null;
 }

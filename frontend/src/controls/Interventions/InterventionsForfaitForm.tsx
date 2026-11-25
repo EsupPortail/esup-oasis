@@ -55,7 +55,7 @@ export const InterventionsForfaitForm: React.FC<InterventionsForfaitFormProps> =
     () =>
       periodes?.items
         .filter((p) => !p.envoyee || !isEditable)
-        .filter((p) => user?.isAdmin || dayjs(p.butoir).isAfter(dayjs()))
+        .filter((p) => user?.isAdmin || dayjs(p.butoir).endOf("day").isAfter(dayjs()))
         .map((periode) => ({
           key: periode["@id"],
           value: periode["@id"],

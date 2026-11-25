@@ -41,20 +41,52 @@ class PreloadAssociationsFilter extends AbstractFilter
             return;
         }
 
+        // Ce filtre est purement interne aux Providers : on ignore toute valeur issue directement des query params HTTP
+        if (
+            isset($context['request'])
+            && $context['request']->query->has(self::PROPERTY)
+            && $context['request']->query->all()[self::PROPERTY] === $value
+        ) {
+            return;
+        }
+
+        $rootEntityClass = (
+            $operation?->getStateOptions()?->getEntityClass() ?? $operation?->getClass() ?? $resourceClass
+        );
         $aliases = [
             'root' => $queryBuilder->getRootAliases()[0],
         ];
+        $entityClasses = [
+            'root' => $rootEntityClass,
+        ];
 
         foreach ($value as $associationName => $association) {
+            if (!is_array($association)) {
+                continue;
+            }
+            $sourceEntity = $association['sourceEntity'] ?? null;
+            $relationName = $association['relationName'] ?? null;
+            if (
+                !is_string($sourceEntity)
+                || !is_string($relationName)
+                || !isset($aliases[$sourceEntity], $entityClasses[$sourceEntity])
+            ) {
+                continue;
+            }
+            $metadata = $this->getClassMetadata($entityClasses[$sourceEntity]);
+            if (!$metadata->hasAssociation($relationName)) {
+                continue;
+            }
             $aliases[$associationName] = $queryNameGenerator->generateJoinAlias($associationName);
+            $entityClasses[$associationName] = $metadata->getAssociationTargetClass($relationName);
             if (($association['joinType'] ?? 'LEFT') === 'LEFT') {
                 $queryBuilder->leftJoin(
-                    $aliases[$association['sourceEntity']] . '.' . $association['relationName'],
+                    $aliases[$sourceEntity] . '.' . $relationName,
                     $aliases[$associationName],
                 );
             } else {
                 $queryBuilder->innerJoin(
-                    $aliases[$association['sourceEntity']] . '.' . $association['relationName'],
+                    $aliases[$sourceEntity] . '.' . $relationName,
                     $aliases[$associationName],
                 );
             }

@@ -58,6 +58,9 @@ class PieceJointeBeneficiaireProvider implements ProviderInterface
             uriVariables: $relevantVariables,
             context: $context,
         );
+        if ($entity?->getBeneficiaire()?->getUid() !== $uriVariables['uid']) {
+            return null;
+        }
         return match ($entity) {
             null => null,
             default => new PieceJointeBeneficiaire($entity),

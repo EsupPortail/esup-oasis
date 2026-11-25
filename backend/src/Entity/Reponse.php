@@ -423,6 +423,7 @@ class Reponse
     {
         if (!$this->piecesJustificatives->contains($piece)) {
             $this->piecesJustificatives->add($piece);
+            $piece->addReponse($this);
         }
 
         return $this;
@@ -430,7 +431,9 @@ class Reponse
 
     public function removePieceJustificative(Fichier $piece): static
     {
-        $this->piecesJustificatives->removeElement($piece);
+        if ($this->piecesJustificatives->removeElement($piece)) {
+            $piece->removeReponse($this);
+        }
 
         return $this;
     }

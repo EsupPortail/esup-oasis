@@ -21,6 +21,7 @@ class CustomCsvEncoder extends CsvEncoder
         $context[parent::DELIMITER_KEY] = ';';
         $context[parent::NO_HEADERS_KEY] = true;
         $context[parent::OUTPUT_UTF8_BOM_KEY] = true;
+        $context[parent::ESCAPE_FORMULAS_KEY] = true;
         return parent::encode($data, $format, $context);
     }
 

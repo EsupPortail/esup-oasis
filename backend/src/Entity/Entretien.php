@@ -77,6 +77,9 @@ class Entretien
     public function setFichier(?Fichier $fichier): static
     {
         $this->fichier = $fichier;
+        if (null !== $fichier && $fichier->getEntretien() !== $this) {
+            $fichier->setEntretien($this);
+        }
 
         return $this;
     }
