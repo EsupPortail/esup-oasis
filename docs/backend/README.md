@@ -7,7 +7,7 @@ Application backend :
 
 ## Composants techniques
 
-Développé en PHP 8.4, avec les frameworks Symfony 8 (https://symfony.com/)
+Développé en PHP 8.5, avec les frameworks Symfony 8 (https://symfony.com/)
 et Api Platform 4 (https://api-platform.com/), et utilise une base Postgresql (testé sur version 13+).
 
 Déploiement avec docker / K8S, avec le serveur d'applications frankenphp (https://frankenphp.dev/),
@@ -17,7 +17,7 @@ un module pour Caddy - https://caddyserver.com/.
 
 ## Dépendances / intégrations
 
-* Pour l'authentification, un serveur OAuth (testé avec un serveur CAS).
+* Pour l'authentification, un serveur OAuth2 / OIDC (testé avec CAS, LemonLDAP::NG...).
 * Pour l'accès aux données de scolarité, une base Apogée (possibilité d'implémenter d'autres connecteurs)
 * Pour l'édition PDF, un service gotenberg (https://gotenberg.dev/).
 * Pour le stockage des pièces justificatives, un serveur de GED Nuxeo en option (sinon stockage "fichier")

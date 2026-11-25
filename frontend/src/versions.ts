@@ -98,6 +98,12 @@ export const VERSIONS: IVersion[] = [
         description: "Un aménagement reste actif jusqu'à la fin de son dernier jour",
         type: "fix",
       },
+      {
+        description:
+          "La saisie d'interventions au forfait reste ouverte toute la journée de la date butoir",
+        roles: [RoleValues.ROLE_GESTIONNAIRE, RoleValues.ROLE_RENFORT],
+        type: "fix",
+      },
     ],
   },
   {
