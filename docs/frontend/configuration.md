@@ -8,6 +8,13 @@ du projet. Un fichier `.env.example` est fourni pour servir de base à la config
 
 ## Variables liées à l'établissement et au service d'accompagnement des étudiants
 
+> **Déploiement "tout-en-un" :** ces variables se renseignent via leurs équivalents `APP_*` du fichier
+> [.env.exemple](../../installation/.env.exemple) (`APP_ETABLISSEMENT`, `APP_SERVICE_DENOMINATION`,
+> `APP_DECISION_ETAB_LIB`…), dont sont dérivées les variables `REACT_APP_*`. Les dénominations de l'établissement et du
+> service s'appliquent alors aussi aux e-mails, à la décision d'aménagements et au bilan des services faits générés par
+> le backend (cf [configuration applicative du backend](../backend/README.md#configuration-applicative-statique)) ; le
+> libellé de la décision d'établissement est repris par le parapheur électronique.
+
 | **Variable**                            | **Description**                                                       | **Exemple**                                            | **Obligatoire**                        |
 |------------------------------------------|-------------------------------------------------------------------------|-----------------------------------------------------------|-------------------------------------------|
 | `REACT_APP_TITRE`                       | Titre de l'application                                                | Oasis                                                  | Oui                                    |

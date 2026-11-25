@@ -5,16 +5,28 @@ L'API est entièrement privée, les seuls endpoints publics sont ceux permettant
 
 ## Authentification d'un utilisateur
 
-Le frontend déclenche de son côté l'authentification auprès du serveur OAuth, et obtient en retour un accesstoken.
-Il obtient ensuite un token JWT du backend en appelant l'endpoint `/connect/oauth/token` et en lui passant l'accesstoken
-obtenu - la requête curl correspondante serait :
+Par défaut (flux Authorization Code avec PKCE, activé via `OAUTH_PKCE=true` et `REACT_APP_OAUTH_PKCE=true`), le frontend
+déclenche l'authentification auprès du serveur OAuth2 / OIDC et obtient en retour un code d'autorisation (`code`). Il
+obtient ensuite un token JWT du backend en appelant l'endpoint `/connect/oauth/token` avec ce code, le `codeVerifier`
+PKCE et l'`redirectUri` :
 
 ```
-$ curl 'https://backend.univ.fr/connect/oauth/token?json=1' \ 
+$ curl 'https://backend.univ.fr/connect/oauth/token?json=1' \
     -X POST \
     -H 'Content-Type: application/json' \
     -H 'Connection: keep-alive' \
-    -data-raw '{"accessToken":"AT-xxxxxxxxxxxxxxxxxxxxx"}'
+    --data-raw '{"code":"OC-xxxxxxxx","codeVerifier":"xxxxxxxx","redirectUri":"https://oasis.univ.fr/callback"}'
+```
+
+Si PKCE est désactivé (`OAUTH_PKCE=false` / `REACT_APP_OAUTH_PKCE=false`, ancien flux implicit de CAS), le frontend
+transmet directement l'`accessToken` obtenu auprès du serveur OAuth :
+
+```
+$ curl 'https://backend.univ.fr/connect/oauth/token?json=1' \
+    -X POST \
+    -H 'Content-Type: application/json' \
+    -H 'Connection: keep-alive' \
+    --data-raw '{"accessToken":"AT-xxxxxxxxxxxxxxxxxxxxx"}'
 ```
 
 En retour l'API va :
@@ -27,7 +39,10 @@ En retour l'API va :
   ```
 
 Les appels suivants à l'API devront fournir le JWT obtenu soit via le cookie "oasis-token", soit dans le header
-HTTP Authorization (`Authorization: Bearer eyxxxxxxxxxxxxxx`)
+HTTP Authorization (`Authorization: Bearer eyxxxxxxxxxxxxxx`).
+
+Lors de la déconnexion, un appel à l'endpoint `/connect/oauth/logout` (`POST` ou `GET`) permet d'effacer le cookie
+httpOnly de session.
 
 ## Authentification d'une application cliente
 
